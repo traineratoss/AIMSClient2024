@@ -2,6 +2,8 @@
 const props = defineProps({
     text: ""
 })
+
+
 </script>
 
 <template>
