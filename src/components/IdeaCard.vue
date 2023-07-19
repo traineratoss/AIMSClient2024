@@ -27,7 +27,7 @@ const comments = ref([
   {
     commentText: "some comment text",
     userName: "Gigel",
-    hasReplies: true,
+    hasReplies: false,
     replies: [{ commentText: "first reply", userName: "dan armeanca" }],
   },
   { commentText: "just comment text", userName: "Crsiti", hasReplies: true },
@@ -39,7 +39,15 @@ function print() {
 
 }
 
-const showComments = ref(false);
+let showComments = ref(false);
+let someVariable = ref(true)
+
+function toggle(){
+    console.log("function was accesed")
+    someVariable =! someVariable
+    console.log(someVariable)
+}
+
 </script>
 
 <!-- 
@@ -62,10 +70,15 @@ const showComments = ref(false);
     v-for="comment in comments"
     :key="comment.userName"
   >
-    <CustomComment :text="comment.commentText" :userName="comment.userName" :hasReplies="comment.hasReplies" />
-
+    <CustomComment 
+    :text="comment.commentText" 
+    :userName="comment.userName" 
+    :hasReplies="comment.hasReplies" 
+    @showReplies="toggle()"
+    />
+<!-- v-if ul trebuie sa primeasca un emit din customcomment dupa care arata sau nu replies -->
     <div class="reply-container" 
-    v-if="comment.hasReplies"
+    v-if="someVariable"
     v-for="commentReply in comment.replies">
       <CustomComment :text="commentReply.commentText" :userName="commentReply.userName" />
     </div>

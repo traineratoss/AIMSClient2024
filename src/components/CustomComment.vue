@@ -11,8 +11,14 @@ const props = defineProps({
   hasReplies: ""
 });
 
+const emits = defineEmits(['showReplies']);
 
-let showReplies = ref(false)
+let toggle = ref(false)
+
+function showReplies(){
+    console.log("Emit button was pressed from CustomComment")
+    emits('showReplies')
+} 
 
 
 </script>
@@ -24,12 +30,12 @@ let showReplies = ref(false)
     </p>
     <div class="item">{{ props.text }}</div>
     <div v-if="props.hasReplies">
-        <button class="showReplies" @click="showReplies =! showReplies">...</button>
+        <button class="showReplies" @click="showReplies()">...</button>
     </div>
   
-    <div class="reply-container" v-if="showReplies">
+    <!-- <div class="reply-container" v-if="showReplies">
       <CustomComment :text='"TEST"' :userName='"test"' />
-    </div>
+    </div> -->
 
   </div>
 </template>
