@@ -3,7 +3,7 @@ import { ref } from "vue";
 import SidePanel from "../components/SidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 
-const ideas = ref([{ text: "Foo" }, { text: "Bar" }, { text: "Ham" }]);
+const ideas = ref([{ text: "Ideea 1" }, { text: "Ideea 2" }, { text: "Ideea 3" }]);
 </script>
 
 <template>
@@ -14,8 +14,8 @@ const ideas = ref([{ text: "Foo" }, { text: "Bar" }, { text: "Ham" }]);
     <div class="left-space">
       <h1>This div will be used to display all users and statistics</h1>
     </div>
-    <div class="idea-container" v-for="idea in ideas">
-      <IdeaCard />
+    <div class="idea-container" v-for="idea in ideas" :key="idea.text">
+      <IdeaCard :title="idea.text"/>
     </div>
     <!-- <div class="right-space">
       <h1>This div will be used to display something</h1>
@@ -39,8 +39,9 @@ const ideas = ref([{ text: "Foo" }, { text: "Bar" }, { text: "Ham" }]);
   border: 1px solid black;
 }
 .sidebar-container {
-  left: 0;
+  position: -webkit-sticky; /* Safari */
   position: sticky;
+  left: 0;
   width: 18vw;
   float: left;
   height: 92vh;
