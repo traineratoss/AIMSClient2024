@@ -1,9 +1,18 @@
 <script setup>
+const props = defineProps({
+    text: ""
+})
+
 
 </script>
 
 <template>
-ghngfnfgdngdnghdndghhgh
+    <div class="item">{{ props.text }}</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+    .item {
+        background-color: lightskyblue;
+        color: black;
+    }
+</style>

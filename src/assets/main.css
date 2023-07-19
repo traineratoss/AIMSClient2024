@@ -1,35 +1,17 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
+*{
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', "Lato", Arial, sans-serif;
+  font-size: 14px;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+:root{
+  --background-color:#c8c8ca;
+  --sidebar-color:#b3b3b3;
+  --color:#333333;
+  --selected-color:#ffa941;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+body{
+  background-color: var(--background-color);
 }

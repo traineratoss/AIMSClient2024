@@ -1,20 +1,10 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
+<!-- <script setup>
+import TestNavbar from './components/TestNavbar.vue'
+
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <TestNavbar/>
 </template>
 
 <style scoped>
@@ -78,4 +68,48 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
+</style> -->
+
+<script setup>
+
+  import TestNavbar from './components/TestNavbar.vue'
+
+</script>
+
+<template>
+  <TestNavbar/>
+  <!-- <div id="app">
+
+    <Header >
+      <template v-slot:logo>
+        <h1 class="brand">M<span class="uer">uer</span></h1>
+
+      </template>
+
+      
+      <template v-slot:navbar>
+        <navbar :showBars="showBars" class="nav">
+          <nav-link @hide-dropdown="hideDropDown" class="link" url="/">Home</nav-link>
+          <nav-link @hide-dropdown="hideDropDown" class="link" url="/about">Services</nav-link>
+          <nav-link @hide-dropdown="hideDropDown" class="link" url="/">Products</nav-link>
+        </navbar>
+
+        <i @click="toggleBars" 
+        class="fas bars"
+        :class="{'fa-times':showBars, 'fa-bars':!showBars}"></i>
+
+        
+      </template>
+
+      
+
+    </Header>
+
+    <router-view/>
+  </div> -->
+</template>
+
+
+<style>
+
 </style>
