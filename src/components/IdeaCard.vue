@@ -33,6 +33,12 @@ const comments = ref([
   { commentText: "just comment text", userName: "Crsiti", hasReplies: true },
 ]);
 
+function print() {
+
+    console.log(comments)
+
+}
+
 const showComments = ref(false);
 </script>
 
@@ -48,6 +54,7 @@ const showComments = ref(false);
     <button @click="showComments = !showComments" class="showComments">
       ...
     </button>
+    <button @click="print()">Test</button>
   </div>
   <div
     class="comment-container"
@@ -55,10 +62,14 @@ const showComments = ref(false);
     v-for="comment in comments"
     :key="comment.userName"
   >
-    <CustomComment :text="comment.commentText" :userName="comment.userName" />
-    <div class="reply-container" v-if="comment.hasReplies">
-      <CustomComment :text="comment.replies" :userName="comment.userName" />
+    <CustomComment :text="comment.commentText" :userName="comment.userName" :hasReplies="comment.hasReplies" />
+
+    <div class="reply-container" 
+    v-if="comment.hasReplies"
+    v-for="commentReply in comment.replies">
+      <CustomComment :text="commentReply.commentText" :userName="commentReply.userName" />
     </div>
+
   </div>
 </template>
 

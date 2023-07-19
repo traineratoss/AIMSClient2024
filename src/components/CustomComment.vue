@@ -1,12 +1,20 @@
 <script setup>
+import { ref } from "vue";
+
+
 const props = defineProps({
   text: "",
   creationDate: "",
   userName: "",
   userId: "",
   ideaId: "",
-  hasReplies: "",
+  hasReplies: ""
 });
+
+
+let showReplies = ref(false)
+
+
 </script>
 
 <template>
@@ -15,7 +23,14 @@ const props = defineProps({
       <i>{{ props.userName }}</i>
     </p>
     <div class="item">{{ props.text }}</div>
-    <button class="showReplies">...</button>
+    <div v-if="props.hasReplies">
+        <button class="showReplies" @click="showReplies =! showReplies">...</button>
+    </div>
+  
+    <div class="reply-container" v-if="showReplies">
+      <CustomComment :text='"TEST"' :userName='"test"' />
+    </div>
+
   </div>
 </template>
 
@@ -40,5 +55,12 @@ const props = defineProps({
   font-size: xx-large;
   border: none;
   background-color: unset;
+}
+
+.reply-container {
+  max-width: 25vw;
+  position: relative;
+  left: 40px;
+  margin-bottom: 30px;
 }
 </style>
