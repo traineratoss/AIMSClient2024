@@ -15,6 +15,14 @@
                 <router-link to="/comment">
                     Comment TEST</router-link>
             </li>
+            <li>
+                <router-link to="/all">
+                    All Ideas TEST</router-link>
+            </li>
+            <li>
+                <router-link to="/my">
+                    My Ideas TEST</router-link>
+            </li>
         </ul>
     </nav>
 
@@ -27,15 +35,22 @@
   
 <style scoped>
 nav{
-    width: 100vw;
+    width:auto;
     top: 0;
+    border: 1px solid black;
+    background-color: #ffffff;
+    height: 7vh;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    
 }
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #666;
+    display: flex;
+    justify-content: space-between;
 }
 
 li {
@@ -44,14 +59,15 @@ li {
 
 li a {
     display: block;
-    color: white;
+    color: rgb(0, 0, 0);
     text-align: center;
-    padding: 14px 16px;
+
     text-decoration: none;
 }
 
 /* Change the link color to #111 (black) on hover */
 li a:hover {
-    background-color: #111;
+    background-color: #ffa941
+;
 }
 </style>
