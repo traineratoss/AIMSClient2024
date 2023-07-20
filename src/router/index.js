@@ -8,6 +8,7 @@ import PasswordRecoveryView from "../views/PasswordRecoveryView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import ChangePasswordView from '../views/ChangePasswordView.vue'
 import TermsAndConditionsView from '../views/TermsAndConditionsView.vue';
+import RegistrationCompleteView from "../views/RegistrationCompleteView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,9 +49,14 @@ const router = createRouter({
       component: RegisterView,
     },
     {
-      path: '/change',
-      name: 'change',
-      component: ChangePasswordView
+      path: "/registration-complete",
+      name: "registration-complete",
+      component: RegistrationCompleteView,
+    },
+    {
+      path: "/change",
+      name: "change",
+      component: ChangePasswordView,
     },
     {
       path: '/terms',

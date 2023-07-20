@@ -1,5 +1,9 @@
 <script setup>
+import router from '../router';
 
+function redirectToRegister() {
+    router.push('/register');
+}
 </script>
 
 <template>
@@ -50,6 +54,7 @@
         </div>
         <button 
             id="register"
+            @click="redirectToRegister"
         >
             Register
         </button>
