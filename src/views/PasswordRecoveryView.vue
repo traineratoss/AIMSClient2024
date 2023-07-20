@@ -7,11 +7,13 @@
         <img src="" alt="company logo">
     </div>
     <div class="container">
-        <h1 id="header">
-            <span id="name">
+        <h1 id="title">
+            <div class="big-text" id="name">
                 AIMS
-            </span>
-            Log in
+            </div>
+            <div class="big-text">
+                Password Recovery
+            </div>
         </h1>
         <div id="profile-img">
             <i 
@@ -28,31 +30,12 @@
             >
         </div>
         <div>
-            <input 
-                type="password" 
-                id="password-input" 
-                placeholder="Password"
-            >
-        </div>
-        <div>
             <button 
-                id="sign-in"
+                id="request-password"
             >
-                Sign in
+                Request new Password
             </button>
         </div>
-        <div 
-            id="forgot-password"
-        >
-            <router-link to="/recovery">  
-                Forgot password?
-            </router-link>
-        </div>
-        <button 
-            id="register"
-        >
-            Register
-        </button>
     </div>
 </template>
 
@@ -74,33 +57,22 @@
         cursor: pointer;
     }
 
-    #sign-in {
+    #request-password {
         border-width: 3px;
+        background-color: var(--selected-color);
     }
 
-    #register {
-        border: none;
-        position: relative;
-        bottom: -10vh;
+    #title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     #name {
         color: var(--selected-color);
     }
 
-    #sign-in {
-        background-color: var(--selected-color);
-    }
-
-    #forgot-password {
-        text-decoration: underline;
-    }
-
-    #forgot-password:hover {
-        cursor: pointer;
-    }
-
-    h1, h1 span {
+    .big-text {
         font-size: 30px;
     }
 
