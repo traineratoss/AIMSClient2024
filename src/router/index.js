@@ -9,6 +9,9 @@ import RegisterView from "../views/RegisterView.vue";
 import ChangePasswordView from '../views/ChangePasswordView.vue'
 import TermsAndConditionsView from '../views/TermsAndConditionsView.vue';
 import RegistrationCompleteView from "../views/RegistrationCompleteView.vue";
+import IdeaCard from "../components/IdeaCard.vue";
+import IdeaList from "../components/IdeaList.vue";
+import DeleteIdeaView from "../views/DeleteIdeaView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -61,8 +64,33 @@ const router = createRouter({
     {
       path: '/terms',
       name: 'terms',
-      component: TermsAndConditionsView
-    }
+      component: TermsAndConditionsView,
+    },
+    {
+      path: "/idea",
+      name: "idea:id",
+      component: IdeaCard,
+    },
+    {
+      path: "/",
+      name: "idealist",
+      component: IdeaList,
+    },
+    {
+      path: "/viewidea",
+      name: "viewidea",
+      component: IdeaCard,
+    },
+    {
+      path: "/",
+      name: "idealist",
+      component: IdeaList,
+    },
+    {
+      path: "/delete",
+      name: "delete",
+      component: DeleteIdeaView,
+    },
   ],
 });
 
