@@ -5,77 +5,68 @@
 
  -->
 <script setup>
-
 </script>
 
 <template>
-    <nav>
-        <ul>
-            <li>
-                <router-link to="/comment">
-                    Comment TEST</router-link>
-            </li>
-            <li>
-                <router-link to="/all">
-                    All Ideas TEST</router-link>
-            </li>
-            <li>
-                <router-link to="/my">
-                    My Ideas TEST</router-link>
-            </li>
-            <li>
-                <router-link to="/login">
-                    User Login TEST</router-link>
-            </li>
-            <li>
-                <router-link to="/change">
-                    Change Password TEST</router-link>
-            </li>
-        </ul>
-    </nav>
+  <nav>
+    <ul>
+      <li>
+        <router-link to="/comment"> Comment TEST</router-link>
+      </li>
+      <li>
+        <router-link to="/all"> All Ideas TEST</router-link>
+      </li>
+      <li>
+        <router-link to="/my"> My Ideas TEST</router-link>
+      </li>
+      <li>
+        <router-link to="/login"> User Login TEST</router-link>
+      </li>
+      <li>
+        <router-link to="/register"> Register TEST</router-link>
+      </li>
+    </ul>
+  </nav>
 
-
-    <div>
-        <router-view />
-    </div>
+  <div>
+    <router-view />
+  </div>
 </template>
 
   
 <style scoped>
-nav{
-    width:auto;
-    top: 0;
-    border: 1px solid black;
-    background-color: #ffffff;
-    height: 7vh;
-    padding-left: 3rem;
-    padding-right: 3rem;
-    
+nav {
+  width: auto;
+  top: 0;
+  border: 1px solid black;
+  background-color: #ffffff;
+  height: 7vh;
+  padding-left: 3rem;
+  padding-right: 3rem;
 }
 ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    display: flex;
-    justify-content: space-between;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
 }
 
 li {
-    float: left;
+  float: left;
 }
 
 li a {
-    display: block;
-    color: rgb(0, 0, 0);
-    text-align: center;
+  display: block;
+  color: rgb(0, 0, 0);
+  text-align: center;
 
-    text-decoration: none;
+  text-decoration: none;
 }
 
 /* Change the link color to #111 (black) on hover */
 li a:hover {
-    background-color: #ffa941
-;
+  background-color: #ffa941;
 }
 </style>
