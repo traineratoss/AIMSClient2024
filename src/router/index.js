@@ -9,6 +9,12 @@ import RegisterView from "../views/RegisterView.vue";
 import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
+import ChangePasswordView from "../views/ChangePasswordView.vue";
+import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
+import RegistrationCompleteView from "../views/RegistrationCompleteView.vue";
+import IdeaCard from "../components/IdeaCard.vue";
+import IdeaList from "../components/IdeaList.vue";
+import DeleteIdeaView from "../views/DeleteIdeaView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,7 +57,7 @@ const router = createRouter({
     {
       path: "/registration-complete",
       name: "registration-complete",
-      component: RegistrationCompleteViewVue,
+      component: RegistrationCompleteView,
     },
     {
       path: "/change",
@@ -62,6 +68,34 @@ const router = createRouter({
       path: "/my-profile",
       name: "my-profile",
       component: MyProfileView,
+      path: "/terms",
+      name: "terms",
+      component: TermsAndConditionsView,
+    },
+    {
+      path: "/idea",
+      name: "idea:id",
+      component: IdeaCard,
+    },
+    {
+      path: "/",
+      name: "idealist",
+      component: IdeaList,
+    },
+    {
+      path: "/viewidea",
+      name: "viewidea",
+      component: IdeaCard,
+    },
+    {
+      path: "/",
+      name: "idealist",
+      component: IdeaList,
+    },
+    {
+      path: "/delete",
+      name: "delete",
+      component: DeleteIdeaView,
     },
   ],
 });

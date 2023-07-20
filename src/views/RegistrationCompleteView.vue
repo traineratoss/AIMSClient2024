@@ -55,7 +55,7 @@ h4 {
   font-weight: 400;
 }
 .return-button {
-  width: 8vw;
+  width: auto;
   height: 35px;
 
   font-weight: 500;

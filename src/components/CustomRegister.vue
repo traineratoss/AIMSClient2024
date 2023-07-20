@@ -18,7 +18,10 @@ import FormTitle from "./FormTitle.vue";
         </label>
       </form>
       <label for="check">
-        <input type="checkbox" /> <a href="#">Agree Terms & Conditions</a>
+        <input type="checkbox" />
+        <router-link to="/terms"> 
+          Agree Terms & Conditions
+        </router-link>
       </label>
       <CustomButton id="sign-up" class="sign-up-button">Sign up </CustomButton>
     </div>
