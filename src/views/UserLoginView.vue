@@ -4,7 +4,7 @@
 
 <template>
     <div id="company-logo">
-        <img src="" alt="company logo">
+        <img src="../assets/img/company.png" alt="company logo">
     </div>
     <div class="container">
         <h1 id="header">
@@ -65,6 +65,16 @@
         gap: 20px;
         position: relative;
         top: 80px;
+    }
+
+    img {
+        padding: 10px;
+        width: 150px;
+    }
+
+    input {
+        padding: 5px;
+        border: none;
     }
 
     button {

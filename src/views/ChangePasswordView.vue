@@ -12,7 +12,7 @@
                 AIMS
             </div>
             <div class="big-text">
-                Password Recovery
+                Change Password
             </div>
         </h1>
         <div id="profile-img">
@@ -24,16 +24,36 @@
         </div>
         <div>
             <input 
-                type="text" 
-                id="username-email-input" 
-                placeholder="Username/E-mail"
+                type="password" 
+                id="current-password-input" 
+                placeholder="Current password"
             >
         </div>
         <div>
-            <button 
-                id="request-password"
+            <input 
+                type="password" 
+                id="current-password-input" 
+                placeholder="New password"
             >
-                Request new Password
+        </div>
+        <div>
+            <input 
+                type="password" 
+                id="current-password-input" 
+                placeholder="Confirm new password"
+            >
+        </div>
+        <div id="controls-container">
+            <router-link 
+                to="/recovery"
+                id="cancel"
+            >  
+                Cancel
+            </router-link>
+            <button 
+                id="submit"
+            >
+                Submit
             </button>
         </div>
     </div>
@@ -55,9 +75,20 @@
         width: 150px;
     }
 
+    #cancel {
+        display: flex;
+        align-items: center;
+    }
+
     input {
         padding: 5px;
         border: none;
+    }
+
+    #controls-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
     }
 
     button {
@@ -67,7 +98,7 @@
         cursor: pointer;
     }
 
-    #request-password {
+    #submit {
         border-width: 3px;
         background-color: var(--selected-color);
     }
