@@ -5,6 +5,7 @@ import AllIdeasView from '../views/AllIdeasView.vue'
 import UserLoginView from '../views/UserLoginView.vue'
 import MyIdeasView from '../views/MyIdeasView.vue'
 import PasswordRecoveryView from '../views/PasswordRecoveryView.vue'
+import ChangePasswordView from '../views/ChangePasswordView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/recovery',
       name: 'recovery',
       component: PasswordRecoveryView
+    },
+    {
+      path: '/change',
+      name: 'change',
+      component: ChangePasswordView
     }
   ]
 })

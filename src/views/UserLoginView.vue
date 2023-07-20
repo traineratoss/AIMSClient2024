@@ -67,6 +67,11 @@
         top: 80px;
     }
 
+    input {
+        padding: 5px;
+        border: none;
+    }
+
     button {
         padding: 5px;
         padding-right: 30px;

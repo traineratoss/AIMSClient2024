@@ -27,6 +27,10 @@
                 <router-link to="/login">
                     User Login TEST</router-link>
             </li>
+            <li>
+                <router-link to="/change">
+                    Change Password TEST</router-link>
+            </li>
         </ul>
     </nav>
 
