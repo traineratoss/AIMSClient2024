@@ -13,10 +13,10 @@ import CustomButton from "../components/CustomButton.vue";
     </h4>
     <CustomButton
       :id="back - to - login"
-      label="Return to login page"
       class="return-button"
       @click="$router.push({ path: '/register' })"
-    />
+      >Return to login page</CustomButton
+    >
   </div>
 </template>
 

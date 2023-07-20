@@ -20,7 +20,7 @@ import FormTitle from "./FormTitle.vue";
       <label for="check">
         <input type="checkbox" /> <a href="#">Agree Terms & Conditions</a>
       </label>
-      <CustomButton id="sign-up" label="Sign Up" class="sign-up-button" />
+      <CustomButton id="sign-up" class="sign-up-button">Sign up </CustomButton>
     </div>
   </div>
 </template>
