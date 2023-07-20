@@ -25,6 +25,11 @@
       <li>
         <router-link to="/register"> Register TEST</router-link>
       </li>
+      <li>
+        <router-link to="/registration-complete">
+          Registration TEST</router-link
+        >
+      </li>
     </ul>
   </nav>
 

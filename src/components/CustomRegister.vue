@@ -37,7 +37,7 @@ img {
 .register {
   display: flex;
   flex-direction: column;
-  margin-top: 30vh;
+  margin-top: 20vh;
   align-items: center;
   gap: 50px;
 }
