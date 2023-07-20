@@ -62,7 +62,20 @@ function toggle(){
     <button @click="showComments = !showComments" class="showComments">
       ...
     </button>
-    <button @click="print()">Test</button>
+    <div class="number-of-comments">Nr. Comments: {{ numberOfComments }}</div>
+    <div class="author-info">Author: {{ authorName }}</div>
+    <div class="title">Title: {{ Title }}</div>
+    <div class="text">Text: {{ Text }}</div>
+    <div class="status">Status: {{ Status }}
+      <select v-model="statusValue" @change="handleChangeStatus">
+        <option value="open">Open</option>
+        <option value="implemented">Implemented</option>
+      </select>
+    </div>
+    <button class="edit-button" @click="editIdea">Edit</button>
+    <button class="view-button" @click="viewIdea">View</button>
+    <button class="delete-button" @click="deleteIdea">Delete</button>
+    <img class="idea-image" src="https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw" alt="image" />
   </div>
   <div
     class="comment-container"
@@ -98,7 +111,70 @@ function toggle(){
   background-color: white;
   width: 30vw;
   height: 25vh;
-  border: 1px solid black;
+  border: 7px solid #c8c0c0;
+}
+.author-info {
+  position: absolute;
+  bottom: 35px; 
+  right: 50px; 
+  font-size: 14px;
+  font-weight: bold; 
+  color: black;
+}
+.number-of-comments {
+  position: absolute;
+  bottom: 75px;
+  right: 50px;
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+}
+.title {
+  font-weight: bold; 
+  font-size: 14px; 
+  margin: 5px 0 0 20px; 
+}
+.text {
+  font-weight: bold; 
+  font-size: 14px; 
+  margin: 5px 0 0 20px; 
+}
+.status {
+  font-weight: bold; 
+  font-size: 14px; 
+  margin: 5px 0 0 20px; 
+}
+.edit-button,
+.view-button,
+.delete-button {
+  position: absolute;
+  bottom: 25px;
+  left: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 5px 10px;
+  background-color: white;
+  color: black;
+  border: 1px solid black; 
+  cursor: pointer; 
+}
+.view-button {
+  left: 70px;
+}
+.delete-button {
+  left: 135px;
+}
+.edit-button:hover,
+.view-button:hover,
+.delete-button:hover {
+  background-color: #ffa941;
+}
+.idea-image {
+  position: absolute;
+  top: 30px;
+  right: 45px; 
+  width: 80px; 
+  height: 80px; 
 }
 .showComments {
   display: flex;

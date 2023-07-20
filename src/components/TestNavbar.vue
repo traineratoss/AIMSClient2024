@@ -20,6 +20,9 @@
         <router-link to="/my"> My Ideas TEST</router-link>
       </li>
       <li>
+        <router-link to="/login"> User Login TEST</router-link>
+      </li>
+      <li>
         <router-link to="/register"> Register TEST</router-link>
       </li>
     </ul>
