@@ -1,11 +1,9 @@
 <script setup>
 import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomButton from "../components/CustomButton.vue";
-import CustomOptions from "../components/CustomOptions.vue";
 </script>
 
 <template>
-  <CustomOptions />
   <div class="my-profile">
     <h1>My profile</h1>
     <form action="">
@@ -41,10 +39,9 @@ import CustomOptions from "../components/CustomOptions.vue";
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2vh;
+  gap: 5vh;
 
-  margin-top: 10vh;
-  height: 80vh;
+  margin-top: 20vh;
 }
 
 h1 {

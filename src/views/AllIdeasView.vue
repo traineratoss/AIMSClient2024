@@ -3,7 +3,11 @@ import { ref } from "vue";
 import SidePanel from "../components/SidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 
-const ideas = ref([{},{},{}]);
+const ideas = ref([{ text: "Ideea 1" }, 
+{ text: "Ideea 2" }, 
+{ text: "Ideea 3" }
+]);
+
 </script>
 
 <template>
