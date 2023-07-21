@@ -2,10 +2,44 @@
 import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
+import { 
+  getUser, 
+  postUser, 
+  updateUser, 
+  getAllUsers, 
+  getAllUserByUsername, 
+  getAllUserByIsActive, 
+  sendEmail, 
+  changePassword 
+} from "../services/user_service.js"
 
 function redirectToRegister() {
   router.push("/register");
 }
+
+function showUserDetails(username, email, userUpdateDTO, changePasswordDTO) {
+  // console.log(getUser(username));
+  // console.log(postUser(username, email));
+  // console.log(updateUser(username, userUpdateDTO));
+  // console.log(getAllUsers(1, 2, "username"));
+  console.log(getAllUserByUsername(false, 2, 0, "username"));
+  // sendEmail("cristian");
+  // console.log(getAllUserByUsername("usern"));
+  // console.log(changePassword(changePasswordDTO));
+}
+
+
+showUserDetails("username1", 
+                "email1", 
+                {
+                  "role": "STANDARD"
+                },
+                {
+                  "username": "cristian",
+                  "oldPassword": "cristian",
+                  "newPassword": "cristian"
+                });
+
 </script>
 
 <template>
