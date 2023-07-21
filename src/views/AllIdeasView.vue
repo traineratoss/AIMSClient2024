@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import SidePanel from "../components/SidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
+
 
 const ideas = ref([
   { text: "Ideea 1" },
@@ -64,9 +65,15 @@ const ideas = ref([
 }
 
 .idea-container {
-  width: auto;
+  width: calc(33.33% - 9vw); /* 33.33% width minus margins on both sides */
   float: left;
   border: 1px solid black;
-  margin: 4.5vw;
+  margin: 2.5vw; /* Adjust the margin as needed */
+  
+}
+.big-container{
+  display: flex;
+  justify-content: center;
+  height: 92vh;
 }
 </style>

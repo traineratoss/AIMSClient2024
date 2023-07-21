@@ -25,9 +25,18 @@
         <router-link to="/register"> Register TEST</router-link>
       </li>
       <li>
+        <router-link to="/create-idea">Create Ideas TEST</router-link>
+      </li>
+      <li>
         <router-link to="/registration-complete">
           Registration TEST</router-link
         >
+      </li>
+      <li>
+        <router-link to="/my-profile"> My profile TEST</router-link>
+      </li>
+      <li>
+        <router-link to="/admin-dashboard"> Admin dashboard TEST</router-link>
       </li>
     </ul>
   </nav>
@@ -40,7 +49,7 @@
 <style scoped>
 nav {
   width: auto;
-  top: 0;
+  /* top: 0; */
   border: 1px solid black;
   background-color: #ffffff;
   height: 7vh;
