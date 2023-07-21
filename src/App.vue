@@ -71,13 +71,14 @@ nav a:first-of-type {
 </style> -->
 
 <script setup>
-
-  import TestNavbar from './components/TestNavbar.vue'
-
+import TestNavbar from "./components/TestNavbar.vue";
 </script>
 
 <template>
-  <TestNavbar/>
+  <div class="app-container">
+    <TestNavbar />
+    <router-view />
+  </div>
   <!-- <div id="app">
 
     <Header >
@@ -109,7 +110,11 @@ nav a:first-of-type {
   </div> -->
 </template>
 
-
-<style>
-
+<style scoped>
+.app-container {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 </style>

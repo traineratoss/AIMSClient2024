@@ -1,33 +1,44 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import SidePanel from "../components/SidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 
-const ideas = ref([{ text: "Ideea 1" }, 
-{ text: "Ideea 2" }, 
-{ text: "Ideea 3" }
-]);
 
+const ideas = ref([
+  { text: "Ideea 1" },
+  { text: "Ideea 2" },
+  { text: "Ideea 3" },
+]);
 </script>
 
 <template>
-  <div class="sidebar-container">
-    <SidePanel />
-  </div>
-  <div class="main-container">
-    <div class="left-space">
-      <h1>This div will be used to display all users and statistics</h1>
+  <div class="all-ideas-view-container">
+    <div class="sidebar-container">
+      <SidePanel />
     </div>
-    <div class="idea-container" v-for="idea in ideas" :key="idea.text">
-      <IdeaCard :title="idea.text"/>
+    <div class="main-container">
+      <div class="left-space">
+        <h1>This div will be used to display all users and statistics</h1>
+      </div>
+      <div class="idea-container" v-for="idea in ideas" :key="idea.text">
+        <IdeaCard :title="idea.text" />
+      </div>
+      <!-- <div class="right-space">
+        <h1>This div will be used to display something</h1>
+      </div> -->
     </div>
-    <!-- <div class="right-space">
-      <h1>This div will be used to display something</h1>
-    </div> -->
   </div>
 </template>
 
 <style scoped>
+.all-ideas-view-container{
+  width: 100%;
+  display: flex;
+  height: 100%;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
 .left-space {
   width: 20vw;
   float: left;
@@ -43,26 +54,26 @@ const ideas = ref([{ text: "Ideea 1" },
   border: 1px solid black;
 }
 .sidebar-container {
-  position: -webkit-sticky; /* Safari */
-  position: sticky;
-  left: 0;
-  width: 18vw;
-  float: left;
-  height: 92vh;
+  width: 30%;
   background-color: var(--sidebar-color);
   border: 1px solid black;
 }
 
 .main-container {
-  width: 80vw;
-  float: right;
+  width: 70%;
   height: auto;
 }
 
 .idea-container {
-  width: auto;
+  width: calc(33.33% - 9vw); /* 33.33% width minus margins on both sides */
   float: left;
   border: 1px solid black;
-  margin: 4.5vw;
+  margin: 2.5vw; /* Adjust the margin as needed */
+  
+}
+.big-container{
+  display: flex;
+  justify-content: center;
+  height: 92vh;
 }
 </style>

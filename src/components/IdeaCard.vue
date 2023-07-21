@@ -13,9 +13,8 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
 import { ref, defineEmits } from "vue";
-import DeleteDialog from "../components/DeleteDialog.vue";
-import DeleteIdeaView from "../views/DeleteIdeaView.vue";
 import { useRouter } from "vue-router";
+import { loadComments,postComment ,postReply} from "../services/comment.service";
 
 const props = defineProps({
   title: "",
@@ -52,6 +51,9 @@ function toggle() {
   someVariable.value = !someVariable.value;
   console.log(someVariable);
 }
+
+
+
 </script>
 
 <template>
@@ -94,7 +96,10 @@ function toggle() {
       <div class="input-container">
         <input type="text" >
         <button>POST</button>
-        <button>TEST</button>
+        <button @click="loadComments(4,0,'id',0)">TEST</button>
+        <button @click="postComment('dragos',0,'merge sau nu merge')">COMM</button>
+        <button @click="postReply('dragos',0,'merge sau nu merge')">Reply</button>
+
       </div>
     </div>
     <div
