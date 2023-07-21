@@ -4,9 +4,6 @@
     It was created in order to assure better fiting for the components development
  -->
 
-<!-- 
-    The :key is not working !!!!
-  -->
 
   <script setup>
   import CustomComment from "../components/CustomComment.vue";
