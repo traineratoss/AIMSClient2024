@@ -6,10 +6,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <button 
-    class="customButton" 
-    :id="id"
-  >
+  <button class="customButton" :id="id">
     <slot></slot>
   </button>
 </template>

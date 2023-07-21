@@ -1,10 +1,9 @@
 <script setup>
+import CompanyLogo from "../components/CompanyLogo.vue";
 </script>
 
 <template>
-  <div id="company-logo">
-    <img src="../assets/img/company.png" alt="company logo" />
-  </div>
+  <CompanyLogo />
   <div class="container">
     <h1 id="title">
       <div class="big-text" id="name">AIMS</div>

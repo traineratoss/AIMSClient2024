@@ -1,8 +1,6 @@
 <script setup>
 import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
-import CustomButton from "../components/CustomButton.vue";
-import UserIcon from "../components/UserIcon.vue";
 </script>
 
 <template>
@@ -10,7 +8,7 @@ import UserIcon from "../components/UserIcon.vue";
   <div class="container">
     <FormTitle label="Password Recovery" />
     <div id="profile-img">
-      <UserIcon />
+      <i class="fa-regular fa-circle-user" id="user-icon"> </i>
     </div>
     <div>
       <input
@@ -20,7 +18,7 @@ import UserIcon from "../components/UserIcon.vue";
       />
     </div>
     <div>
-      <CustomButton id="request-password"> Request new Password </CustomButton>
+      <button id="request-password">Request new Password</button>
     </div>
   </div>
 </template>
@@ -46,9 +44,16 @@ input {
   border: none;
 }
 
+button {
+  padding: 5px;
+  padding-right: 30px;
+  padding-left: 30px;
+  cursor: pointer;
+}
+
 #request-password {
-  width: auto;
-  height: auto;
+  border-width: 3px;
+  background-color: var(--selected-color);
 }
 
 #title {
@@ -63,5 +68,9 @@ input {
 
 .big-text {
   font-size: 30px;
+}
+
+#user-icon {
+  font-size: 70px;
 }
 </style>
