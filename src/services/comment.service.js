@@ -1,22 +1,29 @@
 const API_URL = "http://localhost:8080/ideas";
-// http://localhost:8080/ideas/all?pageSize=4&pageNumber=0&sortCategory=id&ideaId=0
-
+/*
+pageSize = numarul de elemente pe pagina
+pageNumber = numarul pagini , 0 prima pagina si asa mai departe
+sortCategory = categoria dupa care se face sortarea
+ideaId = id ul ideei pentru care vrei comentariile
+*/
 async function loadComments(pageSize, pageNumber, sortCategory, ideaId) {
-  await fetch(
+  const response = await fetch(
     API_URL +
-      "/all?pageSize=" +
-      pageSize + // numarul de elemente pe pagina
+      "/comments?pageSize=" +
+      pageSize +
       "&pageNumber=" +
-      pageNumber + // numarul pagini , 0 prima pagina si asa mai departe
+      pageNumber +
       "&sortCategory=" +
-      sortCategory + // categoria dupa care se face sortarea
+      sortCategory +
       "&ideaId=" +
-      ideaId // id ul ideei pentru care vrei comentariile
-  ).then((response) => console.log(response.json()));
+      ideaId
+  );
+
+  const data = await response.json();
+  console.log(data);
 }
 
 async function postComment(username, ideaId, commentText) {
-  const response = await fetch(API_URL + "/", {
+  const response = await fetch(API_URL + "/comments", {
     method: "POST",
     body: JSON.stringify({
       username: username,
@@ -29,23 +36,23 @@ async function postComment(username, ideaId, commentText) {
   });
 
   const data = await response.json();
-
   console.log(data);
 }
 
-async function postCommentsbyIdeaId(username, ideaId, commentText) {
+async function postReply(username, parentId, commentText) {
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: username,
-      ideaId: ideaId,
+      parentId: parentId,
       commentText: commentText,
     }),
   };
-  fetch(API_URL + "/", requestOptions).then((response) =>
-    console.log(response.json())
-  );
+
+  const response = await fetch(API_URL + "/comments/reply", requestOptions);
+  const data = await response.json();
+  console.log(data);
 }
 
-export { loadComments, postComment, postCommentsbyIdeaId };
+export { loadComments, postComment, postReply };

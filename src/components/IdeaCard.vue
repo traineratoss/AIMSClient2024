@@ -14,7 +14,7 @@
 import CustomComment from "../components/CustomComment.vue";
 import { ref, defineEmits } from "vue";
 import { useRouter } from "vue-router";
-import { loadComments,postComment ,postCommentsbyIdeaId} from "../services/comment.service";
+import { loadComments,postComment ,postReply} from "../services/comment.service";
 
 const props = defineProps({
   title: "",
@@ -96,8 +96,10 @@ function toggle() {
       <div class="input-container">
         <input type="text" >
         <button>POST</button>
-        <!-- <button @click="loadComments(4,0,'id',0)">TEST</button> -->
         <button @click="loadComments(4,0,'id',0)">TEST</button>
+        <button @click="postComment('dragos',0,'merge sau nu merge')">COMM</button>
+        <button @click="postReply('dragos',0,'merge sau nu merge')">Reply</button>
+
       </div>
     </div>
     <div
