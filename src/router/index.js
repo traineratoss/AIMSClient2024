@@ -98,6 +98,11 @@ const router = createRouter({
       name: "delete",
       component: DeleteIdeaView,
     },
+    {
+      path: "/admin-dashboard",
+      name: "admin-dashboard",
+      component: AdminDashboardView,
+    },
   ],
 });
 

@@ -33,6 +33,9 @@
       <li>
         <router-link to="/my-profile"> My profile TEST</router-link>
       </li>
+      <li>
+        <router-link to="/admin-dashboard"> Admin dashboard TEST</router-link>
+      </li>
     </ul>
   </nav>
 
