@@ -1,4 +1,6 @@
 <script setup>
+import UserIcon from '../components/UserIcon.vue';
+import CustomButton from '../components/CustomButton.vue';
 
 </script>
 
@@ -16,11 +18,7 @@
             </div>
         </h1>
         <div id="profile-img">
-            <i 
-                class="fa-regular fa-circle-user"
-                id="user-icon"
-            >
-            </i>
+            <UserIcon />
         </div>
         <div>
             <input 
@@ -45,16 +43,16 @@
         </div>
         <div id="controls-container">
             <router-link 
-                to="/recovery"
+                to="/my-profile"
                 id="cancel"
             >  
                 Cancel
             </router-link>
-            <button 
+            <CustomButton
                 id="submit"
             >
                 Submit
-            </button>
+            </CustomButton>
         </div>
     </div>
 </template>
@@ -91,18 +89,6 @@
         gap: 20px;
     }
 
-    button {
-        padding: 5px;
-        padding-right: 30px;
-        padding-left: 30px;
-        cursor: pointer;
-    }
-
-    #submit {
-        border-width: 3px;
-        background-color: var(--selected-color);
-    }
-
     #title {
         display: flex;
         flex-direction: column;
@@ -121,9 +107,5 @@
         position: relative;
         top: 20px;
         left: 5vw;
-    }
-
-    #user-icon {
-        font-size: 70px;
     }
 </style>

@@ -1,4 +1,5 @@
 <script setup>
+import CustomButton from '../components/CustomButton.vue';
 import router from '../router';
 
 function goToRegistration() {
@@ -44,11 +45,12 @@ function goToRegistration() {
                     in these terms and conditions</p>
             </div>
         </div>
-        <button
+        <CustomButton
             @click="goToRegistration"
+            class="button"
         >
             I,ve read and accepted the Terms & Conditions
-        </button>
+        </CustomButton>
     </div>
 </template>
 
@@ -84,11 +86,9 @@ function goToRegistration() {
         gap: 100px;
     }
 
-    button {
-        background-color: var(--selected-color);
-        border-width: 0.5px;
-        padding: 5px;
-        cursor: pointer;
+    .button {
+        width: auto;
+        height: auto;
         position: absolute;
         right: 13%;
         bottom: 10vh;

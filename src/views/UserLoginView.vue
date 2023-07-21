@@ -1,5 +1,7 @@
 <script setup>
 import router from '../router';
+import CustomButton from '../components/CustomButton.vue';
+import UserIcon from '../components/UserIcon.vue';
 
 function redirectToRegister() {
     router.push('/register');
@@ -18,11 +20,7 @@ function redirectToRegister() {
             Log in
         </h1>
         <div id="profile-img">
-            <i 
-                class="fa-regular fa-circle-user"
-                id="user-icon"
-            >
-            </i>
+            <UserIcon />
         </div>
         <div>
             <input 
@@ -39,11 +37,11 @@ function redirectToRegister() {
             >
         </div>
         <div>
-            <button 
+            <CustomButton
                 id="sign-in"
             >
                 Sign in
-            </button>
+            </CustomButton>
         </div>
         <div 
             id="forgot-password"
@@ -89,10 +87,6 @@ function redirectToRegister() {
         cursor: pointer;
     }
 
-    #sign-in {
-        border-width: 3px;
-    }
-
     #register {
         border: none;
         position: relative;
@@ -123,9 +117,5 @@ function redirectToRegister() {
         position: relative;
         top: 20px;
         left: 5vw;
-    }
-
-    #user-icon {
-        font-size: 70px;
     }
 </style>

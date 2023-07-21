@@ -1,4 +1,6 @@
 <script setup>
+import CostumButton from '../components/CustomButton.vue';
+import UserIcon from '../components/UserIcon.vue';
 
 </script>
 
@@ -16,11 +18,7 @@
             </div>
         </h1>
         <div id="profile-img">
-            <i 
-                class="fa-regular fa-circle-user"
-                id="user-icon"
-            >
-            </i>
+            <UserIcon />
         </div>
         <div>
             <input 
@@ -30,11 +28,11 @@
             >
         </div>
         <div>
-            <button 
+            <CostumButton
                 id="request-password"
             >
                 Request new Password
-            </button>
+            </CostumButton>
         </div>
     </div>
 </template>
@@ -60,16 +58,9 @@
         border: none;
     }
 
-    button {
-        padding: 5px;
-        padding-right: 30px;
-        padding-left: 30px;
-        cursor: pointer;
-    }
-
     #request-password {
-        border-width: 3px;
-        background-color: var(--selected-color);
+        width: auto;
+        height: auto;
     }
 
     #title {
@@ -90,9 +81,5 @@
         position: relative;
         top: 20px;
         left: 5vw;
-    }
-
-    #user-icon {
-        font-size: 70px;
     }
 </style>
