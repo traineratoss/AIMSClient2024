@@ -1,10 +1,9 @@
 <script setup>
+import CompanyLogo from "../components/CompanyLogo.vue";
 </script>
 
 <template>
-  <div id="company-logo">
-    <img src="../assets/img/company.png" alt="company logo" />
-  </div>
+  <CompanyLogo />
   <div class="container">
     <h1 id="title">
       <div class="big-text" id="name">AIMS</div>
@@ -35,7 +34,7 @@
       />
     </div>
     <div id="controls-container">
-      <router-link to="/recovery" id="cancel"> Cancel </router-link>
+      <router-link to="/my-profile" id="cancel"> Cancel </router-link>
       <button id="submit">Submit</button>
     </div>
   </div>
