@@ -48,7 +48,7 @@
 <style scoped>
 nav {
   width: auto;
-  top: 0;
+  /* top: 0; */
   border: 1px solid black;
   background-color: #ffffff;
   height: 7vh;
