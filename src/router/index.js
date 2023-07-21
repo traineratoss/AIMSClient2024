@@ -13,6 +13,7 @@ import RegistrationCompleteView from "../views/RegistrationCompleteView.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import IdeaList from "../components/IdeaList.vue";
 import DeleteIdeaView from "../views/DeleteIdeaView.vue";
+import AdminDashboardView from "../views/AdminDashboardView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -96,6 +97,11 @@ const router = createRouter({
       path: "/delete",
       name: "delete",
       component: DeleteIdeaView,
+    },
+    {
+      path: "/admin-dashboard",
+      name: "admin-dashboard",
+      component: AdminDashboardView,
     },
   ],
 });

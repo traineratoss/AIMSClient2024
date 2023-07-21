@@ -1,13 +1,14 @@
 <script setup>
+import CompanyLogo from "./CompanyLogo.vue";
 import CustomButton from "./CustomButton.vue";
 import FormTitle from "./FormTitle.vue";
 </script>
 
 <template>
   <div class="custom-register">
-    <img src="../assets/img/company.png" />
+    <CompanyLogo />
     <div class="register">
-      <FormTitle />
+      <FormTitle label="Register" />
       <i class="fa-regular fa-circle-user"></i>
       <form action="" id="form">
         <label for="username">
@@ -19,9 +20,7 @@ import FormTitle from "./FormTitle.vue";
       </form>
       <label for="check">
         <input type="checkbox" />
-        <router-link to="/terms"> 
-          Agree Terms & Conditions
-        </router-link>
+        <router-link to="/terms"> Agree Terms & Conditions </router-link>
       </label>
       <CustomButton id="sign-up" class="sign-up-button">Sign up </CustomButton>
     </div>
@@ -31,11 +30,6 @@ import FormTitle from "./FormTitle.vue";
 <style scoped>
 .custom-register {
   height: 100vh;
-}
-
-img {
-  padding: 10px;
-  width: 150px;
 }
 .register {
   display: flex;
