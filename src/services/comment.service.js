@@ -1,5 +1,7 @@
 const API_URL = "http://localhost:8080/ideas";
 /*
+FlorinCP:
+
 pageSize = numarul de elemente pe pagina
 pageNumber = numarul pagini , 0 prima pagina si asa mai departe
 sortCategory = categoria dupa care se face sortarea
