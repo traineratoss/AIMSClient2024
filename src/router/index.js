@@ -9,7 +9,6 @@ import RegisterView from "../views/RegisterView.vue";
 import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
-import ChangePasswordView from "../views/ChangePasswordView.vue";
 import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import RegistrationCompleteView from "../views/RegistrationCompleteView.vue";
 import IdeaCard from "../components/IdeaCard.vue";
