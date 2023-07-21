@@ -2,6 +2,8 @@
 import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
+import CustomButton from "../components/CustomButton.vue";
+import UserIcon from "../components/UserIcon.vue";
 
 function redirectToRegister() {
   router.push("/register");
@@ -13,8 +15,9 @@ function redirectToRegister() {
   <div class="container">
     <FormTitle label="Log in" />
     <div id="profile-img">
-      <i class="fa-regular fa-circle-user" id="user-icon"> </i>
+      <UserIcon />
     </div>
+
     <div>
       <input
         type="text"
@@ -26,7 +29,7 @@ function redirectToRegister() {
       <input type="password" id="password-input" placeholder="Password" />
     </div>
     <div>
-      <button id="sign-in">Sign in</button>
+      <CustomButton id="sign-in"> Sign in </CustomButton>
     </div>
     <div id="forgot-password">
       <router-link to="/recovery"> Forgot password? </router-link>
@@ -68,10 +71,6 @@ button {
   bottom: -10vh;
 }
 
-#sign-in {
-  background-color: var(--selected-color);
-}
-
 #forgot-password {
   text-decoration: underline;
 }
@@ -89,9 +88,5 @@ h1 span {
   position: relative;
   top: 20px;
   left: 5vw;
-}
-
-#user-icon {
-  font-size: 70px;
 }
 </style>

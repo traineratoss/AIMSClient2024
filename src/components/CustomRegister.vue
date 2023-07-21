@@ -2,6 +2,7 @@
 import CompanyLogo from "./CompanyLogo.vue";
 import CustomButton from "./CustomButton.vue";
 import FormTitle from "./FormTitle.vue";
+import UserIcon from "../components/UserIcon.vue";
 </script>
 
 <template>
@@ -9,7 +10,7 @@ import FormTitle from "./FormTitle.vue";
     <CompanyLogo />
     <div class="register">
       <FormTitle label="Register" />
-      <i class="fa-regular fa-circle-user"></i>
+      <UserIcon />
       <form action="" id="form">
         <label for="username">
           <input type="text" id="username" placeholder="Username" />
@@ -37,10 +38,6 @@ import FormTitle from "./FormTitle.vue";
   margin-top: 20vh;
   align-items: center;
   gap: 50px;
-}
-
-.register i {
-  font-size: 70px;
 }
 
 form {
