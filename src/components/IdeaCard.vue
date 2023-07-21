@@ -3,7 +3,7 @@
     Shall be either deleted of modified 
     It was created in order to assure better fiting for the components development
  -->
-<!-- 
+
 
   <script setup>
   import CustomComment from "../components/CustomComment.vue";

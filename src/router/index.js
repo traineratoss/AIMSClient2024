@@ -13,6 +13,8 @@ import RegistrationCompleteView from "../views/RegistrationCompleteView.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import IdeaList from "../components/IdeaList.vue";
 import DeleteIdeaView from "../views/DeleteIdeaView.vue";
+import CosminPlaygroud from "../views/CosminPlayground.vue"
+import AdminDashboardView from "../views/AdminDashboardView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,7 +27,7 @@ const router = createRouter({
     {
       path: "/comment",
       name: "comment",
-      component: CommentView,
+      component: CosminPlaygroud,
     },
     {
       path: "/all",
