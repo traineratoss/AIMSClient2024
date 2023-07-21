@@ -51,7 +51,7 @@
   
   function toggle(){
       console.log("function was accesed")
-      someVariable.value =! someVariable.value
+      someVariable =! someVariable
       console.log(someVariable)
   }
 
@@ -121,7 +121,7 @@
     position: relative;
     background-color: white;
     width: 30vw;
-    height: 35vh;
+    height: 25vh;
     border: 7px solid #c8c0c0;
   }
   .author-info {
