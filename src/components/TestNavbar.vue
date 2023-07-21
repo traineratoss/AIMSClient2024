@@ -4,8 +4,7 @@
     It was created in order to assure better fiting for the components development
 
  -->
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <nav>
@@ -33,12 +32,11 @@
     </ul>
   </nav>
 
-  <div>
+  <!-- <div>
     <router-view />
-  </div>
+  </div> -->
 </template>
 
-  
 <style scoped>
 nav {
   width: auto;
