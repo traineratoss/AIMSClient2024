@@ -4,6 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CarouselSlide from "../components/CarouselSlide.vue";
 import CustomInput from "../components/CustomInput.vue";
+import CustomDropDown from "../components/CustomDropDown.vue";
 import { watch, ref } from "vue";
 
 const inputValue = ref("");
@@ -19,16 +20,22 @@ const inputValue = ref("");
             <CustomInput v-model="inputValue" />   
         </div>
         <div class="idea">
-             
+         <label for="status-idea" class="label">Status:</label>
+            <select name="status-idea" id="status-idea" class="label">
+                <option value="open">OPEN</option>
+                <option value="draft">DRAFT</option>
+                <option value="implemented">IMPLEMENTED</option>
+            </select> 
         </div>
         <div class="idea">
             <label for="category-idea" class="label">Category:</label>
-            <input type="text" name="category-idea" list="category" id="category-idea">
+            <!-- <input type="text" name="category-idea" list="category" id="category-idea">
                 <datalist id="category">
                     <option>Fun</option>
                     <option>IT</option>
                     <option>Food</option>
-            </datalist>
+            </datalist> -->
+            <CustomDropDown></CustomDropDown>
         </div>
 
         <div class="idea-text">
