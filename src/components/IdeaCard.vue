@@ -17,11 +17,14 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-  comments.value = await loadComments(4, 0, "id", props.ideaId);
   console.log(comments);
   currentUser.value = getCurrentUser();
   console.log(currentUser.value.username);
 });
+
+async function loadIdeaComments(){
+  comments.value = await loadComments(10, 0, "id", props.ideaId)
+}
 
 let comments = ref([]);
 let commentText = ref([]);
@@ -39,7 +42,7 @@ function toggle() {
 <template>
   <div class="container">
     <div class="idea-card">
-      <button @click="showComments = !showComments" class="showComments">
+      <button @click="showComments = !showComments ;loadIdeaComments()" class="showComments">
         ...
       </button>
       <div class="something">
@@ -83,11 +86,13 @@ function toggle() {
       class="comment-container"
       v-if="showComments"
       v-for="comment in comments"
-      :key="comment.userName"
+      :key="comment.id"
     >
       <CustomComment
+        :isReplay="false"
+        :parentId="comment.id"
         :text="comment.commentText"
-        :userName="comment.userName"
+        :userName="comment.username"
         :hasReplies="comment.hasReplies"
         @showReplies="toggle()"
       />
@@ -98,9 +103,9 @@ function toggle() {
         v-for="commentReply in comment.replies"
       >
         <CustomComment
-          :parentId="comment.id"
+          :isReplay="true"
           :text="commentReply.commentText"
-          :userName="commentReply.userName"
+          :userName="commentReply.username"
         />
       </div>
     </div>
