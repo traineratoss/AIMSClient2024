@@ -1,4 +1,3 @@
-
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CommentView from "../views/CommentView.vue";
@@ -7,16 +6,13 @@ import UserLoginView from "../views/UserLoginView.vue";
 import MyIdeasView from "../views/MyIdeasView.vue";
 import PasswordRecoveryView from "../views/PasswordRecoveryView.vue";
 import RegisterView from "../views/RegisterView.vue";
+import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
-import MyProfileView from "../views/MyProfileView.vue";
+import CosminPlayground from "../views/CosminPlayground.vue";
 import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
-import RegistrationCompleteView from "../views/RegistrationCompleteView.vue";
-import IdeaCard from "../components/IdeaCard.vue";
-import IdeaList from "../components/IdeaList.vue";
-import DeleteIdeaView from "../views/DeleteIdeaView.vue";
-import CreateIdeaView from '../views/CreateIdeaView.vue';
-import CosminPlaygroud from "../views/CosminPlayground.vue"
-import AdminDashboardView from "../views/AdminDashboardView.vue"
+import MyProfileView from "../views/MyProfileView.vue";
+import AdminDashboardView from "../views/AdminDashboardView.vue";
+import CreateIdeaView from "../views/CreateIdeaView.vue";
 
 
 const router = createRouter({
@@ -30,7 +26,7 @@ const router = createRouter({
     {
       path: "/comment",
       name: "comment",
-      component: CosminPlaygroud,
+      component: CommentView,
     },
     {
       path: "/all",
@@ -48,6 +44,11 @@ const router = createRouter({
       component: UserLoginView,
     },
     {
+      path: "/my-profile",
+      name: "my-profile",
+      component: MyProfileView,
+    },
+    {
       path: "/recovery",
       name: "recovery",
       component: PasswordRecoveryView,
@@ -58,9 +59,14 @@ const router = createRouter({
       component: RegisterView,
     },
     {
+      path: "/create-idea",
+      name: "create-idea",
+      component: CreateIdeaView,
+    },
+    {
       path: "/registration-complete",
       name: "registration-complete",
-      component: RegistrationCompleteView,
+      component: RegistrationCompleteViewVue,
     },
     {
       path: "/change",
@@ -68,51 +74,23 @@ const router = createRouter({
       component: ChangePasswordView,
     },
     {
-      path: "/my-profile",
-      name: "my-profile",
-      component: MyProfileView,
-    },
-    {
       path: "/terms",
       name: "terms",
       component: TermsAndConditionsView,
     },
     {
-      path: "/idea",
-      name: "idea:id",
-      component: IdeaCard,
-    },
-    {
-      path: "/",
-      name: "idealist",
-      component: IdeaList,
-    },
-    {
-      path: "/viewidea",
-      name: "viewidea",
-      component: IdeaCard,
-    },
-    {
-      path: "/",
-      name: "idealist",
-      component: IdeaList,
-    },
-    {
-      path: "/delete",
-      name: "delete",
-      component: DeleteIdeaView,
-    },
-    {
+      path: "/my-profile",
+      name: "my profile",
+      component: MyProfileView,
       path: "/admin-dashboard",
       name: "admin-dashboard",
       component: AdminDashboardView,
     },
     {
-      path: '/create-idea',
-      name: 'create-idea',
-      component: CreateIdeaView
+      path: "/test",
+      name: "test",
+      component: CosminPlayground,
     }
-
   ],
 });
 

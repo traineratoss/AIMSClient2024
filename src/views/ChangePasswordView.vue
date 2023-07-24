@@ -1,5 +1,17 @@
 <script setup>
 import CompanyLogo from "../components/CompanyLogo.vue";
+import CustomInput from '../components/CustomInput.vue';
+import { ref } from 'vue';
+
+const oldPasswordText = ref('');
+const newPasswordText = ref('');
+const confirmNewPassword = ref('');
+
+function submit() {
+  console.log('old password', oldPasswordText.value);
+  console.log('new password', newPasswordText.value);
+  console.log('confirm new password', confirmNewPassword.value);
+}
 </script>
 
 <template>
@@ -13,29 +25,37 @@ import CompanyLogo from "../components/CompanyLogo.vue";
       <i class="fa-regular fa-circle-user" id="user-icon"> </i>
     </div>
     <div>
-      <input
+      <CustomInput
         type="password"
         id="current-password-input"
         placeholder="Current password"
+        v-model:model-value="oldPasswordText"
       />
     </div>
     <div>
-      <input
+      <CustomInput
         type="password"
         id="current-password-input"
         placeholder="New password"
+        v-model:model-value="newPasswordText"
       />
     </div>
     <div>
-      <input
+      <CustomInput
         type="password"
         id="current-password-input"
         placeholder="Confirm new password"
+        v-model:model-value="confirmNewPassword"
       />
     </div>
     <div id="controls-container">
       <router-link to="/my-profile" id="cancel"> Cancel </router-link>
-      <button id="submit">Submit</button>
+      <button 
+        id="submit"
+        @click="submit"
+      >
+        Submit
+      </button>
     </div>
   </div>
 </template>

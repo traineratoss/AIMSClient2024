@@ -1,6 +1,18 @@
 <script setup>
 import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomButton from "../components/CustomButton.vue";
+import CustomInput from '../components/CustomInput.vue';
+import { ref } from 'vue';
+
+const usernameText = ref('');
+const fullNameText = ref('');
+const emailText = ref('');
+
+function saveChanges() {
+  console.log('username', usernameText.value);
+  console.log('full name', fullNameText.value);
+  console.log('email', emailText.value);
+}
 </script>
 
 <template>
@@ -9,17 +21,26 @@ import CustomButton from "../components/CustomButton.vue";
     <form action="">
       <div class="form-input">
         <label for="username"> Username </label>
-        <input type="text" />
+        <CustomInput 
+          type="text" 
+          v-model:model-value="usernameText"
+        />
       </div>
 
       <div class="form-input">
         <label for="full-name"> Full name </label>
-        <input type="text" />
+        <CustomInput 
+          type="text" 
+          v-model:model-value="fullNameText"
+        />
       </div>
 
       <div class="form-input">
         <label for="email"> E-mail </label>
-        <input type="email" />
+        <CustomInput 
+          type="email" 
+          v-model:model-value="emailText"
+        />
       </div>
     </form>
     <img src="../assets/img/avatars/avatar1.svg" />
@@ -28,8 +49,12 @@ import CustomButton from "../components/CustomButton.vue";
       label="Select avatar"
       class="avatar-button"
     />
-    <CustomButton id="save-changes" class="save-changes-button"
-      >Save changes
+    <CustomButton 
+      id="save-changes" 
+      class="save-changes-button"
+      @click="saveChanges"
+    >
+      Save changes
     </CustomButton>
   </div>
 </template>

@@ -1,16 +1,3 @@
-<script setup>
-import { ref, computed } from "vue";
-import SidePanel from "../components/SidePanel.vue";
-import IdeaCard from "../components/IdeaCard.vue";
-
-
-const ideas = ref([
-  { text: "Ideea 1" },
-  { text: "Ideea 2" },
-  { text: "Ideea 3" },
-]);
-</script>
-
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
@@ -18,17 +5,105 @@ const ideas = ref([
     </div>
     <div class="main-container">
       <div class="left-space">
-        <h1>This div will be used to display all users and statistics</h1>
+        <div class="stats-container">
+          <div class="stat-item">
+            <p class="stat-label"><b>Total Comments:</b></p>
+            <p class="centered-number">{{ totalComments }}</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Total Replies:</b></p>
+            <p class="centered-number">{{ totalReplies }}</p>
+          </div>
+          <div class="spacer"></div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Ideas/User:</b></p>
+            <p class="centered-number">{{ ideasPerUser }}</p>
+          </div>
+          <div class="spacer"></div>
+          <div class="stat-item">
+            <p class="centered-number">{{ publicIdeasCount }}</p>
+            <p class="stat-label"><b>Public Ideas</b></p>
+          </div>
+          <div class="stat-item">
+            <p class="centered-number">{{ implementedIdeasCount }}</p>
+            <p class="stat-label"><b>Implemented Ideas</b></p>
+          </div>
+        </div>
       </div>
       <div class="idea-container" v-for="idea in ideas" :key="idea.text">
         <IdeaCard :title="idea.text" />
       </div>
-      <!-- <div class="right-space">
-        <h1>This div will be used to display something</h1>
-      </div> -->
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, computed, watch } from "vue";
+import SidePanel from "../components/SidePanel.vue";
+import IdeaCard from "../components/IdeaCard.vue";
+
+const ideas = ref([
+  { text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
+  { text: "Idea 2", userId: 2, isPublic: false, isImplemented: true, comments: 1, replies: 1 },
+  { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
+  { text: "Idea 4", userId: 3, isPublic: true, isImplemented: true, comments: 5, replies: 0 },
+]);
+
+const totalIdeas = computed(() => ideas.value.length);
+
+const totalComments = computed(() => {
+  let total = 0;
+  for (const idea of ideas.value) {
+    total += idea.comments || 0;
+  }
+  return total;
+});
+
+const totalReplies = computed(() => {
+  let total = 0;
+  for (const idea of ideas.value) {
+    total += idea.replies || 0;
+  }
+  return total;
+});
+
+const publicIdeasCount = computed(() => {
+  let count = 0;
+  for (const idea of ideas.value) {
+    if (idea.isPublic) {
+      count++;
+    }
+  }
+  return count;
+});
+
+const implementedIdeasCount = computed(() => {
+  let count = 0;
+  for (const idea of ideas.value) {
+    if (idea.isImplemented) {
+      count++;
+    }
+  }
+  return count;
+});
+
+const ideasPerUser = computed(() => {
+  const users = new Set(ideas.value.map((idea) => idea.userId));
+  return totalIdeas.value / users.size;
+});
+
+watch(ideas, () => {
+  calculateStatistics();
+});
+
+function calculateStatistics() {
+  totalComments.value = calculateTotalComments();
+  totalReplies.value = calculateTotalReplies();
+  publicIdeasCount.value = calculatePublicIdeasCount();
+  implementedIdeasCount.value = calculateImplementedIdeasCount();
+}
+</script>
+
 
 <style scoped>
 .all-ideas-view-container{
@@ -42,10 +117,11 @@ const ideas = ref([
 .left-space {
   width: 20vw;
   float: left;
-  background-color: rgb(247, 161, 161);
+  background-color: #c8c8ca;
   height: 92vh;
   border: 1px solid black;
 }
+
 .right-space {
   width: 20vw;
   float: right;
@@ -53,9 +129,10 @@ const ideas = ref([
   height: 92vh;
   border: 1px solid black;
 }
+
 .sidebar-container {
   width: 30%;
-  background-color: var(--sidebar-color);
+  background-color: #b3b3b3;
   border: 1px solid black;
 }
 
@@ -75,5 +152,16 @@ const ideas = ref([
   display: flex;
   justify-content: center;
   height: 92vh;
+}
+.stats-container {
+  margin-top: 20px; /* Space between numbers */
+  text-align: center; 
+}
+.centered-number {
+  margin: 10px 0; /* Space between numbers */
+}
+
+.spacer {
+  height: 20rem; 
 }
 </style>

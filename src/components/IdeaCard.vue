@@ -1,47 +1,28 @@
-<!-- 
-    FlorinCP
-    Shall be either deleted of modified 
-    It was created in order to assure better fiting for the components development
- -->
-<!-- 
-  @TODO:
-  
-    idea card must be a fixed size cuz when changing the viewport it should not change its size , or does it ?
-
- -->
-
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-import { ref, defineEmits } from "vue";
-import { useRouter } from "vue-router";
-import { loadComments,postComment ,postCommentsbyIdeaId} from "../services/comment.service";
+import { ref, defineEmits , onMounted} from "vue";
+import {
+  loadComments,
+  postComment,
+  postReply,
+} from "../services/comment.service";
 
 const props = defineProps({
   title: "",
+  text: "",
+  status: "",
+  user:"",
+  ideaId:"",
+
 });
 
-const showDeleteDialog = ref(false);
-const router = useRouter();
 
-function openDeleteIdeaView() {
-  showDeleteDialog.value = true;
-}
+onMounted( async () => {
+  comments.value = await loadComments(4, 0, 'id', props.ideaId)
+  console.log(comments)
+})
 
-const comments = ref([
-  {
-    commentText: "textul primului comentariu ",
-    userName: "Gigel",
-    hasReplies: true,
-    replies: [{ commentText: "reply text", userName: "dan armeanca" }],
-  },
-  {
-    commentText: "some comment text",
-    userName: "Gigel",
-    hasReplies: false,
-    replies: [{ commentText: "first reply", userName: "dan armeanca" }],
-  },
-  { commentText: "just comment text", userName: "Crsiti", hasReplies: true },
-]);
+let comments = ref([]);
 
 let showComments = ref(false);
 let someVariable = ref(false);
@@ -51,16 +32,11 @@ function toggle() {
   someVariable.value = !someVariable.value;
   console.log(someVariable);
 }
-
-
-
 </script>
 
 <template>
   <div class="container">
     <div class="idea-card">
-      <h1>{{ props.title }}</h1>
-
       <button @click="showComments = !showComments" class="showComments">
         ...
       </button>
@@ -68,17 +44,20 @@ function toggle() {
         <div class="number-of-comments">
           Nr. Comments: {{ numberOfComments }}
         </div>
-        <div class="author-info">Author: {{ authorName }}</div>
-        <div class="title">Title: {{ Title }}</div>
-        <div class="text">Text: {{ Text }}</div>
+        <div class="author-info">Author: {{ props.user }}</div>
+        <div class="title">Title: {{ props.title }}</div>
+        <div class="text">Text: {{ props.text }}</div>
+       
         <div class="status">
-          Status: {{ Status }}
-          <select v-model="statusValue" @change="handleChangeStatus">
+          Status:
+           <!-- @TODO make handle bla bla function  -->
+          <select v-model="props.status" @change="handleChangeStatus">
             <option value="open">Open</option>
             <option value="draft">Draft</option>
             <option value="implemented">Implemented</option>
           </select>
         </div>
+
       </div>
 
       <div class="buttons-container">
@@ -94,10 +73,15 @@ function toggle() {
         alt="image"
       />
       <div class="input-container">
-        <input type="text" >
+        <input type="text" />
         <button>POST</button>
-        <!-- <button @click="loadComments(4,0,'id',0)">TEST</button> -->
-        <button @click="loadComments(4,0,'id',0)">TEST</button>
+        <button @click="loadComments(4, 0, 'id', 0)">TEST</button>
+        <button @click="postComment('dragos', 0, 'merge sau nu merge')">
+          COMM
+        </button>
+        <button @click="postReply('dragos', 0, 'merge sau nu merge')">
+          Reply
+        </button>
       </div>
     </div>
     <div
@@ -128,7 +112,7 @@ function toggle() {
 </template>
 
 <style scoped>
-.input-container{
+.input-container {
   position: absolute;
   bottom: 25px;
   left: 40px;
@@ -159,7 +143,7 @@ function toggle() {
 }
 .number-of-comments {
   position: absolute;
-  bottom:95px;
+  bottom: 95px;
   right: 50px;
   font-size: 14px;
   font-weight: bold;
