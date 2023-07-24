@@ -12,6 +12,8 @@ import CosminPlayground from "../views/CosminPlayground.vue";
 import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
+import CreateIdeaView from "../views/CreateIdeaView.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +57,11 @@ const router = createRouter({
       path: "/register",
       name: "register",
       component: RegisterView,
+    },
+    {
+      path: "/create-idea",
+      name: "create-idea",
+      component: CreateIdeaView,
     },
     {
       path: "/registration-complete",

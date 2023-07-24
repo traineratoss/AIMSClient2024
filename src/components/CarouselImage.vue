@@ -1,92 +1,81 @@
 <script setup>
+import { ref,defineProps } from 'vue';
+
+const slides = defineProps(['images']);
+const currentIndex = ref(0);
+
+const prevSlide = () => {
+  currentIndex.value = (currentIndex.value - 1 + slides.images.length) % slides.images.length;
+};
+
+const nextSlide = () => {
+  currentIndex.value = (currentIndex.value + 1) % slides.images.length;
+};
 
 </script>
 
 <template>
-<div class="slider">
-    <div class="arrows-carousel">
-    <i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941;"></i>
-  </div>
-  <div class="slides">
-    <div id="slide-1">
-      1
-    </div>
-    <div id="slide-2">
-      2
-    </div>
-    <div id="slide-3">
-      3
-    </div>
-    <div id="slide-4">
-      4
-    </div>
-    <div id="slide-5">
-      5
-    </div>
-  </div>
-  <div class="arrows-carousel-left">
-    <i class="fa-solid fa-arrow-right fa-2xl" style="color: #ffa941;"></i>
-  </div>
-</div>
 
+<div class="carousel">
+    <button @click="prevSlide"><i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941;"></i></button>
+    <div class="slide-container">
+      <div class="slides" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+        <div v-for="(slide, index) in images" :key="index" class="slide" :class="{ active: currentIndex === index }">
+          <img :src="slide.url" > 
+          
+        </div>
+      </div>
+    </div>
+    <button @click="nextSlide"><i class="fa-solid fa-arrow-right fa-2xl " style="color: #ffa941;"></i></button>
+  </div>
 </template>
 
 <style scoped>
 
-* {
-  box-sizing: content-box;
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position:relative;
+  overflow: hidden;
+  z-index:10;
+  margin-top: 10px;
+  height: 20vh;
 }
 
-.slider {
-  width: 300px;
-  text-align: center;
+.slide-container {
+  display: flex;
   overflow: hidden;
- padding-top: 20px;
- display: flex;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
+  border: 1px solid #ccc;
+  margin: 0 10px;
+  max-width: 300px;
 }
 
 .slides {
   display: flex;
-  
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  transition: transform 0.3s ease;
+}
 
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  
+.slide {
+  flex: 0 0 100%;
 }
-.slides::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+
+.slide.active {
+  background-color: #f0f0f0;
 }
-.slides::-webkit-scrollbar-thumb {
-  background: black;
-  border-radius: 10px;
+
+button {
+  margin: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }
-.slides::-webkit-scrollbar-track {
-  background: transparent;
+
+img{
+  height: 100%;
+  width: 100%;
 }
-.slides > div {
-  scroll-snap-align: start;
-  flex-shrink: 0;
-  width: 200px;
-  height: 200px;
-  margin-right: 50px;
-  border-radius: 30px;
-  background: #eee;
-  transform-origin: center center;
-  transform: scale(1);
-  transition: transform 0.5s;
-  position: relative;
-  
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 100px;
-}
+
 
 
 </style>

@@ -1,21 +1,13 @@
 <script setup>
-import CustomInput from "../components/CustomInput.vue";
-import { ref } from 'vue';
-const categoryName = ref();
+import { ref,onMounted } from 'vue';
 
-const variants = ['Fun', 'Food', 'Books']; // Add more variants here as needed
+const variants = ['Fun', 'Food', 'Books', 'IT'];
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
-
-// const toggleDropdown = () => {
-//   isDropdownVisible.value = !isDropdownVisible.value;
-// };  
+  
 const showDropdown = () => {
     isDropdownVisible.value = true;
-};
-const hideDropdown = () => {
-    isDropdownVisible.value = false;
 };
 
 const handleCheckboxChange = () => {
@@ -26,16 +18,28 @@ const handleCheckboxChange = () => {
 
   comboInput.value.value = selectedVariants.join(', ');
 };
+
+const onMouseEnter = () => {
+  isDropdownVisible.value = true;
+};
+
+const onMouseLeave = () => {
+  isDropdownVisible.value = false;
+};
+
+onMounted(() => {
+  comboInput.value.addEventListener('click', showDropdown);
+});
 </script>
 
 <template>
-            <!-- <CustomInput v-model="categoryName"/>  -->
-            <!-- @blur="hideDropdown" -->
-            <div class="combo-box" @focusout="hideDropdown">
-                    <input type="text" ref="comboInput" @focus="showDropdown"  tabindex="0" placeholder="Select variants">
+            <div class="combo-box" >
+                    <input type="text" ref="comboInput"  class="input-dropdown" placeholder="Select category">
                     <div v-show="isDropdownVisible" 
                          class="dropdown" 
                          ref="dropdown" 
+                         @mouseenter="onMouseEnter"
+                         @mouseleave="onMouseLeave"
                          
                     >
                         <label v-for="variant in variants" :key="variant">
@@ -51,8 +55,8 @@ const handleCheckboxChange = () => {
 .combo-box {
   position: relative;
   display: inline-block;
+  
 }
-
 
 .dropdown {
   position: absolute;
@@ -71,12 +75,18 @@ const handleCheckboxChange = () => {
 }
 
 .dropdown label {
-  display: block;
-  padding: 5px;
-  cursor: pointer;
+
+  cursor: pointer; 
+  display: flex;
+  justify-content: flex-start;
+  width: 185px;
 }
 
 .dropdown label:hover {
   background-color: #f0f0f0;
+}
+
+.input-dropdown{
+  width: 185px;
 }
 </style>
