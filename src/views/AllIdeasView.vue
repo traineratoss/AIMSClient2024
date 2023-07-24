@@ -27,6 +27,10 @@
           <div class="stat-item">
             <p class="centered-number">{{ implementedIdeasCount }}</p>
             <p class="stat-label"><b>Implemented Ideas</b></p>
+            <br>
+          <div class="implementation-bar">
+            <div class="fill" :style="{ width: implementationPercentage + '%' }"></div>
+          </div>
           </div>
         </div>
       </div>
@@ -44,9 +48,9 @@ import IdeaCard from "../components/IdeaCard.vue";
 
 const ideas = ref([
   { text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
-  { text: "Idea 2", userId: 2, isPublic: false, isImplemented: true, comments: 1, replies: 1 },
+  { text: "Idea 2", userId: 2, isPublic: false, isImplemented: false, comments: 1, replies: 1 },
   { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
-  { text: "Idea 4", userId: 3, isPublic: true, isImplemented: true, comments: 5, replies: 0 },
+  { text: "Idea 4", userId: 3, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
 ]);
 
 const totalIdeas = computed(() => ideas.value.length);
@@ -90,6 +94,13 @@ const implementedIdeasCount = computed(() => {
 const ideasPerUser = computed(() => {
   const users = new Set(ideas.value.map((idea) => idea.userId));
   return totalIdeas.value / users.size;
+});
+
+const implementationPercentage = computed(() => {
+  if (publicIdeasCount.value === 0) {
+    return 0;
+  }
+  return (implementedIdeasCount.value / publicIdeasCount.value) * 100;
 });
 
 watch(ideas, () => {
@@ -163,5 +174,20 @@ function calculateStatistics() {
 
 .spacer {
   height: 20rem; 
+}
+
+.implementation-bar {
+  width: 80%;
+  height: 15px;
+  background-color: #fff;
+  margin: 0 auto; /* Centrare pe orizontală */
+  border-radius: 7.5px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background-color: #ffa941;
+  transition: width 0.3s ease;
 }
 </style>
