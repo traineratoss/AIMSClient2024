@@ -1,32 +1,3 @@
-<script setup>
-import { ref, computed } from "vue";
-import SidePanel from "../components/SidePanel.vue";
-import IdeaCard from "../components/IdeaCard.vue";
-
-
-const ideas = ref([
-  { text: "Ideea 1", userId: 1 },
-  { text: "Ideea 2", userId: 2 },
-  { text: "Ideea 3", userId: 1 },
-  { text: "Ideea 4", userId: 3 },
-]);
-
-const totalComments = ref(10); 
-const totalReplies = ref(5); 
-const publicIdeasCount = ref(8);
-const implementedIdeasCount = ref(3); 
-const ideasPerUser = ref(2);
-
-/* These are just some random examples */
-
-/* const totalIdeas = computed(() => ideas.value.length);  total number of ideas 
-
-const totalUsers = computed(() => users.value.length); total number of users 
-
-const ideasPerUser = computed(() => totalIdeas.value / totalUsers.value); - to calculate the number of ideas/user */
-
-</script>
-
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
@@ -34,7 +5,6 @@ const ideasPerUser = computed(() => totalIdeas.value / totalUsers.value); - to c
     </div>
     <div class="main-container">
       <div class="left-space">
-       <!-- <h1>This div will be used to display all users and statistics</h1> -->
         <div class="stats-container">
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>
@@ -63,12 +33,77 @@ const ideasPerUser = computed(() => totalIdeas.value / totalUsers.value); - to c
       <div class="idea-container" v-for="idea in ideas" :key="idea.text">
         <IdeaCard :title="idea.text" />
       </div>
-      <!-- <div class="right-space">
-        <h1>This div will be used to display something</h1>
-      </div> -->
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, computed, watch } from "vue";
+import SidePanel from "../components/SidePanel.vue";
+import IdeaCard from "../components/IdeaCard.vue";
+
+const ideas = ref([
+  { text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
+  { text: "Idea 2", userId: 2, isPublic: false, isImplemented: true, comments: 1, replies: 1 },
+  { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
+  { text: "Idea 4", userId: 3, isPublic: true, isImplemented: true, comments: 5, replies: 0 },
+]);
+
+const totalIdeas = computed(() => ideas.value.length);
+
+const totalComments = computed(() => {
+  let total = 0;
+  for (const idea of ideas.value) {
+    total += idea.comments || 0;
+  }
+  return total;
+});
+
+const totalReplies = computed(() => {
+  let total = 0;
+  for (const idea of ideas.value) {
+    total += idea.replies || 0;
+  }
+  return total;
+});
+
+const publicIdeasCount = computed(() => {
+  let count = 0;
+  for (const idea of ideas.value) {
+    if (idea.isPublic) {
+      count++;
+    }
+  }
+  return count;
+});
+
+const implementedIdeasCount = computed(() => {
+  let count = 0;
+  for (const idea of ideas.value) {
+    if (idea.isImplemented) {
+      count++;
+    }
+  }
+  return count;
+});
+
+const ideasPerUser = computed(() => {
+  const users = new Set(ideas.value.map((idea) => idea.userId));
+  return totalIdeas.value / users.size;
+});
+
+watch(ideas, () => {
+  calculateStatistics();
+});
+
+function calculateStatistics() {
+  totalComments.value = calculateTotalComments();
+  totalReplies.value = calculateTotalReplies();
+  publicIdeasCount.value = calculatePublicIdeasCount();
+  implementedIdeasCount.value = calculateImplementedIdeasCount();
+}
+</script>
+
 
 <style scoped>
 .all-ideas-view-container{
