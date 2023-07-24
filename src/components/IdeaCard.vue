@@ -1,6 +1,6 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-import { ref, defineEmits , onMounted} from "vue";
+import { ref, defineEmits, onMounted } from "vue";
 import {
   loadComments,
   postComment,
@@ -12,28 +12,22 @@ const props = defineProps({
   title: "",
   text: "",
   status: "",
-  user:"",
-  ideaId:"",
+  user: "",
+  ideaId: "",
+});
 
-})
-
-
-onMounted( async () => {
-  comments.value = await loadComments(4, 0, 'id', props.ideaId)
-  console.log(comments)
-  currentUser.value = getCurrentUser()
-  console.log(currentUser.value.username)
-})
-
-async function postComment2()  {
-  return await postComment(currentUser.value.username, props.ideaId, commentText.value);
-}
+onMounted(async () => {
+  comments.value = await loadComments(4, 0, "id", props.ideaId);
+  console.log(comments);
+  currentUser.value = getCurrentUser();
+  console.log(currentUser.value.username);
+});
 
 let comments = ref([]);
-let commentText = ref([])
+let commentText = ref([]);
 let showComments = ref(false);
 let someVariable = ref(false);
-let currentUser = ref('')
+let currentUser = ref("");
 
 function toggle() {
   console.log("function was accesed");
@@ -49,23 +43,19 @@ function toggle() {
         ...
       </button>
       <div class="something">
-        <div class="number-of-comments">
-          Nr. Comments: {{ numberOfComments }}
-        </div>
         <div class="author-info">Author: {{ props.user }}</div>
         <div class="title">Title: {{ props.title }}</div>
         <div class="text">Text: {{ props.text }}</div>
-       
+
         <div class="status">
           Status:
-           <!-- @TODO make handle bla bla function  -->
+          <!-- @TODO make handle bla bla function  -->
           <select v-model="props.status" @change="handleChangeStatus">
             <option value="open">Open</option>
             <option value="draft">Draft</option>
             <option value="implemented">Implemented</option>
           </select>
         </div>
-
       </div>
 
       <div class="buttons-container">
@@ -82,8 +72,10 @@ function toggle() {
       />
       <div class="input-container">
         <input type="text" v-model="commentText" />
-        <button @click="postComment(currentUser.username, props.ideaId, commentText)">
-          Post
+        <button
+          @click="postComment(currentUser.username, props.ideaId, commentText)"
+        >
+          Post comment
         </button>
       </div>
     </div>
@@ -106,6 +98,7 @@ function toggle() {
         v-for="commentReply in comment.replies"
       >
         <CustomComment
+          :parentId="comment.id"
           :text="commentReply.commentText"
           :userName="commentReply.userName"
         />
