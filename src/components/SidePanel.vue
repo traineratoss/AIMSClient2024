@@ -6,12 +6,19 @@
  -->
 <script setup>
 import { ref } from "vue";
+import CustomInput from "../components/CustomInput.vue";
+import CustomDropDown from "../components/CustomDropDown.vue";
+
 const statusOptions = ["Open", "Implemented", "Draft"];
 const categoryOptions = [];
-const userOptions = [];
-const title = ref("");
-const text = ref("");
-const status = ref(statusOptions[0]);
+// const userOptions = [];
+// const title = ref("");
+// const text = ref("");
+// const selectedStatus = ref(statusOptions[0]);
+const inputTitle = ref("");
+const inputText = ref("");
+const selectedDateFrom = ref("");
+const selectedDateTo = ref("");
 // const fetchCategories = async () => {
 //     try {
 //         const response = await fetch('');
@@ -43,24 +50,20 @@ const status = ref(statusOptions[0]);
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
       <span class="title"> Title </span>
-      <input type="text" class="title-input"  />
+      <CustomInput v-model="inputTitle" class="title-input"/>
 
       <span class="text">Text:</span>
-      <input type="text" class="text-input" />
+      <CustomInput v-model="inputText" class="text-input"  />
 
       <span class="status">Status:</span>
-      <select name="" id="" class="status-select">
-        <option v-for="status in statusOptionsOptions" :value="status">
+      <select v-model="selectedStatus" class="status-select" >
+        <option v-for="status in statusOptions" :key="status" :value="status" >
           {{ status }}
         </option>
       </select>
 
       <span class="category">Category:</span>
-      <select name="" id="" class="category-select">
-        <option v-for="category in categoryOptions" :value="category">
-          {{ category }}
-        </option>
-      </select>
+      <CustomDropDown class="category-select"></CustomDropDown>
 
       <span class="user">User:</span>
       <select name="" id="" class="user-select">
@@ -75,9 +78,9 @@ const status = ref(statusOptions[0]);
           </legend>
           <div class="date-input">
             <span class="from-date"> From: </span>
-            <input class="from-input" type="date" v-model="selectedDate" />
+            <CustomInput v-model="selectedDateFrom" type="date" class="form-input"/>
             <span class="to-date"> To: </span>
-            <input class="to-input" type="date" v-model="selectedDate" />
+            <CustomInput v-model="selectedDateTo" type="date" class="to-input"/>
           </div>
         </fieldset>
       </div>

@@ -33,21 +33,21 @@ onMounted(() => {
 </script>
 
 <template>
-            <div class="combo-box" >
-                    <input type="text" ref="comboInput"  class="input-dropdown" placeholder="Select category">
-                    <div v-show="isDropdownVisible" 
-                         class="dropdown" 
-                         ref="dropdown" 
-                         @mouseenter="onMouseEnter"
-                         @mouseleave="onMouseLeave"
-                         
-                    >
-                        <label v-for="variant in variants" :key="variant">
-                            <input type="checkbox" :value="variant" @change="handleCheckboxChange">
-                            {{ variant }}
-                        </label>
-                    </div>
-            </div>
+  <div class="combo-box" >
+          <input type="text" ref="comboInput"  class="input-dropdown" placeholder="Select category">
+          <div v-show="isDropdownVisible" 
+                class="dropdown" 
+                ref="dropdown" 
+                @mouseenter="onMouseEnter"
+                @mouseleave="onMouseLeave"
+                
+          >
+              <label v-for="variant in variants" :key="variant">
+                  <input type="checkbox" :value="variant" @change="handleCheckboxChange">
+                  {{ variant }}
+              </label>
+          </div>
+  </div>
 
 </template>
 

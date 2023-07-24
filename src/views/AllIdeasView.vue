@@ -142,7 +142,7 @@ function calculateStatistics() {
 }
 
 .sidebar-container {
-  width: 30%;
+  width: 20%;
   background-color: #b3b3b3;
   border: 1px solid black;
 }

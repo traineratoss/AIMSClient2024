@@ -44,7 +44,9 @@ const slideImages = [
             
         </div>
         <div class="add-image">
-            <CustomButtonGray id="add-photo" label="Import Image"></CustomButtonGray>
+            <input type="file" id="upload" hidden/>
+            <label for="upload" class="add-image-idea">Choose file</label>
+           
         </div>
         <div>
             <CustomButton id="create-idea"> Create Idea</CustomButton>
@@ -64,6 +66,16 @@ const slideImages = [
         height: 80vh;
         margin-top: 10px;
     }
+    .add-image-idea{
+        background-color: gray;
+        color: white;
+        padding: 0.5rem;
+        font-family: sans-serif;
+        /* border-radius: 0.3rem; */
+        cursor: pointer;
+        margin-top: 1rem;
+    }
+    
     .idea{
         display: flex;
         justify-content: space-between;
