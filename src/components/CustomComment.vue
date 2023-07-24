@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from "vue";
-
+import { ref,onMounted } from "vue";
+import { postReply } from "../services/comment.service";
+import { getCurrentUser } from "../services/user_service";
 
 const props = defineProps({
   text: "",
@@ -8,12 +9,21 @@ const props = defineProps({
   userName: "",
   userId: "",
   ideaId: "",
-  hasReplies: ""
+  hasReplies: "",
+  parentId:"",
+});
+
+let currentUser=ref('')
+
+onMounted(async () => {
+  currentUser.value = getCurrentUser();
+  console.log(currentUser.value.username);
 });
 
 const emits = defineEmits(['showReplies']);
 
 let toggle = ref(false)
+let replyText = ref([])
 
 function showReplies(){
     console.log("Emit button was pressed from CustomComment")
@@ -29,6 +39,10 @@ function showReplies(){
       <i>{{ props.userName }}</i>
     </p>
     <div class="item">{{ props.text }}</div>
+    <input type="text" v-model="commentText" />
+        <button @click="postReply(currentUser.username, props.parentId, commentText)">
+          Post reply
+        </button>
     <div v-if="props.hasReplies">
         <button class="showReplies" @click="showReplies()">...</button>
     </div>
