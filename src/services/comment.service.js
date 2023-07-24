@@ -39,6 +39,7 @@ async function postComment(username, ideaId, commentText) {
     },
   });
 
+  console.log(username)
   const data = await response.json();
   console.log(data);
 }

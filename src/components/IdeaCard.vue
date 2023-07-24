@@ -6,6 +6,7 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
+import { getCurrentUser } from "../services/user_service";
 
 const props = defineProps({
   title: "",
@@ -14,18 +15,25 @@ const props = defineProps({
   user:"",
   ideaId:"",
 
-});
+})
 
 
 onMounted( async () => {
   comments.value = await loadComments(4, 0, 'id', props.ideaId)
   console.log(comments)
+  currentUser.value = getCurrentUser()
+  console.log(currentUser.value.username)
 })
 
-let comments = ref([]);
+async function postComment2()  {
+  return await postComment(currentUser.value.username, props.ideaId, commentText.value);
+}
 
+let comments = ref([]);
+let commentText = ref([])
 let showComments = ref(false);
 let someVariable = ref(false);
+let currentUser = ref('')
 
 function toggle() {
   console.log("function was accesed");
@@ -73,14 +81,9 @@ function toggle() {
         alt="image"
       />
       <div class="input-container">
-        <input type="text" />
-        <button>POST</button>
-        <button @click="loadComments(4, 0, 'id', 0)">TEST</button>
-        <button @click="postComment('dragos', 0, 'merge sau nu merge')">
-          COMM
-        </button>
-        <button @click="postReply('dragos', 0, 'merge sau nu merge')">
-          Reply
+        <input type="text" v-model="commentText" />
+        <button @click="postComment(currentUser.username, props.ideaId, commentText)">
+          Post
         </button>
       </div>
     </div>
