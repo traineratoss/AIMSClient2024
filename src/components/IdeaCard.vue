@@ -1,18 +1,6 @@
-<!-- 
-    FlorinCP
-    Shall be either deleted of modified 
-    It was created in order to assure better fiting for the components development
- -->
-<!-- 
-  @TODO:
-  
-    idea card must be a fixed size cuz when changing the viewport it should not change its size , or does it ?
-
- -->
-
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits , onMounted} from "vue";
 import {
   loadComments,
   postComment,
@@ -24,24 +12,17 @@ const props = defineProps({
   text: "",
   status: "",
   user:"",
+  ideaId:"",
 
 });
 
-const comments = ref([
-  {
-    commentText: "textul primului comentariu ",
-    userName: "Gigel",
-    hasReplies: true,
-    replies: [{ commentText: "reply text", userName: "dan armeanca" }],
-  },
-  {
-    commentText: "some comment text",
-    userName: "Gigel",
-    hasReplies: false,
-    replies: [{ commentText: "first reply", userName: "dan armeanca" }],
-  },
-  { commentText: "just comment text", userName: "Crsiti", hasReplies: true },
-]);
+
+onMounted( async () => {
+  comments.value = await loadComments(4, 0, 'id', props.ideaId)
+  console.log(comments)
+})
+
+let comments = ref([]);
 
 let showComments = ref(false);
 let someVariable = ref(false);

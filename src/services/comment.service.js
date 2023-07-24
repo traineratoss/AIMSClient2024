@@ -21,8 +21,8 @@ async function loadComments(pageSize, pageNumber, sortCategory, ideaId) {
   );
 
   const data = await response.json();
-  console.log(data);
-  return data;
+  console.log(data.content);
+  return data.content;
  
 }
 
