@@ -10,7 +10,7 @@ sortDirection = cum vrei sa sortezi , ASC sau DSC
 async function loadPagedIdeas(pageSize, pageNumber, sortCategory, sortDirection) {
   const response = await fetch(
     API_URL +
-      "//getAllIdeas/page?pageSize=" +
+      "/getAllIdeas/page?pageSize=" +
       pageSize +
       "&pageNumber=" +
       pageNumber +
@@ -21,7 +21,8 @@ async function loadPagedIdeas(pageSize, pageNumber, sortCategory, sortDirection)
   );
 
   const data = await response.json();
-  console.log(data);
+  const content = await data.content;
+  return content;
 }
 
 export {loadPagedIdeas}
