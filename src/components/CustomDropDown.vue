@@ -1,6 +1,8 @@
 <script setup>
 import { ref,onMounted } from 'vue';
 
+const emit = defineEmits(['update:selectedCategories']);
+
 const variants = ['Fun', 'Food', 'Books', 'IT'];
 const comboInput = ref(null);
 const dropdown = ref(null);
@@ -17,6 +19,7 @@ const handleCheckboxChange = () => {
     .map((checkbox) => checkbox.value);
 
   comboInput.value.value = selectedVariants.join(', ');
+  emit('update:selectedCategories', selectedVariants);
 };
 
 const onMouseEnter = () => {
