@@ -6,12 +6,43 @@
  -->
 <script setup>
 import { ref } from "vue";
-const statusOptions = ["Open", "Implemented"];
-const categoryOptions = ["Category 1", "Category 2", "Category 3"];
-const userOptions = ["User", "Admin"];
-const title = ref("");
-const text = ref("");
-const status = ref(statusOptions[0]);
+import CustomInput from "../components/CustomInput.vue";
+import CustomDropDown from "../components/CustomDropDown.vue";
+
+const statusOptions = ["Open", "Implemented", "Draft"];
+const categoryOptions = [];
+// const userOptions = [];
+// const title = ref("");
+// const text = ref("");
+// const selectedStatus = ref(statusOptions[0]);
+const inputTitle = ref("");
+const inputText = ref("");
+const selectedDateFrom = ref("");
+const selectedDateTo = ref("");
+// const fetchCategories = async () => {
+//     try {
+//         const response = await fetch('');
+//         const data = await response.json();
+//         categoryOptions.value = data;
+//     } catch (error) {
+//         console.error(" eroare ", error);
+//     }
+// };
+
+// const fetchUsers = async () => {
+//     try {
+//         const response = await fetch('');
+//         const data = await response.json();
+//         userOptions.value = data;
+//     } catch (error) {
+//         console.error("", error);
+//     }
+// };
+
+// onMounted(() => {
+//     fetchCategories();
+//     fetchUsers();
+// });
 </script>
 
 <template>
@@ -19,19 +50,27 @@ const status = ref(statusOptions[0]);
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
       <span class="title"> Title </span>
-      <input type="text" class="title-input" />
+      <CustomInput v-model="inputTitle" class="title-input"/>
 
       <span class="text">Text:</span>
-      <input type="text" class="text-input" />
+      <CustomInput v-model="inputText" class="text-input"  />
 
       <span class="status">Status:</span>
-      <select name="" id="" class="status-select"></select>
+      <select v-model="selectedStatus" class="status-select" >
+        <option v-for="status in statusOptions" :key="status" :value="status" >
+          {{ status }}
+        </option>
+      </select>
 
       <span class="category">Category:</span>
-      <select name="" id="" class="category-select"></select>
+      <CustomDropDown class="category-select"></CustomDropDown>
 
       <span class="user">User:</span>
-      <select name="" id="" class="user-select"></select>
+      <select name="" id="" class="user-select">
+        <option v-for="user in userOptionsOptions" :value="user">
+          {{ user }}
+        </option>
+      </select>
       <div class="date-chooser">
         <fieldset style="border: 0.1px black solid">
           <legend style="margin-left: 1em; padding: 0.2em 0.8em">
@@ -39,9 +78,9 @@ const status = ref(statusOptions[0]);
           </legend>
           <div class="date-input">
             <span class="from-date"> From: </span>
-            <input class="from-input" type="date" v-model="selectedDate" />
+            <CustomInput v-model="selectedDateFrom" type="date" class="form-input"/>
             <span class="to-date"> To: </span>
-            <input class="to-input" type="date" v-model="selectedDate" />
+            <CustomInput v-model="selectedDateTo" type="date" class="to-input"/>
           </div>
         </fieldset>
       </div>
@@ -54,7 +93,6 @@ const status = ref(statusOptions[0]);
 <style scoped>
 .date-input {
   display: grid;
-  grid-template-columns: max-content max-content;
   grid-template-rows: repeat(3, auto);
   grid-gap: 20px;
   font-size: 20;
@@ -133,12 +171,12 @@ const status = ref(statusOptions[0]);
   grid-row: 6/7;
 }
 .date-chooser {
-  grid-column: 1/4;
+  grid-column: 1/3;
   grid-row: 7/8;
   margin-top: 70px;
 }
 .filter-button {
-  grid-column: 2/3;
+  grid-column: 1/3;
   grid-row: 8/9;
   align-self: stretch;
   background-color: orange;

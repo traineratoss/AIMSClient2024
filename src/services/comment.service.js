@@ -21,7 +21,9 @@ async function loadComments(pageSize, pageNumber, sortCategory, ideaId) {
   );
 
   const data = await response.json();
-  console.log(data);
+  console.log(data.content);
+  return data.content;
+ 
 }
 
 async function postComment(username, ideaId, commentText) {
@@ -37,6 +39,7 @@ async function postComment(username, ideaId, commentText) {
     },
   });
 
+  console.log(username)
   const data = await response.json();
   console.log(data);
 }
@@ -55,6 +58,7 @@ async function postReply(username, parentId, commentText) {
   const response = await fetch(API_URL + "/comments/reply", requestOptions);
   const data = await response.json();
   console.log(data);
+  return data;
 }
 
 export { loadComments, postComment, postReply };

@@ -8,9 +8,12 @@ import PasswordRecoveryView from "../views/PasswordRecoveryView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
+import CosminPlayground from "../views/CosminPlayground.vue";
 import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
+import CreateIdeaView from "../views/CreateIdeaView.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +59,11 @@ const router = createRouter({
       component: RegisterView,
     },
     {
+      path: "/create-idea",
+      name: "create-idea",
+      component: CreateIdeaView,
+    },
+    {
       path: "/registration-complete",
       name: "registration-complete",
       component: RegistrationCompleteViewVue,
@@ -80,6 +88,11 @@ const router = createRouter({
       name: "admin-dashboard",
       component: AdminDashboardView,
     },
+    {
+      path: "/test",
+      name: "test",
+      component: CosminPlayground,
+    }
   ],
 });
 

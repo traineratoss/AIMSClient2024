@@ -85,6 +85,21 @@ async function sendEmail(username) {
     });
 }
 
+
+
+// FlorinCP : function for getting username from localStorage 
+// @TODO : Add a function to store that into local storage when login in
+
+function getCurrentUser(){
+    return JSON.parse(localStorage.getItem('user'))
+}
+
+function setCurrentUser(username){
+    const currenUser = getUser(username)
+    localStorage.setItem('user', JSON.stringify(currenUser));
+}
+
+
 export { 
     getUserByEmail,
     getUserByUsername, 
