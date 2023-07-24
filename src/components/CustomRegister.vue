@@ -2,6 +2,18 @@
 import CompanyLogo from "./CompanyLogo.vue";
 import CustomButton from "./CustomButton.vue";
 import FormTitle from "./FormTitle.vue";
+import CustomInput from '../components/CustomInput.vue';
+import { ref } from 'vue';
+
+const acceptedTermsAndConditions = ref(false);
+const usernameText = ref('');
+const passwordText = ref('');
+
+function signUp() {
+  console.log('username', usernameText.value);
+  console.log('password', passwordText.value);
+  console.log('checked', acceptedTermsAndConditions.value);
+}
 </script>
 
 <template>
@@ -12,17 +24,36 @@ import FormTitle from "./FormTitle.vue";
       <i class="fa-regular fa-circle-user"></i>
       <form action="" id="form">
         <label for="username">
-          <input type="text" id="username" placeholder="Username" />
+          <CustomInput 
+            type="text" 
+            id="username" 
+            placeholder="Username" 
+            v-model:model-value="usernameText"
+          />
         </label>
         <label for="email">
-          <input type="email" id="email" placeholder="E-mail" />
+          <CustomInput 
+            type="email" 
+            id="email" 
+            placeholder="E-mail" 
+            v-model:model-value="passwordText"
+          />
         </label>
       </form>
       <label for="check">
-        <input type="checkbox" />
+        <input 
+          type="checkbox" 
+          v-model="acceptedTermsAndConditions"
+        />
         <router-link to="/terms"> Agree Terms & Conditions </router-link>
       </label>
-      <CustomButton id="sign-up" class="sign-up-button">Sign up </CustomButton>
+      <CustomButton 
+        id="sign-up" 
+        class="sign-up-button"
+        @click="signUp"
+      >
+        Sign up 
+      </CustomButton>
     </div>
   </div>
 </template>

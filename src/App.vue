@@ -111,10 +111,10 @@ import TestNavbar from "./components/TestNavbar.vue";
 </template>
 
 <style scoped>
-.app-container {
+/* .app-container {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-}
+} */
 </style>

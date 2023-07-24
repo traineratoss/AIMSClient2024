@@ -1,6 +1,14 @@
 <script setup>
 import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
+import CustomInput from '../components/CustomInput.vue';
+import { ref } from 'vue';
+
+const usernameText = ref('');
+
+function requestNewPassword() {
+  console.log('username/email', usernameText.value);
+}
 </script>
 
 <template>
@@ -11,14 +19,21 @@ import CompanyLogo from "../components/CompanyLogo.vue";
       <i class="fa-regular fa-circle-user" id="user-icon"> </i>
     </div>
     <div>
-      <input
+      <CustomInput
         type="text"
         id="username-email-input"
         placeholder="Username/E-mail"
+        v-model:model-value="usernameText"
+        @keydown.enter="requestNewPassword"
       />
     </div>
     <div>
-      <button id="request-password">Request new Password</button>
+      <button 
+        id="request-password"
+        @click="requestNewPassword"
+      >
+        Request new Password
+      </button>
     </div>
   </div>
 </template>

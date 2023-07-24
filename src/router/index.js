@@ -8,6 +8,8 @@ import PasswordRecoveryView from "../views/PasswordRecoveryView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
+import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
+import MyProfileView from "../views/MyProfileView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +58,16 @@ const router = createRouter({
       path: "/change",
       name: "change",
       component: ChangePasswordView,
+    },
+    {
+      path: "/terms",
+      name: "terms",
+      component: TermsAndConditionsView,
+    },
+    {
+      path: "/my-profile",
+      name: "my profile",
+      component: MyProfileView,
     },
   ],
 });
