@@ -10,6 +10,7 @@ import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
 import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
+import AdminDashboardView from "../views/AdminDashboardView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,11 @@ const router = createRouter({
       component: UserLoginView,
     },
     {
+      path: "/my-profile",
+      name: "my-profile",
+      component: MyProfileView,
+    },
+    {
       path: "/recovery",
       name: "recovery",
       component: PasswordRecoveryView,
@@ -68,6 +74,9 @@ const router = createRouter({
       path: "/my-profile",
       name: "my profile",
       component: MyProfileView,
+      path: "/admin-dashboard",
+      name: "admin-dashboard",
+      component: AdminDashboardView,
     },
   ],
 });
