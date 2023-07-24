@@ -74,6 +74,8 @@ const router = createRouter({
       path: "/my-profile",
       name: "my profile",
       component: MyProfileView,
+    },
+    {
       path: "/admin-dashboard",
       name: "admin-dashboard",
       component: AdminDashboardView,
