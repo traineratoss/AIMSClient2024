@@ -5,10 +5,26 @@ import IdeaCard from "../components/IdeaCard.vue";
 
 
 const ideas = ref([
-  { text: "Ideea 1" },
-  { text: "Ideea 2" },
-  { text: "Ideea 3" },
+  { text: "Ideea 1", userId: 1 },
+  { text: "Ideea 2", userId: 2 },
+  { text: "Ideea 3", userId: 1 },
+  { text: "Ideea 4", userId: 3 },
 ]);
+
+const totalComments = ref(10); 
+const totalReplies = ref(5); 
+const publicIdeasCount = ref(8);
+const implementedIdeasCount = ref(3); 
+const ideasPerUser = ref(2);
+
+/* These are just some random examples */
+
+/* const totalIdeas = computed(() => ideas.value.length);  total number of ideas 
+
+const totalUsers = computed(() => users.value.length); total number of users 
+
+const ideasPerUser = computed(() => totalIdeas.value / totalUsers.value); - to calculate the number of ideas/user */
+
 </script>
 
 <template>
@@ -18,7 +34,31 @@ const ideas = ref([
     </div>
     <div class="main-container">
       <div class="left-space">
-        <h1>This div will be used to display all users and statistics</h1>
+       <!-- <h1>This div will be used to display all users and statistics</h1> -->
+        <div class="stats-container">
+          <div class="stat-item">
+            <p class="stat-label"><b>Total Comments:</b></p>
+            <p class="centered-number">{{ totalComments }}</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Total Replies:</b></p>
+            <p class="centered-number">{{ totalReplies }}</p>
+          </div>
+          <div class="spacer"></div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Ideas/User:</b></p>
+            <p class="centered-number">{{ ideasPerUser }}</p>
+          </div>
+          <div class="spacer"></div>
+          <div class="stat-item">
+            <p class="centered-number">{{ publicIdeasCount }}</p>
+            <p class="stat-label"><b>Public Ideas</b></p>
+          </div>
+          <div class="stat-item">
+            <p class="centered-number">{{ implementedIdeasCount }}</p>
+            <p class="stat-label"><b>Implemented Ideas</b></p>
+          </div>
+        </div>
       </div>
       <div class="idea-container" v-for="idea in ideas" :key="idea.text">
         <IdeaCard :title="idea.text" />
@@ -42,10 +82,11 @@ const ideas = ref([
 .left-space {
   width: 20vw;
   float: left;
-  background-color: rgb(247, 161, 161);
+  background-color: #c8c8ca;
   height: 92vh;
   border: 1px solid black;
 }
+
 .right-space {
   width: 20vw;
   float: right;
@@ -53,9 +94,10 @@ const ideas = ref([
   height: 92vh;
   border: 1px solid black;
 }
+
 .sidebar-container {
   width: 30%;
-  background-color: var(--sidebar-color);
+  background-color: #b3b3b3;
   border: 1px solid black;
 }
 
@@ -75,5 +117,16 @@ const ideas = ref([
   display: flex;
   justify-content: center;
   height: 92vh;
+}
+.stats-container {
+  margin-top: 20px; /* Space between numbers */
+  text-align: center; 
+}
+.centered-number {
+  margin: 10px 0; /* Space between numbers */
+}
+
+.spacer {
+  height: 20rem; 
 }
 </style>
