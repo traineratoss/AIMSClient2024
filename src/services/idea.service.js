@@ -63,3 +63,5 @@ async function createIdea(title, status, text, categoryList, username) {
 }
 
 export {loadPagedIdeas, createIdea}
+
+export {loadPagedIdeas, createIdea}
