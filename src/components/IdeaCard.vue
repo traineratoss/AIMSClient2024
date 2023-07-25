@@ -1,10 +1,9 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import {
   loadComments,
   postComment,
-  postReply,
 } from "../services/comment.service";
 import { getCurrentUser } from "../services/user_service";
 
@@ -89,6 +88,7 @@ function toggle() {
       :key="comment.id"
     >
       <CustomComment
+        :elapsedTime="comment.elapsedTime"
         :isReplay="false"
         :parentId="comment.id"
         :text="comment.commentText"
@@ -103,6 +103,7 @@ function toggle() {
         v-for="commentReply in comment.replies"
       >
         <CustomComment
+          :elapsedTime="commentReply.elapsedTime"
           :isReplay="true"
           :text="commentReply.commentText"
           :userName="commentReply.username"

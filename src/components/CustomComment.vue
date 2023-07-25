@@ -11,7 +11,8 @@ const props = defineProps({
   ideaId: "",
   hasReplies: "",
   parentId:"",
-  isReplay:""
+  isReplay:"",
+  elapsedTime:""
 });
 
 let currentUser=ref('')
@@ -34,6 +35,8 @@ function showReplies(){
   <div class="comment-container">
     <p>
       <i>{{ props.userName }}</i>
+      <br>
+      <i>{{ props.elapsedTime }}</i>
     </p>
     <div class="item">{{ props.text }}</div>
     <div class="input-container"  v-if="!props.isReplay">
