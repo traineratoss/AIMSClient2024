@@ -10,7 +10,7 @@ const props = defineProps({
   <button 
     class="customButton" 
     :id="id"
-    :style="{ backgroundColor: isActive ? 'var(--selected-color)' : 'transparent' }"
+    :style="{ backgroundColor: isActive ? 'var(--selected-color)' : '' }"
     >
     <slot></slot>
   </button>
