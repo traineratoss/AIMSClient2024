@@ -43,4 +43,23 @@ async function getUser(pageSize, pageNumber, sortCategory) {
   return json;
 }
 
-export { loadPagedIdeas, getCategory, getUser };
+async function createIdea(title, status, text, categoryList, username) {
+  const response = await fetch(API_URL + "/createIdea?username=" + username, {
+    method: "POST",
+    body: JSON.stringify({
+      title: title,
+      status: status,
+      text: text,
+      categoryList: categoryList
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+
+  const data = await response.json();
+  const content = await data.content;
+  console.log(data);
+}
+
+export {loadPagedIdeas, createIdea}

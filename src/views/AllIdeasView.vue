@@ -17,7 +17,7 @@
           <div class="spacer"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
-            <p class="centered-number">{{ ideasPerUser }}</p>
+            <p class="centered-number">{{ roundedNumber(ideasPerUser) }}</p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
@@ -48,9 +48,9 @@ import IdeaCard from "../components/IdeaCard.vue";
 
 const ideas = ref([
   { text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
-  { text: "Idea 2", userId: 2, isPublic: false, isImplemented: false, comments: 1, replies: 1 },
+  { text: "Idea 2", userId: 3, isPublic: true, isImplemented: false, comments: 1, replies: 1 },
   { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
-  { text: "Idea 4", userId: 3, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
+  { text: "Idea 4", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
 ]);
 
 const totalIdeas = computed(() => ideas.value.length);
@@ -102,6 +102,10 @@ const implementationPercentage = computed(() => {
   }
   return (implementedIdeasCount.value / publicIdeasCount.value) * 100;
 });
+
+const roundedNumber = (number) => {
+  return Math.round(number * 100) / 100;
+};
 
 watch(ideas, () => {
   calculateStatistics();
