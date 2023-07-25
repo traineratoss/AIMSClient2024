@@ -5,44 +5,30 @@
 
  -->
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
+import { getCategory, getUser } from "../services/idea.service";
 
 const statusOptions = ["Open", "Implemented", "Draft"];
 const categoryOptions = [];
-// const userOptions = [];
-// const title = ref("");
-// const text = ref("");
-// const selectedStatus = ref(statusOptions[0]);
+const userOptions = [];
 const inputTitle = ref("");
 const inputText = ref("");
 const selectedDateFrom = ref("");
 const selectedDateTo = ref("");
-// const fetchCategories = async () => {
-//     try {
-//         const response = await fetch('');
-//         const data = await response.json();
-//         categoryOptions.value = data;
-//     } catch (error) {
-//         console.error(" eroare ", error);
-//     }
-// };
 
-// const fetchUsers = async () => {
-//     try {
-//         const response = await fetch('');
-//         const data = await response.json();
-//         userOptions.value = data;
-//     } catch (error) {
-//         console.error("", error);
-//     }
-// };
-
-// onMounted(() => {
-//     fetchCategories();
-//     fetchUsers();
-// });
+async function hh() {
+  // const data = await getCategory();
+  // categoryOptions.value = data;
+  // console.log(categoryOptions.value);
+  const pageSize = 1;
+  const pageNumber = 0;
+  const sortCategory = "username";
+  const data1 = await getUser(pageSize, pageNumber, sortCategory);
+  userOptions.value = data1;
+  console.log(data1);
+}
 </script>
 
 <template>
@@ -50,14 +36,14 @@ const selectedDateTo = ref("");
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
       <span class="title"> Title </span>
-      <CustomInput v-model="inputTitle" class="title-input"/>
+      <CustomInput v-model="inputTitle" class="title-input" />
 
       <span class="text">Text:</span>
-      <CustomInput v-model="inputText" class="text-input"  />
+      <CustomInput v-model="inputText" class="text-input" />
 
       <span class="status">Status:</span>
-      <select v-model="selectedStatus" class="status-select" >
-        <option v-for="status in statusOptions" :key="status" :value="status" >
+      <select v-model="selectedStatus" class="status-select">
+        <option v-for="status in statusOptions" :key="status" :value="status">
           {{ status }}
         </option>
       </select>
@@ -67,7 +53,7 @@ const selectedDateTo = ref("");
 
       <span class="user">User:</span>
       <select name="" id="" class="user-select">
-        <option v-for="user in userOptionsOptions" :value="user">
+        <option v-for="user in userOptions" :value="user">
           {{ user }}
         </option>
       </select>
@@ -78,14 +64,22 @@ const selectedDateTo = ref("");
           </legend>
           <div class="date-input">
             <span class="from-date"> From: </span>
-            <CustomInput v-model="selectedDateFrom" type="date" class="form-input"/>
+            <CustomInput
+              v-model="selectedDateFrom"
+              type="date"
+              class="form-input"
+            />
             <span class="to-date"> To: </span>
-            <CustomInput v-model="selectedDateTo" type="date" class="to-input"/>
+            <CustomInput
+              v-model="selectedDateTo"
+              type="date"
+              class="to-input"
+            />
           </div>
         </fieldset>
       </div>
 
-      <button class="filter-button">filter</button>
+      <button class="filter-button" @click="hh">filter</button>
     </div>
   </div>
 </template>
