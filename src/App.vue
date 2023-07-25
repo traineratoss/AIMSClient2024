@@ -72,11 +72,13 @@ nav a:first-of-type {
 
 <script setup>
 import TestNavbar from "./components/TestNavbar.vue";
+import CustomNavBar from './components/CustomNavBar.vue';
 </script>
 
 <template>
   <div class="app-container">
-    <TestNavbar />
+    <!-- <TestNavbar /> -->
+    <CustomNavBar/>
     <router-view />
   </div>
   <!-- <div id="app">
