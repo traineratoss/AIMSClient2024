@@ -39,7 +39,7 @@ function isPageWithIndexActive(index) {
 
 
 <template>
-    <nav>
+    <nav id="navbar">
         <CompanyLogo
         />
         <div class="options">
@@ -134,6 +134,10 @@ nav {
     background-color: transparent;
     width: auto;
     height: auto;
+}
+
+.nav-button:hover {
+    background-color: var(--selected-color);
 }
 
 #dashboard {

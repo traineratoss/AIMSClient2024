@@ -128,4 +128,5 @@ input[type="checkbox"] {
 .error-message-visible {
   opacity: 1;
 }
+
 </style>
