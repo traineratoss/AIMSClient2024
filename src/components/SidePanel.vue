@@ -11,24 +11,25 @@ import CustomDropDown from "../components/CustomDropDown.vue";
 import { getCategory, getUser } from "../services/idea.service";
 
 const statusOptions = ["Open", "Implemented", "Draft"];
-const categoryOptions = [];
-const userOptions = [];
+const categoryOptions = ref([]);
+const userOptions = ref([]);
 const inputTitle = ref("");
 const inputText = ref("");
 const selectedDateFrom = ref("");
 const selectedDateTo = ref("");
 
-async function hh() {
-  // const data = await getCategory();
-  // categoryOptions.value = data;
-  // console.log(categoryOptions.value);
-  const pageSize = 1;
-  const pageNumber = 0;
-  const sortCategory = "username";
-  const data1 = await getUser(pageSize, pageNumber, sortCategory);
-  userOptions.value = data1;
-  console.log(data1);
-}
+onMounted(async () => {
+  //getting all the available categories on mount
+  const dataCategory = await getCategory();
+  const categoryNames = dataCategory.map((category) => category.text);
+  categoryOptions.value = categoryNames;
+
+  //getting all the available users on mount
+  const dataUser = await getUser(2, 0, "username");
+  const usernames = dataUser.map((user) => user.username);
+  userOptions.value = usernames;
+  console.log(userOptions.value);
+});
 </script>
 
 <template>
@@ -49,7 +50,10 @@ async function hh() {
       </select>
 
       <span class="category">Category:</span>
-      <CustomDropDown class="category-select"></CustomDropDown>
+      <CustomDropDown
+        class="category-select"
+        :variants="categoryOptions"
+      ></CustomDropDown>
 
       <span class="user">User:</span>
       <select name="" id="" class="user-select">

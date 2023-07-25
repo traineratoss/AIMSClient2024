@@ -32,7 +32,6 @@ async function loadPagedIdeas(
 async function getCategory() {
   const response = await fetch(`${API_URL}/categories`);
   const json = await response.json();
-  console.log(json);
   return json;
 }
 async function getUser(pageSize, pageNumber, sortCategory) {
@@ -40,7 +39,8 @@ async function getUser(pageSize, pageNumber, sortCategory) {
     `${API_URL}/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`
   );
   const json = await response.json();
-  return json;
+  const content = await json.content;
+  return content;
 }
 
 async function createIdea(title, status, text, categoryList, username) {
@@ -50,7 +50,7 @@ async function createIdea(title, status, text, categoryList, username) {
       title: title,
       status: status,
       text: text,
-      categoryList: categoryList
+      categoryList: categoryList,
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
