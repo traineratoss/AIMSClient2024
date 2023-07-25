@@ -1,11 +1,13 @@
 <script setup>
 import CarouselImage from "../components/CarouselImage.vue";
 import CustomButton from "../components/CustomButton.vue";
-import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import { createIdea } from "../services/idea.service";
 import { watch, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import router from "../router";
+
 
 const inputValue = ref("");
 const statusValue = ref("");
@@ -45,43 +47,68 @@ async function createIdeaFunction() {
     console.log(categoriesValue.value);
     const data = await createIdea(inputValue.value, statusValue.value.toUpperCase(), textValue.value, categoryList.value,'AdminPopescu1');
 }
+
+const disableFields = useRoute().query.disableFields === 'true';
+const fieldsDisabled = ref(disableFields);
+    
+const showDeletePopup = useRoute().query.showDeletePopup === 'true';
+const deletePopup = ref(showDeletePopup);
+
+const closePopup = () => {
+  router.replace({ query: {} });
+};
+
+const deleteIdea = () => {
+  // Perform the delete logic here
+  alert('Idea deleted!'); 
+  closePopup();
+};
+
+
+
 </script>
 
 <template>
     <div class="create-idea-container">
-        <div class="idea">
+        <div class="idea" >
             <label for="title-idea" class="label">Title:</label>
-            <CustomInput v-model="inputValue" />   
+            <CustomInput v-model="inputValue" :disabled="fieldsDisabled" />   
         </div>
         <div class="idea">
          <label for="status-idea" class="label">Status:</label>
-            <select v-model="statusValue" name="status-idea" id="status-idea" class="label">
-                <option value="open">OPEN</option>
-                <option value="draft">DRAFT</option>
-                <option value="implemented">IMPLEMENTED</option>
+            <select v-model="statusValue" name="status-idea" id="status-idea" class="input-width" :disabled="fieldsDisabled">
+                <option value="open">Open</option>
+                <option value="draft">Draft</option>
+                <option value="implemented">Implemented</option>
             </select> 
         </div>
-        <div class="idea">
-            <label for="category-idea" class="label">Category:</label>
-            <CustomDropDown @update:selectedCategories="handleSelectedCategories"></CustomDropDown>
+        <div class="idea" >
+            <label for="category-idea" class="label" >Category:</label>
+            <CustomDropDown @update:selectedCategories="handleSelectedCategories" :disabled="fieldsDisabled"></CustomDropDown>
         </div>
 
         <div class="idea-text">
             <label for="category-idea" class="label-text">Idea text:</label>
-            <textarea v-model="textValue"></textarea>
+            <textarea v-model="textValue" :disabled="fieldsDisabled"></textarea>
         </div>
         <div class="idea">
-             <CarouselImage :images="slideImages" />
-                    
-            
+             <CarouselImage :images="slideImages" :disabled="fieldsDisabled"/>
         </div>
-        <div class="add-image">
-            <input type="file" id="upload" hidden/>
-            <label for="upload" class="add-image-idea">Choose file</label>
+        <div class="add-image" >
+            <input type="file" id="upload" hidden :disabled="fieldsDisabled"/>
+            <label for="upload" class="add-image-idea" >Choose Image</label>
            
         </div>
         <div>
-            <CustomButton id="create-idea" @click="createIdeaFunction"> Create Idea</CustomButton>
+            <CustomButton id="create-idea" @click="createIdeaFunction" :disabled="fieldsDisabled"> Create Idea</CustomButton>
+        </div>
+
+        <div v-if="deletePopup" class="popup idea">
+            <dialog open class="popup-content">
+                <span class="close-popup" @click="closePopup">&times;</span>
+                <p>Delete Idea?</p>
+                <button @click="deleteIdea">Confirm</button>
+            </dialog>
         </div>
 
     </div>
@@ -118,6 +145,9 @@ async function createIdeaFunction() {
     .label{
         padding-right: 20px;
     }
+    .input-width{
+        width: 190px;
+    }
     .idea-text{
         display: flex;
         align-items: center;
@@ -142,5 +172,36 @@ async function createIdeaFunction() {
     .add-image{
         padding-bottom: 10px;
     }
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popup-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+  text-align: center;
+}
+
+.close-popup {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-popup:hover {
+  color: #000;
+}
 
 </style>

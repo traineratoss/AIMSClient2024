@@ -1,6 +1,8 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-import { ref, onMounted } from "vue";
+
+import { ref, defineEmits , onMounted} from "vue";
+import router from "../router";
 import {
   loadComments,
   postComment,
@@ -31,11 +33,23 @@ let showComments = ref(false);
 let someVariable = ref(false);
 let currentUser = ref("");
 
+
 function toggle() {
   console.log("function was accesed");
   someVariable.value = !someVariable.value;
   console.log(someVariable);
+};
+
+function redirectToCreateIdeaView(){
+  router.push({ path: '/create-idea', query: { disableFields: true } });
+};
+
+function showDeletePopup(){
+  router.push({ path: '/create-idea', query: { showDeletePopup: true }});
 }
+
+
+
 </script>
 
 <template>
@@ -59,13 +73,14 @@ function toggle() {
           </select>
         </div>
       </div>
-
+        
       <div class="buttons-container">
         <button class="edit-button" @click="editIdea">Edit</button>
-        <router-link :to="`/viewidea`" class="view-button"> View </router-link>
-        <router-link :to="`/delete`" class="delete-button">
+        <button @click="redirectToCreateIdeaView" class="view-button">View</button>
+        <!-- <router-link :to="`/create-idea`" class="delete-button">
           Delete
-        </router-link>
+        </router-link> -->
+        <button @click="showDeletePopup" class="delete-button">Delete</button>
       </div>
       <img
         class="idea-image"
@@ -132,7 +147,7 @@ function toggle() {
   position: relative;
   background-color: white;
   width: 30vw;
-  height: 45vh;
+  height: 40vh;
   border: 7px solid #c8c0c0;
 }
 .author-info {

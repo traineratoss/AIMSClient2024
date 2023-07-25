@@ -1,5 +1,5 @@
 <script setup>
-import { ref,onMounted } from 'vue';
+import { ref,onMounted,defineProps } from 'vue';
 
 const emit = defineEmits(['update:selectedCategories']);
 
@@ -9,7 +9,7 @@ const dropdown = ref(null);
 const isDropdownVisible = ref(false);
   
 const showDropdown = () => {
-    isDropdownVisible.value = true;
+    isDropdownVisible.value = true;  
 };
 
 const handleCheckboxChange = () => {
@@ -33,12 +33,14 @@ const onMouseLeave = () => {
 onMounted(() => {
   comboInput.value.addEventListener('click', showDropdown);
 });
+
+const { disabled } = defineProps(['disabled']);
 </script>
 
 <template>
   <div class="combo-box" >
-          <input type="text" ref="comboInput"  class="input-dropdown" placeholder="Select category">
-          <div v-show="isDropdownVisible" 
+          <input type="text" ref="comboInput"  class="input-dropdown" placeholder="Select category" :disabled="disabled">
+          <div v-show="isDropdownVisible && !disabled" 
                 class="dropdown" 
                 ref="dropdown" 
                 @mouseenter="onMouseEnter"
@@ -81,7 +83,8 @@ onMounted(() => {
 
   cursor: pointer; 
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
   width: 185px;
 }
 
