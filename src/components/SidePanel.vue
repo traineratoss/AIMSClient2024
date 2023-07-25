@@ -85,7 +85,7 @@ const selectedDateTo = ref("");
         </fieldset>
       </div>
 
-      <button class="filter-button">filter</button>
+      <button class="filter-button">Filter</button>
     </div>
   </div>
 </template>
