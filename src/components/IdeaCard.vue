@@ -25,7 +25,7 @@ onMounted(async () => {
 });
 
 async function loadIdeaComments(){
-  comments.value = await loadComments(10, 0, "id", props.ideaId)
+  comments.value = await loadComments(100, 0, "id", props.ideaId)
 }
 
 let comments = ref([]);
@@ -55,13 +55,13 @@ function toggleComments(){
 
 async function refreshCommentList(){
   toggleComments()
-  console.log("order has been rcieved")
+  console.log("order has been recieved")
   loadIdeaComments()
   toggleComments()
 }
 
-async function loadCommentReplies(commentId){
-  commentReplies.value = await loadReplies(commentId)
+async function loadCommentReplies(comment){
+  comment.replies = await loadReplies(comment.id)
   console.log("doamne ajuta",commentReplies.value)
 }
 
@@ -125,13 +125,13 @@ async function loadCommentReplies(commentId){
         :userName="comment.username"
         :hasReplies="comment.hasReplies"
         @showReplies="toggle()"
-        @loadComments="refreshCommentList()"
+        @loadReplies="loadCommentReplies(comment)"
       />
 
       <div
         class="reply-container"
         v-if="someVariable"
-        v-for="commentReply in commentReplies"
+        v-for="commentReply in comment.replies"
       >
         <CustomComment
           :elapsedTime="commentReply.elapsedTime"

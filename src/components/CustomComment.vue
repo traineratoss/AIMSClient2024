@@ -15,7 +15,7 @@ const props = defineProps({
   elapsedTime:""
 });
 
-const emits = defineEmits(['showReplies','loadComments']);
+const emits = defineEmits(['showReplies','loadComments','loadReplies']);
 
 let currentUser=ref('')
 let commentReplies=ref([])
@@ -36,8 +36,8 @@ function loadParentComments(){
 }
 
 async function loadCommentReplies(){
-  commentReplies.value = await loadReplies(props.parentId)
-  console.log(commentReplies.value)
+  console.log('incercam sa trimitem reply')
+  emits('loadReplies')
 } 
 
 </script>
