@@ -2,12 +2,17 @@
 import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from '../components/CustomInput.vue';
+import { sendNewPassword } from '../services/user_service.js';
 import { ref } from 'vue';
 
-const usernameText = ref('');
+const usernameOrEmailText = ref('');
 
 function requestNewPassword() {
-  console.log('username/email', usernameText.value);
+  sendNewPassword(usernameOrEmailText.value)
+    .catch(error => {
+      usernameOrEmailText.value = '';
+    });
+  console.log('mail sent');
 }
 </script>
 
@@ -23,7 +28,7 @@ function requestNewPassword() {
         type="text"
         id="username-email-input"
         placeholder="Username/E-mail"
-        v-model:model-value="usernameText"
+        v-model:model-value="usernameOrEmailText"
         @keydown.enter="requestNewPassword"
       />
     </div>

@@ -3,22 +3,13 @@ import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
 import { ref } from 'vue';
-import { 
-  getUserByUsername,
-  getUserByEmail, 
-  postUser, 
-  updateUser, 
-  getAllUsers, 
-  getAllUserByUsername, 
-  getAllUserByIsActive, 
-  sendEmail, 
-  changePassword,
-  loginUser
-} from "../services/user_service.js"
+import { loginUser } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
+import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 
 const usernameOrEmailText = ref('');
 const passwordText = ref('');
+const showErrorMessage = ref(false);
 
 function redirectToRegister() {
   router.push("/register");
@@ -55,6 +46,7 @@ function login() {
       .catch(error => {
           usernameOrEmailText.value = '';
           passwordText.value = '';
+          showErrorMessage.value = true;
       });
 }
 
@@ -67,6 +59,10 @@ function login() {
     <div id="profile-img">
       <i class="fa-regular fa-circle-user" id="user-icon"> </i>
     </div>
+    <InvalidInputMessage 
+      message="Incorrect username or password"
+      :class="{ 'error-message-visible': showErrorMessage }"
+    />
     <div>
       <CustomInput
         type="text"
@@ -107,6 +103,10 @@ function login() {
   gap: 20px;
   position: relative;
   top: 80px;
+}
+
+.error-message-visible {
+  opacity: 1;
 }
 
 input {
