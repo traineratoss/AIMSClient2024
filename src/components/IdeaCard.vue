@@ -5,6 +5,7 @@ import { ref, defineEmits , onMounted} from "vue";
 import router from "../router";
 import {
   loadComments,
+  loadReplies,
   postComment,
 } from "../services/comment.service";
 import { getCurrentUser } from "../services/user_service";
@@ -32,7 +33,7 @@ let commentText = ref([]);
 let showComments = ref(false);
 let someVariable = ref(false);
 let currentUser = ref("");
-
+let commentReplies = ref([])
 
 function toggle() {
   console.log("function was accesed");
@@ -48,14 +49,28 @@ function showDeletePopup(){
   router.push({ path: '/create-idea', query: { showDeletePopup: true }});
 }
 
+function toggleComments(){
+  showComments.value = !showComments.value 
+}
 
+async function refreshCommentList(){
+  toggleComments()
+  console.log("order has been rcieved")
+  loadIdeaComments()
+  toggleComments()
+}
+
+async function loadCommentReplies(commentId){
+  commentReplies.value = await loadReplies(commentId)
+  console.log("doamne ajuta",commentReplies.value)
+}
 
 </script>
 
 <template>
   <div class="container">
     <div class="idea-card">
-      <button @click="showComments = !showComments ;loadIdeaComments()" class="showComments">
+      <button @click="toggleComments() ; loadIdeaComments()" class="showComments">
         ...
       </button>
       <div class="something">
@@ -110,12 +125,13 @@ function showDeletePopup(){
         :userName="comment.username"
         :hasReplies="comment.hasReplies"
         @showReplies="toggle()"
+        @loadComments="refreshCommentList()"
       />
 
       <div
         class="reply-container"
         v-if="someVariable"
-        v-for="commentReply in comment.replies"
+        v-for="commentReply in commentReplies"
       >
         <CustomComment
           :elapsedTime="commentReply.elapsedTime"
@@ -141,7 +157,7 @@ function showDeletePopup(){
   max-width: 25vw;
   position: relative;
   left: 18%;
-  margin-bottom: 30px;
+  margin-bottom:10px;
 }
 .idea-card {
   position: relative;
