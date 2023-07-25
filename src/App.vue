@@ -76,7 +76,7 @@ import TestNavbar from "./components/TestNavbar.vue";
 
 <template>
   <div class="app-container">
-    <TestNavbar />
+    <!-- <TestNavbar /> -->
     <router-view />
   </div>
   <!-- <div id="app">
