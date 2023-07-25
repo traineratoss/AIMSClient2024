@@ -30,7 +30,7 @@ async function loadPagedIdeas(
   return content;
 }
 async function getCategory() {
-  const response = await fetch(`${API_URL}/categories`);
+  const response = await fetch(`http://localhost:8080/categories`);
   const json = await response.json();
   return json;
 }

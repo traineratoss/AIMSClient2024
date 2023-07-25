@@ -3,7 +3,7 @@ import { ref, onMounted, defineProps } from "vue";
 
 const emit = defineEmits(["update:selectedCategories"]);
 
-const { variants, disabled } = defineProps({
+const props = defineProps({
   variants: {
     type: Array,
     default: () => [],
@@ -12,9 +12,11 @@ const { variants, disabled } = defineProps({
     type: Boolean,
     default: false,
   },
+  error : {
+    type: Boolean,
+    default: false,
+  }
 });
-
-//const variants = ["Fun", "Food", "Books", "IT"];
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
@@ -32,6 +34,21 @@ const handleCheckboxChange = () => {
   comboInput.value.value = selectedVariants.join(", ");
   emit("update:selectedCategories", selectedVariants);
 };
+
+onMounted(() =>{
+})
+
+const handleInputKeyPress = (event) => {
+  if (event.key === "Enter" && event.target.value !== "") {
+    props.variants.push(event.target.value);
+    comboInput.value.value = "";
+  }
+  const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
+  const selectedVariants = Array.from(checkboxes)
+    .filter((checkbox) => checkbox.checked)
+    .map((checkbox) => checkbox.value);
+  emit("update:selectedCategories", selectedVariants);
+}
 
 const onMouseEnter = () => {
   isDropdownVisible.value = true;
@@ -54,17 +71,19 @@ onMounted(() => {
       type="text"
       ref="comboInput"
       class="input-dropdown"
-      placeholder="Select category"
-      :disabled="disabled"
+      :placeholder="error ? 'Select a category' : ''"
+      :disabled="props.disabled"
+      @keydown.enter="handleInputKeyPress"
+      :class="{error:props.error}"
     />
     <div
-      v-show="isDropdownVisible && !disabled"
+      v-show="isDropdownVisible && !props.disabled"
       class="dropdown"
       ref="dropdown"
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >
-      <label v-for="variant in variants" :key="variant">
+      <label v-for="variant in props.variants" :key="variant">
         <input
           type="checkbox"
           :value="variant"
@@ -80,6 +99,16 @@ onMounted(() => {
 .combo-box {
   position: relative;
   display: inline-block;
+}
+
+.error {
+  border-color: red;
+  border-width: 1.4px; 
+  border-radius: 1px;
+}
+
+.error::placeholder {
+  color: red;
 }
 
 .dropdown {
