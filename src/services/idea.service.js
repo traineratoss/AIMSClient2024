@@ -62,6 +62,4 @@ async function createIdea(title, status, text, categoryList, username) {
   console.log(data);
 }
 
-export {loadPagedIdeas, createIdea}
-
-export {loadPagedIdeas, createIdea}
+export {loadPagedIdeas, createIdea, getCategory, getUser}

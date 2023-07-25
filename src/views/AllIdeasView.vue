@@ -34,9 +34,20 @@
           </div>
         </div>
       </div>
-      <div class="idea-container" v-for="idea in ideas" :key="idea.text">
-        <IdeaCard :title="idea.text" />
-      </div>
+      <div class="idea-container" v-for="idea in paginatedIdeas" :key="idea.text">
+          <IdeaCard :title="idea.text" />
+        </div>
+        <div class="pagination-container">
+          <span
+            class="page-number"
+            v-for="pageNumber in totalPages"
+            :key="pageNumber"
+            :class="{ active: currentPage === pageNumber }"
+            @click="changePage(pageNumber)"
+          >
+            {{ pageNumber }}
+          </span>
+        </div>
     </div>
   </div>
 </template>
@@ -45,6 +56,9 @@
 import { ref, computed, watch } from "vue";
 import SidePanel from "../components/SidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
+
+const ideasPerPage = 2;
+const currentPage = ref(1);
 
 const ideas = ref([
   { text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
@@ -107,6 +121,17 @@ const roundedNumber = (number) => {
   return Math.round(number * 100) / 100;
 };
 
+const paginatedIdeas = computed(() => {
+  const startIndex = (currentPage.value - 1) * ideasPerPage;
+  return ideas.value.slice(startIndex, startIndex + ideasPerPage);
+});
+
+const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
+
+function changePage(pageNumber) {
+  currentPage.value = pageNumber;
+}
+
 watch(ideas, () => {
   calculateStatistics();
 });
@@ -157,11 +182,13 @@ function calculateStatistics() {
 }
 
 .idea-container {
-  width: calc(33.33% - 9vw); /* 33.33% width minus margins on both sides */
-  float: left;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  width: calc(50% - 20px); /* 50% width minus margins on both sides */
+  margin: 10px auto; /* Center the ideas horizontally */
   border: 1px solid black;
-  margin: 2.5vw; /* Adjust the margin as needed */
-  
+  padding: 10px;
 }
 .big-container{
   display: flex;
@@ -184,7 +211,7 @@ function calculateStatistics() {
   width: 80%;
   height: 15px;
   background-color: #fff;
-  margin: 0 auto; /* Centrare pe orizontală */
+  margin: 0 auto; 
   border-radius: 7.5px;
   overflow: hidden;
 }
@@ -193,5 +220,26 @@ function calculateStatistics() {
   height: 100%;
   background-color: #ffa941;
   transition: width 0.3s ease;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.page-number {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 5px 10px; 
+  border: 1px solid #000;
+  border-radius: 999px; 
+  background-color: transparent; 
+  cursor: pointer;
+}
+
+.page-number.active {
+  background-color: #000;
+  color: #fff;
 }
 </style>

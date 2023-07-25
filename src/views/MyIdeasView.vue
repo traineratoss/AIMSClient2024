@@ -87,12 +87,14 @@ function changePage(pageNumber) {
   }
   
   .idea-container {
-  width: calc(50% - 20px); 
-  margin: 10px auto; 
+  display: flex;
+  justify-content: center; /* Centrare pe axa orizontală */
+  align-items: center; /* Centrare pe axa verticală */
+  width: calc(50% - 20px); /* 50% width minus margins on both sides */
+  margin: 10px auto; /* Center the ideas horizontally */
   border: 1px solid black;
   padding: 10px;
 }
-
 .pagination-container {
   display: flex;
   justify-content: flex-end;
@@ -102,8 +104,10 @@ function changePage(pageNumber) {
 .page-number {
   display: inline-block;
   margin: 0 5px;
-  padding: 5px;
+  padding: 5px 10px; 
   border: 1px solid #000;
+  border-radius: 999px; 
+  background-color: transparent; 
   cursor: pointer;
 }
 
