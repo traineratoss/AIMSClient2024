@@ -147,7 +147,7 @@ function showDeletePopup(){
   position: relative;
   background-color: white;
   width: 30vw;
-  height: 45vh;
+  height: 40vh;
   border: 7px solid #c8c0c0;
 }
 .author-info {
