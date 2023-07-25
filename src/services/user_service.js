@@ -110,7 +110,9 @@ export {
     getAllUserByIsActive, 
     sendEmail, 
     changePassword,
-    loginUser 
+    loginUser,
+    getCurrentUser,
+    setCurrentUser
 }
 
 
