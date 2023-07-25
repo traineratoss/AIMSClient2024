@@ -1,8 +1,22 @@
-
 const API_URL = 'http://localhost:8080/users'; 
 
-async function getUser(username){
-    const response = await fetch(`${API_URL}?username=${username}`);
+async function getUserByUsername(username){
+    const response = await fetch(`${API_URL}/username?username=${username}`);
+    const json = await response.json();
+    return json;
+}
+
+async function getUserByEmail(email) {
+    const response = await fetch(`${API_URL}/email?email=${email}`);
+    const json = await response.json();
+    return json;
+}
+
+async function loginUser(username, password) {
+    const response = await fetch(`${API_URL}/login?username=${username}`, {
+        method: 'POST',
+        body: password
+    });
     const json = await response.json();
     return json;
 }
@@ -87,7 +101,8 @@ function setCurrentUser(username){
 
 
 export { 
-    getUser, 
+    getUserByEmail,
+    getUserByUsername, 
     postUser, 
     updateUser, 
     getAllUsers, 
@@ -95,8 +110,7 @@ export {
     getAllUserByIsActive, 
     sendEmail, 
     changePassword,
-    getCurrentUser,
-    setCurrentUser 
+    loginUser 
 }
 
 

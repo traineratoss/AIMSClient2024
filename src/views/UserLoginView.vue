@@ -4,18 +4,20 @@ import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
 import { ref } from 'vue';
 import { 
-  getUser, 
+  getUserByUsername,
+  getUserByEmail, 
   postUser, 
   updateUser, 
   getAllUsers, 
   getAllUserByUsername, 
   getAllUserByIsActive, 
   sendEmail, 
-  changePassword 
+  changePassword,
+  loginUser
 } from "../services/user_service.js"
 import CustomInput from "../components/CustomInput.vue";
 
-const usernameText = ref('');
+const usernameOrEmailText = ref('');
 const passwordText = ref('');
 
 function redirectToRegister() {
@@ -46,10 +48,14 @@ showUserDetails("username1",
                 });
 
 function login() {
-  console.log('username/email', usernameText.value);
-  console.log('password', passwordText.value);
-  usernameText.value = '';
-  passwordText.value = '';
+  loginUser(usernameOrEmailText.value, passwordText.value)
+      .then(res => {
+        router.push('/my');
+      })
+      .catch(error => {
+          usernameOrEmailText.value = '';
+          passwordText.value = '';
+      });
 }
 
 </script>
@@ -66,7 +72,7 @@ function login() {
         type="text"
         id="username-email-input"
         placeholder="Username/E-mail"
-        v-model:model-value="usernameText"
+        v-model:model-value="usernameOrEmailText"
       />
     </div>
     <div>
