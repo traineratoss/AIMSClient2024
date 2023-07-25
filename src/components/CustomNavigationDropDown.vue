@@ -1,17 +1,21 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { defineProps } from "vue";
+import router from "../router";
 
 const props = defineProps({
-    element: {
-        type: Object,
-        required: true,
-    }
+  element: {
+    type: Object,
+    required: true,
+    validator: (value) => {
+      return value.hasOwnProperty("name") && value.hasOwnProperty("route");
+    },
+  },
 });
 
 function onClickHandler() {
-    const router = useRouter();
-    router.push(props.element.route)
+    console.log(props.element.route);
+    // router.push('/app')
 }
 
 </script>
@@ -19,7 +23,7 @@ function onClickHandler() {
 
 
 <template>
-    <div class="main-container" v-for="element in props.elements" :key="element">
+    <div class="main-container" v-for="element in element" :key="element">
         <button
             @click="onClickHandler"
         > 

@@ -37,15 +37,20 @@ function isPageWithIndexActive(index) {
 }
 
 function onMouseEnter() {
-
+    
 }
 
-const props = defineProps({
-  dashboardElement: {
-    name: "All users",
-    route: "/app",
-  },
-});
+
+ const dashboardElements = [
+    {
+        name: "All users",
+        route: "/admin-dashboard"
+    },
+    {
+        name: "Statistics",
+        route: "/app"
+    }
+]
 
 </script>
 
@@ -80,12 +85,14 @@ const props = defineProps({
                         :is-active=isPageWithIndexActive(3)
                         >
                         Dashboard <i class="fa-solid fa-caret-down fa-xl"></i>
-                        <CustomNavigationDropDown
-                        ></CustomNavigationDropDown>
+                        
 
                         
                     </CustomButton>
                     <div class="dropdown-content">
+                        <CustomNavigationDropDown
+                        :element="dashboardElements">
+                        </CustomNavigationDropDown>
                     </div>
                 </div>
             </div>
@@ -175,6 +182,10 @@ nav {
 
 #search-an-idea {
     padding: 2.5px;
+}
+
+.dropdown-content {
+    position: absolute;
 }
 
 </style>
