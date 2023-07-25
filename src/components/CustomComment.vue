@@ -1,6 +1,10 @@
 <script setup>
-import { ref,onMounted } from "vue";
-import { loadComments, postReply,loadReplies } from "../services/comment.service";
+import { ref, onMounted } from "vue";
+import {
+  loadComments,
+  postReply,
+  loadReplies,
+} from "../services/comment.service";
 import { getCurrentUser } from "../services/user_service";
 
 const props = defineProps({
@@ -10,59 +14,68 @@ const props = defineProps({
   userId: "",
   ideaId: "",
   hasReplies: "",
-  parentId:"",
-  isReplay:"",
-  elapsedTime:""
+  parentId: "",
+  isReplay: "",
+  elapsedTime: "",
 });
 
-const emits = defineEmits(['showReplies','loadComments','loadReplies']);
+const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
 
-let currentUser=ref('')
-let commentReplies=ref([])
+let currentUser = ref("");
+let commentReplies = ref([]);
 
 onMounted(async () => {
   currentUser.value = getCurrentUser();
   console.log(currentUser.value.username);
 });
 
-function showReplies(){
-    console.log("Emit button was pressed from CustomComment")
-    emits('showReplies')
-} 
-
-function loadParentComments(){
-  console.log("loading order has been sent")
-  emits('loadComments')
+function showReplies() {
+  console.log("Emit button was pressed from CustomComment");
+  emits("showReplies");
 }
 
-async function loadCommentReplies(){
-  console.log('incercam sa trimitem reply')
-  emits('loadReplies')
-} 
+function loadParentComments() {
+  console.log("loading order has been sent");
+  emits("loadComments");
+}
 
+async function loadCommentReplies() {
+  console.log("incercam sa trimitem reply");
+  emits("loadReplies");
+}
 </script>
 
 <template>
   <div class="comment-container">
     <p>
       <i>{{ props.userName }}</i>
-      <br>
+      <br />
       <i>{{ props.elapsedTime }}</i>
     </p>
     <div class="item">{{ props.text }}</div>
-    <div class="input-container"  v-if="!props.isReplay">
-      <input type="text" v-model="commentText"/>
-        <button @click="postReply(currentUser.username, props.parentId, commentText)
-                    ;loadParentComments()
-        ">
-          Post reply
-        </button>
-    </div>
- 
-    <div v-if="props.hasReplies">
-        <button class="showReplies" @click="showReplies();loadCommentReplies()">...</button>
+    <div class="input-container" v-if="!props.isReplay">
+      <input type="text" v-model="commentText" />
+      <button
+        @click="
+          postReply(currentUser.username, props.parentId, commentText);
+          loadParentComments();
+        "
+      >
+        Post reply
+      </button>
     </div>
 
+    <div v-if="props.hasReplies">
+      <button
+        class="showReplies"
+        @click="
+          showReplies();
+          loadCommentReplies();
+        "
+      >
+        ...
+      </button>
+    </div>
   </div>
 </template>
 
@@ -82,7 +95,7 @@ async function loadCommentReplies(){
 
 .showReplies {
   position: relative;
-  left:180px;
+  left: 180px;
   top: 5px;
   font-size: xx-large;
   border: none;

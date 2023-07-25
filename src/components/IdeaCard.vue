@@ -1,7 +1,7 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
 
-import { ref, defineEmits , onMounted} from "vue";
+import { ref, defineEmits, onMounted } from "vue";
 import router from "../router";
 import {
   loadComments,
@@ -24,8 +24,8 @@ onMounted(async () => {
   console.log(currentUser.value.username);
 });
 
-async function loadIdeaComments(){
-  comments.value = await loadComments(100, 0, "id", props.ideaId)
+async function loadIdeaComments() {
+  comments.value = await loadComments(100, 0, "id", props.ideaId);
 }
 
 let comments = ref([]);
@@ -33,44 +33,49 @@ let commentText = ref([]);
 let showComments = ref(false);
 let someVariable = ref(false);
 let currentUser = ref("");
-let commentReplies = ref([])
+let commentReplies = ref([]);
 
 function toggle() {
   console.log("function was accesed");
   someVariable.value = !someVariable.value;
   console.log(someVariable);
-};
-
-function redirectToCreateIdeaView(){
-  router.push({ path: '/create-idea', query: { disableFields: true } });
-};
-
-function showDeletePopup(){
-  router.push({ path: '/create-idea', query: { showDeletePopup: true }});
 }
 
-function toggleComments(){
-  showComments.value = !showComments.value 
+function redirectToCreateIdeaView() {
+  router.push({ path: "/create-idea", query: { disableFields: true } });
 }
 
-async function refreshCommentList(){
-  toggleComments()
-  console.log("order has been recieved")
-  loadIdeaComments()
-  toggleComments()
+function showDeletePopup() {
+  router.push({ path: "/create-idea", query: { showDeletePopup: true } });
 }
 
-async function loadCommentReplies(comment){
-  comment.replies = await loadReplies(comment.id)
-  console.log("doamne ajuta",commentReplies.value)
+function toggleComments() {
+  showComments.value = !showComments.value;
 }
 
+async function refreshCommentList() {
+  toggleComments();
+  console.log("order has been recieved");
+  loadIdeaComments();
+  toggleComments();
+}
+
+async function loadCommentReplies(comment) {
+  comment.replies = await loadReplies(comment.id);
+  console.log("doamne ajuta", commentReplies.value);
+}
 </script>
 
 <template>
   <div class="container">
     <div class="idea-card">
-      <button @click="toggleComments() ; loadIdeaComments()" class="showComments">
+      <button
+        @click="
+          toggleComments();
+          loadIdeaComments();
+        "
+        class="showComments"
+      >
         ...
       </button>
       <div class="something">
@@ -88,10 +93,12 @@ async function loadCommentReplies(comment){
           </select>
         </div>
       </div>
-        
+
       <div class="buttons-container">
         <button class="edit-button" @click="editIdea">Edit</button>
-        <button @click="redirectToCreateIdeaView" class="view-button">View</button>
+        <button @click="redirectToCreateIdeaView" class="view-button">
+          View
+        </button>
         <!-- <router-link :to="`/create-idea`" class="delete-button">
           Delete
         </router-link> -->
@@ -157,7 +164,7 @@ async function loadCommentReplies(comment){
   max-width: 25vw;
   position: relative;
   left: 18%;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 .idea-card {
   position: relative;
