@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/ideas";
+const API_URL = "http://localhost:8080";
 /*
 FlorinCP:
 
@@ -7,7 +7,12 @@ pageNumber = numarul pagini , 0 prima pagina si asa mai departe
 sortCategory = categoria dupa care se face sortarea
 sortDirection = cum vrei sa sortezi , ASC sau DSC
 */
-async function loadPagedIdeas(pageSize, pageNumber, sortCategory, sortDirection) {
+async function loadPagedIdeas(
+  pageSize,
+  pageNumber,
+  sortCategory,
+  sortDirection
+) {
   const response = await fetch(
     API_URL +
       "/getAllIdeas/page?pageSize=" +
@@ -24,6 +29,19 @@ async function loadPagedIdeas(pageSize, pageNumber, sortCategory, sortDirection)
   const content = await data.content;
   return content;
 }
+async function getCategory() {
+  const response = await fetch(`${API_URL}/categories`);
+  const json = await response.json();
+  return json;
+}
+async function getUser(pageSize, pageNumber, sortCategory) {
+  const response = await fetch(
+    `${API_URL}/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`
+  );
+  const json = await response.json();
+  const content = await json.content;
+  return content;
+}
 
 async function createIdea(title, status, text, categoryList, username) {
   const response = await fetch(API_URL + "/createIdea?username=" + username, {
@@ -32,7 +50,7 @@ async function createIdea(title, status, text, categoryList, username) {
       title: title,
       status: status,
       text: text,
-      categoryList: categoryList
+      categoryList: categoryList,
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
@@ -44,4 +62,4 @@ async function createIdea(title, status, text, categoryList, username) {
   console.log(data);
 }
 
-export {loadPagedIdeas, createIdea}
+export {loadPagedIdeas, createIdea, getCategory, getUser}

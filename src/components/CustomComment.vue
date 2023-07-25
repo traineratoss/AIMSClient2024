@@ -11,6 +11,8 @@ const props = defineProps({
   ideaId: "",
   hasReplies: "",
   parentId:"",
+  isReplay:"",
+  elapsedTime:""
 });
 
 let currentUser=ref('')
@@ -20,16 +22,12 @@ onMounted(async () => {
   console.log(currentUser.value.username);
 });
 
-const emits = defineEmits(['showReplies']);
-
-let toggle = ref(false)
-let replyText = ref([])
+const emits = defineEmits(['showReplies','loadComments']);
 
 function showReplies(){
     console.log("Emit button was pressed from CustomComment")
     emits('showReplies')
 } 
-
 
 </script>
 
@@ -37,19 +35,20 @@ function showReplies(){
   <div class="comment-container">
     <p>
       <i>{{ props.userName }}</i>
+      <br>
+      <i>{{ props.elapsedTime }}</i>
     </p>
     <div class="item">{{ props.text }}</div>
-    <input type="text" v-model="commentText" />
+    <div class="input-container"  v-if="!props.isReplay">
+      <input type="text" v-model="commentText"/>
         <button @click="postReply(currentUser.username, props.parentId, commentText)">
           Post reply
         </button>
+    </div>
+ 
     <div v-if="props.hasReplies">
         <button class="showReplies" @click="showReplies()">...</button>
     </div>
-  
-    <!-- <div class="reply-container" v-if="showReplies">
-      <CustomComment :text='"TEST"' :userName='"test"' />
-    </div> -->
 
   </div>
 </template>

@@ -1,15 +1,26 @@
 <script setup>
-import { ref,onMounted } from 'vue';
+import { ref, onMounted, defineProps } from "vue";
 
-const emit = defineEmits(['update:selectedCategories']);
+const emit = defineEmits(["update:selectedCategories"]);
 
-const variants = ['Fun', 'Food', 'Books', 'IT'];
+const { variants, disabled } = defineProps({
+  variants: {
+    type: Array,
+    default: () => [],
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+//const variants = ["Fun", "Food", "Books", "IT"];
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
-  
+
 const showDropdown = () => {
-    isDropdownVisible.value = true;
+  isDropdownVisible.value = true;
 };
 
 const handleCheckboxChange = () => {
@@ -18,8 +29,8 @@ const handleCheckboxChange = () => {
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
 
-  comboInput.value.value = selectedVariants.join(', ');
-  emit('update:selectedCategories', selectedVariants);
+  comboInput.value.value = selectedVariants.join(", ");
+  emit("update:selectedCategories", selectedVariants);
 };
 
 const onMouseEnter = () => {
@@ -31,34 +42,44 @@ const onMouseLeave = () => {
 };
 
 onMounted(() => {
-  comboInput.value.addEventListener('click', showDropdown);
+  comboInput.value.addEventListener("click", showDropdown);
 });
+
+// const { disabled } = defineProps(['disabled']);
 </script>
 
 <template>
-  <div class="combo-box" >
-          <input type="text" ref="comboInput"  class="input-dropdown" placeholder="Select category">
-          <div v-show="isDropdownVisible" 
-                class="dropdown" 
-                ref="dropdown" 
-                @mouseenter="onMouseEnter"
-                @mouseleave="onMouseLeave"
-                
-          >
-              <label v-for="variant in variants" :key="variant">
-                  <input type="checkbox" :value="variant" @change="handleCheckboxChange">
-                  {{ variant }}
-              </label>
-          </div>
+  <div class="combo-box">
+    <input
+      type="text"
+      ref="comboInput"
+      class="input-dropdown"
+      placeholder="Select category"
+      :disabled="disabled"
+    />
+    <div
+      v-show="isDropdownVisible && !disabled"
+      class="dropdown"
+      ref="dropdown"
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
+    >
+      <label v-for="variant in variants" :key="variant">
+        <input
+          type="checkbox"
+          :value="variant"
+          @change="handleCheckboxChange"
+        />
+        {{ variant }}
+      </label>
+    </div>
   </div>
-
 </template>
 
 <style scoped>
 .combo-box {
   position: relative;
   display: inline-block;
-  
 }
 
 .dropdown {
@@ -78,10 +99,10 @@ onMounted(() => {
 }
 
 .dropdown label {
-
-  cursor: pointer; 
+  cursor: pointer;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
   width: 185px;
 }
 
@@ -89,7 +110,7 @@ onMounted(() => {
   background-color: #f0f0f0;
 }
 
-.input-dropdown{
+.input-dropdown {
   width: 185px;
 }
 </style>
