@@ -5,6 +5,7 @@ import { ref, defineEmits , onMounted} from "vue";
 import router from "../router";
 import {
   loadComments,
+  loadReplies,
   postComment,
 } from "../services/comment.service";
 import { getCurrentUser } from "../services/user_service";
@@ -24,7 +25,7 @@ onMounted(async () => {
 });
 
 async function loadIdeaComments(){
-  comments.value = await loadComments(10, 0, "id", props.ideaId)
+  comments.value = await loadComments(100, 0, "id", props.ideaId)
 }
 
 let comments = ref([]);
@@ -32,7 +33,7 @@ let commentText = ref([]);
 let showComments = ref(false);
 let someVariable = ref(false);
 let currentUser = ref("");
-
+let commentReplies = ref([])
 
 function toggle() {
   console.log("function was accesed");
@@ -48,14 +49,28 @@ function showDeletePopup(){
   router.push({ path: '/create-idea', query: { showDeletePopup: true }});
 }
 
+function toggleComments(){
+  showComments.value = !showComments.value 
+}
 
+async function refreshCommentList(){
+  toggleComments()
+  console.log("order has been recieved")
+  loadIdeaComments()
+  toggleComments()
+}
+
+async function loadCommentReplies(comment){
+  comment.replies = await loadReplies(comment.id)
+  console.log("doamne ajuta",commentReplies.value)
+}
 
 </script>
 
 <template>
   <div class="container">
     <div class="idea-card">
-      <button @click="showComments = !showComments ;loadIdeaComments()" class="showComments">
+      <button @click="toggleComments() ; loadIdeaComments()" class="showComments">
         ...
       </button>
       <div class="something">
@@ -110,6 +125,7 @@ function showDeletePopup(){
         :userName="comment.username"
         :hasReplies="comment.hasReplies"
         @showReplies="toggle()"
+        @loadReplies="loadCommentReplies(comment)"
       />
 
       <div
@@ -141,7 +157,7 @@ function showDeletePopup(){
   max-width: 25vw;
   position: relative;
   left: 18%;
-  margin-bottom: 30px;
+  margin-bottom:10px;
 }
 .idea-card {
   position: relative;

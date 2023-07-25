@@ -1,6 +1,6 @@
 <script setup>
 import { ref,onMounted } from "vue";
-import { postReply } from "../services/comment.service";
+import { loadComments, postReply,loadReplies } from "../services/comment.service";
 import { getCurrentUser } from "../services/user_service";
 
 const props = defineProps({
@@ -15,18 +15,29 @@ const props = defineProps({
   elapsedTime:""
 });
 
+const emits = defineEmits(['showReplies','loadComments','loadReplies']);
+
 let currentUser=ref('')
+let commentReplies=ref([])
 
 onMounted(async () => {
   currentUser.value = getCurrentUser();
   console.log(currentUser.value.username);
 });
 
-const emits = defineEmits(['showReplies','loadComments']);
-
 function showReplies(){
     console.log("Emit button was pressed from CustomComment")
     emits('showReplies')
+} 
+
+function loadParentComments(){
+  console.log("loading order has been sent")
+  emits('loadComments')
+}
+
+async function loadCommentReplies(){
+  console.log('incercam sa trimitem reply')
+  emits('loadReplies')
 } 
 
 </script>
@@ -41,13 +52,15 @@ function showReplies(){
     <div class="item">{{ props.text }}</div>
     <div class="input-container"  v-if="!props.isReplay">
       <input type="text" v-model="commentText"/>
-        <button @click="postReply(currentUser.username, props.parentId, commentText)">
+        <button @click="postReply(currentUser.username, props.parentId, commentText)
+                    ;loadParentComments()
+        ">
           Post reply
         </button>
     </div>
  
     <div v-if="props.hasReplies">
-        <button class="showReplies" @click="showReplies()">...</button>
+        <button class="showReplies" @click="showReplies();loadCommentReplies()">...</button>
     </div>
 
   </div>

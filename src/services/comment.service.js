@@ -61,4 +61,17 @@ async function postReply(username, parentId, commentText) {
   return data;
 }
 
-export { loadComments, postComment, postReply };
+async function loadReplies(commentId) {
+  const response = await fetch(API_URL +
+    "/comments/replies?commentId=" + 
+    commentId
+  );
+
+  const data = await response.json();
+  console.log(data);
+  return data;
+ 
+}
+
+
+export { loadComments, postComment, postReply, loadReplies };
