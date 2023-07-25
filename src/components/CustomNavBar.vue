@@ -3,6 +3,7 @@ import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
+import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue"
 import { computed, ref } from "vue";
 
 const indexOfActivePage = ref(1);
@@ -34,6 +35,17 @@ function redirectToMyProfile() {
 function isPageWithIndexActive(index) {
   return indexOfActivePage.value == index ? true : false;
 }
+
+function onMouseEnter() {
+
+}
+
+const props = defineProps({
+  dashboardElement: {
+    name: "All users",
+    route: "/app",
+  },
+});
 
 </script>
 
@@ -68,6 +80,9 @@ function isPageWithIndexActive(index) {
                         :is-active=isPageWithIndexActive(3)
                         >
                         Dashboard <i class="fa-solid fa-caret-down fa-xl"></i>
+                        <CustomNavigationDropDown
+                        ></CustomNavigationDropDown>
+
                         
                     </CustomButton>
                     <div class="dropdown-content">
