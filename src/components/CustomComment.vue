@@ -64,13 +64,9 @@ async function postReplyDynamic(username, parentId, commentText) {
     <div class="main-container">
       <div class="header-container">
         <p>{{ props.userName }}</p>
-        <div class="subheader-container">
-          <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
-          <div class="righ-side">
-            <span class="material-symbols-outlined"> menu </span>
-          </div>
-        </div>
+        <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
       </div>
+
       <div class="comment-container">
         <textarea name="" id="contentTextArea" cols="30" rows="10" disabled>
         {{ props.text }}
@@ -78,18 +74,34 @@ async function postReplyDynamic(username, parentId, commentText) {
         >
       </div>
       <div class="footer-container">
-        <button @click="showReplies()" class="showPostAction">
-          <span class="material-symbols-outlined"> expand_more </span>
-        </button>
-        <span class="material-symbols-outlined"> expand_less </span>
-        <button class="showPostAction" @click="postToggle = !postToggle">
-          <span class="material-symbols-outlined"> ink_pen </span>
-        </button>
+        <div class="left"></div>
+        <div class="center">
+          <button @click="showReplies()" id="expandPost">
+            <span class="material-symbols-outlined"> expand_more </span>
+            <button @click="showReplies()" class="showPostAction">
+              <span class="material-symbols-outlined"> expand_less </span>
+            </button>
+          </button>
+        </div>
+        <div class="right">
+          <button class="showPostAction" @click="postToggle = !postToggle">
+            <span class="material-symbols-outlined"> ink_pen </span>
+          </button>
+          <button class="showPostAction" @click="postToggle = !postToggle">
+            <span class="material-symbols-outlined"> delete </span>
+          </button>
+        </div>
       </div>
     </div>
     <div class="input-container" v-if="!props.isReplay && postToggle">
-      <textarea v-model="commentText" placeholder="Comment text."> </textarea>
+      <textarea
+        v-model="commentText"
+        placeholder="Comment text."
+        id="commentTextArea"
+      >
+      </textarea>
       <button
+        id="postButton"
         @click="
           postReplyDynamic(currentUser.username, props.parentId, commentText)
         "
@@ -109,50 +121,47 @@ async function postReplyDynamic(username, parentId, commentText) {
   margin-top: 5px;
   width: 30vw;
   min-height: 20vh;
-  max-height: 40vh;
+  max-height: 45vh;
 }
 .main-container {
   display: grid;
   grid-template-rows: 2rem 20vh 2rem;
 }
 .input-container {
+  display: flex;
   min-height: 10vh;
+  flex-direction: column;
 }
+
+#postButton {
+  margin: 5px;
+  align-self: flex-end;
+}
+
 .header-container {
+  background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: space-between;
   margin-right: 5px;
   margin-left: 5px;
   border-bottom: 1px solid #ffa941;
-}
-.subheader-container {
-  display: flex;
-  justify-content: space-between;
-  margin-right: 5px;
-  margin-left: 5px;
-}
-.footer-container {
-  color: #ff8c00;
+  align-items: center;
 }
 
-.header-container > i {
-  margin-right: 10px;
+.footer-container {
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: space-between;
 }
-.reply-container {
-  max-width: 25vw;
-  position: relative;
-  left: 40px;
-  margin-bottom: 30px;
+
+.footer-container > button {
+  align-self: center;
 }
-.showReplies {
-  color: orange;
-  position: relative;
-  left: 150px;
-  top: 15px;
-  font-size: 410%;
-  border: none;
-  background-color: unset;
+
+.footer-container > #expandPost {
+  align-items: center;
 }
+
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
@@ -166,6 +175,14 @@ async function postReplyDynamic(username, parentId, commentText) {
   outline: inherit;
 }
 
+#expandPost {
+  background-color: white;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
 .elapsedTime {
   margin-right: 5px;
 }
@@ -177,10 +194,18 @@ textarea {
   border: 1px solid rgba(0, 4, 8, 0.537);
   border-radius: 5px;
 }
+#commentTextArea {
+  resize: none;
+  min-height: 9vh;
+  width: 29vw;
+  border: 1px solid rgba(0, 4, 8, 0.537);
+  border-radius: 5px;
+  margin-left: 5px;
+}
 
 #contentTextArea {
   color: black;
-  background-color: rgb(250, 194, 194);
+  background-color: rgb(255, 255, 255);
   height: 18vh;
   width: 29vw;
   resize: none;
