@@ -54,8 +54,14 @@ function onMouseLeaveUser() {
     disabledUser.value = true;
 }
 
-function dropDownClicked() {
-    indexOfActivePage.value = 0;
+function dropDownClicked(elementId) {
+    if(elementId === 'my-ideas') {
+        indexOfActivePage.value = 2;
+    } else if(elementId === 'stats') {
+        indexOfActivePage.value = 1;
+    } else {
+        indexOfActivePage.value = 0;
+    }
 }
 
 
