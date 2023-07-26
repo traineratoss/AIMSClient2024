@@ -32,9 +32,16 @@ async function loadIdeaComments() {
   }));
 }
 
-function toggleComment(comment) {
+async function toggleComment(comment) {
   comment.expanded = !comment.expanded;
+  // comment.expanded = !comment.expanded;
+  // const loadedComments = await loadComments(100, 0, "id", props.ideaId);
+  // comments.value = loadedComments.map((comment) => ({
+  //   ...comment,
+  //   expanded: false, // Add the 'expanded' property
+  // }));
 }
+
 
 let comments = ref([]);
 let commentText = ref([]);
@@ -167,18 +174,15 @@ async function postCommentDynamic(username, ideaId, commentText) {
         @showReplies="toggleComment(comment)"
         @loadReplies="loadCommentReplies(comment)"
       />
-
-      <div
-        v-if="comment.expanded"
-        v-for="commentReply in comment.replies"
-        class="reply-container"
-      >
-        <CustomComment
-          :elapsedTime="commentReply.elapsedTime"
-          :isReply="true"
-          :text="commentReply.commentText"
-          :userName="commentReply.username"
-        />
+      <div v-if="comment.expanded" class="replies-wrapper">
+        <div v-for="commentReply in comment.replies" class="reply-container">
+          <CustomComment
+            :elapsedTime="commentReply.elapsedTime"
+            :isReplay="true"
+            :text="commentReply.commentText"
+            :userName="commentReply.username"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -186,7 +190,7 @@ async function postCommentDynamic(username, ideaId, commentText) {
 
 <style scoped>
 .comment-container {
-  border: 1px solid slategray;
+  /* border: 1px solid slategray; */
 }
 
 .input-container {
@@ -199,8 +203,13 @@ async function postCommentDynamic(username, ideaId, commentText) {
 }
 
 .reply-container {
-  height: 30vh;
+  /* height: 30vh; */
 }
+
+.replies-wrapper{
+  /* overflow-y: scroll; */
+}
+
 .idea-card {
   position: relative;
   background-color: white;

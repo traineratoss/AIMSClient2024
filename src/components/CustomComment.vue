@@ -14,10 +14,10 @@ const props = defineProps({
   userId: "",
   ideaId: "",
   hasReplies: "",
-  isReply: "",
   parentId: "",
+  isReplay: "",
   elapsedTime: "",
-  expanded: "",
+  expanded:""
 });
 
 const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
@@ -70,15 +70,42 @@ async function postReplyDynamic(username, parentId, commentText) {
 </script>
 
 <template>
-  <div v-if="!props.isReply" class="container">
-    <div class="main-container">
+ <div v-if="props.isReplay" class="reply-container">
+    <div class="reply-grid-main-container">
+      <div class="header-container">
+        <p>@{{ props.userName }}</p>
+        <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
+      </div>
+
+      <div class="">
+        <textarea name="" id="reply-textarea" disabled>
+        {{ props.text }}
+      </textarea
+        >
+      </div>
+      <div class="footer-container">
+        <div class="left"></div>
+        <div class="center"></div>
+        <div class="right">
+          <button class="action-icon-button" @click="postToggle = !postToggle">
+            <span class="material-symbols-outlined"> ink_pen </span>
+          </button>
+          <button class="action-icon-button" @click="postToggle = !postToggle">
+            <span class="material-symbols-outlined"> delete </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-if="!props.isReplay" class="comment-container">
+    <div class="comment-grid-main-container">
       <div class="header-container">
         <p>{{ props.userName }}</p>
         <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
       </div>
 
-      <div class="comment-container">
-        <textarea name="" id="contentTextArea" cols="30" rows="10" disabled>
+      <div class="comment-text-container">
+        <textarea name="" id="comment-textarea" disabled>
          {{ props.text }}
       </textarea
         >
@@ -87,37 +114,29 @@ async function postReplyDynamic(username, parentId, commentText) {
         <div class="left"></div>
 
         <div class="center">
-          <button @click="showReplies()" id="expandPost">
-            <span
-              class="material-symbols-outlined"
-              v-if="!props.isReply && props.hasReplies && !props.expanded"
-            >
+          <button @click="showReplies()" id="view-replies-button">
+            <span v-if="enableRepliesView" class="material-symbols-outlined">
               expand_more
             </span>
-            <span
-              class="material-symbols-outlined"
-              v-if="!props.isReply && props.hasReplies && props.expanded"
-            >
-              expand_less
-            </span>
+            <span v-else class="material-symbols-outlined"> expand_less </span>
           </button>
         </div>
 
         <div class="right">
-          <button class="showPostAction" @click="postToggle = !postToggle">
+          <button class="action-icon-button" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> ink_pen </span>
           </button>
-          <button class="showPostAction">
+          <button class="action-icon-button" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> delete </span>
           </button>
         </div>
       </div>
     </div>
-    <div class="input-container" v-if="postToggle">
+    <div class="reply-input-container" v-if="postToggle">
       <textarea
         v-model="commentText"
-        placeholder="Comment text."
-        id="commentTextArea"
+        placeholder="  Write your reply here .."
+        id="insert-reply-textarea"
       >
       </textarea>
       <button
@@ -130,43 +149,11 @@ async function postReplyDynamic(username, parentId, commentText) {
       </button>
     </div>
   </div>
-  <div v-else class="reply-container">
-    <div class="main-container">
-      <div class="header-container">
-        <p>{{ props.userName }}</p>
-        <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
-      </div>
-
-      <div class="">
-        <textarea
-          name=""
-          id="replyContentTextArea"
-          cols="30"
-          rows="10"
-          disabled
-        >
-        {{ props.text }}
-      </textarea
-        >
-      </div>
-      <div class="footer-container">
-        <div class="left"></div>
-        <div class="center"></div>
-        <div class="right">
-          <button class="showPostAction" @click="postToggle = !postToggle">
-            <span class="material-symbols-outlined"> ink_pen </span>
-          </button>
-          <button class="showPostAction" @click="postToggle = !postToggle">
-            <span class="material-symbols-outlined"> delete </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <style scoped>
-.container {
+/* *-container : wraps entire component , either comment or reply */
+.comment-container {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
   border: 1px solid slategray;
@@ -174,31 +161,31 @@ async function postReplyDynamic(username, parentId, commentText) {
   margin-top: 5px;
   width: 30vw;
   min-height: 20vh;
+  height: 23vh;
   max-height: 45vh;
 }
-.reply-container {
+.reply-container  {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
   border: 1px solid slategray;
   padding: 10px;
   margin-top: 5px;
   width: 30vw;
+  min-height: 15vh;
+  height: 15vh;
   max-height: 25vh;
 }
 
-.main-container {
+/* grid containers define grid layout for header-container , comment-text-container and footer-container  */
+
+.reply-grid-main-container {
   display: grid;
-  grid-template-rows: 2rem 15vh 2rem;
-}
-.input-container {
-  display: flex;
-  min-height: 10vh;
-  flex-direction: column;
+  grid-template-rows: 2rem 10vh 2rem;
 }
 
-#postButton {
-  margin: 5px;
-  align-self: flex-end;
+.comment-grid-main-container {
+  display: grid;
+  grid-template-rows: 2rem 18vh 2rem;
 }
 
 .header-container {
@@ -221,43 +208,48 @@ async function postReplyDynamic(username, parentId, commentText) {
   align-self: center;
 }
 
-.footer-container > #expandPost {
+.footer-container > #view-replies-button {
   align-items: center;
 }
+
+/* the text area input used for adding replies */
+
+.reply-input-container {
+  display: flex;
+  min-height: 10vh;
+  flex-direction: column;
+}
+
+/* defining size for imported icons */
 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
-.showPostAction {
-  background-color: white;
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
-}
-
-#expandPost {
-  background-color: white;
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
-}
 .elapsedTime {
   margin-right: 5px;
 }
 
-textarea {
-  resize: none;
-  min-height: 10vh;
-  width: 30vw;
-  border: 1px solid rgba(0, 4, 8, 0.537);
-  border-radius: 5px;
+.action-icon-button {
+  background-color: white;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
-#commentTextArea {
+
+#view-replies-button {
+  background-color: white;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+#insert-reply-textarea {
+  background-color: rgb(255, 255, 255);
   resize: none;
   min-height: 9vh;
   width: 29vw;
@@ -266,23 +258,37 @@ textarea {
   margin-left: 5px;
 }
 
-#contentTextArea {
+#comment-textarea {
   color: black;
-  background-color: rgb(255, 255, 255);
-  height: 18vh;
+  background-color: rgb(255, 0, 0);
+  min-height: 15vh;
+  max-height: 25vh;
   width: 29vw;
   resize: none;
   border: none;
-  margin: 1vh;
 }
 
-#replyContentTextArea {
+#reply-textarea {
   color: black;
-  background-color: rgb(255, 255, 255);
-  height: 12vh;
+  background-color: rgb(47, 47, 249);
+  box-sizing: border-box;
+  min-height: 8vh;
+  max-height: 30vh;
   width: 29vw;
   resize: none;
   border: none;
-  margin: 1vh;
+}
+
+#postButton {
+  margin: 5px;
+  align-self: flex-end;
+}
+
+textarea {
+  resize: none;
+  min-height: 10vh;
+  width: 30vw;
+  border: 1px solid rgba(0, 4, 8, 0.537);
+  border-radius: 5px;
 }
 </style>
