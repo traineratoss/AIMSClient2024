@@ -5,8 +5,8 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
 import { createIdea } from "../services/idea.service";
-import { watch, ref, onMounted,defineEmits } from "vue";
-import { useRoute } from "vue-router";
+import { watch, ref, onMounted,defineProps } from "vue";
+import { stringifyQuery, useRoute } from "vue-router";
 import router from "../router";
 import { getCategory, getUser } from "../services/idea.service";
 
@@ -26,6 +26,7 @@ const slideImages = [
     {url: 'https://www.freecodecamp.org/news/content/images/2022/12/main-image.png'},
     {url: 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/blogs/34246/images/i9SaP0vNQZWCZNsLaVhr_Hobby.jpg'}
 ];
+
 
 watch(categoriesSelected, (newValue) => {
   console.log("Selected categories changed. New value:", newValue);
@@ -86,34 +87,28 @@ async function createIdeaFunction() {
     return data;
   }
 }
-
 const disableFields = useRoute().query.disableFields === 'true';
 const fieldsDisabled = ref(disableFields);
     
 const showDeletePopup = useRoute().query.showDeletePopup === 'true';
 const deletePopup = ref(showDeletePopup);
+console.log(">> ",deletePopup.value);
 
-function onCancel() {
-  console.log("Delete cancelled");
-}
 
-function onDeleteIdea() {
-  // Perform the delete logic here
-  closePopup();
-}
-const emit = defineEmits(['update:isOpen','cancel', 'confirm']);
+// const emit = defineEmits(['cancel', 'confirm']);
+const customDialog = ref(null);
 
-function handleCancel() {
-  emit('update:isOpen', false);
-  emit('cancel');
-  router.push({ path: '/all' });
-}
+async function handleCancel() {
+  customDialog.value.close();
+  await router.push({ path: '/all' });
+};
 
-function handleConfirm() {
-  emit('update:isOpen', false);
-  emit('confirm');
-  router.push({ path: '/all' });
-}
+async function handleConfirm() {
+  customDialog.value.close();
+  await router.push({ path: '/all' });
+};
+
+
 
 </script>
 
@@ -125,7 +120,8 @@ function handleConfirm() {
             v-model="inputValue" 
             :disabled="fieldsDisabled" 
             :placeholder="titleError ? 'Select a title' : ''"
-            :error="titleError" />   
+            :error="titleError" 
+            />   
         </div>
         <div class="idea">
          <label for="status-idea" class="label">Status:</label>
@@ -164,16 +160,19 @@ function handleConfirm() {
 
         </div>
         <div>
-            <CustomButton id="create-idea" @click="createIdeaFunction" :disabled="fieldsDisabled" v-if="!deletePopup"> Create Idea</CustomButton>
+            <CustomButton id="create-idea"  @click="createIdeaFunction"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Idea</CustomButton>
         </div>
-
-          <CustomDialog :is-open="deletePopup"  @update:is-open="deletePopup = $event" @cancel="onCancel" @confirm="onDeleteIdea">
-                    <h2>Delete Idea?</h2>
-                    <p>Are you sure you want to delete this idea?</p>
-                    <div class="dialog-actions">
-                      <button @click="handleCancel">Cancel</button>
-                      <button @click="handleConfirm">Confirm</button>
-                    </div>    
+        <CustomDialog 
+        ref="customDialog" 
+        :open="deletePopup" 
+        title="Are you sure you want to delete?"
+        message="This item will be deleted immediatly. You can't undo this action!"
+        >
+                    
+            <div class="dialog-actions">
+              <button @click="handleCancel">Cancel</button>
+              <button @click="handleConfirm">Confirm</button>
+            </div>    
         </CustomDialog>  
     
     </div>

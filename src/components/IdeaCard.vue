@@ -116,12 +116,6 @@ async function postCommentDynamic(username, ideaId, commentText) {
         <button @click="redirectToCreateIdeaView" class="view-button">
           View
         </button>
-        <button @click="redirectToCreateIdeaView" class="view-button">
-          View
-        </button>
-        <!-- <router-link :to="`/create-idea`" class="delete-button">
-          Delete
-        </router-link> -->
         <button @click="showDeletePopup" class="delete-button">Delete</button>
       </div>
 
