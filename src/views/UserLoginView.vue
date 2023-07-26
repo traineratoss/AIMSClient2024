@@ -3,49 +3,17 @@ import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
 import { ref } from 'vue';
-import { 
-  getUserByUsername,
-  getUserByEmail, 
-  postUser, 
-  updateUser, 
-  getAllUsers, 
-  getAllUserByUsername, 
-  getAllUserByIsActive, 
-  sendEmail, 
-  changePassword,
-  loginUser
-} from "../services/user_service.js"
+import { loginUser } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
+import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 
 const usernameOrEmailText = ref('');
 const passwordText = ref('');
+const showErrorMessage = ref(false);
 
 function redirectToRegister() {
   router.push("/register");
 }
-
-function showUserDetails(username, email, userUpdateDTO, changePasswordDTO) {
-  // console.log(getUser(username));
-  // console.log(postUser(username, email));
-  // console.log(updateUser(username, userUpdateDTO));
-  // console.log(getAllUsers(1, 2, "username"));
-  //console.log(getAllUserByUsername(false, 2, 0, "username"));
-  // sendEmail("cristian");
-  // console.log(getAllUserByUsername("usern"));
-  // console.log(changePassword(changePasswordDTO));
-}
-
-
-showUserDetails("username1", 
-                "email1", 
-                {
-                  "role": "STANDARD"
-                },
-                {
-                  "username": "cristian",
-                  "oldPassword": "cristian",
-                  "newPassword": "cristian"
-                });
 
 function login() {
   loginUser(usernameOrEmailText.value, passwordText.value)
@@ -55,6 +23,7 @@ function login() {
       .catch(error => {
           usernameOrEmailText.value = '';
           passwordText.value = '';
+          showErrorMessage.value = true;
       });
 }
 
@@ -67,6 +36,10 @@ function login() {
     <div id="profile-img">
       <i class="fa-regular fa-circle-user" id="user-icon"> </i>
     </div>
+    <InvalidInputMessage 
+      message="Incorrect username or password"
+      :class="{ 'error-message-visible': showErrorMessage }"
+    />
     <div>
       <CustomInput
         type="text"
@@ -107,6 +80,10 @@ function login() {
   gap: 20px;
   position: relative;
   top: 80px;
+}
+
+.error-message-visible {
+  opacity: 1;
 }
 
 input {

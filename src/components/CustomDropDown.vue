@@ -1,15 +1,28 @@
 <script setup>
-import { ref,onMounted } from 'vue';
+import { ref, onMounted, defineProps } from "vue";
 
-const emit = defineEmits(['update:selectedCategories']);
+const emit = defineEmits(["update:selectedCategories"]);
 
-const variants = ['Fun', 'Food', 'Books', 'IT'];
+const props = defineProps({
+  variants: {
+    type: Array,
+    default: () => [],
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  error : {
+    type: Boolean,
+    default: false,
+  }
+});
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
-  
+
 const showDropdown = () => {
-    isDropdownVisible.value = true;
+  isDropdownVisible.value = true;
 };
 
 const handleCheckboxChange = () => {
@@ -18,9 +31,24 @@ const handleCheckboxChange = () => {
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
 
-  comboInput.value.value = selectedVariants.join(', ');
-  emit('update:selectedCategories', selectedVariants);
+  comboInput.value.value = selectedVariants.join(", ");
+  emit("update:selectedCategories", selectedVariants);
 };
+
+onMounted(() =>{
+})
+
+const handleInputKeyPress = (event) => {
+  if (event.key === "Enter" && event.target.value !== "") {
+    props.variants.push(event.target.value);
+    comboInput.value.value = "";
+  }
+  const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
+  const selectedVariants = Array.from(checkboxes)
+    .filter((checkbox) => checkbox.checked)
+    .map((checkbox) => checkbox.value);
+  emit("update:selectedCategories", selectedVariants);
+}
 
 const onMouseEnter = () => {
   isDropdownVisible.value = true;
@@ -31,34 +59,56 @@ const onMouseLeave = () => {
 };
 
 onMounted(() => {
-  comboInput.value.addEventListener('click', showDropdown);
+  comboInput.value.addEventListener("click", showDropdown);
 });
+
+// const { disabled } = defineProps(['disabled']);
 </script>
 
 <template>
-  <div class="combo-box" >
-          <input type="text" ref="comboInput"  class="input-dropdown" placeholder="Select category">
-          <div v-show="isDropdownVisible" 
-                class="dropdown" 
-                ref="dropdown" 
-                @mouseenter="onMouseEnter"
-                @mouseleave="onMouseLeave"
-                
-          >
-              <label v-for="variant in variants" :key="variant">
-                  <input type="checkbox" :value="variant" @change="handleCheckboxChange">
-                  {{ variant }}
-              </label>
-          </div>
+  <div class="combo-box">
+    <input
+      type="text"
+      ref="comboInput"
+      class="input-dropdown"
+      :placeholder="error ? 'Select a category' : ''"
+      :disabled="props.disabled"
+      @keydown.enter="handleInputKeyPress"
+      :class="{error:props.error}"
+    />
+    <div
+      v-show="isDropdownVisible && !props.disabled"
+      class="dropdown"
+      ref="dropdown"
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
+    >
+      <label v-for="variant in props.variants" :key="variant">
+        <input
+          type="checkbox"
+          :value="variant"
+          @change="handleCheckboxChange"
+        />
+        {{ variant }}
+      </label>
+    </div>
   </div>
-
 </template>
 
 <style scoped>
 .combo-box {
   position: relative;
   display: inline-block;
-  
+}
+
+.error {
+  border-color: red;
+  border-width: 1.4px; 
+  border-radius: 1px;
+}
+
+.error::placeholder {
+  color: red;
 }
 
 .dropdown {
@@ -78,10 +128,10 @@ onMounted(() => {
 }
 
 .dropdown label {
-
-  cursor: pointer; 
+  cursor: pointer;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
   width: 185px;
 }
 
@@ -89,7 +139,7 @@ onMounted(() => {
   background-color: #f0f0f0;
 }
 
-.input-dropdown{
+.input-dropdown {
   width: 185px;
 }
 </style>

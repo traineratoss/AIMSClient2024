@@ -24,7 +24,7 @@ import CustomButtonGray from "../components/CustomButtonGray.vue";
 <style scoped>
 .side-panel {
   height: 100%;
-  width: 30vh;
+  width: 20vw;
 
   background-color: var(--sidebar-color);
   border: 1px solid black;

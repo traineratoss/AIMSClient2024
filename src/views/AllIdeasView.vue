@@ -17,7 +17,7 @@
           <div class="spacer"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
-            <p class="centered-number">{{ ideasPerUser }}</p>
+            <p class="centered-number">{{ roundedNumber(ideasPerUser) }}</p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
@@ -34,8 +34,49 @@
           </div>
         </div>
       </div>
-      <div class="idea-container" v-for="idea in ideas" :key="idea.text">
-        <IdeaCard :title="idea.text" />
+      <div class="idea-container" v-for="idea in paginatedIdeas" :key="idea.text">
+          <IdeaCard :title="idea.text" />
+        </div>
+        <div class="pagination-container">
+        <span
+          v-if="currentPage !== 1 && totalPages > 1"
+          class="page-number arrow"
+          @click="goToPage(1)"
+        >
+        <span class="material-symbols-outlined">
+          keyboard_double_arrow_left
+        </span>
+        </span>
+        <span
+          v-if="currentPage > 1"
+          class="page-number arrow"
+          @click="goToPage(currentPage - 1)"
+        >
+        <span class="material-symbols-outlined">
+          navigate_before
+        </span>
+        </span>
+        <span class="page-number current-page">
+          {{ currentPage }}
+        </span>
+        <span
+          v-if="currentPage < totalPages"
+          class="page-number arrow"
+          @click="goToPage(currentPage + 1)"
+        >
+        <span class="material-symbols-outlined">
+          navigate_next
+        </span>
+        </span>
+        <span
+          v-if="currentPage !== totalPages && totalPages > 1"
+          class="page-number arrow"
+          @click="goToPage(totalPages)"
+        >
+        <span class="material-symbols-outlined">
+          keyboard_double_arrow_right
+        </span>
+        </span>
       </div>
     </div>
   </div>
@@ -46,11 +87,15 @@ import { ref, computed, watch } from "vue";
 import SidePanel from "../components/SidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 
+const ideasPerPage = 2;
+const currentPage = ref(1);
+
 const ideas = ref([
   { text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
-  { text: "Idea 2", userId: 2, isPublic: false, isImplemented: false, comments: 1, replies: 1 },
+  { text: "Idea 2", userId: 3, isPublic: true, isImplemented: false, comments: 1, replies: 1 },
   { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
-  { text: "Idea 4", userId: 3, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
+  { text: "Idea 4", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
+  { text: "Idea 5", userId: 2, isPublic: true, isImplemented: false, comments: 4, replies: 8 },
 ]);
 
 const totalIdeas = computed(() => ideas.value.length);
@@ -103,6 +148,22 @@ const implementationPercentage = computed(() => {
   return (implementedIdeasCount.value / publicIdeasCount.value) * 100;
 });
 
+const roundedNumber = (number) => {
+  return Math.round(number * 100) / 100;
+};
+
+const paginatedIdeas = computed(() => {
+  const startIndex = (currentPage.value - 1) * ideasPerPage;
+  return ideas.value.slice(startIndex, startIndex + ideasPerPage);
+});
+
+const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
+
+function goToPage(pageNumber) {
+  currentPage.value = pageNumber;
+}
+
+
 watch(ideas, () => {
   calculateStatistics();
 });
@@ -117,7 +178,7 @@ function calculateStatistics() {
 
 
 <style scoped>
-.all-ideas-view-container{
+.all-ideas-view-container {
   width: 100%;
   display: flex;
   height: 100%;
@@ -153,11 +214,12 @@ function calculateStatistics() {
 }
 
 .idea-container {
-  width: calc(33.33% - 9vw); /* 33.33% width minus margins on both sides */
-  float: left;
-  border: 1px solid black;
-  margin: 2.5vw; /* Adjust the margin as needed */
-  
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  width: calc(50% - 20px); /* 50% width minus margins on both sides */
+  margin: 10px auto; /* Center the ideas horizontally */
+  padding: 10px;
 }
 .big-container{
   display: flex;
@@ -169,18 +231,18 @@ function calculateStatistics() {
   text-align: center; 
 }
 .centered-number {
-  margin: 10px 0; /* Space between numbers */
+  margin: 1px 0; /* Space between numbers */
 }
 
 .spacer {
-  height: 20rem; 
+  height: 15rem; 
 }
 
 .implementation-bar {
   width: 80%;
   height: 15px;
   background-color: #fff;
-  margin: 0 auto; /* Centrare pe orizontală */
+  margin: 0 auto; 
   border-radius: 7.5px;
   overflow: hidden;
 }
@@ -189,5 +251,47 @@ function calculateStatistics() {
   height: 100%;
   background-color: #ffa941;
   transition: width 0.3s ease;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.page-number {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 5px 10px; 
+  border: 1px solid #000;
+  border-radius: 999px; 
+  background-color: transparent; 
+  cursor: pointer;
+}
+
+.page-number.active {
+  background-color: #000;
+  color: #fff;
+}
+
+.arrow {
+  cursor: pointer;
+}
+
+.arrow:hover {
+  text-decoration: underline;
+}
+
+.current-page {
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.current-page:hover {
+  text-decoration: underline;
 }
 </style>

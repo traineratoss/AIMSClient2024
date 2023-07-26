@@ -17,16 +17,16 @@ const nextSlide = () => {
 <template>
 
 <div class="carousel">
-    <button @click="prevSlide"><i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941;"></i></button>
-    <div class="slide-container">
+    <button @click="prevSlide"><i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941;" ></i></button>
+    <div class="slide-container" >
       <div class="slides" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
-        <div v-for="(slide, index) in images" :key="index" class="slide" :class="{ active: currentIndex === index }">
+        <div v-for="(slide, index) in images" :key="index" class="slide" :class="{ active: currentIndex === index }" >
           <img :src="slide.url" > 
           
         </div>
       </div>
     </div>
-    <button @click="nextSlide"><i class="fa-solid fa-arrow-right fa-2xl " style="color: #ffa941;"></i></button>
+    <button @click="nextSlide"><i class="fa-solid fa-arrow-right fa-2xl " style="color: #ffa941;" ></i></button>
   </div>
 </template>
 
@@ -58,6 +58,8 @@ const nextSlide = () => {
 
 .slide {
   flex: 0 0 100%;
+  border-style:double;
+  box-sizing: border-box;
 }
 
 .slide.active {

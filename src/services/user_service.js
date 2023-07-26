@@ -77,11 +77,20 @@ async function changePassword(changePasswordDTO) {
     return response;
 }
 
-async function sendEmail(username) {
+async function sendNewPassword(usernameOrEmail) {
+    const response = await fetch(`${API_URL}/send-forgot-password`, {
+        method: 'POST',
+        body: usernameOrEmail
+    });
+    const json = await response.json();
+    return json;
+}
+
+async function sendEmail(usernameOrEmail) {
     const response = await fetch(`${API_URL}/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: username
+        body: usernameOrEmail
     });
 }
 
@@ -112,7 +121,8 @@ export {
     changePassword,
     loginUser,
     getCurrentUser,
-    setCurrentUser
+    setCurrentUser,
+    sendNewPassword
 }
 
 
