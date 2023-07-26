@@ -1,6 +1,6 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-import { ref, defineEmits , onMounted} from "vue";
+import { ref, defineEmits, onMounted } from "vue";
 import router from "../router";
 import { inject } from "vue";
 import {
@@ -35,27 +35,23 @@ let someVariable = ref(false);
 let currentUser = ref("");
 let commentReplies = ref([]);
 
-
 function toggle() {
   console.log("function was accesed");
   someVariable.value = !someVariable.value;
   console.log(someVariable);
-
-};
-
-function redirectToCreateIdeaView(){
-  router.push({ path: '/create-idea', query: { disableFields: true } });
-};
-
-function showDeletePopup(){
-  router.push({ path: '/create-idea', query: { showDeletePopup: true }});
-
 }
 
-function toggleComments(){
-  showComments.value = !showComments.value 
+function redirectToCreateIdeaView() {
+  router.push({ path: "/create-idea", query: { disableFields: true } });
 }
 
+function showDeletePopup() {
+  router.push({ path: "/create-idea", query: { showDeletePopup: true } });
+}
+
+function toggleComments() {
+  showComments.value = !showComments.value;
+}
 
 async function refreshCommentList() {
   toggleComments();
@@ -69,6 +65,14 @@ async function loadCommentReplies(comment) {
   console.log("doamne ajuta", commentReplies.value);
 }
 
+async function postCommentDynamic(username, ideaId, commentText) {
+  try {
+    await postComment(username, ideaId, commentText);
+    await loadIdeaComments();
+  } catch (error) {
+    console.error("Error posting comment:", error);
+  }
+}
 </script>
 
 <template>
@@ -80,8 +84,7 @@ async function loadCommentReplies(comment) {
           loadIdeaComments();
         "
         class="showComments"
-      >
-      </button>
+      ></button>
       <button
         @click="
           toggleComments();
@@ -108,7 +111,6 @@ async function loadCommentReplies(comment) {
         </div>
       </div>
 
-
       <div class="buttons-container">
         <button class="edit-button" @click="editIdea">Edit</button>
         <button @click="redirectToCreateIdeaView" class="view-button">
@@ -131,7 +133,9 @@ async function loadCommentReplies(comment) {
       <div class="input-container">
         <input type="text" v-model="commentText" />
         <button
-          @click="postComment(currentUser.username, props.ideaId, commentText)"
+          @click="
+            postCommentDynamic(currentUser.username, props.ideaId, commentText)
+          "
         >
           Post comment
         </button>
@@ -155,24 +159,18 @@ async function loadCommentReplies(comment) {
         @loadReplies="loadCommentReplies(comment)"
       />
 
-      
-        <div class="reply-container">
-        <div
-          v-if="someVariable"
-          v-for="commentReply in comment.replies"
-        >
-        <div class="wrapper">
-          <CustomComment
-            :elapsedTime="commentReply.elapsedTime"
-            :isReplay="true"
-            :text="commentReply.commentText"
-            :userName="commentReply.username"
-          />
-        </div>
+      <div class="reply-container">
+        <div v-if="someVariable" v-for="commentReply in comment.replies">
+          <div class="wrapper">
+            <CustomComment
+              :elapsedTime="commentReply.elapsedTime"
+              :isReplay="true"
+              :text="commentReply.commentText"
+              :userName="commentReply.username"
+            />
+          </div>
         </div>
       </div>
-      
-      
     </div>
   </div>
 </template>
@@ -183,17 +181,17 @@ async function loadCommentReplies(comment) {
   background-color: white;
   width: 30vw;
   height: 40vh;
-  border:1px solid slategray;
+  border: 1px solid slategray;
 }
 .comment-container {
-  border:1px solid slategray;
+  border: 1px solid slategray;
 }
 
 .reply-container {
   width: 30vw;
   margin-bottom: 10px;
 }
-.wrapper{
+.wrapper {
   padding: 1px;
   background-color: white;
   margin-left: 20px;

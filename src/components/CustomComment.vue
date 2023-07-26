@@ -35,6 +35,7 @@ onMounted(async () => {
 
 function showReplies() {
   console.log("Emit button was pressed from CustomComment");
+  loadCommentReplies();
   emits("showReplies");
 }
 
@@ -46,6 +47,15 @@ function loadParentComments() {
 async function loadCommentReplies() {
   console.log("incercam sa trimitem reply");
   emits("loadReplies");
+}
+
+async function postReplyDynamic(username, parentId, commentText) {
+  try {
+    await postReply(username, parentId, commentText);
+    await loadCommentReplies();
+  } catch (error) {
+    console.error("Error posting reply:", error);
+  }
 }
 </script>
 
@@ -64,29 +74,24 @@ async function loadCommentReplies() {
       <div class="comment-container">
         <textarea name="" id="contentTextArea" cols="30" rows="10" disabled>
         {{ props.text }}
-      </textarea>
+      </textarea
+        >
       </div>
       <div class="footer-container">
-        <span class="material-symbols-outlined"> ink_pen </span>
         <button @click="showReplies()" class="showPostAction">
           <span class="material-symbols-outlined"> expand_more </span>
         </button>
         <span class="material-symbols-outlined"> expand_less </span>
-
-        <span class="material-symbols-outlined"> visibility </span>
-        <span class="material-symbols-outlined"> visibility_off </span>
         <button class="showPostAction" @click="postToggle = !postToggle">
           <span class="material-symbols-outlined"> ink_pen </span>
         </button>
       </div>
     </div>
     <div class="input-container" v-if="!props.isReplay && postToggle">
-      <textarea v-model="commentText" placeholder="Comment text.">
-      </textarea>
+      <textarea v-model="commentText" placeholder="Comment text."> </textarea>
       <button
         @click="
-          postReply(currentUser.username, props.parentId, commentText);
-          loadParentComments();
+          postReplyDynamic(currentUser.username, props.parentId, commentText)
         "
       >
         Post reply
@@ -161,26 +166,25 @@ async function loadCommentReplies() {
   outline: inherit;
 }
 
-.elapsedTime{
+.elapsedTime {
   margin-right: 5px;
 }
 
-textarea{
-  
+textarea {
   resize: none;
   min-height: 10vh;
   width: 30vw;
-  border:1px solid rgba(0, 4, 8, 0.537);
+  border: 1px solid rgba(0, 4, 8, 0.537);
   border-radius: 5px;
 }
 
-#contentTextArea{
+#contentTextArea {
   color: black;
   background-color: rgb(250, 194, 194);
   height: 18vh;
-  width:29vw;
+  width: 29vw;
   resize: none;
   border: none;
-  margin:1vh;
+  margin: 1vh;
 }
 </style>
