@@ -159,17 +159,13 @@ async function postCommentDynamic(username, ideaId, commentText) {
         @loadReplies="loadCommentReplies(comment)"
       />
 
-      <div class="reply-container">
-        <div v-if="someVariable" v-for="commentReply in comment.replies">
-          <div class="wrapper">
-            <CustomComment
-              :elapsedTime="commentReply.elapsedTime"
-              :isReplay="true"
-              :text="commentReply.commentText"
-              :userName="commentReply.username"
-            />
-          </div>
-        </div>
+      <div v-if="someVariable" v-for="commentReply in comment.replies" class="reply-container">
+        <CustomComment
+          :elapsedTime="commentReply.elapsedTime"
+          :isReplay="true"
+          :text="commentReply.commentText"
+          :userName="commentReply.username"
+        />
       </div>
     </div>
   </div>
@@ -187,17 +183,6 @@ async function postCommentDynamic(username, ideaId, commentText) {
   border: 1px solid slategray;
 }
 
-.reply-container {
-  width: 30vw;
-  margin-bottom: 10px;
-}
-.wrapper {
-  padding: 1px;
-  background-color: white;
-  margin-left: 20px;
-  margin-top: 10px;
-  border-radius: 5px;
-}
 .input-container {
   position: absolute;
   bottom: 25px;
@@ -206,11 +191,9 @@ async function postCommentDynamic(username, ideaId, commentText) {
   color: black;
   border: 1px solid rgb(93, 93, 93);
 }
-.reply-container {
-  max-width: 25vw;
-  position: relative;
-  left: 18%;
-  margin-bottom: 10px;
+
+.reply-container{
+  height: 30vh;
 }
 .idea-card {
   position: relative;
@@ -222,14 +205,6 @@ async function postCommentDynamic(username, ideaId, commentText) {
 .author-info {
   position: absolute;
   bottom: 65px;
-  right: 50px;
-  font-size: 14px;
-  font-weight: bold;
-  color: black;
-}
-.number-of-comments {
-  position: absolute;
-  bottom: 95px;
   right: 50px;
   font-size: 14px;
   font-weight: bold;

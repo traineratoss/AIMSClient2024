@@ -27,6 +27,7 @@ const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
 let postToggle = ref(false);
 let currentUser = ref("");
 let commentReplies = ref([]);
+let enableRepliesView = ref(false)
 
 onMounted(async () => {
   currentUser.value = getCurrentUser();
@@ -35,8 +36,10 @@ onMounted(async () => {
 
 function showReplies() {
   console.log("Emit button was pressed from CustomComment");
+  enableRepliesView =! enableRepliesView
   loadCommentReplies();
   emits("showReplies");
+  
 }
 
 function loadParentComments() {
@@ -60,7 +63,7 @@ async function postReplyDynamic(username, parentId, commentText) {
 </script>
 
 <template>
-  <div class="container">
+  <div v-if="!props.isReplay" class="container" >
     <div class="main-container">
       <div class="header-container">
         <p>{{ props.userName }}</p>
@@ -69,20 +72,27 @@ async function postReplyDynamic(username, parentId, commentText) {
 
       <div class="comment-container">
         <textarea name="" id="contentTextArea" cols="30" rows="10" disabled>
-        {{ props.text }}
+         {{ props.text }}
       </textarea
         >
       </div>
       <div class="footer-container">
         <div class="left"></div>
+
+
         <div class="center">
-          <button @click="showReplies()" id="expandPost">
+          
+          <button @click="showReplies()" id="expandPost" v-if="!enableRepliesView">
             <span class="material-symbols-outlined"> expand_more </span>
-            <button @click="showReplies()" class="showPostAction">
+          </button>
+
+          <button @click="showReplies()" class="showPostAction" v-if="enableRepliesView">
               <span class="material-symbols-outlined"> expand_less </span>
             </button>
-          </button>
+          
         </div>
+
+
         <div class="right">
           <button class="showPostAction" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> ink_pen </span>
@@ -93,7 +103,7 @@ async function postReplyDynamic(username, parentId, commentText) {
         </div>
       </div>
     </div>
-    <div class="input-container" v-if="!props.isReplay && postToggle">
+    <div class="input-container" v-if="postToggle">
       <textarea
         v-model="commentText"
         placeholder="Comment text."
@@ -110,6 +120,33 @@ async function postReplyDynamic(username, parentId, commentText) {
       </button>
     </div>
   </div>
+  <div v-else class="reply-container" >
+    <div class="main-container">
+      <div class="header-container">
+        <p>{{ props.userName }}</p>
+        <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
+      </div>
+
+      <div class="">
+        <textarea name="" id="replyContentTextArea" cols="30" rows="10" disabled>
+        {{ props.text }}
+      </textarea
+        >
+      </div>
+      <div class="footer-container">
+        <div class="left"></div>
+        <div class="center"></div>
+        <div class="right">
+          <button class="showPostAction" @click="postToggle = !postToggle">
+            <span class="material-symbols-outlined"> ink_pen </span>
+          </button>
+          <button class="showPostAction" @click="postToggle = !postToggle">
+            <span class="material-symbols-outlined"> delete </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -123,9 +160,19 @@ async function postReplyDynamic(username, parentId, commentText) {
   min-height: 20vh;
   max-height: 45vh;
 }
+.reply-container{
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  border: 1px solid slategray;
+  padding: 10px;
+  margin-top: 5px;
+  width: 30vw;
+  max-height: 25vh;
+}
+
 .main-container {
   display: grid;
-  grid-template-rows: 2rem 20vh 2rem;
+  grid-template-rows: 2rem 15vh 2rem;
 }
 .input-container {
   display: flex;
@@ -207,6 +254,16 @@ textarea {
   color: black;
   background-color: rgb(255, 255, 255);
   height: 18vh;
+  width: 29vw;
+  resize: none;
+  border: none;
+  margin: 1vh;
+}
+
+#replyContentTextArea{
+  color: black;
+  background-color: rgb(255, 255, 255);
+  height: 12vh;
   width: 29vw;
   resize: none;
   border: none;
