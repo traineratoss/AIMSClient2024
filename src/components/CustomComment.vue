@@ -25,7 +25,7 @@ const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
 let postToggle = ref(false);
 let currentUser = ref("");
 let enableRepliesView = ref(true);
-let commentText = ref('')
+let commentText = ref('   ')
 
 onMounted(async () => {
   currentUser.value = getCurrentUser();
@@ -60,7 +60,7 @@ async function postReplyDynamic(username, parentId, commentText) {
     <div class="reply-grid-main-container">
       <div class="header-container">
         <p>@{{ props.userName }}</p>
-        <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
+        <p class="elapsedTime">{{ props.elapsedTime }} ago </p>
       </div>
 
       <div class="">
@@ -87,16 +87,22 @@ async function postReplyDynamic(username, parentId, commentText) {
     <div class="comment-grid-main-container">
       <div class="header-container">
         <p>{{ props.userName }}</p>
-        <i class="elapsedTime">{{ props.elapsedTime }} ago </i>
+        <p class="elapsedTime">{{ props.elapsedTime }} ago </p>
       </div>
 
       <div class="comment-text-container">
-            <p id="comment-textarea">{{ props.text }}</p>  
+            <p>{{ props.text }}</p>  
       </div>
       <div class="footer-container">
-        <div class="left"></div>
-
-        <div class="center" v-show="props.hasReplies">
+        <div class="footer-container-left">
+        <button class="dummy-button" disabled>
+            <span class="material-symbols-outlined"> ink_pen </span>
+          </button>
+          <button class="dummy-button" disabled>
+            <span class="material-symbols-outlined"> delete </span>
+          </button>
+        </div>
+        <div class="footer-container-center" v-show="props.hasReplies">
           <button @click="showReplies()" id="view-replies-button">
             <span v-if="enableRepliesView" class="material-symbols-outlined">
               expand_more
@@ -105,8 +111,8 @@ async function postReplyDynamic(username, parentId, commentText) {
           </button>
         </div>
 
-        <div class="right">
-          <button class="action-icon-button" @click="postToggle = !postToggle">
+        <div class="footer-container-right">
+            <button class="action-icon-button" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> ink_pen </span>
           </button>
           <button class="action-icon-button" @click="postToggle = !postToggle">
@@ -139,11 +145,13 @@ async function postReplyDynamic(username, parentId, commentText) {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
   border: 1px solid slategray;
-  padding: 10px;
-  margin-top: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 5px;
   width: 30vw;
-  min-height: 20vh;
+  min-height: 7vh;
   max-height: 45vh;
+  box-sizing: border-box;
 }
 .reply-container  {
   background-color: rgb(255, 255, 255);
@@ -163,7 +171,8 @@ async function postReplyDynamic(username, parentId, commentText) {
 
 .comment-grid-main-container {
   display: grid;
-  grid-template-rows: 2rem 18vh 2rem;
+  grid-template-rows: 2rem auto 2rem;
+
 }
 
 .header-container {
@@ -176,27 +185,35 @@ async function postReplyDynamic(username, parentId, commentText) {
   align-items: center;
 }
 
+.comment-text-container {
+  color: black;
+  margin-left: 5px;
+  min-height: 4vh;
+  max-height: 10vh;
+  max-width: 29vw;
+  resize: none;
+  border-radius: 5px;
+}
+
 .footer-container {
   background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: space-between;
+  margin-top: 5px;
 }
 
-.footer-container > button {
-  align-self: center;
-}
-
-.footer-container > #view-replies-button {
-  align-items: center;
+.footer-container-right{
+  margin-right: 7px;
 }
 
 .reply-input-container {
   display: flex;
-  min-height: 10vh;
+  min-height: 7vh;
   flex-direction: column;
 }
 
 .material-symbols-outlined {
+  background-color: inherit;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
@@ -204,12 +221,22 @@ async function postReplyDynamic(username, parentId, commentText) {
   margin-right: 5px;
 }
 .action-icon-button {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0);
   border: none;
   padding: 0;
   font: inherit;
   cursor: pointer;
   outline: inherit;
+}
+
+.dummy-button{
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  padding: 0;
+  font: inherit;
+  outline: inherit;
+  color: white;
+  user-select: none;
 }
 
 #view-replies-button {
@@ -222,24 +249,13 @@ async function postReplyDynamic(username, parentId, commentText) {
 }
 
 #insert-reply-textarea {
-  background-color: rgb(255, 255, 255);
   resize: none;
-  min-height: 9vh;
-  width: 29vw;
+  min-height: 4vh;
+  max-width: 28vw;
   border: 1px solid rgba(0, 4, 8, 0.537);
-  border-radius: 5px;
-  margin-left: 5px;
+  border-radius: 3px;
 }
 
-#comment-textarea {
-  color: black;
-  background-color: rgb(255, 0, 0);
-  min-height: 15vh;
-  max-height: 25vh;
-  width: 29vw;
-  resize: none;
-  border: none;
-}
 
 #reply-textarea {
   color: black;
@@ -253,15 +269,11 @@ async function postReplyDynamic(username, parentId, commentText) {
 }
 
 #postButton {
-  margin: 5px;
+  margin-top: 5px;
+  margin-bottom: 10px;
   align-self: flex-end;
-}
-
-textarea {
-  resize: none;
-  min-height: 10vh;
-  width: 30vw;
-  border: 1px solid rgba(0, 4, 8, 0.537);
-  border-radius: 5px;
+  background-color:white;
+  border: 1px solid #6d3d02;
+  border-radius: 3px;
 }
 </style>
