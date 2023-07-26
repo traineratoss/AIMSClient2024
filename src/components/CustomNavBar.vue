@@ -4,7 +4,7 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue"
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
@@ -54,26 +54,35 @@ function onMouseLeaveUser() {
     disabledUser.value = true;
 }
 
+function dropDownClicked() {
+    indexOfActivePage.value = 0;
+}
+
 
 const dashboardElements = [
     {
+        id: 'all-users',
         name: "All users",
         route: "/admin-dashboard",
         icon: "src/assets/img/allusers_icon.png",
         width: '20%',
-        height: '90%'
+        height: '90%',
+        backgroundColor: 'white'
     },
     {
+        id: 'stats',
         name: "Statistics",
-        route: "/statistics",
+        route: "/all",
         icon: "src/assets/img/statistics_icon.png",
         width: '20%',
-        height: '90%'
+        height: '90%',
+        backgroundColor: 'white'
     }
 ]
 
 const userDashboardElements = [
     {
+        id: 'profile',
         name: "Profile",
         route: "/my-profile",
         icon: "src/assets/img/avatar_icon.png",
@@ -81,13 +90,15 @@ const userDashboardElements = [
         height: '90%'
     },
     {
+        id: 'change-password',
         name: "Change Password",
-        route: "/app",
+        route: "/change",
         icon: "src/assets/img/settings_icon.png",
         width: '10%',
         height: '90%'
     },
     {
+        id: 'my-ideas',
         name: "My ideas",
         route: "/my",
         icon: "src/assets/img/bulb_icon.png",
@@ -95,6 +106,7 @@ const userDashboardElements = [
         height: '90%'
     },
     {
+        id: 'dashboard',
         name: "Dashboard",
         route: "/admin-dashboard",
         icon: "src/assets/img/dashboard_icon.png",
@@ -102,8 +114,9 @@ const userDashboardElements = [
         height: '90%'
     },
     {
+        id: 'logout',
         name: "Log out",
-        route: "/app",
+        route: "/login",
         icon: "src/assets/img/logout_icon.png",
         width: '10%',
         height: '90%'
@@ -150,9 +163,10 @@ const userDashboardElements = [
                     </CustomButton>
                     <div class="dropdown-content">
                         <CustomNavigationDropDown
-                        :element="dashboardElements"
-                        :disabled="disabledDashboard">
-                        </CustomNavigationDropDown>
+                            :element="dashboardElements"
+                            :disabled="disabledDashboard"
+                            @clicked-drop-down="dropDownClicked"
+                        />
                     </div>
                 </div>
             </div>
@@ -185,9 +199,10 @@ const userDashboardElements = [
                 <i class="fa-solid fa-chevron-down fa-xl"></i>
                 <div class="dropdown-content-user">
                     <CustomNavigationDropDown
-                    :element="userDashboardElements"
-                     :disabled="disabledUser">
-                    </CustomNavigationDropDown>
+                        :element="userDashboardElements"
+                        :disabled="disabledUser"
+                        @clicked-drop-down="dropDownClicked"
+                    />
                 </div>
             </CustomButton>
         </div>

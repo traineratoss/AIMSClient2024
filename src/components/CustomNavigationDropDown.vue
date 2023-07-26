@@ -1,9 +1,11 @@
 <script setup>
-import { defineProps, ref, computed, onMounted } from "vue";
+import { defineProps, ref, computed, defineEmits } from "vue";
 import CustomButton from "../components/CustomButton.vue"
 import router from "../router";
 
 const dashboardIsHovered = ref(false);
+
+const emits = defineEmits(['clickedDropDown']);
 
 const props = defineProps({
   element: {
@@ -17,7 +19,7 @@ const props = defineProps({
 });
 
 props.element.forEach((element) => {
-element.isHovered = ref(false);
+  element.isHovered = ref(false);
 });
 
 function onMouseEnter(element) {
@@ -31,6 +33,7 @@ function onMouseLeave(element) {
 }
 
 const onClickHandler = (element) => {
+  emits('clickedDropDown');
   router.push(element.route);
 };
 
@@ -47,18 +50,17 @@ const shouldDisableDiv = computed(() => {
     :key="element"
     :style="`display: ${shouldDisableDiv ? 'none' : 'block'};`"
   >
-  <CustomButton
+    <CustomButton
+      :id="element.id"
       :style="{
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: 'white',
         borderColor: 'black',
         borderWidth: '1px',
         whiteSpace: 'nowrap',
         width: '100%',
         textAlign: 'right',
       }"
-      :class="{ hovered: element.isHovered }"
       @mouseenter="onMouseEnter(element)"
       @mouseleave="onMouseLeave(element)"
       @click="onClickHandler(element)"
@@ -71,8 +73,11 @@ const shouldDisableDiv = computed(() => {
 
 <style>
 
-.hovered{
-  background-color: orange;
+#all-users, #stats, #profile, #change-password, #dashboard, #logout, #my-ideas {
+  background-color: white;
 }
 
+#all-users:hover, #stats:hover, #profile:hover, #change-password:hover, #dashboard:hover, #logout:hover, #my-ideas:hover {
+  background-color: var(--selected-color);
+}
 </style>
