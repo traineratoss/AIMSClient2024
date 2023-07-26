@@ -178,13 +178,6 @@ async function loadCommentReplies(comment) {
 </template>
 
 <style scoped>
-.idea-card {
-  position: relative;
-  background-color: white;
-  width: 30vw;
-  height: 40vh;
-  border:1px solid slategray;
-}
 .comment-container {
   border:1px solid slategray;
 }
@@ -218,7 +211,7 @@ async function loadCommentReplies(comment) {
   position: relative;
   background-color: white;
   width: 30vw;
-  height: 40vh;
+  height: 35vh;
   border: 7px solid #c8c0c0;
 }
 .author-info {

@@ -18,7 +18,7 @@
         </span>
         </span>
         <span
-          v-if="currentPage > 1"
+          v-if="currentPage > 2"
           class="page-number arrow"
           @click="goToPage(currentPage - 1)"
         >
@@ -30,7 +30,7 @@
           {{ currentPage }}
         </span>
         <span
-          v-if="currentPage < totalPages"
+          v-if="currentPage < totalPages - 1"
           class="page-number arrow"
           @click="goToPage(currentPage + 1)"
         >
@@ -142,19 +142,18 @@ function goToPage(pageNumber) {
   border-radius: 999px;
   cursor: pointer;
 }
-
 .page-number.active {
   background-color: #000;
   color: #fff;
   font-weight: bold;
 }
-
 .arrow {
   cursor: pointer;
 }
 
 .arrow:hover {
-  text-decoration: underline;
+  background-color: #000;
+  color: #fff;
 }
 
 .current-page {

@@ -8,24 +8,24 @@
         <div class="stats-container">
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>
-            <p class="centered-number">{{ totalComments }}</p>
+            <p class="centered-number"><b>{{ totalComments }}</b></p>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Total Replies:</b></p>
-            <p class="centered-number">{{ totalReplies }}</p>
+            <p class="centered-number"><b>{{ totalReplies }}</b></p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
-            <p class="centered-number">{{ roundedNumber(ideasPerUser) }}</p>
+            <p class="centered-number"><b>{{ roundedNumber(ideasPerUser) }}</b></p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
-            <p class="centered-number">{{ publicIdeasCount }}</p>
+            <p class="centered-number"><b>{{ publicIdeasCount }}</b></p>
             <p class="stat-label"><b>Public Ideas</b></p>
           </div>
           <div class="stat-item">
-            <p class="centered-number">{{ implementedIdeasCount }}</p>
+            <p class="centered-number"><b>{{ implementedIdeasCount }}</b></p>
             <p class="stat-label"><b>Implemented Ideas</b></p>
             <br>
           <div class="implementation-bar">
@@ -48,7 +48,7 @@
         </span>
         </span>
         <span
-          v-if="currentPage > 1"
+          v-if="currentPage > 2"
           class="page-number arrow"
           @click="goToPage(currentPage - 1)"
         >
@@ -60,7 +60,7 @@
           {{ currentPage }}
         </span>
         <span
-          v-if="currentPage < totalPages"
+          v-if="currentPage < totalPages - 1"
           class="page-number arrow"
           @click="goToPage(currentPage + 1)"
         >
@@ -191,7 +191,7 @@ function calculateStatistics() {
   float: left;
   background-color: #c8c8ca;
   height: 92vh;
-  border: 1px solid black;
+  border: none;
 }
 
 .right-space {
@@ -199,7 +199,7 @@ function calculateStatistics() {
   float: right;
   background-color: rgb(247, 161, 161);
   height: 92vh;
-  border: 1px solid black;
+  border: none;
 }
 
 .sidebar-container {
@@ -227,7 +227,7 @@ function calculateStatistics() {
   height: 92vh;
 }
 .stats-container {
-  margin-top: 20px; /* Space between numbers */
+  margin-top: 75px; /* Space between numbers */
   text-align: center; 
 }
 .centered-number {
@@ -239,8 +239,8 @@ function calculateStatistics() {
 }
 
 .implementation-bar {
-  width: 80%;
-  height: 15px;
+  width: 75%;
+  height: 20px;
   background-color: #fff;
   margin: 0 auto; 
   border-radius: 7.5px;
@@ -279,7 +279,8 @@ function calculateStatistics() {
 }
 
 .arrow:hover {
-  text-decoration: underline;
+  background-color: #000;
+  color: #fff;
 }
 
 .current-page {
