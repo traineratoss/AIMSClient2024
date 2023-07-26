@@ -1,44 +1,53 @@
 <script setup>
-import { ref,defineProps } from 'vue';
+import { ref, defineProps } from "vue";
 
-const slides = defineProps(['images']);
+const slides = defineProps(["images"]);
 const currentIndex = ref(0);
 
 const prevSlide = () => {
-  currentIndex.value = (currentIndex.value - 1 + slides.images.length) % slides.images.length;
+  currentIndex.value =
+    (currentIndex.value - 1 + slides.images.length) % slides.images.length;
 };
 
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % slides.images.length;
 };
-
 </script>
 
 <template>
-
-<div class="carousel">
-    <button @click="prevSlide"><i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941;" ></i></button>
-    <div class="slide-container" >
-      <div class="slides" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
-        <div v-for="(slide, index) in images" :key="index" class="slide" :class="{ active: currentIndex === index }" >
-          <img :src="slide.url" > 
-          
+  <div class="carousel">
+    <button @click="prevSlide">
+      <i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941"></i>
+    </button>
+    <div class="slide-container">
+      <div
+        class="slides"
+        :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
+      >
+        <div
+          v-for="(slide, index) in images"
+          :key="index"
+          class="slide"
+          :class="{ active: currentIndex === index }"
+        >
+          <img :src="slide.url" />
         </div>
       </div>
     </div>
-    <button @click="nextSlide"><i class="fa-solid fa-arrow-right fa-2xl " style="color: #ffa941;" ></i></button>
+    <button @click="nextSlide">
+      <i class="fa-solid fa-arrow-right fa-2xl" style="color: #ffa941"></i>
+    </button>
   </div>
 </template>
 
 <style scoped>
-
 .carousel {
   display: flex;
   align-items: center;
   justify-content: center;
-  position:relative;
+  position: relative;
   overflow: hidden;
-  z-index:10;
+  z-index: 10;
   margin-top: 10px;
   height: 20vh;
 }
@@ -58,12 +67,13 @@ const nextSlide = () => {
 
 .slide {
   flex: 0 0 100%;
-  border-style:double;
+  background-color: transparent;
   box-sizing: border-box;
+  border-style: double;
 }
 
 .slide.active {
-  background-color: #f0f0f0;
+  border: none;
 }
 
 button {
@@ -73,11 +83,8 @@ button {
   cursor: pointer;
 }
 
-img{
+img {
   height: 100%;
   width: 100%;
 }
-
-
-
 </style>

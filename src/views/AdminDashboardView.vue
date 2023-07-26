@@ -42,6 +42,7 @@ onMounted(() => {
         v-for="user in users"
         :key="user.username"
         :name="user.username"
+        :isActive="Deactivate"
       />
     </div>
   </div>

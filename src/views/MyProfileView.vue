@@ -1,17 +1,42 @@
 <script setup>
 import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomButton from "../components/CustomButton.vue";
-import CustomInput from '../components/CustomInput.vue';
-import { ref } from 'vue';
+import CustomInput from "../components/CustomInput.vue";
+import CarouselImage from "../components/CarouselImage.vue";
+import { ref } from "vue";
 
-const usernameText = ref('');
-const fullNameText = ref('');
-const emailText = ref('');
+const usernameText = ref("");
+const fullNameText = ref("");
+const emailText = ref("");
+
+const slideImages = [
+  {
+    url: "src/assets/img/avatars/avatar1.svg",
+  },
+  {
+    url: "src/assets/img/avatars/avatar2.svg",
+  },
+  {
+    url: "src/assets/img/avatars/avatar3.svg",
+  },
+  {
+    url: "src/assets/img/avatars/avatar4.svg",
+  },
+  {
+    url: "src/assets/img/avatars/avatar5.svg",
+  },
+  {
+    url: "src/assets/img/avatars/avatar6.svg",
+  },
+  {
+    url: "src/assets/img/avatars/avatar7.svg",
+  },
+];
 
 function saveChanges() {
-  console.log('username', usernameText.value);
-  console.log('full name', fullNameText.value);
-  console.log('email', emailText.value);
+  console.log("username", usernameText.value);
+  console.log("full name", fullNameText.value);
+  console.log("email", emailText.value);
 }
 </script>
 
@@ -21,36 +46,27 @@ function saveChanges() {
     <form action="">
       <div class="form-input">
         <label for="username"> Username </label>
-        <CustomInput 
-          type="text" 
-          v-model:model-value="usernameText"
-        />
+        <CustomInput type="text" v-model:model-value="usernameText" />
       </div>
 
       <div class="form-input">
         <label for="full-name"> Full name </label>
-        <CustomInput 
-          type="text" 
-          v-model:model-value="fullNameText"
-        />
+        <CustomInput type="text" v-model:model-value="fullNameText" />
       </div>
 
       <div class="form-input">
         <label for="email"> E-mail </label>
-        <CustomInput 
-          type="email" 
-          v-model:model-value="emailText"
-        />
+        <CustomInput type="email" v-model:model-value="emailText" />
       </div>
     </form>
-    <img src="../assets/img/avatars/avatar1.svg" />
+    <CarouselImage :images="slideImages" class="avatar-carousel" />
     <CustomButtonGray
       id="avatar-button"
       label="Select avatar"
       class="avatar-button"
     />
-    <CustomButton 
-      id="save-changes" 
+    <CustomButton
+      id="save-changes"
       class="save-changes-button"
       @click="saveChanges"
     >
@@ -67,6 +83,7 @@ function saveChanges() {
   gap: 5vh;
 
   margin-top: 20vh;
+  width: 100vw;
 }
 
 h1 {
@@ -80,9 +97,10 @@ form {
 }
 
 .form-input {
-  width: 15vw;
+  width: 20vw;
 
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
 }
 
@@ -91,11 +109,16 @@ form {
   gap: 10px;
 }
 
-img {
-  height: 100px;
-}
-
 a {
   color: black;
+}
+
+img {
+  height: 10px;
+}
+
+.avatar-button,
+.save-changes-button {
+  width: auto;
 }
 </style>
