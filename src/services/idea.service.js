@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/ideas";
+const API_URL = "http://localhost:8080";
 /*
 FlorinCP:
 
