@@ -86,8 +86,32 @@ async function sendNewPassword(usernameOrEmail) {
     return json;
 }
 
-async function sendEmail(usernameOrEmail) {
+async function sendApproveEmail(usernameOrEmail) {
     const response = await fetch(`${API_URL}/send-approve-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: usernameOrEmail
+    });
+}
+
+async function sendDeclineEmail(usernameOrEmail) {
+    const response = await fetch(`${API_URL}/send-decline-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: usernameOrEmail
+    });
+}
+
+async function sendActivateEmail(usernameOrEmail) {
+    const response = await fetch(`${API_URL}/send-activate-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: usernameOrEmail
+    });
+}
+
+async function sendDeactivateEmail(usernameOrEmail) {
+    const response = await fetch(`${API_URL}/send-deactivate-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: usernameOrEmail
@@ -113,10 +137,13 @@ export {
     getAllUsers, 
     getAllUserByUsername, 
     getAllUserByIsActive, 
-    sendEmail, 
+    sendApproveEmail, 
     changePassword,
     loginUser,
     getCurrentUser,
     setCurrentUser,
-    sendNewPassword
+    sendNewPassword,
+    sendDeclineEmail,
+    sendActivateEmail,
+    sendDeactivateEmail
 }
