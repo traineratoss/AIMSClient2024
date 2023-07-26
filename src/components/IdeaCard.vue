@@ -216,7 +216,7 @@ async function postCommentDynamic(username, ideaId, commentText) {
   position: relative;
   background-color: white;
   width: 30vw;
-  height: 40vh;
+  height: 35vh;
   border: 7px solid #c8c0c0;
 }
 .author-info {

@@ -13,7 +13,7 @@ import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
-
+import NewPasswordChanged from "../views/NewPasswordChanged.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,7 +92,12 @@ const router = createRouter({
       path: "/test",
       name: "test",
       component: CosminPlayground,
-    }
+    },
+    {
+      path: "/password-changed",
+      name: "password-changed",
+      component: NewPasswordChanged,
+    },
   ],
 });
 
