@@ -20,6 +20,11 @@ function login() {
     loginUser(usernameOrEmailText.value, passwordText.value)
       .then(res => {
         router.push('/my');
+        if (user.token) {
+                // store user details and jwt token in local storage to keep user logged in between page refreshes
+                localStorage.setItem('user', JSON.stringify(user));
+        }
+        return user;
       })
       .catch(error => {
           usernameOrEmailText.value = '';
@@ -31,6 +36,10 @@ function login() {
   }
 }
 
+function logout() {
+    // remove user from local storage to log user out
+    localStorage.removeItem('user');
+}
 </script>
 
 <template>
