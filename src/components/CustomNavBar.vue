@@ -146,6 +146,7 @@ const userDashboardElements = [
                     >
                         Dashboard 
                     <i class="fa-solid fa-caret-down fa-xl"></i>
+                    <div class="invisible-hover"></div>
                     </CustomButton>
                     <div class="dropdown-content">
                         <CustomNavigationDropDown
@@ -171,7 +172,7 @@ const userDashboardElements = [
         </div>
         <div class="user">
             <div class="user-details">
-                <h3 style="font-size: 16px; font-weight: 550;">Username</h3>
+                <h3 style="font-size: 16px; font-weight: 550; height: 1vh;">Username</h3>
                 <router-link to="/my-profile" style="text-decoration: none; color: black">User details</router-link>
             </div>
             <CustomButton 
@@ -182,10 +183,9 @@ const userDashboardElements = [
             >
                 <i class="fa-solid fa-user fa-2xl"></i>
                 <i class="fa-solid fa-chevron-down fa-xl"></i>
-                <div class="invisible-hover">aa</div>
                 <div class="dropdown-content-user">
                     <CustomNavigationDropDown
-                     :element="userDashboardElements"
+                    :element="userDashboardElements"
                      :disabled="disabledUser">
                     </CustomNavigationDropDown>
                 </div>
@@ -201,20 +201,13 @@ const userDashboardElements = [
   background-color: var(--selected-color);
 }
 
-.invisible-hover {
-    opacity: 0;
-    position: absolute;
-    right: 0;
-    width: 100px;
-    top: 6.9vh;
-}
 nav {
     background-color: white;
     display: flex;
-    gap: 30px;
+    gap: 5vw;
     width: 100vw;
     align-items: center;
-
+    height: 9vh;
 }
 
 .buttons {
@@ -222,6 +215,7 @@ nav {
     justify-content: space-between;
     align-content: center;
     width: 15vw;
+    align-items: center;
 }
 
 .options {
@@ -250,17 +244,25 @@ nav {
 
 
 #user-details-button {
-    border: none;
+    position: relative; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 0;
+    margin-right: 1vw;
+    height: 7vh;
 }
 
 .user {
     display: flex;   
-    gap: 20px;
+    gap: 1vw;
+    align-items: center;
 }
 
 .user-details {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 #search-an-idea {
@@ -276,5 +278,7 @@ nav {
     position: absolute;
     right: 0;
     width: 200px;
+    top: calc(100% + 1px);
+    margin-right: -0.1vw;
 }
 </style>
