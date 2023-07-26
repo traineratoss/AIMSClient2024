@@ -1,0 +1,9 @@
+Bearer tokens are a general class of token that grants access to the party in possession of the token. Access tokens, ID tokens, and self-signed JWTs are all bearer tokens.
+
+Using bearer tokens for authentication relies on the security provided by an encrypted protocol, such as HTTPS; if a bearer token is intercepted, it can be used by a bad actor to gain access.
+
+
+https://www.telerik.com/blogs/vue-js-state-management-pinia-vs-vuex
+https://blog.logrocket.com/refactoring-vue-2-apps-vue-3/
+https://reqbin.com/code/javascript
+https://jasonwatmore.com/post/2022/07/25/vue-3-pinia-user-registration-and-login-example-tutorial

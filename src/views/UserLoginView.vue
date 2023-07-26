@@ -15,29 +15,6 @@ function redirectToRegister() {
   router.push("/register");
 }
 
-function showUserDetails(username, email, userUpdateDTO, changePasswordDTO) {
-  // console.log(getUser(username));
-  // console.log(postUser(username, email));
-  // console.log(updateUser(username, userUpdateDTO));
-  // console.log(getAllUsers(1, 2, "username"));
-  //console.log(getAllUserByUsername(false, 2, 0, "username"));
-  // sendEmail("cristian");
-  // console.log(getAllUserByUsername("usern"));
-  // console.log(changePassword(changePasswordDTO));
-}
-
-
-showUserDetails("username1", 
-                "email1", 
-                {
-                  "role": "STANDARD"
-                },
-                {
-                  "username": "cristian",
-                  "oldPassword": "cristian",
-                  "newPassword": "cristian"
-                });
-
 function login() {
   loginUser(usernameOrEmailText.value, passwordText.value)
       .then(res => {

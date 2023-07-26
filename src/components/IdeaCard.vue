@@ -1,8 +1,8 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-
 import { ref, defineEmits , onMounted} from "vue";
 import router from "../router";
+import { inject } from "vue";
 import {
   loadComments,
   loadReplies,
@@ -24,8 +24,8 @@ onMounted(async () => {
   console.log(currentUser.value.username);
 });
 
-async function loadIdeaComments(){
-  comments.value = await loadComments(100, 0, "id", props.ideaId)
+async function loadIdeaComments() {
+  comments.value = await loadComments(100, 0, "id", props.ideaId);
 }
 
 let comments = ref([]);
@@ -33,12 +33,14 @@ let commentText = ref([]);
 let showComments = ref(false);
 let someVariable = ref(false);
 let currentUser = ref("");
-let commentReplies = ref([])
+let commentReplies = ref([]);
+
 
 function toggle() {
   console.log("function was accesed");
   someVariable.value = !someVariable.value;
   console.log(someVariable);
+
 };
 
 function redirectToCreateIdeaView(){
@@ -47,22 +49,24 @@ function redirectToCreateIdeaView(){
 
 function showDeletePopup(){
   router.push({ path: '/create-idea', query: { showDeletePopup: true }});
+
 }
 
 function toggleComments(){
   showComments.value = !showComments.value 
 }
 
-async function refreshCommentList(){
-  toggleComments()
-  console.log("order has been recieved")
-  loadIdeaComments()
-  toggleComments()
+
+async function refreshCommentList() {
+  toggleComments();
+  console.log("order has been recieved");
+  loadIdeaComments();
+  toggleComments();
 }
 
-async function loadCommentReplies(comment){
-  comment.replies = await loadReplies(comment.id)
-  console.log("doamne ajuta",commentReplies.value)
+async function loadCommentReplies(comment) {
+  comment.replies = await loadReplies(comment.id);
+  console.log("doamne ajuta", commentReplies.value);
 }
 
 </script>
@@ -70,9 +74,24 @@ async function loadCommentReplies(comment){
 <template>
   <div class="container">
     <div class="idea-card">
-      <button @click="toggleComments() ; loadIdeaComments()" class="showComments">
+      <button
+        @click="
+          toggleComments();
+          loadIdeaComments();
+        "
+        class="showComments"
+      >
+      </button>
+      <button
+        @click="
+          toggleComments();
+          loadIdeaComments();
+        "
+        class="showComments"
+      >
         ...
       </button>
+
       <div class="something">
         <div class="author-info">Author: {{ props.user }}</div>
         <div class="title">Title: {{ props.title }}</div>
@@ -88,15 +107,22 @@ async function loadCommentReplies(comment){
           </select>
         </div>
       </div>
-        
+
+
       <div class="buttons-container">
         <button class="edit-button" @click="editIdea">Edit</button>
-        <button @click="redirectToCreateIdeaView" class="view-button">View</button>
+        <button @click="redirectToCreateIdeaView" class="view-button">
+          View
+        </button>
+        <button @click="redirectToCreateIdeaView" class="view-button">
+          View
+        </button>
         <!-- <router-link :to="`/create-idea`" class="delete-button">
           Delete
         </router-link> -->
         <button @click="showDeletePopup" class="delete-button">Delete</button>
       </div>
+
       <img
         class="idea-image"
         src="https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw"
@@ -111,6 +137,7 @@ async function loadCommentReplies(comment){
         </button>
       </div>
     </div>
+
     <div
       class="comment-container"
       v-if="showComments"
@@ -128,23 +155,44 @@ async function loadCommentReplies(comment){
         @loadReplies="loadCommentReplies(comment)"
       />
 
-      <div
-        class="reply-container"
-        v-if="someVariable"
-        v-for="commentReply in comment.replies"
-      >
-        <CustomComment
-          :elapsedTime="commentReply.elapsedTime"
-          :isReplay="true"
-          :text="commentReply.commentText"
-          :userName="commentReply.username"
-        />
+      
+        <div class="reply-container">
+        <div
+          v-if="someVariable"
+          v-for="commentReply in comment.replies"
+        >
+        <div class="wrapper">
+          <CustomComment
+            :elapsedTime="commentReply.elapsedTime"
+            :isReplay="true"
+            :text="commentReply.commentText"
+            :userName="commentReply.username"
+          />
+        </div>
+        </div>
       </div>
+      
+      
     </div>
   </div>
 </template>
 
 <style scoped>
+.comment-container {
+  border:1px solid slategray;
+}
+
+.reply-container {
+  width: 30vw;
+  margin-bottom: 10px;
+}
+.wrapper{
+  padding: 1px;
+  background-color: white;
+  margin-left: 20px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
 .input-container {
   position: absolute;
   bottom: 25px;
@@ -157,13 +205,13 @@ async function loadCommentReplies(comment){
   max-width: 25vw;
   position: relative;
   left: 18%;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 .idea-card {
   position: relative;
   background-color: white;
   width: 30vw;
-  height: 40vh;
+  height: 35vh;
   border: 7px solid #c8c0c0;
 }
 .author-info {

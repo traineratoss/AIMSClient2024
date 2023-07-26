@@ -8,24 +8,24 @@
         <div class="stats-container">
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>
-            <p class="centered-number">{{ totalComments }}</p>
+            <p class="centered-number"><b>{{ totalComments }}</b></p>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Total Replies:</b></p>
-            <p class="centered-number">{{ totalReplies }}</p>
+            <p class="centered-number"><b>{{ totalReplies }}</b></p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
-            <p class="centered-number">{{ roundedNumber(ideasPerUser) }}</p>
+            <p class="centered-number"><b>{{ roundedNumber(ideasPerUser) }}</b></p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
-            <p class="centered-number">{{ publicIdeasCount }}</p>
+            <p class="centered-number"><b>{{ publicIdeasCount }}</b></p>
             <p class="stat-label"><b>Public Ideas</b></p>
           </div>
           <div class="stat-item">
-            <p class="centered-number">{{ implementedIdeasCount }}</p>
+            <p class="centered-number"><b>{{ implementedIdeasCount }}</b></p>
             <p class="stat-label"><b>Implemented Ideas</b></p>
             <br>
           <div class="implementation-bar">
@@ -38,16 +38,46 @@
           <IdeaCard :title="idea.text" />
         </div>
         <div class="pagination-container">
-          <span
-            class="page-number"
-            v-for="pageNumber in totalPages"
-            :key="pageNumber"
-            :class="{ active: currentPage === pageNumber }"
-            @click="changePage(pageNumber)"
-          >
-            {{ pageNumber }}
-          </span>
-        </div>
+        <span
+          v-if="currentPage !== 1 && totalPages > 1"
+          class="page-number arrow"
+          @click="goToPage(1)"
+        >
+        <span class="material-symbols-outlined">
+          keyboard_double_arrow_left
+        </span>
+        </span>
+        <span
+          v-if="currentPage > 2"
+          class="page-number arrow"
+          @click="goToPage(currentPage - 1)"
+        >
+        <span class="material-symbols-outlined">
+          navigate_before
+        </span>
+        </span>
+        <span class="page-number current-page">
+          {{ currentPage }}
+        </span>
+        <span
+          v-if="currentPage < totalPages - 1"
+          class="page-number arrow"
+          @click="goToPage(currentPage + 1)"
+        >
+        <span class="material-symbols-outlined">
+          navigate_next
+        </span>
+        </span>
+        <span
+          v-if="currentPage !== totalPages && totalPages > 1"
+          class="page-number arrow"
+          @click="goToPage(totalPages)"
+        >
+        <span class="material-symbols-outlined">
+          keyboard_double_arrow_right
+        </span>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -65,6 +95,7 @@ const ideas = ref([
   { text: "Idea 2", userId: 3, isPublic: true, isImplemented: false, comments: 1, replies: 1 },
   { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
   { text: "Idea 4", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
+  { text: "Idea 5", userId: 2, isPublic: true, isImplemented: false, comments: 4, replies: 8 },
 ]);
 
 const totalIdeas = computed(() => ideas.value.length);
@@ -128,9 +159,10 @@ const paginatedIdeas = computed(() => {
 
 const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
 
-function changePage(pageNumber) {
+function goToPage(pageNumber) {
   currentPage.value = pageNumber;
 }
+
 
 watch(ideas, () => {
   calculateStatistics();
@@ -146,7 +178,7 @@ function calculateStatistics() {
 
 
 <style scoped>
-.all-ideas-view-container{
+.all-ideas-view-container {
   width: 100%;
   display: flex;
   height: 100%;
@@ -159,7 +191,7 @@ function calculateStatistics() {
   float: left;
   background-color: #c8c8ca;
   height: 92vh;
-  border: 1px solid black;
+  border: none;
 }
 
 .right-space {
@@ -167,7 +199,7 @@ function calculateStatistics() {
   float: right;
   background-color: rgb(247, 161, 161);
   height: 92vh;
-  border: 1px solid black;
+  border: none;
 }
 
 .sidebar-container {
@@ -187,7 +219,6 @@ function calculateStatistics() {
   align-items: center; 
   width: calc(50% - 20px); /* 50% width minus margins on both sides */
   margin: 10px auto; /* Center the ideas horizontally */
-  border: 1px solid black;
   padding: 10px;
 }
 .big-container{
@@ -196,20 +227,20 @@ function calculateStatistics() {
   height: 92vh;
 }
 .stats-container {
-  margin-top: 20px; /* Space between numbers */
+  margin-top: 75px; /* Space between numbers */
   text-align: center; 
 }
 .centered-number {
-  margin: 10px 0; /* Space between numbers */
+  margin: 1px 0; /* Space between numbers */
 }
 
 .spacer {
-  height: 20rem; 
+  height: 15rem; 
 }
 
 .implementation-bar {
-  width: 80%;
-  height: 15px;
+  width: 75%;
+  height: 20px;
   background-color: #fff;
   margin: 0 auto; 
   border-radius: 7.5px;
@@ -241,5 +272,27 @@ function calculateStatistics() {
 .page-number.active {
   background-color: #000;
   color: #fff;
+}
+
+.arrow {
+  cursor: pointer;
+}
+
+.arrow:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.current-page {
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.current-page:hover {
+  text-decoration: underline;
 }
 </style>
