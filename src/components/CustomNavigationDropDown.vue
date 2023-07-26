@@ -33,7 +33,7 @@ function onMouseLeave(element) {
 }
 
 const onClickHandler = (element) => {
-  emits('clickedDropDown');
+  emits('clickedDropDown', element.id);
   router.push(element.route);
 };
 
