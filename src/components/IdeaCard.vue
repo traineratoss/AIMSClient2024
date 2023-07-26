@@ -28,18 +28,12 @@ async function loadIdeaComments() {
   const loadedComments = await loadComments(100, 0, "id", props.ideaId);
   comments.value = loadedComments.map((comment) => ({
     ...comment,
-    expanded: false, // Add the 'expanded' property
+    expanded: false,
   }));
 }
 
 async function toggleComment(comment) {
   comment.expanded = !comment.expanded;
-  // comment.expanded = !comment.expanded;
-  // const loadedComments = await loadComments(100, 0, "id", props.ideaId);
-  // comments.value = loadedComments.map((comment) => ({
-  //   ...comment,
-  //   expanded: false, // Add the 'expanded' property
-  // }));
 }
 
 
@@ -49,12 +43,6 @@ let showComments = ref(false);
 let toggleReplies = ref(false);
 let currentUser = ref("");
 let commentReplies = ref([]);
-
-function toggle() {
-  //console.log("function was accesed");
-  toggleReplies.value = !toggleReplies.value;
-  console.log("TOGGLE REPLIES", toggleReplies);
-}
 
 function redirectToCreateIdeaView() {
   router.push({ path: "/page-not-found", query: { disableFields: true } });
@@ -66,13 +54,6 @@ function showDeletePopup() {
 
 function toggleComments() {
   showComments.value = !showComments.value;
-}
-
-async function refreshCommentList() {
-  toggleComments();
-  console.log("order has been recieved");
-  loadIdeaComments();
-  toggleComments();
 }
 
 async function loadCommentReplies(comment) {
@@ -117,7 +98,6 @@ async function postCommentDynamic(username, ideaId, commentText) {
 
         <div class="status">
           Status:
-          <!-- @TODO make handle bla bla function  -->
           <select v-model="props.status" @change="handleChangeStatus">
             <option value="open">Open</option>
             <option value="draft">Draft</option>
@@ -134,9 +114,6 @@ async function postCommentDynamic(username, ideaId, commentText) {
         <button @click="redirectToCreateIdeaView" class="view-button">
           View
         </button>
-        <!-- <router-link :to="`/create-idea`" class="delete-button">
-          Delete
-        </router-link> -->
         <button @click="showDeletePopup" class="delete-button">Delete</button>
       </div>
 
@@ -201,14 +178,19 @@ async function postCommentDynamic(username, ideaId, commentText) {
   color: black;
   border: 1px solid rgb(93, 93, 93);
 }
-
-.reply-container {
-  /* height: 30vh; */
-}
-
 .replies-wrapper{
-  /* overflow-y: scroll; */
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  margin-top: 5px;
+  overflow-y: auto;
+  max-height: 300px;
+  border: 1px solid slategray;
+  border-radius: 5px;
+  width: 31vw;
 }
+
+
 
 .idea-card {
   position: relative;

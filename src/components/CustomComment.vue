@@ -24,22 +24,13 @@ const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
 
 let postToggle = ref(false);
 let currentUser = ref("");
-let commentReplies = ref([]);
-let enableRepliesView = ref(false);
+let enableRepliesView = ref(true);
+let commentText = ref('')
 
 onMounted(async () => {
   currentUser.value = getCurrentUser();
   console.log(currentUser.value.username);
 });
-
-// function showReplies() {
-//   console.log("Emit button was pressed from CustomComment - SHOW REPLIES");
-//   enableRepliesView.value = !enableRepliesView.value;
-//   if (enableRepliesView) {
-//     loadCommentReplies();
-//     emits("showReplies");
-//   }
-// }
 
 function showReplies() {
   enableRepliesView = !enableRepliesView;
@@ -47,11 +38,6 @@ function showReplies() {
     emits("showReplies");
     loadCommentReplies();
   }
-}
-
-function loadParentComments() {
-  console.log("loading order has been sent");
-  emits("loadComments");
 }
 
 async function loadCommentReplies() {
@@ -152,7 +138,6 @@ async function postReplyDynamic(username, parentId, commentText) {
 </template>
 
 <style scoped>
-/* *-container : wraps entire component , either comment or reply */
 .comment-container {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
@@ -169,14 +154,11 @@ async function postReplyDynamic(username, parentId, commentText) {
   border-radius: 5px;
   border: 1px solid slategray;
   padding: 10px;
-  margin-top: 5px;
-  width: 30vw;
+  max-width: 30vw;
   min-height: 15vh;
   height: 15vh;
   max-height: 25vh;
 }
-
-/* grid containers define grid layout for header-container , comment-text-container and footer-container  */
 
 .reply-grid-main-container {
   display: grid;
@@ -212,15 +194,11 @@ async function postReplyDynamic(username, parentId, commentText) {
   align-items: center;
 }
 
-/* the text area input used for adding replies */
-
 .reply-input-container {
   display: flex;
   min-height: 10vh;
   flex-direction: column;
 }
-
-/* defining size for imported icons */
 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
@@ -229,7 +207,6 @@ async function postReplyDynamic(username, parentId, commentText) {
 .elapsedTime {
   margin-right: 5px;
 }
-
 .action-icon-button {
   background-color: white;
   border: none;
