@@ -7,6 +7,8 @@ import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue
 import { computed, ref } from "vue";
 
 const indexOfActivePage = ref(1);
+const disabledDashboard = ref(true);
+const disabledUser = ref(true);
 
 function redirectToAllIdeas() {
     indexOfActivePage.value = 1;
@@ -36,19 +38,75 @@ function isPageWithIndexActive(index) {
   return indexOfActivePage.value == index ? true : false;
 }
 
-function onMouseEnter() {
-    
+function onMouseEnterDashboard() {
+  disabledDashboard.value = false;
+}
+
+function onMouseLeaveDashboard() {
+  disabledDashboard.value = true;
+}
+
+function onMouseEnterUser() {
+    disabledUser.value = false;
+}
+
+function onMouseLeaveUser() {
+    disabledUser.value = true;
 }
 
 
- const dashboardElements = [
+const dashboardElements = [
     {
         name: "All users",
-        route: "/admin-dashboard"
+        route: "/admin-dashboard",
+        icon: "src/assets/img/allusers.svg",
+        width: '20%',
+        height: '90%'
     },
     {
         name: "Statistics",
-        route: "/app"
+        route: "/statistics",
+        icon: "src/assets/img/statistics.png",
+        width: '20%',
+        height: '90%'
+    }
+]
+
+const userDashboardElements = [
+    {
+        name: "Profile",
+        route: "/my-profile",
+        icon: "src/assets/img/avatar_icon.png",
+        width: '10%',
+        height: '90%'
+    },
+    {
+        name: "Change Password",
+        route: "/app",
+        icon: "src/assets/img/settings_icon.png",
+        width: '10%',
+        height: '90%'
+    },
+    {
+        name: "My ideas",
+        route: "/my",
+        icon: "src/assets/img/bulb_icon.png",
+        width: '10%',
+        height: '90%'
+    },
+    {
+        name: "Dashboard",
+        route: "/admin-dashboard",
+        icon: "src/assets/img/dashboard_icon.png",
+        width: '10%',
+        height: '90%'
+    },
+    {
+        name: "Log out",
+        route: "/app",
+        icon: "src/assets/img/logout_icon.svg",
+        width: '10%',
+        height: '90%'
     }
 ]
 
@@ -77,21 +135,22 @@ function onMouseEnter() {
                 >
                     My ideas
                 </CustomButton>
-                <div class="dashboard-dropdown">
+                <div 
+                class="dashboard-dropdown">
                     <CustomButton 
                         class = "nav-button" 
                         id = "dashboard"
-                        @click="redirectToDashboard"
                         :is-active=isPageWithIndexActive(3)
-                        >
-                        Dashboard <i class="fa-solid fa-caret-down fa-xl"></i>
-                        
-
-                        
+                        @mouseenter="onMouseEnterDashboard"
+                        @mouseleave="onMouseLeaveDashboard"
+                    >
+                        Dashboard 
+                    <i class="fa-solid fa-caret-down fa-xl"></i>
                     </CustomButton>
                     <div class="dropdown-content">
                         <CustomNavigationDropDown
-                        :element="dashboardElements">
+                        :element="dashboardElements"
+                        :disabled="disabledDashboard">
                         </CustomNavigationDropDown>
                     </div>
                 </div>
@@ -118,10 +177,18 @@ function onMouseEnter() {
             <CustomButton 
                 class = "nav-button" 
                 id="user-details-button"
-                @click="redirectToMyProfile"
+                @mouseenter="onMouseEnterUser"
+                @mouseleave="onMouseLeaveUser"
             >
                 <i class="fa-solid fa-user fa-2xl"></i>
                 <i class="fa-solid fa-chevron-down fa-xl"></i>
+                <div class="invisible-hover">aa</div>
+                <div class="dropdown-content-user">
+                    <CustomNavigationDropDown
+                     :element="userDashboardElements"
+                     :disabled="disabledUser">
+                    </CustomNavigationDropDown>
+                </div>
             </CustomButton>
         </div>
     </nav>    
@@ -129,6 +196,18 @@ function onMouseEnter() {
 
 
 <style scoped>
+
+.dashboard-hovered {
+  background-color: var(--selected-color);
+}
+
+.invisible-hover {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 100px;
+    top: 6.9vh;
+}
 nav {
     background-color: white;
     display: flex;
@@ -141,6 +220,7 @@ nav {
 .buttons {
     display: flex;
     justify-content: space-between;
+    align-content: center;
     width: 15vw;
 }
 
@@ -163,8 +243,11 @@ nav {
 }
 
 #dashboard {
-    border: none;
+    text-align: center;
+    width: 100%;
+    height: 100%;
 }
+
 
 #user-details-button {
     border: none;
@@ -186,6 +269,13 @@ nav {
 
 .dropdown-content {
     position: absolute;
+    width: 100px;
 }
 
+.dropdown-content-user {
+    position: absolute;
+    right: 0;
+    width: 200px;
+    top: 7.5vh;
+}
 </style>
