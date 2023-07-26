@@ -1,7 +1,8 @@
 <script setup>
 import CustomComment from "../components/CustomComment.vue";
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, defineEmits , onMounted} from "vue";
 import router from "../router";
+import { inject } from "vue";
 import {
   loadComments,
   loadReplies,
@@ -39,20 +40,22 @@ function toggle() {
   console.log("function was accesed");
   someVariable.value = !someVariable.value;
   console.log(someVariable);
+
+};
+
+function redirectToCreateIdeaView(){
+  router.push({ path: '/create-idea', query: { disableFields: true } });
+};
+
+function showDeletePopup(){
+  router.push({ path: '/create-idea', query: { showDeletePopup: true }});
+
 }
 
-
-function redirectToCreateIdeaView() {
-  router.push({ path: "/create-idea", query: { disableFields: true } });
+function toggleComments(){
+  showComments.value = !showComments.value 
 }
 
-function showDeletePopup() {
-  router.push({ path: "/create-idea", query: { showDeletePopup: true } });
-}
-
-function toggleComments() {
-  showComments.value = !showComments.value;
-}
 
 async function refreshCommentList() {
   toggleComments();
