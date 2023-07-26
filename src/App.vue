@@ -73,12 +73,29 @@ nav a:first-of-type {
 <script setup>
 import TestNavbar from "./components/TestNavbar.vue";
 import CustomNavBar from './components/CustomNavBar.vue';
+import { ref } from 'vue';
+import router from "./router";
+
+const showNavbar = ref(true);
+
+router.afterEach((to, from) => {
+  if(to.name === 'login' || to.name === 'register' || 
+    to.name === 'terms' || to.name === 'change' ||
+    to.name === 'recovery') {
+    showNavbar.value = false;
+  } else {
+    showNavbar.value = true;
+  }
+});
+
 </script>
 
 <template>
   <div class="app-container">
     <!-- <TestNavbar /> -->
-    <CustomNavBar/>
+    <CustomNavBar 
+      :style="{ 'display': showNavbar ? '' : 'none'}"
+    />
     <router-view />
   </div>
   <!-- <div id="app">
