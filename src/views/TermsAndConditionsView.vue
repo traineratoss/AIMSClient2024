@@ -3,7 +3,7 @@ import router from '../router';
 import sampleText from '../assets/termsAndConditions/termsAndConditions.js';
 
 function goToRegistration() {
-    router.push('/register');
+    router.push('/register/true');
 }
 const fileContent = sampleText;
 </script>

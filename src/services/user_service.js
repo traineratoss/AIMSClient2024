@@ -87,16 +87,13 @@ async function sendNewPassword(usernameOrEmail) {
 }
 
 async function sendEmail(usernameOrEmail) {
-    const response = await fetch(`${API_URL}/send-email`, {
+    const response = await fetch(`${API_URL}/send-approve-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: usernameOrEmail
     });
 }
-
-
-
-// FlorinCP : function for getting username from localStorage 
+ 
 // @TODO : Add a function to store that into local storage when login in
 
 function getCurrentUser(){
@@ -107,7 +104,6 @@ function setCurrentUser(username){
     const currenUser = getUser(username)
     localStorage.setItem('user', JSON.stringify(currenUser));
 }
-
 
 export { 
     getUserByEmail,
@@ -124,13 +120,3 @@ export {
     setCurrentUser,
     sendNewPassword
 }
-
-
-
-// fetch('https://dummyjson.com/products/1', {
-//   method: 'PUT', /* or PATCH */
-//   headers: { 'Content-Type': 'application/json' },
-//   body: JSON.stringify({
-//     title: 'iPhone Galaxy +1'
-//   })
-// })

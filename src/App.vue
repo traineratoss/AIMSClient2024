@@ -81,7 +81,7 @@ const showNavbar = ref(true);
 router.afterEach((to, from) => {
   if(to.name === 'login' || to.name === 'register' || 
     to.name === 'terms' || to.name === 'change' ||
-    to.name === 'recovery') {
+    to.name === 'recovery' || to.name === 'registration-complete') {
     showNavbar.value = false;
   } else {
     showNavbar.value = true;

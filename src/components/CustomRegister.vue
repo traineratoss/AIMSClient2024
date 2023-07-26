@@ -7,8 +7,9 @@ import { ref } from "vue";
 import { postUser } from "../services/user_service.js";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
+import { useRoute } from "vue-router";
 
-const acceptedTermsAndConditions = ref(false);
+const acceptedTermsAndConditions = ref(useRoute().params.accepted == 'true');
 const usernameText = ref("");
 const emailText = ref("");
 const showErrorMessage = ref(false);
@@ -30,7 +31,7 @@ function signUp() {
         });
     }
   } else {
-    message.value = "You need to agree with out Terms and Conditions";
+    message.value = "You need to agree with our Terms and Conditions";
     showErrorMessage.value = true;
   }
 }

@@ -166,13 +166,6 @@ async function postCommentDynamic(username, ideaId, commentText) {
 </template>
 
 <style scoped>
-.idea-card {
-  position: relative;
-  background-color: white;
-  width: 30vw;
-  height: 40vh;
-  border: 1px solid slategray;
-}
 .comment-container {
   border: 1px solid slategray;
 }

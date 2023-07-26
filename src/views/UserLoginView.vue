@@ -12,11 +12,12 @@ const passwordText = ref('');
 const showErrorMessage = ref(false);
 
 function redirectToRegister() {
-  router.push("/register");
+  router.push("/register/false");
 }
 
 function login() {
-  loginUser(usernameOrEmailText.value, passwordText.value)
+  if(usernameOrEmailText.value && passwordText.value) {
+    loginUser(usernameOrEmailText.value, passwordText.value)
       .then(res => {
         router.push('/my');
       })
@@ -25,6 +26,9 @@ function login() {
           passwordText.value = '';
           showErrorMessage.value = true;
       });
+  } else {
+    showErrorMessage.value = true;
+  }
 }
 
 </script>

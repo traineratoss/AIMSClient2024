@@ -54,7 +54,7 @@ const router = createRouter({
       component: PasswordRecoveryView,
     },
     {
-      path: "/register",
+      path: "/register/:accepted",
       name: "register",
       component: RegisterView,
     },
