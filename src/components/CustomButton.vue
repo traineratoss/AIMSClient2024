@@ -2,16 +2,16 @@
 const props = defineProps({
   id: String,
   label: String,
-  isActive: Boolean
+  isActive: Boolean,
 });
 </script>
 
 <template>
-  <button 
-    class="customButton" 
+  <button
+    class="customButton"
     :id="id"
     :style="{ backgroundColor: isActive ? 'var(--selected-color)' : '' }"
-    >
+  >
     <slot></slot>
   </button>
 </template>
@@ -24,7 +24,7 @@ const props = defineProps({
 
   cursor: pointer;
 
-  background-color: transparent;
+  background-color: var(--selected-color);
   border: 2px solid transparent;
 }
 
