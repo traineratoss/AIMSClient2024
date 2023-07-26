@@ -17,18 +17,28 @@ const message = ref("");
 
 function signUp() {
   if (acceptedTermsAndConditions.value === true) {
-    if (validateEmail(emailText.value) === true) {
-      postUser(usernameText.value, emailText.value)
-        .then((res) => {
-          router.push("/registration-complete");
-          showErrorMessage.value = false;
-        })
-        .catch((error) => {
-          usernameText.value = "";
-          emailText.value = "";
-          message.value = "Userame or email already exists";
-          showErrorMessage.value = true;
-        });
+    if (
+      emailText.value === "" ||
+      emailText.value === null ||
+      usernameText.value === "" ||
+      usernameText.value === null
+    ) {
+      message.value = "All the fields should be completed!";
+      showErrorMessage.value = true;
+    } else {
+      if (validateEmail(emailText.value) === true) {
+        postUser(usernameText.value, emailText.value)
+          .then((res) => {
+            router.push("/registration-complete");
+            showErrorMessage.value = false;
+          })
+          .catch((error) => {
+            usernameText.value = "";
+            emailText.value = "";
+            message.value = "Userame or email already exists";
+            showErrorMessage.value = true;
+          });
+      }
     }
   } else {
     message.value = "You need to agree with our Terms and Conditions";
@@ -129,5 +139,4 @@ input[type="checkbox"] {
 .error-message-visible {
   opacity: 1;
 }
-
 </style>
