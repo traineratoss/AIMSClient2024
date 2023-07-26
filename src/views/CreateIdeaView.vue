@@ -92,10 +92,8 @@ const fieldsDisabled = ref(disableFields);
     
 const showDeletePopup = useRoute().query.showDeletePopup === 'true';
 const deletePopup = ref(showDeletePopup);
-console.log(">> ",deletePopup.value);
 
 
-// const emit = defineEmits(['cancel', 'confirm']);
 const customDialog = ref(null);
 
 async function handleCancel() {

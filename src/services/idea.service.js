@@ -62,4 +62,10 @@ async function createIdea(title, status, text, categoryList, username) {
   console.log(data);
 }
 
-export {loadPagedIdeas, createIdea, getCategory, getUser}
+async function getImage() {
+  const response = await fetch(`http://localhost:8080/images`);
+  const json = await response.json();
+  return json;
+}
+
+export {loadPagedIdeas, createIdea, getCategory, getUser,getImage}

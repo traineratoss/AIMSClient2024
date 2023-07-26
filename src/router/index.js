@@ -14,6 +14,7 @@ import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
 import NewPasswordChanged from "../views/NewPasswordChanged.vue";
+import PageNotFound from "../views/PageNotFound.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -97,6 +98,11 @@ const router = createRouter({
       path: "/password-changed",
       name: "password-changed",
       component: NewPasswordChanged,
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "page-not-found",
+      component: PageNotFound,
     },
   ],
 });

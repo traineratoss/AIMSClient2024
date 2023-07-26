@@ -57,7 +57,7 @@ function toggle() {
 }
 
 function redirectToCreateIdeaView() {
-  router.push({ path: "/create-idea", query: { disableFields: true } });
+  router.push({ path: "/page-not-found", query: { disableFields: true } });
 }
 
 function showDeletePopup() {
