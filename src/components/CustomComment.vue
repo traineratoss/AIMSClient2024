@@ -91,15 +91,12 @@ async function postReplyDynamic(username, parentId, commentText) {
       </div>
 
       <div class="comment-text-container">
-        <textarea name="" id="comment-textarea" disabled>
-         {{ props.text }}
-      </textarea
-        >
+            <p id="comment-textarea">{{ props.text }}</p>  
       </div>
       <div class="footer-container">
         <div class="left"></div>
 
-        <div class="center">
+        <div class="center" v-show="props.hasReplies">
           <button @click="showReplies()" id="view-replies-button">
             <span v-if="enableRepliesView" class="material-symbols-outlined">
               expand_more
@@ -146,7 +143,6 @@ async function postReplyDynamic(username, parentId, commentText) {
   margin-top: 5px;
   width: 30vw;
   min-height: 20vh;
-  height: 23vh;
   max-height: 45vh;
 }
 .reply-container  {
