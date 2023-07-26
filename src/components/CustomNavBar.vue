@@ -59,14 +59,14 @@ const dashboardElements = [
     {
         name: "All users",
         route: "/admin-dashboard",
-        icon: "src/assets/img/allusers.svg",
+        icon: "src/assets/img/allusers_icon.png",
         width: '20%',
         height: '90%'
     },
     {
         name: "Statistics",
         route: "/statistics",
-        icon: "src/assets/img/statistics.png",
+        icon: "src/assets/img/statistics_icon.png",
         width: '20%',
         height: '90%'
     }
@@ -104,7 +104,7 @@ const userDashboardElements = [
     {
         name: "Log out",
         route: "/app",
-        icon: "src/assets/img/logout_icon.svg",
+        icon: "src/assets/img/logout_icon.png",
         width: '10%',
         height: '90%'
     }
@@ -276,6 +276,5 @@ nav {
     position: absolute;
     right: 0;
     width: 200px;
-    top: 7.5vh;
 }
 </style>
