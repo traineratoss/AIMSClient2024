@@ -14,12 +14,10 @@ const props = defineProps({
   userId: "",
   ideaId: "",
   hasReplies: "",
+  isReply: "",
   parentId: "",
-  isReplay: "",
   elapsedTime: "",
-  parentId: "",
-  isReplay: "",
-  elapsedTime: "",
+  expanded: "",
 });
 
 const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
@@ -27,19 +25,28 @@ const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
 let postToggle = ref(false);
 let currentUser = ref("");
 let commentReplies = ref([]);
-let enableRepliesView = ref(false)
+let enableRepliesView = ref(false);
 
 onMounted(async () => {
   currentUser.value = getCurrentUser();
   console.log(currentUser.value.username);
 });
 
+// function showReplies() {
+//   console.log("Emit button was pressed from CustomComment - SHOW REPLIES");
+//   enableRepliesView.value = !enableRepliesView.value;
+//   if (enableRepliesView) {
+//     loadCommentReplies();
+//     emits("showReplies");
+//   }
+// }
+
 function showReplies() {
-  console.log("Emit button was pressed from CustomComment");
-  enableRepliesView =! enableRepliesView
-  loadCommentReplies();
-  emits("showReplies");
-  
+  enableRepliesView = !enableRepliesView;
+  if (props.hasReplies) {
+    emits("showReplies");
+    loadCommentReplies();
+  }
 }
 
 function loadParentComments() {
@@ -63,7 +70,7 @@ async function postReplyDynamic(username, parentId, commentText) {
 </script>
 
 <template>
-  <div v-if="!props.isReplay" class="container" >
+  <div v-if="!props.isReply" class="container">
     <div class="main-container">
       <div class="header-container">
         <p>{{ props.userName }}</p>
@@ -79,25 +86,28 @@ async function postReplyDynamic(username, parentId, commentText) {
       <div class="footer-container">
         <div class="left"></div>
 
-
         <div class="center">
-          
-          <button @click="showReplies()" id="expandPost" v-if="!enableRepliesView">
-            <span class="material-symbols-outlined"> expand_more </span>
+          <button @click="showReplies()" id="expandPost">
+            <span
+              class="material-symbols-outlined"
+              v-if="!props.isReply && props.hasReplies && !props.expanded"
+            >
+              expand_more
+            </span>
+            <span
+              class="material-symbols-outlined"
+              v-if="!props.isReply && props.hasReplies && props.expanded"
+            >
+              expand_less
+            </span>
           </button>
-
-          <button @click="showReplies()" class="showPostAction" v-if="enableRepliesView">
-              <span class="material-symbols-outlined"> expand_less </span>
-            </button>
-          
         </div>
-
 
         <div class="right">
           <button class="showPostAction" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> ink_pen </span>
           </button>
-          <button class="showPostAction" @click="postToggle = !postToggle">
+          <button class="showPostAction">
             <span class="material-symbols-outlined"> delete </span>
           </button>
         </div>
@@ -120,7 +130,7 @@ async function postReplyDynamic(username, parentId, commentText) {
       </button>
     </div>
   </div>
-  <div v-else class="reply-container" >
+  <div v-else class="reply-container">
     <div class="main-container">
       <div class="header-container">
         <p>{{ props.userName }}</p>
@@ -128,7 +138,13 @@ async function postReplyDynamic(username, parentId, commentText) {
       </div>
 
       <div class="">
-        <textarea name="" id="replyContentTextArea" cols="30" rows="10" disabled>
+        <textarea
+          name=""
+          id="replyContentTextArea"
+          cols="30"
+          rows="10"
+          disabled
+        >
         {{ props.text }}
       </textarea
         >
@@ -160,7 +176,7 @@ async function postReplyDynamic(username, parentId, commentText) {
   min-height: 20vh;
   max-height: 45vh;
 }
-.reply-container{
+.reply-container {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
   border: 1px solid slategray;
@@ -260,7 +276,7 @@ textarea {
   margin: 1vh;
 }
 
-#replyContentTextArea{
+#replyContentTextArea {
   color: black;
   background-color: rgb(255, 255, 255);
   height: 12vh;

@@ -25,20 +25,28 @@ onMounted(async () => {
 });
 
 async function loadIdeaComments() {
-  comments.value = await loadComments(100, 0, "id", props.ideaId);
+  const loadedComments = await loadComments(100, 0, "id", props.ideaId);
+  comments.value = loadedComments.map((comment) => ({
+    ...comment,
+    expanded: false, // Add the 'expanded' property
+  }));
+}
+
+function toggleComment(comment) {
+  comment.expanded = !comment.expanded;
 }
 
 let comments = ref([]);
 let commentText = ref([]);
 let showComments = ref(false);
-let someVariable = ref(false);
+let toggleReplies = ref(false);
 let currentUser = ref("");
 let commentReplies = ref([]);
 
 function toggle() {
-  console.log("function was accesed");
-  someVariable.value = !someVariable.value;
-  console.log(someVariable);
+  //console.log("function was accesed");
+  toggleReplies.value = !toggleReplies.value;
+  console.log("TOGGLE REPLIES", toggleReplies);
 }
 
 function redirectToCreateIdeaView() {
@@ -116,6 +124,12 @@ async function postCommentDynamic(username, ideaId, commentText) {
         <button @click="redirectToCreateIdeaView" class="view-button">
           View
         </button>
+        <button @click="redirectToCreateIdeaView" class="view-button">
+          View
+        </button>
+        <!-- <router-link :to="`/create-idea`" class="delete-button">
+          Delete
+        </router-link> -->
         <button @click="showDeletePopup" class="delete-button">Delete</button>
       </div>
 
@@ -144,19 +158,24 @@ async function postCommentDynamic(username, ideaId, commentText) {
     >
       <CustomComment
         :elapsedTime="comment.elapsedTime"
-        :isReplay="false"
+        :isReply="false"
         :parentId="comment.id"
         :text="comment.commentText"
         :userName="comment.username"
         :hasReplies="comment.hasReplies"
-        @showReplies="toggle()"
+        :expanded="comment.expanded"
+        @showReplies="toggleComment(comment)"
         @loadReplies="loadCommentReplies(comment)"
       />
 
-      <div v-if="someVariable" v-for="commentReply in comment.replies" class="reply-container">
+      <div
+        v-if="comment.expanded"
+        v-for="commentReply in comment.replies"
+        class="reply-container"
+      >
         <CustomComment
           :elapsedTime="commentReply.elapsedTime"
-          :isReplay="true"
+          :isReply="true"
           :text="commentReply.commentText"
           :userName="commentReply.username"
         />
@@ -186,7 +205,7 @@ async function postCommentDynamic(username, ideaId, commentText) {
   border: 1px solid rgb(93, 93, 93);
 }
 
-.reply-container{
+.reply-container {
   height: 30vh;
 }
 .idea-card {
