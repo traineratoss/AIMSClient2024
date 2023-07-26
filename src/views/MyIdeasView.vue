@@ -1,26 +1,56 @@
 <template>
-    <div class="all-ideas-view-container">
-      <div class="sidebar-container">
-        <SidePanel />
+  <div class="all-ideas-view-container">
+    <div class="sidebar-container">
+      <SidePanel />
+    </div>
+    <div class="main-container">
+      <div class="idea-container" v-for="idea in paginatedIdeas" :key="idea.text">
+        <IdeaCard :title="idea.text" />
       </div>
-      <div class="main-container">
-        <div class="idea-container" v-for="idea in paginatedIdeas" :key="idea.text">
-          <IdeaCard :title="idea.text" />
-        </div>
-        <div class="pagination-container">
-          <span
-            class="page-number"
-            v-for="pageNumber in totalPages"
-            :key="pageNumber"
-            :class="{ active: currentPage === pageNumber }"
-            @click="changePage(pageNumber)"
-          >
-            {{ pageNumber }}
-          </span>
-        </div>
+      <div class="pagination-container">
+        <span
+          v-if="currentPage !== 1 && totalPages > 1"
+          class="page-number arrow"
+          @click="goToPage(1)"
+        >
+        <span class="material-symbols-outlined">
+          keyboard_double_arrow_left
+        </span>
+        </span>
+        <span
+          v-if="currentPage > 1"
+          class="page-number arrow"
+          @click="goToPage(currentPage - 1)"
+        >
+        <span class="material-symbols-outlined">
+          navigate_before
+        </span>
+        </span>
+        <span class="page-number current-page">
+          {{ currentPage }}
+        </span>
+        <span
+          v-if="currentPage < totalPages"
+          class="page-number arrow"
+          @click="goToPage(currentPage + 1)"
+        >
+        <span class="material-symbols-outlined">
+          navigate_next
+        </span>
+        </span>
+        <span
+          v-if="currentPage !== totalPages && totalPages > 1"
+          class="page-number arrow"
+          @click="goToPage(totalPages)"
+        >
+        <span class="material-symbols-outlined">
+          keyboard_double_arrow_right
+        </span>
+        </span>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script setup>
 import { ref, computed } from "vue";
@@ -35,7 +65,10 @@ const ideas = ref([
   { text: "Idea 2", userId: 3, isPublic: true, isImplemented: false, comments: 1, replies: 1 },
   { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
   { text: "Idea 4", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
-  { text: "Idea 5", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
+  { text: "Idea 5", userId: 2, isPublic: true, isImplemented: false, comments: 4, replies: 8 },
+  { text: "Idea 6", userId: 3, isPublic: true, isImplemented: false, comments: 2, replies: 2 },
+  { text: "Idea 7", userId: 3, isPublic: true, isImplemented: true, comments: 5, replies: 0 },
+  { text: "Idea 8", userId: 4, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
 ]);
 
 const paginatedIdeas = computed(() => {
@@ -45,9 +78,10 @@ const paginatedIdeas = computed(() => {
 
 const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
 
-function changePage(pageNumber) {
+function goToPage(pageNumber) {
   currentPage.value = pageNumber;
 }
+
 </script>
   
   <style scoped>
@@ -88,11 +122,10 @@ function changePage(pageNumber) {
   
   .idea-container {
   display: flex;
-  justify-content: center; /* Centrare pe axa orizontală */
-  align-items: center; /* Centrare pe axa verticală */
-  width: calc(50% - 20px); /* 50% width minus margins on both sides */
-  margin: 10px auto; /* Center the ideas horizontally */
-  border: 1px solid black;
+  justify-content: center; 
+  align-items: center; 
+  width: calc(50% - 20px); 
+  margin: 10px auto; 
   padding: 10px;
 }
 .pagination-container {
@@ -104,16 +137,37 @@ function changePage(pageNumber) {
 .page-number {
   display: inline-block;
   margin: 0 5px;
-  padding: 5px 10px; 
+  padding: 5px 10px;
   border: 1px solid #000;
-  border-radius: 999px; 
-  background-color: transparent; 
+  border-radius: 999px;
   cursor: pointer;
 }
 
 .page-number.active {
   background-color: #000;
   color: #fff;
+  font-weight: bold;
+}
+
+.arrow {
+  cursor: pointer;
+}
+
+.arrow:hover {
+  text-decoration: underline;
+}
+
+.current-page {
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.current-page:hover {
+  text-decoration: underline;
 }
   </style>
   
