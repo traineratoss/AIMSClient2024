@@ -43,6 +43,38 @@ async function getUser(pageSize, pageNumber, sortCategory) {
   return content;
 }
 
+async function filterIdeas(
+  title,
+  text,
+  status,
+  category,
+  pageNumber,
+  sortDirection
+) {
+  let url = `${API_URL}/ideas/filterIdeas?pageNumber=${pageNumber}&sortDirection=${sortDirection}`;
+
+  if (title) url += `&title=${title}`;
+  if (text) url += `&text=${text}`;
+  if (status) url += `&status=${status}`;
+  if (category.length != 0) url += `&category=${category}`;
+
+  const response = await fetch(url, {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  }); // add this line
+  const data = await response.json();
+  const content = await data.content;
+  return content;
+}
+
 async function createIdea(title, status, text, categoryList, username) {
   const response = await fetch(API_URL + "/createIdea?username=" + username, {
     method: "POST",
@@ -68,4 +100,4 @@ async function getImage() {
   return json;
 }
 
-export {loadPagedIdeas, createIdea, getCategory, getUser,getImage}
+export { loadPagedIdeas, createIdea, getCategory, getUser, getImage };
