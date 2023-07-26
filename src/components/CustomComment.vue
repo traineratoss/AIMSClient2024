@@ -51,7 +51,7 @@ async function loadCommentReplies() {
 
 <template>
   <div class="container">
-    <!-- <div class="main-container">
+    <div class="main-container">
       <div class="header-container">
         <p>{{ props.userName }}</p>
         <div class="subheader-container">
@@ -62,25 +62,27 @@ async function loadCommentReplies() {
         </div>
       </div>
       <div class="comment-container">
+        <textarea name="" id="contentTextArea" cols="30" rows="10" disabled>
         {{ props.text }}
+      </textarea>
       </div>
       <div class="footer-container">
         <span class="material-symbols-outlined"> ink_pen </span>
-        <button @click="showReplies()" class="showPostAction"><span class="material-symbols-outlined"> expand_more </span></button>
+        <button @click="showReplies()" class="showPostAction">
+          <span class="material-symbols-outlined"> expand_more </span>
+        </button>
         <span class="material-symbols-outlined"> expand_less </span>
-        
+
         <span class="material-symbols-outlined"> visibility </span>
         <span class="material-symbols-outlined"> visibility_off </span>
         <button class="showPostAction" @click="postToggle = !postToggle">
           <span class="material-symbols-outlined"> ink_pen </span>
         </button>
       </div>
-    </div> -->
-    <button class="showPostAction" @click="postToggle = !postToggle">
-          <span class="material-symbols-outlined"> ink_pen </span>
-        </button>
+    </div>
     <div class="input-container" v-if="!props.isReplay && postToggle">
-      <input type="text" v-model="commentText" />
+      <textarea v-model="commentText" placeholder="Comment text.">
+      </textarea>
       <button
         @click="
           postReply(currentUser.username, props.parentId, commentText);
@@ -100,16 +102,16 @@ async function loadCommentReplies() {
   border: 1px solid slategray;
   padding: 10px;
   margin-top: 5px;
-  max-width: 30vw;
+  width: 30vw;
   min-height: 20vh;
-  max-height: 30vh;
+  max-height: 40vh;
 }
 .main-container {
   display: grid;
-  grid-template-rows: 2rem auto 2rem;
+  grid-template-rows: 2rem 20vh 2rem;
 }
-.input-container{
-  background-color: rgb(255, 255, 255);
+.input-container {
+  min-height: 10vh;
 }
 .header-container {
   display: flex;
@@ -150,13 +152,35 @@ async function loadCommentReplies() {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
-.showPostAction{
-	background-color: white;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
+.showPostAction {
+  background-color: white;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 
+.elapsedTime{
+  margin-right: 5px;
+}
+
+textarea{
+  
+  resize: none;
+  min-height: 10vh;
+  width: 30vw;
+  border:1px solid rgba(0, 4, 8, 0.537);
+  border-radius: 5px;
+}
+
+#contentTextArea{
+  color: black;
+  background-color: rgb(250, 194, 194);
+  height: 18vh;
+  width:29vw;
+  resize: none;
+  border: none;
+  margin:1vh;
+}
 </style>
