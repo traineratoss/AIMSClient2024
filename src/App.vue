@@ -86,7 +86,8 @@ router.afterEach((to, from) => {
     to.name === "change" ||
     to.name === "recovery" ||
     to.name === "registration-complete" ||
-    to.name === "page-not-found"
+    to.name === "page-not-found" ||
+    to.name === 'password-changed'
   ) {
     showNavbar.value = false;
   } else {
