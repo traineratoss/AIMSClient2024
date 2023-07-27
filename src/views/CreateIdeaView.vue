@@ -4,9 +4,9 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { createIdea } from "../services/idea.service";
-import { watch, ref, onMounted,defineProps } from "vue";
-import { stringifyQuery, useRoute } from "vue-router";
+import { createIdea,addImage } from "../services/idea.service";
+import { watch, ref, onMounted } from "vue";
+import {  useRoute } from "vue-router";
 import router from "../router";
 import { getCategory, getUser } from "../services/idea.service";
 
@@ -21,10 +21,10 @@ const statusError = ref(false);
 const textError = ref(false);
 const categoryError = ref(false);
 const slideImages = [
-    {url: 'https://imageio.forbes.com/specials-images/imageserve/5f85be4ed0acaafe77436710/0x0.jpg?format=jpg&width=1200'},
-    {url: 'https://th-thumbnailer.cdn-si-edu.com/XJFrDNlNhvtv1uH-U6FKdBJ_U2U=/1000x750/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/04/8e/048ed839-a581-48af-a0ae-fac6fec00948/gettyimages-168346757_web.jpg'},
-    {url: 'https://www.freecodecamp.org/news/content/images/2022/12/main-image.png'},
-    {url: 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/blogs/34246/images/i9SaP0vNQZWCZNsLaVhr_Hobby.jpg'}
+    'https://imageio.forbes.com/specials-images/imageserve/5f85be4ed0acaafe77436710/0x0.jpg?format=jpg&width=1200',
+    'https://th-thumbnailer.cdn-si-edu.com/XJFrDNlNhvtv1uH-U6FKdBJ_U2U=/1000x750/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/04/8e/048ed839-a581-48af-a0ae-fac6fec00948/gettyimages-168346757_web.jpg',
+    'https://www.freecodecamp.org/news/content/images/2022/12/main-image.png',
+    'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/blogs/34246/images/i9SaP0vNQZWCZNsLaVhr_Hobby.jpg'
 ];
 
 
@@ -106,6 +106,20 @@ async function handleConfirm() {
   await router.push({ path: '/all' });
 };
 
+const fileUpload1 = ref(null);
+function onImageUpload (event){
+  const file = event.target.files[0];
+  fileUpload1.value = new FormData();
+  fileUpload1.value.append("file", file);
+  slideImages.push(URL.createObjectURL(file));
+}
+
+function clickImageButton(){
+  const file = fileUpload1.value;
+  addImage(file);
+  //"research" send byte []
+
+}
 
 
 </script>
@@ -136,6 +150,7 @@ async function handleConfirm() {
              :disabled="fieldsDisabled"
              :variants="categoryOptions"
              :error="categoryError"
+             
              >
             </CustomDropDown>
         </div>
@@ -152,13 +167,14 @@ async function handleConfirm() {
              <CarouselImage :images="slideImages"/>
         </div>
         <div class="add-image" >
-            <input type="file" id="upload" hidden :disabled="fieldsDisabled" />
-            <label for="upload" class="add-image-idea" v-if="!deletePopup">Choose Image</label>
-           
-
+            <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="fileUpload" @change="onImageUpload"/>
+            <label   for="upload" class="add-image-idea" v-if="!deletePopup">Choose Image</label>
         </div>
         <div>
             <CustomButton id="create-idea"  @click="createIdeaFunction"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Idea</CustomButton>
+        </div>
+        <div>
+            <CustomButton id="create-idea"  @click="clickImageButton"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Image</CustomButton>
         </div>
         <CustomDialog 
         ref="customDialog" 
@@ -211,7 +227,7 @@ async function handleConfirm() {
     margin-top: 1rem;
 }
 .input-width{
-  width: 194px;
+  width: 200px;
 }
 
 .idea{
@@ -219,7 +235,7 @@ async function handleConfirm() {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    width:25vh;
+    width:30vh;
 }
 .label{
     padding-right: 20px;

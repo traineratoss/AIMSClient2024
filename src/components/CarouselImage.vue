@@ -1,5 +1,7 @@
 <script setup>
-import { ref, defineProps } from "vue";
+
+import { ref,defineProps,watchEffect } from 'vue';
+
 
 const slides = defineProps(["images"]);
 const currentIndex = ref(0);
@@ -12,6 +14,10 @@ const prevSlide = () => {
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % slides.images.length;
 };
+
+watchEffect(() => {
+  currentIndex.value = 0;
+});
 </script>
 
 <template>
@@ -30,7 +36,7 @@ const nextSlide = () => {
           class="slide"
           :class="{ active: currentIndex === index }"
         >
-          <img :src="slide.url" />
+          <img :src="slide" />
         </div>
       </div>
     </div>

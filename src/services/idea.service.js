@@ -92,11 +92,23 @@ async function createIdea(title, status, text, categoryList, username) {
   console.log(data);
 }
 
+async function addImage(imageData){
+  const response = await fetch(`http://localhost:8080/images/addImage`,{
+    method: 'POST',
+    body: imageData,
+    headers: {
+      'content-type': 'application/json;multipart/form-data',
+    }
+  });
+  const data = await response.json();
+}
+
 async function getImage() {
   const response = await fetch(`http://localhost:8080/images`);
   const json = await response.json();
   return json;
 }
+
 
 export {
   loadPagedIdeas,
@@ -105,4 +117,6 @@ export {
   getUser,
   getImage,
   filterIdeas,
+  addImage
 };
+

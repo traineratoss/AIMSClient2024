@@ -118,6 +118,7 @@ onMounted(() => {
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   max-height: 8vh;
+  /* max-height: 250px; */
   overflow-y: auto;
 }
 
@@ -138,6 +139,6 @@ onMounted(() => {
 }
 
 .input-dropdown {
-  width: 185px;
+  width: 192px;
 }
 </style>
