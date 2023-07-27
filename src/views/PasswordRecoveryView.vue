@@ -21,7 +21,9 @@ function requestNewPassword() {
   <div class="container">
     <FormTitle label="Password Recovery" />
     <div id="profile-img">
-      <i class="fa-regular fa-circle-user" id="user-icon"> </i>
+      <span class="material-symbols-outlined">
+        account_circle
+      </span>
     </div>
     <div>
       <CustomInput
@@ -52,6 +54,10 @@ function requestNewPassword() {
   gap: 20px;
   position: relative;
   top: 80px;
+}
+
+.material-symbols-outlined {
+  font-size: 10vh;
 }
 
 img {

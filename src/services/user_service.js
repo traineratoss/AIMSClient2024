@@ -12,10 +12,10 @@ async function getUserByEmail(email) {
     return json;
 }
 
-async function loginUser(username, password) {
+async function loginUser(username, hashPassword) {
     const response = await fetch(`${API_URL}/login?username=${username}`, {
         method: 'POST',
-        body: password
+        body: hashPassword
     });
     const json = await response.json();
     return json;

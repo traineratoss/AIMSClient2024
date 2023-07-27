@@ -61,7 +61,9 @@ function validateEmail(mail) {
     <CompanyLogo />
     <div class="register">
       <FormTitle label="Register" />
-      <i class="fa-regular fa-circle-user"></i>
+      <span class="material-symbols-outlined">
+        account_circle
+      </span>
       <InvalidInputMessage
         :message="message"
         :class="{ 'error-message-visible': showErrorMessage }"
@@ -109,6 +111,10 @@ function validateEmail(mail) {
   margin-top: 20vh;
   align-items: center;
   gap: 50px;
+}
+
+.material-symbols-outlined {
+  font-size: 10vh;
 }
 
 .register i {
