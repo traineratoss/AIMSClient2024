@@ -129,6 +129,10 @@ function setCurrentUser(username){
     localStorage.setItem('user', JSON.stringify(currenUser));
 }
 
+function logout() {
+    localStorage.setItem('user', JSON.stringify(null));
+}
+
 export { 
     getUserByEmail,
     getUserByUsername, 
@@ -145,5 +149,6 @@ export {
     sendNewPassword,
     sendDeclineEmail,
     sendActivateEmail,
-    sendDeactivateEmail
+    sendDeactivateEmail,
+    logout
 }
