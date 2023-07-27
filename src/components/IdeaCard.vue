@@ -42,7 +42,7 @@ let showComments = ref(false);
 let currentUser = ref("");
 
 function redirectToCreateIdeaView() {
-  router.push({ path: "/page-not-found", query: { disableFields: true } });
+  router.push({ path: "/create-idea", query: { disableFields: true } });
 }
 
 function showDeletePopup() {
@@ -196,6 +196,7 @@ function getShortenedText(text) {
 }
 .replies-wrapper {
   margin: 5px;
+
   display: flex;
   gap: 5px;
   flex-direction: column;

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps } from "vue";
+import { ref, onMounted, defineProps, onUnmounted, watch } from "vue";
 
 const emit = defineEmits(["update:selectedCategories"]);
 
@@ -12,10 +12,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  error : {
+  error: {
     type: Boolean,
     default: false,
-  }
+  },
 });
 const comboInput = ref(null);
 const dropdown = ref(null);
@@ -35,8 +35,7 @@ const handleCheckboxChange = () => {
   emit("update:selectedCategories", selectedVariants);
 };
 
-onMounted(() =>{
-})
+onMounted(() => {});
 
 const handleInputKeyPress = (event) => {
   if (event.key === "Enter" && event.target.value !== "") {
@@ -48,21 +47,19 @@ const handleInputKeyPress = (event) => {
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
   emit("update:selectedCategories", selectedVariants);
+};
+
+function onMouseEnter() {
+  isDropdownVisible.value = true;
 }
 
-const onMouseEnter = () => {
-  isDropdownVisible.value = true;
-};
-
-const onMouseLeave = () => {
+function onMouseLeave() {
   isDropdownVisible.value = false;
-};
+}
 
 onMounted(() => {
   comboInput.value.addEventListener("click", showDropdown);
 });
-
-// const { disabled } = defineProps(['disabled']);
 </script>
 
 <template>
@@ -74,7 +71,8 @@ onMounted(() => {
       :placeholder="error ? 'Select a category' : ''"
       :disabled="props.disabled"
       @keydown.enter="handleInputKeyPress"
-      :class="{error:props.error}"
+      :class="{ error: props.error }"
+      @mouseleave="onMouseLeave"
     />
     <div
       v-show="isDropdownVisible && !props.disabled"
@@ -103,7 +101,7 @@ onMounted(() => {
 
 .error {
   border-color: red;
-  border-width: 1.4px; 
+  border-width: 1.4px;
   border-radius: 1px;
 }
 
@@ -119,7 +117,7 @@ onMounted(() => {
   background-color: #fff;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  max-height: 200px;
+  max-height: 8vh;
   overflow-y: auto;
 }
 
@@ -130,7 +128,7 @@ onMounted(() => {
 .dropdown label {
   cursor: pointer;
   display: flex;
-  justify-content: space-between;
+
   align-items: center;
   width: 185px;
 }

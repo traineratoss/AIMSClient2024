@@ -11,11 +11,12 @@ import CustomDropDown from "../components/CustomDropDown.vue";
 import { getCategory, getUser } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 
-const statusOptions = ["Open", "Implemented"];
+const statusOptions = ["OPEN", "DRAFT", "IMPLEMENTED"];
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
 const userOptions = ref([]);
 const userSelected = ref([]);
+const statusSelected = ref([]);
 const inputTitle = ref("");
 const inputText = ref("");
 const selectedDateFrom = ref("");
@@ -28,10 +29,9 @@ const handleSelectedCategories = (selectedCategories) => {
 const handleSelectedUsers = (selectedUsers) => {
   userSelected.value = selectedUsers;
 };
-
-// watch(categoriesSelected, (newValue) => {
-//   console.log("Selected categories changed. New value:", newValue);
-// });
+const handleSelectedStatus = (selectedStatus) => {
+  statusSelected.value = selectedStatus;
+};
 
 onMounted(async () => {
   //getting all the available categories on mount
@@ -40,7 +40,7 @@ onMounted(async () => {
   categoryOptions.value = categoryNames;
 
   //getting all the available users on mount
-  const dataUser = await getUser(3, 0, "username");
+  const dataUser = await getUser(10, 0, "username");
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
 });
@@ -50,9 +50,10 @@ const filter = async () => {
   const text = inputText.value;
   const category = categoriesSelected.value;
   const pageNumber = 0;
-  const status = statusOptions.value;
+  const status = statusSelected.value;
   const sortDirection = "ASC";
   console.log(category);
+
   const filteredIdeas = await filterIdeas(
     title,
     text,
@@ -61,7 +62,9 @@ const filter = async () => {
     pageNumber,
     sortDirection
   );
-  console.log(filteredIdeas);
+
+  console.log(filteredIdeas.pagedIdeas.content);
+  console.log(filteredIdeas.total);
 };
 </script>
 
@@ -76,11 +79,11 @@ const filter = async () => {
       <CustomInput v-model="inputText" class="text-input" />
 
       <span class="status">Status:</span>
-      <select v-model="statusOptions" class="status-select">
-        <option v-for="status in statusOptions" :key="status" :value="status">
-          {{ status }}
-        </option>
-      </select>
+      <CustomDropDown
+        class="status-select"
+        :variants="statusOptions"
+        @update:selectedCategories="handleSelectedStatus"
+      ></CustomDropDown>
 
       <span class="category">Category:</span>
       <CustomDropDown
@@ -190,10 +193,12 @@ const filter = async () => {
 .text-input {
   grid-column: 2/3;
   grid-row: 3/4;
+  z-index: 5;
 }
 .status-select {
   grid-column: 2/3;
   grid-row: 4/5;
+  z-index: 6;
 }
 .category-select {
   grid-column: 2/3;
