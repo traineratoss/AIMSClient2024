@@ -5,18 +5,33 @@
 
  -->
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import { getCategory, getUser } from "../services/idea.service";
+import { filterIdeas } from "../services/idea.service";
 
-const statusOptions = ["Open", "Implemented", "Draft"];
+const statusOptions = ["Open", "Implemented"];
 const categoryOptions = ref([]);
+const categoriesSelected = ref([]);
 const userOptions = ref([]);
+const userSelected = ref([]);
 const inputTitle = ref("");
 const inputText = ref("");
 const selectedDateFrom = ref("");
 const selectedDateTo = ref("");
+
+const handleSelectedCategories = (selectedCategories) => {
+  categoriesSelected.value = selectedCategories;
+};
+
+const handleSelectedUsers = (selectedUsers) => {
+  userSelected.value = selectedUsers;
+};
+
+// watch(categoriesSelected, (newValue) => {
+//   console.log("Selected categories changed. New value:", newValue);
+// });
 
 onMounted(async () => {
   //getting all the available categories on mount
@@ -25,11 +40,29 @@ onMounted(async () => {
   categoryOptions.value = categoryNames;
 
   //getting all the available users on mount
-  const dataUser = await getUser(2, 0, "username");
+  const dataUser = await getUser(3, 0, "username");
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
-  console.log(userOptions.value);
 });
+
+const filter = async () => {
+  const title = inputTitle.value;
+  const text = inputText.value;
+  const category = categoriesSelected.value;
+  const pageNumber = 0;
+  const status = statusOptions.value;
+  const sortDirection = "ASC";
+  console.log(category);
+  const filteredIdeas = await filterIdeas(
+    title,
+    text,
+    status,
+    category,
+    pageNumber,
+    sortDirection
+  );
+  console.log(filteredIdeas);
+};
 </script>
 
 <template>
@@ -43,7 +76,7 @@ onMounted(async () => {
       <CustomInput v-model="inputText" class="text-input" />
 
       <span class="status">Status:</span>
-      <select v-model="selectedStatus" class="status-select">
+      <select v-model="statusOptions" class="status-select">
         <option v-for="status in statusOptions" :key="status" :value="status">
           {{ status }}
         </option>
@@ -53,14 +86,16 @@ onMounted(async () => {
       <CustomDropDown
         class="category-select"
         :variants="categoryOptions"
+        @update:selectedCategories="handleSelectedCategories"
       ></CustomDropDown>
 
       <span class="user">User:</span>
-      <select name="" id="" class="user-select">
-        <option v-for="user in userOptions" :value="user">
-          {{ user }}
-        </option>
-      </select>
+      <CustomDropDown
+        class="user-select"
+        :variants="userOptions"
+        @update:selectedCategories="handleSelectedUsers"
+      ></CustomDropDown>
+
       <div class="date-chooser">
         <fieldset style="border: 0.1px black solid">
           <legend style="margin-left: 1em; padding: 0.2em 0.8em">
@@ -83,7 +118,7 @@ onMounted(async () => {
         </fieldset>
       </div>
 
-      <button class="filter-button" @click="hh">filter</button>
+      <button class="filter-button" @click="filter">filter</button>
     </div>
   </div>
 </template>
@@ -163,6 +198,7 @@ onMounted(async () => {
 .category-select {
   grid-column: 2/3;
   grid-row: 5/6;
+  z-index: 5;
 }
 .user-select {
   grid-column: 2/3;

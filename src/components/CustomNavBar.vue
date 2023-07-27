@@ -69,19 +69,13 @@ const dashboardElements = [
     id: "all-users",
     name: "All users",
     route: "/admin-dashboard",
-    icon: "src/assets/img/allusers_icon.png",
-    width: "20%",
-    height: "90%",
-    backgroundColor: "white",
+    icon: "group",
   },
   {
     id: "stats",
     name: "Statistics",
     route: "/all",
-    icon: "src/assets/img/statistics_icon.png",
-    width: "20%",
-    height: "90%",
-    backgroundColor: "white",
+    icon: "bar_chart",
   },
 ];
 
@@ -90,41 +84,31 @@ const userDashboardElements = [
     id: "profile",
     name: "Profile",
     route: "/my-profile",
-    icon: "src/assets/img/avatar_icon.png",
-    width: "10%",
-    height: "90%",
+    icon: "person",
   },
   {
     id: "change-password",
     name: "Change Password",
     route: "/change",
-    icon: "src/assets/img/settings_icon.png",
-    width: "10%",
-    height: "90%",
+    icon: "settings",
   },
   {
     id: "my-ideas",
     name: "My ideas",
     route: "/my",
-    icon: "src/assets/img/bulb_icon.png",
-    width: "10%",
-    height: "90%",
+    icon: "lightbulb",
   },
   {
     id: "dashboard",
     name: "Dashboard",
     route: "/admin-dashboard",
-    icon: "src/assets/img/dashboard_icon.png",
-    width: "10%",
-    height: "90%",
+    icon: "dashboard",
   },
   {
     id: "logout",
     name: "Log out",
     route: "/login",
-    icon: "src/assets/img/logout_icon.png",
-    width: "10%",
-    height: "90%",
+    icon: "logout",
   },
 ];
 </script>
@@ -162,7 +146,9 @@ const userDashboardElements = [
             @mouseleave="onMouseLeaveDashboard"
           >
             Dashboard
-            <i class="fa-solid fa-caret-down fa-xl"></i>
+            <span class="material-symbols-outlined">
+              arrow_drop_down
+            </span>
             <div class="invisible-hover"></div>
           </CustomButton>
           <div class="dropdown-content">
@@ -207,8 +193,12 @@ const userDashboardElements = [
         @mouseenter="onMouseEnterUser"
         @mouseleave="onMouseLeaveUser"
       >
-        <i class="fa-solid fa-user fa-2xl"></i>
-        <i class="fa-solid fa-chevron-down fa-xl"></i>
+        <span class="material-symbols-outlined">
+          person
+        </span>
+        <span class="material-symbols-outlined">
+          keyboard_arrow_down
+        </span>
         <div class="dropdown-content-user">
           <CustomNavigationDropDown
             :element="userDashboardElements"
@@ -234,6 +224,10 @@ nav {
   width: 100vw;
   align-items: center;
   height: 9vh;
+}
+
+.material-symbols-outlined {
+  font-size: 2vw;
 }
 
 .buttons {
@@ -266,6 +260,8 @@ nav {
   text-align: center;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 #user-details-button {
@@ -275,7 +271,7 @@ nav {
   justify-content: center;
   right: 0;
   margin-right: 1vw;
-  height: 7vh;
+  height: 3.5vh;
 }
 
 .user {

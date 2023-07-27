@@ -6,6 +6,7 @@ import { ref } from 'vue';
 import { loginUser } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
 import InvalidInputMessage from '../components/InvalidInputMessage.vue';
+import bcrypt from "bcryptjs";
 
 const usernameOrEmailText = ref('');
 const passwordText = ref('');
@@ -16,8 +17,10 @@ function redirectToRegister() {
 }
 
 function login() {
+  const hashPassword = bcrypt.hashSync(passwordText.value, 6);
+  console.log('crypted password', hashPassword);
   if(usernameOrEmailText.value && passwordText.value) {
-    loginUser(usernameOrEmailText.value, passwordText.value)
+    loginUser(usernameOrEmailText.value, hashPassword)
       .then(res => {
         router.push('/my');
         if (user.token) {
@@ -47,7 +50,9 @@ function logout() {
   <div class="container">
     <FormTitle label="Log in" />
     <div id="profile-img">
-      <i class="fa-regular fa-circle-user" id="user-icon"> </i>
+      <span class="material-symbols-outlined">
+        account_circle
+      </span>
     </div>
     <InvalidInputMessage 
       message="Incorrect username or password"
@@ -93,6 +98,10 @@ function logout() {
   gap: 20px;
   position: relative;
   top: 80px;
+}
+
+.material-symbols-outlined {
+  font-size: 10vh;
 }
 
 .error-message-visible {

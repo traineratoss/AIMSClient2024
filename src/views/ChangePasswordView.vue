@@ -22,7 +22,9 @@ function submit() {
       <div class="big-text">Change Password</div>
     </h1>
     <div id="profile-img">
-      <i class="fa-regular fa-circle-user" id="user-icon"> </i>
+      <span class="material-symbols-outlined">
+        account_circle
+      </span>
     </div>
     <div>
       <CustomInput
@@ -69,6 +71,10 @@ function submit() {
   gap: 20px;
   position: relative;
   top: 80px;
+}
+
+.material-symbols-outlined {
+  font-size: 10vh;
 }
 
 #cancel {

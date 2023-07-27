@@ -15,7 +15,8 @@ const props = defineProps({
   disabled : {
     type: Boolean,
     required: true
-  }
+  },
+  image: String
 });
 
 props.element.forEach((element) => {
@@ -65,7 +66,9 @@ const shouldDisableDiv = computed(() => {
       @mouseleave="onMouseLeave(element)"
       @click="onClickHandler(element)"
     >
-    <img :src="element.icon" :style="{ width: element.width, height: element.height, marginRight: '10px' }" />
+      <span class="material-symbols-outlined">
+        {{ element.icon }}
+      </span>
       <span style="flex: 1;">{{ element.name }}</span>
     </CustomButton>
   </div>
