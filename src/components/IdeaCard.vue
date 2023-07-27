@@ -32,17 +32,14 @@ async function loadIdeaComments() {
   }));
 }
 
-async function toggleComment(comment) {
+function toggleCommentReplies(comment) {
   comment.expanded = !comment.expanded;
 }
-
 
 let comments = ref([]);
 let commentText = ref([]);
 let showComments = ref(false);
-let toggleReplies = ref(false);
 let currentUser = ref("");
-let commentReplies = ref([]);
 
 function redirectToCreateIdeaView() {
   router.push({ path: "/page-not-found", query: { disableFields: true } });
@@ -58,16 +55,20 @@ function toggleComments() {
 
 async function loadCommentReplies(comment) {
   comment.replies = await loadReplies(comment.id);
-  console.log("doamne ajuta", commentReplies.value);
 }
 
 async function postCommentDynamic(username, ideaId, commentText) {
   try {
     await postComment(username, ideaId, commentText);
+    clearInput();
     await loadIdeaComments();
   } catch (error) {
     console.error("Error posting comment:", error);
   }
+}
+
+function clearInput() {
+  commentText.value = "";
 }
 </script>
 
@@ -143,19 +144,23 @@ async function postCommentDynamic(username, ideaId, commentText) {
       <CustomComment
         :elapsedTime="comment.elapsedTime"
         :isReply="false"
-        :parentId="comment.id"
+        :commentId="comment.id"
         :text="comment.commentText"
         :userName="comment.username"
         :hasReplies="comment.hasReplies"
         :expanded="comment.expanded"
-        @showReplies="toggleComment(comment)"
+        :parentId="comment.id"
+        :ideaId="comment.ideaId"
+        @showReplies="toggleCommentReplies(comment)"
         @loadReplies="loadCommentReplies(comment)"
+        @loadComments="loadIdeaComments()"
       />
       <div v-if="comment.expanded" class="replies-wrapper">
         <div v-for="commentReply in comment.replies" class="reply-container">
           <CustomComment
             :elapsedTime="commentReply.elapsedTime"
-            :isReplay="true"
+            :isReply="true"
+            :replyId="commentReply.id"
             :text="commentReply.commentText"
             :userName="commentReply.username"
           />
@@ -166,8 +171,10 @@ async function postCommentDynamic(username, ideaId, commentText) {
 </template>
 
 <style scoped>
-.comment-container {
-  /* border: 1px solid slategray; */
+.reply-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .input-container {
@@ -178,7 +185,8 @@ async function postCommentDynamic(username, ideaId, commentText) {
   color: black;
   border: 1px solid rgb(93, 93, 93);
 }
-.replies-wrapper{
+.replies-wrapper {
+  margin: 5px;
   display: flex;
   gap: 5px;
   flex-direction: column;
@@ -187,10 +195,16 @@ async function postCommentDynamic(username, ideaId, commentText) {
   max-height: 300px;
   border: 1px solid slategray;
   border-radius: 5px;
-  width: 31vw;
+  width: 30vw;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-
+.replies-wrapper::-webkit-scrollbar {
+  display: none;
+}
 
 .idea-card {
   position: relative;
