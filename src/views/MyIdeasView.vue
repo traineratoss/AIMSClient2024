@@ -20,7 +20,7 @@ import Pagination from "../components/Pagination.vue";
 
 
 const ideas = ref([
-  { title: "Idea 1", text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
+  { title: "Idea 1", text: "Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1Idea1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
   { title: "Idea 2", text: "Idea 1", userId: 3, isPublic: true, isImplemented: false, comments: 1, replies: 1 },
   { title: "Idea 3", text: "Idea 1", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
   { title: "Idea 4", text: "Idea 1", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },

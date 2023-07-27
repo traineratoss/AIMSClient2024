@@ -75,8 +75,18 @@ function getShortenedTitle(title, maxLength) {
   return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
 }
 
-function getShortenedText(text) {
-  return text; // NEED TO UPDATE!
+function getShortenedText(text, maxLength, maxRows) {
+  let shortenedText = '';
+  const totalCharacters = maxLength * maxRows;
+  const ellipsis = text.length > totalCharacters ? "..." : "";
+
+  for (let i = 0; i < maxRows; i++) {
+    const startIndex = i * maxLength;
+    const rowText = text.substr(startIndex, maxLength);
+    shortenedText += rowText + "\n";
+  }
+
+  return shortenedText.trimEnd() + ellipsis;
 }
 </script>
 
@@ -103,7 +113,9 @@ function getShortenedText(text) {
       <div class="something">
         <div class="author-info">Author: {{ props.user }}</div>
         <div class="title">Title: {{ getShortenedTitle(title, 25) }}</div>
-        <div class="text">Text: {{ getShortenedText(text) }}</div>
+        <div class="text">
+          {{ getShortenedText(text, 25, 3) }}
+       </div>
 
         <div class="status">
           Status:
@@ -263,6 +275,7 @@ function getShortenedText(text) {
   font-weight: bold;
   font-size: 14px;
   margin: 5px 0 0 20px;
+  white-space: pre-line;
 }
 .status {
   font-weight: bold;

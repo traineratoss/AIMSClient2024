@@ -64,7 +64,15 @@ const implementedIdeasCount = computed(() => {
 
 const ideasPerUser = computed(() => {
   const users = new Set(ideas.value.map((idea) => idea.userId));
-  return totalIdeas.value / users.size;
+  if(users.size !=0 )
+  {
+    return totalIdeas.value / users.size;
+  }
+  else
+  {
+    return 0;
+  }
+  
 });
 
 const implementationPercentage = computed(() => {
