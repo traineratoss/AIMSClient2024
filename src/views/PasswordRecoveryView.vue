@@ -4,15 +4,18 @@ import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from '../components/CustomInput.vue';
 import { sendNewPassword } from '../services/user_service.js';
 import { ref } from 'vue';
+import router from "../router";
 
 const usernameOrEmailText = ref('');
 
 function requestNewPassword() {
   sendNewPassword(usernameOrEmailText.value)
+    .then(res => {
+      router.push('/password-changed');
+    })
     .catch(error => {
       usernameOrEmailText.value = '';
     });
-  console.log('mail sent');
 }
 </script>
 
