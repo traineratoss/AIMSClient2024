@@ -63,19 +63,14 @@ async function postReplyDynamic(username, parentId, commentText) {
         <p class="elapsedTime">{{ props.elapsedTime }} ago </p>
       </div>
 
-      <div class="">
-        <textarea name="" id="reply-textarea" disabled>
-        {{ props.text }}
-      </textarea
-        >
+      <div class="comment-text-container">
+            <p>{{ props.text }}</p>  
       </div>
+      
       <div class="footer-container">
         <div class="left"></div>
         <div class="center"></div>
         <div class="right">
-          <button class="action-icon-button" @click="postToggle = !postToggle">
-            <span class="material-symbols-outlined"> ink_pen </span>
-          </button>
           <button class="action-icon-button" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> delete </span>
           </button>
@@ -158,21 +153,20 @@ async function postReplyDynamic(username, parentId, commentText) {
   border-radius: 5px;
   border: 1px solid slategray;
   padding: 10px;
-  max-width: 30vw;
-  min-height: 15vh;
-  height: 15vh;
-  max-height: 25vh;
+  width: 29vw;
+  min-height: 5vh;
+  max-height: 30vh;
+  box-sizing: border-box;
 }
 
 .reply-grid-main-container {
   display: grid;
-  grid-template-rows: 2rem 10vh 2rem;
+  grid-template-rows: 2rem auto 2rem;
 }
 
 .comment-grid-main-container {
   display: grid;
   grid-template-rows: 2rem auto 2rem;
-
 }
 
 .header-container {
@@ -188,10 +182,9 @@ async function postReplyDynamic(username, parentId, commentText) {
 .comment-text-container {
   color: black;
   margin-left: 5px;
-  min-height: 4vh;
+  min-height: 3vh;
   max-height: 10vh;
   max-width: 29vw;
-  resize: none;
   border-radius: 5px;
 }
 
@@ -199,7 +192,6 @@ async function postReplyDynamic(username, parentId, commentText) {
   background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
 }
 
 .footer-container-right{
@@ -254,18 +246,6 @@ async function postReplyDynamic(username, parentId, commentText) {
   max-width: 28vw;
   border: 1px solid rgba(0, 4, 8, 0.537);
   border-radius: 3px;
-}
-
-
-#reply-textarea {
-  color: black;
-  background-color: rgb(47, 47, 249);
-  box-sizing: border-box;
-  min-height: 8vh;
-  max-height: 30vh;
-  width: 29vw;
-  resize: none;
-  border: none;
 }
 
 #postButton {

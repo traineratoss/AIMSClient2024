@@ -166,8 +166,10 @@ async function postCommentDynamic(username, ideaId, commentText) {
 </template>
 
 <style scoped>
-.comment-container {
-  /* border: 1px solid slategray; */
+.reply-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .input-container {
@@ -179,6 +181,7 @@ async function postCommentDynamic(username, ideaId, commentText) {
   border: 1px solid rgb(93, 93, 93);
 }
 .replies-wrapper{
+  margin: 5px;
   display: flex;
   gap: 5px;
   flex-direction: column;
@@ -187,9 +190,16 @@ async function postCommentDynamic(username, ideaId, commentText) {
   max-height: 300px;
   border: 1px solid slategray;
   border-radius: 5px;
-  width: 31vw;
+  width: 30vw;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-width: none;  
+  -ms-overflow-style: none; 
 }
 
+.replies-wrapper::-webkit-scrollbar{
+  display: none;
+}
 
 
 .idea-card {

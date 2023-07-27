@@ -57,9 +57,14 @@ async function loadPreviousPage() {
 </template>
 
 <style scoped>
+*{
+  overflow-x: hidden;
+}
+
 .idea-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 </style>
