@@ -36,7 +36,7 @@ async function getCategory() {
 }
 async function getUser(pageSize, pageNumber, sortCategory) {
   const response = await fetch(
-    `${API_URL}/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`
+    `http://localhost:8080/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`
   );
   const json = await response.json();
   const content = await json.content;

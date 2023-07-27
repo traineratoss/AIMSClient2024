@@ -95,14 +95,6 @@ function clearInput() {
         <div class="left"></div>
         <div class="center"></div>
         <div class="right">
-          <button class="action-icon-button" disabled>
-            <span class="material-symbols-outlined"> ink_pen </span>
-          </button>
-          <button
-            class="action-icon-button"
-            @click="deleteReplyById(props.replyId)"
-          ></button>
-
           <button class="action-icon-button" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> delete </span>
           </button>
@@ -195,7 +187,7 @@ function clearInput() {
   padding: 10px;
   width: 29vw;
   min-height: 5vh;
-  max-height: 30vh;
+  max-height: 40vh;
   box-sizing: border-box;
 }
 
@@ -217,13 +209,19 @@ function clearInput() {
   margin-left: 5px;
   border-bottom: 1px solid #ffa941;
   align-items: center;
+  max-width: 29vw;
+}
+
+.text-wrapper{
+  max-width: 29vw;
+  overflow-x: auto;
 }
 
 .comment-text-container {
   color: black;
   margin-left: 5px;
   min-height: 3vh;
-  max-height: 10vh;
+  max-height: 20vh;
   max-width: 29vw;
   border-radius: 5px;
 }

@@ -2,6 +2,7 @@ body{
   margin: 0;
   padding: 0; 
   font-size: 14px;
+  background-color: var(--background-color);
 }
 
 *{
@@ -15,6 +16,6 @@ body{
   --selected-color:#ffa941;
 }
 
-body{
-  background-color: var(--background-color);
+html {
+  scroll-behavior: smooth;
 }
