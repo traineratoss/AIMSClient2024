@@ -1,6 +1,6 @@
 <script setup>
 import SidePanel from "../components/SidePanel.vue";
-import { ref, onMounted, computed,watch } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { loadPagedIdeas } from "../services/idea.service";
 import { getCurrentUser } from "../services/user_service";
@@ -11,6 +11,7 @@ let ideas = ref([]);
 let currentUser = ref("");
 const pagesPerView = 2;
 const pageNumber = ref(0);
+const sortOrder = ref("ASC");
 
 onMounted(async () => {
   ideas.value = await loadPagedIdeas(
@@ -22,6 +23,7 @@ onMounted(async () => {
   console.log(ideas.value);
   currentUser.value = getCurrentUser();
   console.log(currentUser.value);
+  sortOrder.value = 0;
 });
 
 const totalIdeas = computed(() => ideas.value.length);
@@ -86,13 +88,21 @@ const roundedNumber = (number) => {
   return Math.round(number * 100) / 100;
 };
 
-
 const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
 
 function goToPage(pageNumber) {
   currentPage.value = pageNumber;
 }
 
+function updateSortOrder() {
+  console.log(sortOrder.value);
+  if (sortOrder.value == 0) {
+    sortOrder.value = 0;
+  }
+  if (sortOrder.value == 1) {
+    sortOrder.value = 1;
+  }
+}
 
 // watch(ideas, () => {
 //   calculateStatistics();
@@ -109,7 +119,7 @@ function goToPage(pageNumber) {
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel />
+      <SidePanel :sort="sortOrder" />
     </div>
     <div class="main-container">
       <div class="left-space">
@@ -120,55 +130,71 @@ function goToPage(pageNumber) {
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Total Replies:</b></p>
-            <p class="centered-number"><b>{{ totalReplies }}</b></p>
+            <p class="centered-number">
+              <b>{{ totalReplies }}</b>
+            </p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
-            <p class="centered-number"><b>{{ roundedNumber(ideasPerUser) }}</b></p>
+            <p class="centered-number">
+              <b>{{ roundedNumber(ideasPerUser) }}</b>
+            </p>
           </div>
           <div class="spacer"></div>
           <div class="stat-item">
-            <p class="centered-number"><b>{{ publicIdeasCount }}</b></p>
+            <p class="centered-number">
+              <b>{{ publicIdeasCount }}</b>
+            </p>
             <p class="stat-label"><b>Public Ideas</b></p>
           </div>
           <div class="stat-item">
-            <p class="centered-number"><b>{{ implementedIdeasCount }}</b></p>
+            <p class="centered-number">
+              <b>{{ implementedIdeasCount }}</b>
+            </p>
             <p class="stat-label"><b>Implemented Ideas</b></p>
-            <br>
-          <div class="implementation-bar">
-            <div class="fill" :style="{ width: implementationPercentage + '%' }"></div>
-          </div>
+            <br />
+            <div class="implementation-bar">
+              <div
+                class="fill"
+                :style="{ width: implementationPercentage + '%' }"
+              ></div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="sort-container" style="text-align: right">
+        <label for="sortOrder">Sort by: </label>
+        <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
+          <option :value="0">Date ascending</option>
+          <option :value="1">Date descending</option>
+        </select>
+      </div>
       <div class="idea-container" v-for="idea in ideas" :key="idea.id">
         <IdeaCard
-      :title="idea.title"
-      :text="idea.text"
-      :status="idea.status"
-      :user="idea.username"
-      :ideaId="idea.id"
-    />
-        </div>
-        <div class="pagination-container">
+          :title="idea.title"
+          :text="idea.text"
+          :status="idea.status"
+          :user="idea.username"
+          :ideaId="idea.id"
+        />
+      </div>
+      <div class="pagination-container">
         <span
           v-if="currentPage !== 1 && totalPages > 1"
           class="page-number arrow"
           @click="goToPage(1)"
         >
-        <span class="material-symbols-outlined">
-          keyboard_double_arrow_left
-        </span>
+          <span class="material-symbols-outlined">
+            keyboard_double_arrow_left
+          </span>
         </span>
         <span
           v-if="currentPage > 2"
           class="page-number arrow"
           @click="goToPage(currentPage - 1)"
         >
-        <span class="material-symbols-outlined">
-          navigate_before
-        </span>
+          <span class="material-symbols-outlined"> navigate_before </span>
         </span>
         <span class="page-number current-page">
           {{ currentPage }}
@@ -178,18 +204,16 @@ function goToPage(pageNumber) {
           class="page-number arrow"
           @click="goToPage(currentPage + 1)"
         >
-        <span class="material-symbols-outlined">
-          navigate_next
-        </span>
+          <span class="material-symbols-outlined"> navigate_next </span>
         </span>
         <span
           v-if="currentPage !== totalPages && totalPages > 1"
           class="page-number arrow"
           @click="goToPage(totalPages)"
         >
-        <span class="material-symbols-outlined">
-          keyboard_double_arrow_right
-        </span>
+          <span class="material-symbols-outlined">
+            keyboard_double_arrow_right
+          </span>
         </span>
       </div>
     </div>
@@ -197,6 +221,10 @@ function goToPage(pageNumber) {
 </template>
 
 <style scoped>
+.sort-container {
+  margin: 10px;
+  font-weight: bold;
+}
 .all-ideas-view-container {
   width: 100%;
   display: flex;
@@ -234,34 +262,34 @@ function goToPage(pageNumber) {
 
 .idea-container {
   display: flex;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
   width: calc(50% - 20px); /* 50% width minus margins on both sides */
   margin: 10px auto; /* Center the ideas horizontally */
   padding: 10px;
 }
-.big-container{
+.big-container {
   display: flex;
   justify-content: center;
   height: 92vh;
 }
 .stats-container {
   margin-top: 75px; /* Space between numbers */
-  text-align: center; 
+  text-align: center;
 }
 .centered-number {
   margin: 1px 0; /* Space between numbers */
 }
 
 .spacer {
-  height: 15rem; 
+  height: 15rem;
 }
 
 .implementation-bar {
   width: 75%;
   height: 20px;
   background-color: #fff;
-  margin: 0 auto; 
+  margin: 0 auto;
   border-radius: 7.5px;
   overflow: hidden;
 }
@@ -280,10 +308,10 @@ function goToPage(pageNumber) {
 .page-number {
   display: inline-block;
   margin: 0 5px;
-  padding: 5px 10px; 
+  padding: 5px 10px;
   border: 1px solid #000;
-  border-radius: 999px; 
-  background-color: transparent; 
+  border-radius: 999px;
+  background-color: transparent;
   cursor: pointer;
 }
 
