@@ -7,47 +7,7 @@
       <div class="idea-container" v-for="idea in paginatedIdeas" :key="idea.title">
         <IdeaCard :title="idea.title" :text="idea.text" />
       </div>
-      <div class="pagination-container">
-        <span
-          v-if="currentPage !== 1 && totalPages > 1"
-          class="page-number arrow"
-          @click="goToPage(1)"
-        >
-        <span class="material-symbols-outlined">
-          keyboard_double_arrow_left
-        </span>
-        </span>
-        <span
-          v-if="currentPage > 2"
-          class="page-number arrow"
-          @click="goToPage(currentPage - 1)"
-        >
-        <span class="material-symbols-outlined">
-          navigate_before
-        </span>
-        </span>
-        <span class="page-number current-page">
-          {{ currentPage }}
-        </span>
-        <span
-          v-if="currentPage < totalPages - 1"
-          class="page-number arrow"
-          @click="goToPage(currentPage + 1)"
-        >
-        <span class="material-symbols-outlined">
-          navigate_next
-        </span>
-        </span>
-        <span
-          v-if="currentPage !== totalPages && totalPages > 1"
-          class="page-number arrow"
-          @click="goToPage(totalPages)"
-        >
-        <span class="material-symbols-outlined">
-          keyboard_double_arrow_right
-        </span>
-        </span>
-      </div>
+      <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
     </div>
   </div>
 </template>
@@ -67,7 +27,6 @@ const ideas = ref([
   { title: "Idea 5", text: "Idea 1", userId: 2, isPublic: true, isImplemented: false, comments: 4, replies: 8 },
 ]);
 
-const props = defineProps(["ideas"]);
 const ideasPerPage = 2;
 const currentPage = ref(1);
 
@@ -78,7 +37,7 @@ const paginatedIdeas = computed(() => {
 
 const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
 
-function goToPage(pageNumber) {
+function changePage(pageNumber) {
   currentPage.value = pageNumber;
 }
 

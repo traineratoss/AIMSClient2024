@@ -1,67 +1,50 @@
 <template>
     <div class="pagination-container">
-        <span
-          v-if="currentPage !== 1 && totalPages > 1"
-          class="page-number arrow"
-          @click="goToPage(1)"
-        >
-        <span class="material-symbols-outlined">
-          keyboard_double_arrow_left
-        </span>
-        </span>
-        <span
-          v-if="currentPage > 2"
-          class="page-number arrow"
-          @click="goToPage(currentPage - 1)"
-        >
-        <span class="material-symbols-outlined">
-          navigate_before
-        </span>
-        </span>
-        <span class="page-number current-page">
-          {{ currentPage }}
-        </span>
-        <span
-          v-if="currentPage < totalPages - 1"
-          class="page-number arrow"
-          @click="goToPage(currentPage + 1)"
-        >
-        <span class="material-symbols-outlined">
-          navigate_next
-        </span>
-        </span>
-        <span
-          v-if="currentPage !== totalPages && totalPages > 1"
-          class="page-number arrow"
-          @click="goToPage(totalPages)"
-        >
-        <span class="material-symbols-outlined">
-          keyboard_double_arrow_right
-        </span>
-        </span>
-      </div>
-</template>
-
-<script setup>
-
-import { ref, computed, defineProps } from "vue";
-
-const props = defineProps(["ideas"]);
-const ideasPerPage = 2;
-const currentPage = ref(1);
-
-const paginatedIdeas = computed(() => {
-  const startIndex = (currentPage.value - 1) * ideasPerPage;
-  return ideas.value.slice(startIndex, startIndex + ideasPerPage);
-});
-
-const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
-
-function goToPage(pageNumber) {
-  currentPage.value = pageNumber;
-}
-
-</script>
+      <span
+        v-if="currentPage !== 1 && totalPages > 1"
+        class="page-number arrow"
+        @click="goToPage(1)"
+      >
+        <span class="material-symbols-outlined">keyboard_double_arrow_left</span>
+      </span>
+      <span
+        v-if="currentPage > 2"
+        class="page-number arrow"
+        @click="goToPage(currentPage - 1)"
+      >
+        <span class="material-symbols-outlined">navigate_before</span>
+      </span>
+      <span class="page-number current-page">
+        {{ currentPage }}
+      </span>
+      <span
+        v-if="currentPage < totalPages - 1"
+        class="page-number arrow"
+        @click="goToPage(currentPage + 1)"
+      >
+        <span class="material-symbols-outlined">navigate_next</span>
+      </span>
+      <span
+        v-if="currentPage !== totalPages && totalPages > 1"
+        class="page-number arrow"
+        @click="goToPage(totalPages)"
+      >
+        <span class="material-symbols-outlined">keyboard_double_arrow_right</span>
+      </span>
+    </div>
+  </template>
+  
+  <script setup>
+  import { defineProps, defineEmits } from "vue";
+  
+  const { currentPage, totalPages } = defineProps(["currentPage", "totalPages"]);
+  const  emit  = defineEmits(["changePage"]);
+  
+  function goToPage(pageNumber) {
+    console.log("Clicked page number:", pageNumber); // Afișează numărul paginii în consolă
+    emit("changePage", pageNumber);
+  }
+  </script>
 
 <style>
 .pagination-container {
