@@ -99,8 +99,6 @@ async function getImage() {
   const json = await response.json();
   return json;
 }
-
-<<<<<<< HEAD
 export {
   loadPagedIdeas,
   createIdea,
@@ -109,6 +107,3 @@ export {
   getImage,
   filterIdeas,
 };
-=======
-export { loadPagedIdeas, createIdea, getCategory, getUser, getImage , filterIdeas};
->>>>>>> 2be47b6b159a3396a3c46dd562ae8ab0f6496b8a

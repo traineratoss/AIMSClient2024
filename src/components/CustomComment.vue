@@ -88,24 +88,22 @@ function clearInput() {
       </div>
 
       <div class="comment-text-container">
-            <p>{{ props.text }}</p>  
+        <p>{{ props.text }}</p>
       </div>
-      
+
       <div class="footer-container">
         <div class="left"></div>
         <div class="center"></div>
         <div class="right">
-<<<<<<< HEAD
           <button class="action-icon-button" disabled>
             <span class="material-symbols-outlined"> ink_pen </span>
           </button>
           <button
             class="action-icon-button"
             @click="deleteReplyById(props.replyId)"
-          >
-=======
+          ></button>
+
           <button class="action-icon-button" @click="postToggle = !postToggle">
->>>>>>> 2be47b6b159a3396a3c46dd562ae8ab0f6496b8a
             <span class="material-symbols-outlined"> delete </span>
           </button>
         </div>
@@ -290,8 +288,7 @@ function clearInput() {
   border-radius: 3px;
 }
 
-<<<<<<< HEAD
-#reply-textarea {
+<<<<<<< HEAD #reply-textarea {
   color: black;
   background-color: rgb(47, 47, 249);
   box-sizing: border-box;
@@ -302,9 +299,7 @@ function clearInput() {
   border: none;
 }
 
-=======
->>>>>>> 2be47b6b159a3396a3c46dd562ae8ab0f6496b8a
-#postButton {
+=======>>>>>>>2be47b6b159a3396a3c46dd562ae8ab0f6496b8a #postButton {
   margin-top: 5px;
   margin-bottom: 10px;
   align-self: flex-end;

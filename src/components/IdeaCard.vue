@@ -171,7 +171,7 @@ function clearInput() {
 </template>
 
 <style scoped>
-.reply-container{
+.reply-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,12 +185,8 @@ function clearInput() {
   color: black;
   border: 1px solid rgb(93, 93, 93);
 }
-<<<<<<< HEAD
 .replies-wrapper {
-=======
-.replies-wrapper{
   margin: 5px;
->>>>>>> 2be47b6b159a3396a3c46dd562ae8ab0f6496b8a
   display: flex;
   gap: 5px;
   flex-direction: column;
@@ -202,18 +198,14 @@ function clearInput() {
   width: 30vw;
   overflow-x: hidden;
   overflow-y: scroll;
-  scrollbar-width: none;  
-  -ms-overflow-style: none; 
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-<<<<<<< HEAD
-=======
-.replies-wrapper::-webkit-scrollbar{
+.replies-wrapper::-webkit-scrollbar {
   display: none;
 }
 
-
->>>>>>> 2be47b6b159a3396a3c46dd562ae8ab0f6496b8a
 .idea-card {
   position: relative;
   background-color: white;
