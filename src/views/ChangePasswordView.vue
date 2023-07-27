@@ -2,15 +2,64 @@
 import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from '../components/CustomInput.vue';
 import { ref } from 'vue';
+import { changePassword, getCurrentUser, logout } from "../services/user_service";
+import router from "../router";
+import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 
 const oldPasswordText = ref('');
 const newPasswordText = ref('');
 const confirmNewPassword = ref('');
+const showErrorMessage = ref(false);
+const errorMessage = ref('');
 
 function submit() {
-  console.log('old password', oldPasswordText.value);
-  console.log('new password', newPasswordText.value);
-  console.log('confirm new password', confirmNewPassword.value);
+  if(oldPasswordText.value && newPasswordText.value && confirmNewPassword.value) {
+    if(newPasswordText.value === confirmNewPassword.value) {
+      let passwordFormatOK = true;
+      const upperCaseRegex = /[A-Z]/;
+      const specialCharacterRegex = /[#$^&*_@]/;
+
+      if(newPasswordText.value.length < 8) {
+        errorMessage.value = 'The new password must contain at least 8 characters';
+        showErrorMessage.value = true;
+        passwordFormatOK = false;
+      }
+
+      if(!upperCaseRegex.test(newPasswordText.value) && passwordFormatOK) {
+        errorMessage.value = 'The new password must contain at least one uppercase character';
+        showErrorMessage.value = true;
+        passwordFormatOK = false;
+      }
+
+      if(!specialCharacterRegex.test(newPasswordText.value) && passwordFormatOK) {
+        errorMessage.value = 'The new password must contain at least one special character(#$^&*_@)';
+        showErrorMessage.value = true;
+        passwordFormatOK = false;
+      }
+
+      if(passwordFormatOK) {
+        changePassword({
+          username: getCurrentUser(),
+          oldPassword: oldPasswordText.value,
+          newPassword: newPasswordText.value
+        })
+          .then(res => {
+            logout();
+            router.push('/login');
+          })
+          .catch(error => {
+            errorMessage.value = 'Old password is incorrect';
+            showErrorMessage.value = true;
+          });
+      }
+    } else {
+      errorMessage.value = 'Passwords are not equal';
+      showErrorMessage.value = true;
+    }
+  } else {
+    errorMessage.value = 'All fields must be completed';
+    showErrorMessage.value = true;
+  }
 }
 </script>
 
@@ -22,10 +71,15 @@ function submit() {
       <div class="big-text">Change Password</div>
     </h1>
     <div id="profile-img">
+      <!-- TODO: Show current logged user avatar here -->
       <span class="material-symbols-outlined">
         account_circle
       </span>
     </div>
+    <InvalidInputMessage 
+      :message="errorMessage"
+      :class="{ 'error-message-visible': showErrorMessage }"
+    />
     <div>
       <CustomInput
         type="password"
@@ -71,6 +125,10 @@ function submit() {
   gap: 20px;
   position: relative;
   top: 80px;
+}
+
+.error-message-visible {
+  opacity: 1;
 }
 
 .material-symbols-outlined {
