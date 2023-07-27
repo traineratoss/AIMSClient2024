@@ -34,8 +34,8 @@
           </div>
         </div>
       </div>
-      <div class="idea-container" v-for="idea in paginatedIdeas" :key="idea.text">
-          <IdeaCard :title="idea.text" />
+        <div class="idea-container" v-for="idea in paginatedIdeas" :key="idea.title">
+          <IdeaCard :title="idea.title" :text="idea.text" />
         </div>
         <div class="pagination-container">
         <span
@@ -86,16 +86,14 @@
 import { ref, computed, watch } from "vue";
 import SidePanel from "../components/SidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
-
-const ideasPerPage = 2;
-const currentPage = ref(1);
+import Pagination from "../components/Pagination.vue";
 
 const ideas = ref([
-  { text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
-  { text: "Idea 2", userId: 3, isPublic: true, isImplemented: false, comments: 1, replies: 1 },
-  { text: "Idea 3", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
-  { text: "Idea 4", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
-  { text: "Idea 5", userId: 2, isPublic: true, isImplemented: false, comments: 4, replies: 8 },
+  { title: "Idea 1", text: "Idea 1", userId: 1, isPublic: true, isImplemented: true, comments: 2, replies: 3 },
+  { title: "Idea 2", text: "Idea 1", userId: 3, isPublic: true, isImplemented: false, comments: 1, replies: 1 },
+  { title: "Idea 3", text: "Idea 1", userId: 1, isPublic: true, isImplemented: false, comments: 3, replies: 2 },
+  { title: "Idea 4", text: "Idea 1", userId: 2, isPublic: true, isImplemented: false, comments: 5, replies: 0 },
+  { title: "Idea 5", text: "Idea 1", userId: 2, isPublic: true, isImplemented: false, comments: 4, replies: 8 },
 ]);
 
 const totalIdeas = computed(() => ideas.value.length);
@@ -152,17 +150,6 @@ const roundedNumber = (number) => {
   return Math.round(number * 100) / 100;
 };
 
-const paginatedIdeas = computed(() => {
-  const startIndex = (currentPage.value - 1) * ideasPerPage;
-  return ideas.value.slice(startIndex, startIndex + ideasPerPage);
-});
-
-const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
-
-function goToPage(pageNumber) {
-  currentPage.value = pageNumber;
-}
-
 
 watch(ideas, () => {
   calculateStatistics();
@@ -174,6 +161,22 @@ function calculateStatistics() {
   publicIdeasCount.value = calculatePublicIdeasCount();
   implementedIdeasCount.value = calculateImplementedIdeasCount();
 }
+
+const props = defineProps(["ideas"]);
+const ideasPerPage = 2;
+const currentPage = ref(1);
+
+const paginatedIdeas = computed(() => {
+  const startIndex = (currentPage.value - 1) * ideasPerPage;
+  return ideas.value.slice(startIndex, startIndex + ideasPerPage);
+});
+
+const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
+
+function goToPage(pageNumber) {
+  currentPage.value = pageNumber;
+}
+
 </script>
 
 
@@ -252,7 +255,6 @@ function calculateStatistics() {
   background-color: #ffa941;
   transition: width 0.3s ease;
 }
-
 .pagination-container {
   display: flex;
   justify-content: flex-end;

@@ -70,6 +70,14 @@ async function postCommentDynamic(username, ideaId, commentText) {
 function clearInput() {
   commentText.value = "";
 }
+
+function getShortenedTitle(title, maxLength) {
+  return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
+}
+
+function getShortenedText(text) {
+  return text; // NEED TO UPDATE!
+} 
 </script>
 
 <template>
@@ -94,8 +102,8 @@ function clearInput() {
 
       <div class="something">
         <div class="author-info">Author: {{ props.user }}</div>
-        <div class="title">Title: {{ props.title }}</div>
-        <div class="text">Text: {{ props.text }}</div>
+        <div class="title">Title: {{ getShortenedTitle(title, 25) }}</div>
+        <div class="text">Text: {{ getShortenedText(text) }}</div>
 
         <div class="status">
           Status:
