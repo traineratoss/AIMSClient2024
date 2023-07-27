@@ -179,7 +179,8 @@ function getShortenedText(text) {
 </template>
 
 <style scoped>
-.reply-container {
+.reply-container{
+  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
