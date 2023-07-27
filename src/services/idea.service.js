@@ -48,9 +48,6 @@ async function filterIdeas(
   text,
   status,
   category,
-  user,
-  selectedDateFrom,
-  selectedDateTo,
   pageNumber,
   sortDirection
 ) {
@@ -63,13 +60,11 @@ async function filterIdeas(
       break;
   }
   let url = `${API_URL}/filterIdeas?pageNumber=${pageNumber}&sortDirection=${sortDirection}`;
+  console.log(url);
   if (title) url += `&title=${title}`;
   if (text) url += `&text=${text}`;
   if (status) url += `&status=${status}`;
   if (category.length != 0) url += `&category=${category}`;
-  if (user.length != 0) url += `&user=${user}`;
-  if (selectedDateFrom) url += `&selectedDateFrom=${selectedDateFrom}`;
-  if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -83,6 +78,7 @@ async function filterIdeas(
     referrerPolicy: "no-referrer",
   });
   const data = await response.json();
+  console.log(data);
   return data;
 }
 

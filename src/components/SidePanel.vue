@@ -60,9 +60,6 @@ const filter = async () => {
   const title = inputTitle.value;
   const text = inputText.value;
   const category = categoriesSelected.value;
-  const dateFrom = selectedDateFrom.value;
-  const dateTo = selectedDateTo.value;
-  const user = userSelected.value;
   const pageNumber = 0;
   const status = statusSelected.value;
   const filteredIdeas = await filterIdeas(
@@ -70,14 +67,11 @@ const filter = async () => {
     text,
     status,
     category,
-    user,
-    dateFrom,
-    dateTo,
     pageNumber,
     props.sort
   );
-  console.log(filteredIdeas.pagedIdeas.content);
-  console.log(filteredIdeas.total);
+  // console.log(filteredIdeas.pagedIdeas.content);
+  // console.log(filteredIdeas.total);
 };
 </script>
 

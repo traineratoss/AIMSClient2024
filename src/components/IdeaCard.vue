@@ -2,7 +2,6 @@
 import CustomComment from "../components/CustomComment.vue";
 import { ref, defineEmits, onMounted } from "vue";
 import router from "../router";
-import { inject } from "vue";
 import {
   loadComments,
   loadReplies,
@@ -39,6 +38,7 @@ function toggleCommentReplies(comment) {
 let comments = ref([]);
 let commentText = ref([]);
 let showComments = ref(false);
+let toggleReplies = ref(false);
 let currentUser = ref("");
 
 function redirectToCreateIdeaView() {
@@ -113,9 +113,7 @@ function getShortenedText(text, maxLength, maxRows) {
       <div class="something">
         <div class="author-info">Author: {{ props.user }}</div>
         <div class="title">Title: {{ getShortenedTitle(title, 25) }}</div>
-        <div class="text">
-          {{ getShortenedText(text, 25, 3) }}
-       </div>
+        <div class="text">Text: {{ getShortenedText(text) }}</div>
 
         <div class="status">
           Status:
@@ -181,6 +179,7 @@ function getShortenedText(text, maxLength, maxRows) {
             :elapsedTime="commentReply.elapsedTime"
             :isReply="true"
             :replyId="commentReply.id"
+            :parentId="commentReply.parentId"
             :text="commentReply.commentText"
             :userName="commentReply.username"
           />
@@ -275,7 +274,6 @@ function getShortenedText(text, maxLength, maxRows) {
   font-weight: bold;
   font-size: 14px;
   margin: 5px 0 0 20px;
-  white-space: pre-line;
 }
 .status {
   font-weight: bold;
