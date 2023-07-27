@@ -100,4 +100,11 @@ async function getImage() {
   return json;
 }
 
-export { loadPagedIdeas, createIdea, getCategory, getUser, getImage };
+export {
+  loadPagedIdeas,
+  createIdea,
+  getCategory,
+  getUser,
+  getImage,
+  filterIdeas,
+};
