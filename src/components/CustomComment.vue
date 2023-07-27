@@ -101,6 +101,7 @@ function clearInput() {
         </div>
       </div>
     </div>
+    <div class="shrink-container"></div>
   </div>
   <div v-if="!props.isReply" class="comment-container">
     <div class="comment-grid-main-container">
@@ -136,13 +137,12 @@ function clearInput() {
         </div>
 
         <div class="footer-container-right">
-          <button class="action-icon-button" @click="postToggle = !postToggle">
+            <button class="action-icon-button" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> ink_pen </span>
           </button>
           <button
             class="action-icon-button"
-            @click="deleteCommentById(props.commentId)"
-          >
+            @click="deleteCommentById(props.commentId)">
             <span class="material-symbols-outlined"> delete </span>
           </button>
         </div>
@@ -184,16 +184,25 @@ function clearInput() {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
   border: 1px solid slategray;
-  padding: 10px;
-  width: 29vw;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  width: 30vw;
   min-height: 5vh;
   max-height: 40vh;
   box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 96% auto;
 }
 
 .reply-grid-main-container {
   display: grid;
   grid-template-rows: 2rem auto 2rem;
+}
+
+.shrink-container {
+  /* background-color: red; */
+  min-width: 10px;
 }
 
 .comment-grid-main-container {
@@ -212,7 +221,7 @@ function clearInput() {
   max-width: 29vw;
 }
 
-.text-wrapper{
+.text-wrapper {
   max-width: 29vw;
   overflow-x: auto;
 }
@@ -223,6 +232,7 @@ function clearInput() {
   min-height: 3vh;
   max-height: 20vh;
   max-width: 29vw;
+  min-width: 25vw;
   border-radius: 5px;
 }
 
@@ -251,12 +261,16 @@ function clearInput() {
   margin-right: 5px;
 }
 .action-icon-button {
-  background-color: rgba(255, 255, 255, 0);
+  background-color: rgba(255, 255, 255, 0.797);
   border: none;
   padding: 0;
   font: inherit;
   cursor: pointer;
   outline: inherit;
+}
+
+button:hover{
+  color:#ffa941 ;
 }
 
 .dummy-button {

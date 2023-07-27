@@ -77,7 +77,7 @@ function getShortenedTitle(title, maxLength) {
 
 function getShortenedText(text) {
   return text; // NEED TO UPDATE!
-} 
+}
 </script>
 
 <template>
@@ -179,8 +179,7 @@ function getShortenedText(text) {
 </template>
 
 <style scoped>
-.reply-container{
-  padding: 10px;
+.reply-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,26 +193,50 @@ function getShortenedText(text) {
   color: black;
   border: 1px solid rgb(93, 93, 93);
 }
+
+.comment-container > .replies-wrapper {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
 .replies-wrapper {
+  border: 1px solid slategray;
   margin: 5px;
 
   display: flex;
+  gap: 5px;
   gap: 5px;
   flex-direction: column;
   margin-top: 5px;
   overflow-y: auto;
   max-height: 300px;
-  border: 1px solid slategray;
   border-radius: 5px;
   width: 30vw;
   overflow-x: hidden;
   overflow-y: scroll;
   scrollbar-width: none;
-  -ms-overflow-style: none;
+  box-sizing: border-box;
+}
+
+.replies-wrapper:hover {
+  padding-right: 7px;
+  /* border-top: 1px solid black;
+  border-bottom: 1px solid black; */
 }
 
 .replies-wrapper::-webkit-scrollbar {
   display: none;
+}
+
+.replies-wrapper:hover::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+
+.replies-wrapper:hover::-webkit-scrollbar-thumb {
+  background-color: #ffa941;
+  border-radius: 5px;
+  border: 1px solid slategray;
 }
 
 .idea-card {
