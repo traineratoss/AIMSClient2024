@@ -87,16 +87,15 @@ function clearInput() {
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
 
-      <div class="">
-        <textarea name="" id="reply-textarea" disabled>
-        {{ props.text }}
-      </textarea
-        >
+      <div class="comment-text-container">
+            <p>{{ props.text }}</p>  
       </div>
+      
       <div class="footer-container">
         <div class="left"></div>
         <div class="center"></div>
         <div class="right">
+<<<<<<< HEAD
           <button class="action-icon-button" disabled>
             <span class="material-symbols-outlined"> ink_pen </span>
           </button>
@@ -104,6 +103,9 @@ function clearInput() {
             class="action-icon-button"
             @click="deleteReplyById(props.replyId)"
           >
+=======
+          <button class="action-icon-button" @click="postToggle = !postToggle">
+>>>>>>> 2be47b6b159a3396a3c46dd562ae8ab0f6496b8a
             <span class="material-symbols-outlined"> delete </span>
           </button>
         </div>
@@ -193,15 +195,15 @@ function clearInput() {
   border-radius: 5px;
   border: 1px solid slategray;
   padding: 10px;
-  max-width: 30vw;
-  min-height: 15vh;
-  height: 15vh;
-  max-height: 25vh;
+  width: 29vw;
+  min-height: 5vh;
+  max-height: 30vh;
+  box-sizing: border-box;
 }
 
 .reply-grid-main-container {
   display: grid;
-  grid-template-rows: 2rem 10vh 2rem;
+  grid-template-rows: 2rem auto 2rem;
 }
 
 .comment-grid-main-container {
@@ -222,10 +224,9 @@ function clearInput() {
 .comment-text-container {
   color: black;
   margin-left: 5px;
-  min-height: 4vh;
+  min-height: 3vh;
   max-height: 10vh;
   max-width: 29vw;
-  resize: none;
   border-radius: 5px;
 }
 
@@ -233,7 +234,6 @@ function clearInput() {
   background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
 }
 
 .footer-container-right {
@@ -290,6 +290,7 @@ function clearInput() {
   border-radius: 3px;
 }
 
+<<<<<<< HEAD
 #reply-textarea {
   color: black;
   background-color: rgb(47, 47, 249);
@@ -301,6 +302,8 @@ function clearInput() {
   border: none;
 }
 
+=======
+>>>>>>> 2be47b6b159a3396a3c46dd562ae8ab0f6496b8a
 #postButton {
   margin-top: 5px;
   margin-bottom: 10px;
