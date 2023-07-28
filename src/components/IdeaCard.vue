@@ -41,6 +41,10 @@ let showComments = ref(false);
 let toggleReplies = ref(false);
 let currentUser = ref("");
 
+function redirectToEditIdeaView() {
+  router.push({ path: "/edit-idea", query: { disableFields: true } });
+}
+
 function redirectToCreateIdeaView() {
   router.push({ path: "/create-idea", query: { disableFields: true } });
 }
@@ -83,7 +87,13 @@ function getShortenedText(text, maxLength, maxRows) {
   for (let i = 0; i < maxRows; i++) {
     const startIndex = i * maxLength;
     const rowText = text.substr(startIndex, maxLength);
-    shortenedText += rowText + "\n";
+
+    if (i === 0) {
+      shortenedText += rowText + "\n"; // First row, no need to add spaces
+    } else {
+      const paddedRowText = rowText.padStart(rowText.length + 6, ' ');
+      shortenedText += paddedRowText + "\n";
+    }
   }
 
   return shortenedText.trimEnd() + ellipsis;
@@ -113,22 +123,20 @@ function getShortenedText(text, maxLength, maxRows) {
       <div class="something">
         <div class="author-info">Author: {{ props.user }}</div>
         <div class="title">Title: {{ getShortenedTitle(title, 25) }}</div>
-        <div class="text">Text: {{ getShortenedText(text) }}</div>
+        <div class="text">Text: {{ getShortenedText(text, 25, 3) }}</div>
 
         <div class="status">
           Status:
           <select v-model="props.status" @change="handleChangeStatus">
             <option value="open">Open</option>
-            <option value="draft">Draft</option>
-            <option value="implemented">Implemented</option>
+            <option value="draft">Done</option>
           </select>
         </div>
       </div>
 
       <div class="buttons-container">
-        <button class="edit-button" @click="editIdea">Edit</button>
-        <button @click="redirectToCreateIdeaView" class="view-button">
-          View
+        <button @click="redirectToEditIdeaView" class="edit-button">
+          Edit 
         </button>
         <button @click="redirectToCreateIdeaView" class="view-button">
           View
@@ -274,6 +282,7 @@ function getShortenedText(text, maxLength, maxRows) {
   font-weight: bold;
   font-size: 14px;
   margin: 5px 0 0 20px;
+  white-space: pre-line;
 }
 .status {
   font-weight: bold;
