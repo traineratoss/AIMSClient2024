@@ -11,7 +11,7 @@ let ideas = ref([]);
 let currentUser = ref("");
 const pagesPerView = 2;
 const pageNumber = ref(0);
-const sortOrder = ref("ASC");
+const sortOrder = ref(0);
 
 onMounted(async () => {
   ideas.value = await loadPagedIdeas(
@@ -20,9 +20,7 @@ onMounted(async () => {
     "title",
     "ASC"
   );
-  console.log(ideas.value);
   currentUser.value = getCurrentUser();
-  console.log(currentUser.value);
   sortOrder.value = 0;
 });
 
