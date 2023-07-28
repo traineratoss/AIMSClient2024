@@ -12,14 +12,17 @@ const usernameOrEmailText = ref('');
 const passwordText = ref('');
 const showErrorMessage = ref(false);
 
+const user = {
+  username: String,
+  role: String
+}
+
 function redirectToRegister() {
   router.push("/register/false");
 }
 
-function login() {
-  const hashPassword = passwordText.value;
-  //const hashPassword = bcrypt.hashSync(passwordText.value, 6);
-  console.log('crypted password', hashPassword);
+async function login() {
+  const hashPassword = await bcrypt.hash(passwordText.value, "$2a$10$QkRidA35ea0Fzm/ObrOEgO");
   if(usernameOrEmailText.value && passwordText.value) {
     loginUser(usernameOrEmailText.value, hashPassword)
       .then(res => {
