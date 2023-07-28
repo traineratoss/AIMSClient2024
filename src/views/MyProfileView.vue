@@ -39,7 +39,7 @@ const slideImages = [
 
 function saveChanges() {
   if(usernameText.value && fullNameText.value && emailText.value) {
-    const changesOK = true;
+    let changesOK = true;
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     if(!emailRegex.test(emailText.value)) {
