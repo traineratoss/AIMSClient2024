@@ -34,16 +34,7 @@ const currentUser = ref("");
 const buttonSelected = ref(false);
 const postToggle = ref(false);
 const commentReplies = ref([]);
-const ideaCard = document.querySelector('.idea-card');
 const isSelected = ref(true)
-
-// if(ideaCard){
-//   ideaCard.addEventListener('click', function() {
-//   isSelected.value =! isSelected.value
-//   console.log('Div was clicked!');
-// })}
-
-
 
 async function loadIdeaComments() {
   const loadedComments = await loadComments(100, 0, "id", props.ideaId);
@@ -218,6 +209,9 @@ function getShortenedText(text, maxLength, maxRows) {
 
 <template>
   <div class="container">
+
+  <div class="wrapper">
+    <div class="border"></div>
     <div class="idea-card">
       <div class="top-container">
         <div class="left-container">
@@ -309,6 +303,7 @@ function getShortenedText(text, maxLength, maxRows) {
         </div>
       </div>
     </div>
+  </div>
 
     <div v-if="postToggle" class="comment-input-wrapper">
         <div class="comment-input-container">
@@ -360,20 +355,71 @@ function getShortenedText(text, maxLength, maxRows) {
 </template>
 
 <style scoped>
+.wrapper{
+  width: 30vw;
+  display: grid;
+  grid-template-columns: 1vw 29vw;
+  min-height: 200px;
+  max-height: 30vh;
+  border-radius: 5px;
+  border: 1px solid slategray;
+  position: relative;
+  overflow: hidden;
+  background-color: white;
+  cursor:pointer ;
+}
+
+.wrapper:hover .border{
+  background-color: #ffa941;
+ 
+  animation: 1s normalState ;
+}
+
+
+.border{
+  width: 2vw;
+  min-height: 200px;
+  max-height: 30vh;
+  background-color: white;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  animation: 1s hover ;
+}
+
+@keyframes normalState {
+  from {
+    transform: translateX(-100%);
+    left: 0;
+  }
+  to {
+    left: 100%;
+    transform: translateX(0);
+    background-color: #ffa941;
+  }
+}
+
+@keyframes hover {
+ 0% {
+    transform: translateX(0);
+    left: 0;
+    background-color: #ffa941;
+  }
+  100% {
+    left: 100%;
+    transform: translateX(-100%);
+  }
+}
 .idea-card {
   position: relative;
   background-color: white;
-  width: 30vw;
+  width: 29vw;
   min-height: 200px;
   max-height: 30vh;
-  margin-left: 5px;
-  border-radius: 5px;
-  border: 1px solid slategray;
-  margin-top: 10px;
-  margin-bottom: 10px;
   box-sizing: border-box;
   display: grid;
   grid-template-rows: auto 30px;
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .top-container {
@@ -398,19 +444,19 @@ function getShortenedText(text, maxLength, maxRows) {
 .left-container {
   display: grid;
   grid-template-rows: 20% auto 30px;
-  margin-left: 1vw;
+
 }
 
 .left-container-title {
   display: flex;
   align-items: center;
-  margin-left: 1vw;
+  margin-left: 3px;
   margin-top: 1vh;
 }
 
 .left-container-text {
   margin-top: 1vh;
-  margin-left: 1vw;
+  margin-left: 3px;
 }
 
 .left-container-buttons {
@@ -521,7 +567,7 @@ function getShortenedText(text, maxLength, maxRows) {
   min-height: 17vh;
   max-height: 22vh;
   box-sizing: border-box;
-  margin-left: 5px;
+  margin-top: 10px;
 }
 
 #comment-input-textarea{

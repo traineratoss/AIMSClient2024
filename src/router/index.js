@@ -8,7 +8,6 @@ import PasswordRecoveryView from "../views/PasswordRecoveryView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
-import CosminPlayground from "../views/CosminPlayground.vue";
 import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
@@ -88,11 +87,6 @@ const router = createRouter({
       path: "/admin-dashboard",
       name: "admin-dashboard",
       component: AdminDashboardView,
-    },
-    {
-      path: "/test",
-      name: "test",
-      component: CosminPlayground,
     },
     {
       path: "/password-changed",
