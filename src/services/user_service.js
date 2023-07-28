@@ -40,7 +40,11 @@ async function updateUser(username, userUpdateDto) {
             "avatarId": userUpdateDto.avatarId
         })
     });
+
     const json = await response.json();
+    if(!response.ok) {
+        throw new Error(json.message);
+    }
     return json;
 }
 

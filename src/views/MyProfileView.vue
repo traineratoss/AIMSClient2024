@@ -6,6 +6,7 @@ import CarouselImage from "../components/CarouselImage.vue";
 import { ref } from "vue";
 import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 import { getCurrentUser, updateUser } from "../services/user_service";
+import router from "../router";
 
 const usernameText = ref("");
 const fullNameText = ref("");
@@ -38,39 +39,51 @@ const slideImages = [
 ];
 
 function saveChanges() {
-  
-    let changesOK = true;
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    let oldUsername = 'mihai'; //this needs to be loaded from cookies
-    let oldEmail = 'a@gmail.com'; //this needs to be loaded from cookies
-    let oldAvatarId; //this needs to be loaded from cookies
+  let changesOK = true;
+  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-    if(!emailRegex.test(emailText.value)) {
-      errorMessage.value = 'Invalid email format';
-      showErrorMessage.value = true;
+  let oldUsername = 'mihai'; //this needs to be loaded from cookies
+  let oldEmail = 'aa@gmail.com'; //this needs to be loaded from cookies
+  let oldAvatarId; //this needs to be loaded from cookies
+  let oldFullname = 'mihai_vul2'; //this needs to be loaded from cookies
+  let userId = 3; //this needs to be loaded from cookies
+
+  if(!emailRegex.test(emailText.value)) {
+    errorMessage.value = 'Invalid email format';
+    showErrorMessage.value = true;
+    changesOK = false;
+  }
+
+  if(changesOK) {
+    let userUpdateDTO = {};
+
+    if(usernameText.value !== oldUsername && usernameText.value !== '') {
+      userUpdateDTO.username = usernameText.value;
+    }
+    if(emailText.value !== oldEmail && emailText.value !== '') {
+      userUpdateDTO.email = emailText.value;
+    }
+    if(oldFullname === '') {
+      userUpdateDTO.fullName = fullNameText.value;
+    } else if(fullNameText.value !== oldFullname && fullNameText.value !== '') {
+      userUpdateDTO.fullName = fullNameText.value;
+    } else if(fullNameText.value === '') {
       changesOK = false;
+      errorMessage.value = 'Fullname must not be empty';
+      showErrorMessage.value = true;
     }
 
     if(changesOK) {
-      let userUpdateDTO = {
-        fullName: fullNameText.value,
-      };
-
-      if(usernameText.value !== oldUsername) {
-        userUpdateDTO.username = usernameText.value;
-      }
-      if(emailText.value !== oldEmail) {
-        userUpdateDTO.email = emailText.value;
-      }
-
-      updateUser('mihai', userUpdateDTO)
+      updateUser(oldUsername, userUpdateDTO)
+        .then(res => {
+          router.push('/my');
+        })
         .catch(error => {
-          errorMessage.value = 'Username already exists';
+          errorMessage.value = error.message;
           showErrorMessage.value = true;
-          changesOK = false;
         });
     }
-  
+  }
 }
 </script>
 
@@ -120,7 +133,7 @@ function saveChanges() {
   align-items: center;
   gap: 5vh;
 
-  margin-top: 20vh;
+  margin-top: 10vh;
   width: 100vw;
 }
 
