@@ -38,9 +38,12 @@ const slideImages = [
 ];
 
 function saveChanges() {
-  if(usernameText.value && fullNameText.value && emailText.value) {
+  
     let changesOK = true;
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    let oldUsername = 'mihai'; //this needs to be loaded from cookies
+    let oldEmail = 'a@gmail.com'; //this needs to be loaded from cookies
+    let oldAvatarId; //this needs to be loaded from cookies
 
     if(!emailRegex.test(emailText.value)) {
       errorMessage.value = 'Invalid email format';
@@ -49,21 +52,25 @@ function saveChanges() {
     }
 
     if(changesOK) {
-      updateUser(getCurrentUser().username, {
-        username: usernameText.value,
-        fullname: fullNameText.value,
-        email: emailText.value
-      })
+      let userUpdateDTO = {
+        fullName: fullNameText.value,
+      };
+
+      if(usernameText.value !== oldUsername) {
+        userUpdateDTO.username = usernameText.value;
+      }
+      if(emailText.value !== oldEmail) {
+        userUpdateDTO.email = emailText.value;
+      }
+
+      updateUser('mihai', userUpdateDTO)
         .catch(error => {
           errorMessage.value = 'Username already exists';
           showErrorMessage.value = true;
           changesOK = false;
         });
     }
-  } else {
-    errorMessage.value = 'All fields must be completed';
-    showErrorMessage.value = true;
-  }
+  
 }
 </script>
 

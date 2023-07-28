@@ -30,16 +30,14 @@ async function postUser(username, email){
 }
 
 async function updateUser(username, userUpdateDto) {
-    const response = await fetch(`${API_URL}?username=${username}`, {
+    const response = await fetch(`${API_URL}/update-profile?username=${username}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            "isActive": userUpdateDto.isActive,
-            "role": userUpdateDto.role,
             "username": userUpdateDto.username,
             "fullName": userUpdateDto.fullName,
             "email": userUpdateDto.email,
-            "avatar": userUpdateDto.avatarId
+            "avatarId": userUpdateDto.avatarId
         })
     });
     const json = await response.json();
