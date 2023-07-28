@@ -2,7 +2,7 @@
 import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { loadPagedIdeas } from "../services/idea.service";
+import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
 import { getCurrentUser } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
@@ -14,10 +14,6 @@ const pagesPerView = 2;
 const pageNumber = ref(1);
 const sortOrder = ref(0);
 const totalIdeas = ref(0);
-
-watch(pageNumber.value, newValue => {
-  console.log(newValue);
-})
 
 
 async function changePage(pageNumber) {
@@ -39,12 +35,13 @@ onMounted(async () => {
     "date",
     "ASC"
   );
+  console.log(data); 
   currentUser.value = getCurrentUser();
   sortOrder.value = 0;
   totalIdeas.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
-  console.log(totalIdeas.value)
-  console.log(ideas.value)
+  // console.log(totalIdeas.value)
+  // console.log(ideas.value)
 });
 
 const totalComments = computed(() => {
@@ -57,7 +54,7 @@ const totalComments = computed(() => {
 
 const totalReplies = computed(() => {
   let total = 0;
-  for (const idea of ideas.value) {
+  for (const idea in ideas.value) {
     total += idea.replies || 0;
   }
   return total;
@@ -85,15 +82,12 @@ const implementedIdeasCount = computed(() => {
 
 const ideasPerUser = computed(() => {
   const users = new Set(ideas.value.map((idea) => idea.userId));
-  if(users.size !=0 )
-  {
+  if (users.size != 0) {
     return totalIdeas.value / users.size;
-  }
-  else
-  {
+  } else {
+   
     return 0;
   }
-  
 });
 
 const implementationPercentage = computed(() => {
@@ -114,13 +108,17 @@ function goToPage(pageNumber) {
 }
 
 function updateSortOrder() {
-  console.log(sortOrder.value);
+ 
   if (sortOrder.value == 0) {
     sortOrder.value = 0;
   }
   if (sortOrder.value == 1) {
     sortOrder.value = 1;
   }
+}
+async function updateIdeas(filteredIdeas) {
+  ideas.value = filteredIdeas.pagedIdeas.content;
+  console.log("Updated ideas: ", ideas.value, "\n\n");
 }
 
 // watch(ideas, () => {
@@ -138,7 +136,7 @@ function updateSortOrder() {
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel :sort="sortOrder" />
+      <SidePanel @filter="updateIdeas" :sort="sortOrder" />
     </div>
     <div class="main-container">
       <div class="left-space">
@@ -196,6 +194,7 @@ function updateSortOrder() {
           :status="idea.status"
           :user="idea.username"
           :ideaId="idea.id"
+          @filter="updateIdeas"
         />
       </div>
       <Pagination :totalPages="totalIdeas" :currentPage="currentPage" @changePage="changePage" />

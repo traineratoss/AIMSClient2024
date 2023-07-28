@@ -110,7 +110,6 @@ async function filterIdeas(
     referrerPolicy: "no-referrer",
   });
   const data = await response.json();
-  console.log(data);
   return data;
 }
 

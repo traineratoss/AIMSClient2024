@@ -20,9 +20,9 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-  console.log(comments.value);
+  // console.log(comments.value);
   currentUser.value = getCurrentUser();
-  console.log(currentUser.value.username);
+  // console.log(currentUser.value.username);
   loadIdeaComments();
 });
 
