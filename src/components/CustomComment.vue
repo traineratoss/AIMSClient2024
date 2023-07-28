@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { postReply, deleteComment } from "../services/comment.service";
+import { deleteComment } from "../services/comment.service";
 import { getCurrentUser } from "../services/user_service";
 
 const props = defineProps({
@@ -18,11 +18,18 @@ const props = defineProps({
   expanded: "",
 });
 
-const emits = defineEmits(["showReplies", "loadComments", "loadReplies"]);
+const emits = defineEmits([
+  "toggleReplies",
+  "showReplies",
+  "loadReplies",
+  "postReply",
+  "deleteComment",
+  "deleteReply",
+  "toggleHasReplies",
+]);
 
 let postToggle = ref(false);
 let currentUser = ref("");
-let enableRepliesView = ref(false);
 let commentText = ref("");
 let buttonSelected = ref(false)
 
@@ -31,11 +38,19 @@ onMounted(async () => {
   console.log(currentUser.value.username);
 });
 
+function loadCommentReplies(){
+  emits('loadReplies')
+}
+
 async function deleteCommentById(commentId) {
   try {
-    await deleteComment(commentId);
-    emits("loadComments");
-    console.log("Comment deleted successfully!");
+    const response = await deleteComment(commentId);
+
+    if (response.ok) {
+      emits("deleteComment", commentId);
+    } else {
+      console.log("Unable to delete");
+    }
   } catch (error) {
     console.error("Error deleting comment:", error);
   }
@@ -43,36 +58,32 @@ async function deleteCommentById(commentId) {
 
 async function deleteReplyById(replyId) {
   try {
-    await deleteComment(replyId);
-    emits("loadComments");
-    console.log("Reply deleted successfully!");
+    const response = await deleteComment(replyId);
+    loadCommentReplies()
+    if (response.ok) {
+      emits("deleteReply", replyId);
+    } else {
+      console.log("Unable to delete");
+    }
   } catch (error) {
     console.error("Error deleting reply:", error);
   }
 }
 
 function showReplies() {
-  enableRepliesView = !enableRepliesView;
+  emits("showReplies"); 
+}
+
+function toggleReplies() {
   if (props.hasReplies) {
-    emits("showReplies");
-    loadCommentReplies();
+    emits("toggleReplies"); 
   }
 }
 
-async function loadCommentReplies() {
-  emits("loadReplies");
-}
-
-async function postReplyDynamic(username, parentId, commentText) {
-  try {
-    await postReply(username, parentId, commentText);
-    clearInput();
-    await loadCommentReplies();
-    showExpandMore = !props.isReply && props.hasReplies && !props.expanded;
-    showExpandLess = !props.isReply && props.hasReplies && props.expanded;
-  } catch (error) {
-    console.error("Error posting reply:", error);
-  }
+function postReply(username, parentId, commentText) {
+  emits("postReply", username, parentId, commentText);
+  clearInput();
+  showReplies();
 }
 
 function clearInput() {
@@ -96,7 +107,7 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button class="action-icon-button" @click="postToggle = !postToggle">
+          <button class="action-icon-button" @click="deleteReplyById(props.replyId)">
             <span class="material-symbols-outlined"> delete </span>
           </button>
         </div>
@@ -119,8 +130,9 @@ function clearInput() {
         <div class="footer-container-left">
         </div>
 
-        <div class="footer-container-center" v-show="props.hasReplies">
-          <button @click="showReplies()" id="view-replies-button">
+        <div class="footer-container-center" >
+          <div v-if="props.hasReplies">
+          <button @click="toggleReplies()" id="view-replies-button">
             <span
               v-if="!props.isReply && props.hasReplies && !props.expanded"
               class="material-symbols-outlined" 
@@ -130,7 +142,7 @@ function clearInput() {
             <span v-else class="material-symbols-outlined" :style="{'color':'orange'}"> expand_less </span>
           </button>
         </div>
-
+        </div>
         <div class="footer-container-right">
           <span v-if="buttonSelected">
             <button
@@ -166,7 +178,7 @@ function clearInput() {
       <button
         id="postButton"
         @click="
-          postReplyDynamic(currentUser.username, props.parentId, commentText)
+          postReply(currentUser.username, props.parentId, commentText)
         "
       >
         Post reply
@@ -244,15 +256,12 @@ function clearInput() {
 }
 
 .footer-container {
-  background-color: rgb(255, 255, 255);
   display: grid;
-  grid-template-columns: 12% 76% 12%;
+  grid-template-columns: 25% 50% 25%;
 }
 
 .footer-container-right {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
+  text-align: right;
 }
 
 .footer-container-center{
