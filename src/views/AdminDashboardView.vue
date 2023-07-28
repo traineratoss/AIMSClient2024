@@ -1,56 +1,79 @@
 <script setup>
 import SideBar from "../components/SideBar.vue";
 import UserDisplay from "../components/UserDisplay.vue";
-import { getAllUsers, getAllUserByUsername } from "../services/user_service.js";
-import { ref, computed, onMounted } from "vue";
+import Pagination from "../components/Pagination.vue";
+import { getAllUsersForAdmin } from "../services/user_service.js";
+import { ref, onMounted } from "vue";
 
 const pageSize = 5;
-const pageNumber = ref(0);
-
+const currentPage = ref(1);
 const users = ref([]);
-// const users = ref([
-//   { username: "test", userId: 1 },
-//   { username: "test2", userId: 2 },
-//   { username: "test3", userId: 3 },
-// ])
 
 onMounted(() => {
-  getAllUsers(pageSize, pageNumber.value, "username")
+  getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
     .then((res) => {
       users.value = res.content;
-      console.log(users.value);
     })
     .catch((error) => {
       console.log("Error");
     });
 });
 
-// const paginatedUsers = computed(() => {
-//   const startIndex = (pageNumber.value - 1) * pageSize;
-//   return users.value.slice(startIndex, startIndex + pageSize);
-// });
+function changePage() {
+  currentPage.value++;
+  getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
+    .then((res) => {
+      users.value = res.content;
+    })
+    .catch((error) => {
+      console.log("Error");
+    });
+}
 
-// const totalPages = computed(() => Math.ceil(users.value.length / pageSize));
+function removeUser(user) {
+  const index = users.value.indexOf(user);
+  if (index !== -1) {
+    users.value.splice(index, 1);
+  }
+}
 </script>
-
 
 <template>
   <div class="container">
     <SideBar />
-    <div class="user-container">
-      <UserDisplay
-        v-for="user in users"
-        :key="user.username"
-        :name="user.username"
-        :isActive="Deactivate"
-      />
+    <div class="right-container">
+      <div class="main-container">
+        <div class="user-container">
+          <UserDisplay
+            v-for="user in users"
+            :key="user.username"
+            :name="user.username"
+            :hasPassword="user.hasPassword"
+            :isActive="user.isActive"
+            :userRole="user.role"
+            @change-status-successful="user.isActive = !user.isActive"
+            @approve-user="
+              () => {
+                user.isActive = true;
+                user.hasPassword = true;
+              }
+            "
+            @decline-user="removeUser(user)"
+          />
+        </div>
+        <Pagination
+          :currentPage="currentPage"
+          @changePage="changePage"
+          class="pagination-container"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .container {
-  height: calc(93vh - 4px);
+  height: calc(91vh - 4px);
   width: 100vw;
 
   display: flex;
@@ -63,5 +86,16 @@ onMounted(() => {
   align-items: center;
   gap: 2vh;
   width: 80vw;
+}
+
+.right-container {
+  display: flex;
+  align-items: center;
+}
+
+.pagination-container {
+  position: absolute;
+  bottom: 1vh;
+  right: 3vh;
 }
 </style>

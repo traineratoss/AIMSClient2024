@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
 import { ref } from "vue";
-import InvalidInputMessage from '../components/InvalidInputMessage.vue';
+import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import { getCurrentUser, updateUser } from "../services/user_service";
 import router from "../router";
 
@@ -12,30 +12,16 @@ const usernameText = ref("");
 const fullNameText = ref("");
 const emailText = ref("");
 const showErrorMessage = ref(false);
-const errorMessage = ref('');
+const errorMessage = ref("");
 
 const slideImages = [
-  {
-    url: "src/assets/img/avatars/avatar1.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar2.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar3.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar4.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar5.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar6.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar7.svg",
-  },
+  "src/assets/img/avatars/avatar1.svg",
+  "src/assets/img/avatars/avatar2.svg",
+  "src/assets/img/avatars/avatar3.svg",
+  "src/assets/img/avatars/avatar4.svg",
+  "src/assets/img/avatars/avatar5.svg",
+  "src/assets/img/avatars/avatar6.svg",
+  "src/assets/img/avatars/avatar7.svg",
 ];
 
 function saveChanges() {
@@ -90,7 +76,7 @@ function saveChanges() {
 <template>
   <div class="my-profile">
     <h1>My profile</h1>
-    <InvalidInputMessage 
+    <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
