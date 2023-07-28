@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/ideas";
+const API_URL = "http://localhost:8080/aims/api/v1/ideas";
 /*
 FlorinCP:
 
@@ -15,7 +15,7 @@ async function loadPagedIdeas(
 ) {
   const response = await fetch(
     API_URL +
-      "/getAllIdeas/page?pageSize=" +
+      "/all?pageSize=" +
       pageSize +
       "&pageNumber=" +
       pageNumber +
@@ -23,21 +23,50 @@ async function loadPagedIdeas(
       sortCategory +
       "&sortDirection=" +
       sortDirection
-  );
+  , {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  });
 
   const data = await response.json();
   const content = await data.content;
   return content;
 }
 async function getCategory() {
-  const response = await fetch(`http://localhost:8080/categories`);
+  const response = await fetch(`http://localhost:8080/aims/api/v1/ideas/categories/all`, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  });
   const json = await response.json();
   return json;
 }
 async function getUser(pageSize, pageNumber, sortCategory) {
   const response = await fetch(
-    `http://localhost:8080/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`
-  );
+    `http://localhost:8080/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`, {
+      method: "GET",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+    });
   const json = await response.json();
   const content = await json.content;
   return content;
@@ -48,6 +77,9 @@ async function filterIdeas(
   text,
   status,
   category,
+  user,
+  selectedDateFrom,
+  selectedDateTo,
   pageNumber,
   sortDirection
 ) {
@@ -59,12 +91,14 @@ async function filterIdeas(
       sortDirection = "DESC";
       break;
   }
-  let url = `${API_URL}/filterIdeas?pageNumber=${pageNumber}&sortDirection=${sortDirection}`;
-  console.log(url);
+  let url = `${API_URL}/filter?pageNumber=${pageNumber}&sortDirection=${sortDirection}`;
   if (title) url += `&title=${title}`;
   if (text) url += `&text=${text}`;
-  if (status) url += `&status=${status}`;
+  if (status.length != 0) url += `&status=${status}`;
   if (category.length != 0) url += `&category=${category}`;
+  if (user.length != 0) url += `&user=${user}`;
+  if (selectedDateFrom) url += `&selectedDateFrom=${selectedDateFrom}`;
+  if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -128,4 +162,3 @@ export {
   filterIdeas,
   addImage
 };
-

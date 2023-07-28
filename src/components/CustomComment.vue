@@ -93,9 +93,9 @@ function clearInput() {
       </div>
 
       <div class="footer-container">
-        <div class="left"></div>
-        <div class="center"></div>
-        <div class="right">
+        <div class="footer-container-left"></div>
+        <div class="footer-container-center"></div>
+        <div class="footer-container-right">
           <button class="action-icon-button" @click="postToggle = !postToggle">
             <span class="material-symbols-outlined"> delete </span>
           </button>
@@ -117,28 +117,21 @@ function clearInput() {
 
       <div class="footer-container">
         <div class="footer-container-left">
-          <button class="dummy-button" disabled>
-            <span class="material-symbols-outlined"> ink_pen </span>
-          </button>
-          <button class="dummy-button" disabled>
-            <span class="material-symbols-outlined"> delete </span>
-          </button>
         </div>
 
         <div class="footer-container-center" v-show="props.hasReplies">
           <button @click="showReplies()" id="view-replies-button">
             <span
               v-if="!props.isReply && props.hasReplies && !props.expanded"
-              class="material-symbols-outlined"
+              class="material-symbols-outlined" 
             >
               expand_more
             </span>
-            <span v-else class="material-symbols-outlined"> expand_less </span>
+            <span v-else class="material-symbols-outlined" :style="{'color':'orange'}"> expand_less </span>
           </button>
         </div>
 
         <div class="footer-container-right">
-          <div class="footer-container-right-buttons">
           <span v-if="buttonSelected">
             <button
               class="action-icon-button" :style="{'color':'orange'}"
@@ -158,7 +151,6 @@ function clearInput() {
             @click="deleteCommentById(props.commentId)">
             <span class="material-symbols-outlined"> delete </span>
           </button>
-        </div>
       </div>
 
     </div>
@@ -217,7 +209,6 @@ function clearInput() {
 }
 
 .shrink-container {
-  /* background-color: red; */
   min-width: 10px;
 }
 
@@ -264,8 +255,8 @@ function clearInput() {
   justify-content: end;
 }
 
-.footer-container-right-buttons{
-  text-align: right;
+.footer-container-center{
+  text-align: center;
 }
 
 .reply-input-container {

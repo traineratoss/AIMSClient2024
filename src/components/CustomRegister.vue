@@ -3,7 +3,7 @@ import CompanyLogo from "./CompanyLogo.vue";
 import CustomButton from "./CustomButton.vue";
 import FormTitle from "./FormTitle.vue";
 import CustomInput from "../components/CustomInput.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { postUser } from "../services/user_service.js";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
@@ -14,6 +14,23 @@ const usernameText = ref("");
 const emailText = ref("");
 const showErrorMessage = ref(false);
 const message = ref("");
+
+router.beforeEach((to, from) => {
+  if(from.name === 'register' && to.name === 'terms') {
+    sessionStorage.setItem('username', usernameText.value);
+    sessionStorage.setItem('email', emailText.value);
+  }
+});
+
+onMounted(() => {
+  if(sessionStorage.getItem('username') && sessionStorage.getItem('email')) {
+    usernameText.value = sessionStorage.getItem('username');
+    emailText.value = sessionStorage.getItem('email');
+
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('email');
+  }
+});
 
 function signUp() {
   if (acceptedTermsAndConditions.value === true) {
