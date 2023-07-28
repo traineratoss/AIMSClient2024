@@ -5,7 +5,7 @@
 
  -->
  <script setup>
- import { onMounted, ref, watch } from "vue";
+ import { onMounted, ref } from "vue";
  import CustomInput from "../components/CustomInput.vue";
  import CustomDropDown from "../components/CustomDropDown.vue";
  import { getCategory, getUser } from "../services/idea.service";
@@ -24,10 +24,6 @@
  const sortOrder = ref("ASC");
  const props = defineProps({
    sort: Number,
- });
- 
- onMounted(() => {
-   console.log("mounted:" + props.sort);
  });
  
  const handleSelectedCategories = (selectedCategories) => {

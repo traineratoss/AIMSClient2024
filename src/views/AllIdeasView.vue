@@ -4,27 +4,48 @@ import { ref, onMounted, computed, watch } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { loadPagedIdeas } from "../services/idea.service";
 import { getCurrentUser } from "../services/user_service";
+import Pagination from "../components/Pagination.vue";
 
 const ideasPerPage = 2;
 const currentPage = ref(1);
-let ideas = ref([]);
+const ideas = ref([]);
 let currentUser = ref("");
 const pagesPerView = 2;
-const pageNumber = ref(0);
+const pageNumber = ref(1);
 const sortOrder = ref(0);
+const totalIdeas = ref(0);
+
+watch(pageNumber.value, newValue => {
+  console.log(newValue);
+})
+
+
+async function changePage(pageNumber) {
+  const data = await loadPagedIdeas(
+    pagesPerView,
+    pageNumber-1,
+    "date",
+    "ASC"
+  );
+  currentUser.value = getCurrentUser();
+  currentPage.value = pageNumber;
+  ideas.value = data.pagedIdeas.content;
+}
 
 onMounted(async () => {
-  ideas.value = await loadPagedIdeas(
+  const data = await loadPagedIdeas(
     pagesPerView,
-    pageNumber.value,
-    "title",
+    pageNumber.value-1,
+    "date",
     "ASC"
   );
   currentUser.value = getCurrentUser();
   sortOrder.value = 0;
+  totalIdeas.value = Math.ceil(data.total / ideasPerPage);
+  ideas.value = data.pagedIdeas.content;
+  console.log(totalIdeas.value)
+  console.log(ideas.value)
 });
-
-const totalIdeas = computed(() => ideas.value.length);
 
 const totalComments = computed(() => {
   let total = 0;
@@ -86,7 +107,7 @@ const roundedNumber = (number) => {
   return Math.round(number * 100) / 100;
 };
 
-const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
+// const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
 
 function goToPage(pageNumber) {
   currentPage.value = pageNumber;
@@ -177,43 +198,7 @@ function updateSortOrder() {
           :ideaId="idea.id"
         />
       </div>
-      <div class="pagination-container">
-        <span
-          v-if="currentPage !== 1 && totalPages > 1"
-          class="page-number arrow"
-          @click="goToPage(1)"
-        >
-          <span class="material-symbols-outlined">
-            keyboard_double_arrow_left
-          </span>
-        </span>
-        <span
-          v-if="currentPage > 2"
-          class="page-number arrow"
-          @click="goToPage(currentPage - 1)"
-        >
-          <span class="material-symbols-outlined"> navigate_before </span>
-        </span>
-        <span class="page-number current-page">
-          {{ currentPage }}
-        </span>
-        <span
-          v-if="currentPage < totalPages - 1"
-          class="page-number arrow"
-          @click="goToPage(currentPage + 1)"
-        >
-          <span class="material-symbols-outlined"> navigate_next </span>
-        </span>
-        <span
-          v-if="currentPage !== totalPages && totalPages > 1"
-          class="page-number arrow"
-          @click="goToPage(totalPages)"
-        >
-          <span class="material-symbols-outlined">
-            keyboard_double_arrow_right
-          </span>
-        </span>
-      </div>
+      <Pagination :totalPages="totalIdeas" :currentPage="currentPage" @changePage="changePage" />
     </div>
   </div>
 </template>

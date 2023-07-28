@@ -34,10 +34,8 @@ async function loadPagedIdeas(
     redirect: "follow",
     referrerPolicy: "no-referrer",
   });
-
   const data = await response.json();
-  const content = await data.content;
-  return content;
+  return data;
 }
 async function getCategory() {
   const response = await fetch(`http://localhost:8080/aims/api/v1/ideas/categories/all`, {
