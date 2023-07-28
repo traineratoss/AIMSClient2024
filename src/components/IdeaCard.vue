@@ -6,6 +6,7 @@ import {
   loadComments,
   loadReplies,
   postComment,
+  postReply,
 } from "../services/comment.service";
 import { getCurrentUser } from "../services/user_service";
 
@@ -19,18 +20,20 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-  console.log(comments);
+  console.log(comments.value);
   currentUser.value = getCurrentUser();
   console.log(currentUser.value.username);
+  loadIdeaComments();
 });
 
-let comments = ref([]);
-let commentText = ref([]);
-let showComments = ref(false);
-let toggleReplies = ref(false);
-let currentUser = ref("");
-let buttonSelected = ref(false);
-let postToggle = ref(false);
+const comments = ref([]);
+const commentText = ref([]);
+const showComments = ref(false);
+const toggleReplies = ref(false);
+const currentUser = ref("");
+const buttonSelected = ref(false);
+const postToggle = ref(false);
+const commentReplies = ref([]);
 const ideaCard = document.querySelector('.idea-card');
 const isSelected = ref(true)
 
@@ -41,16 +44,29 @@ const isSelected = ref(true)
 // })}
 
 
+
 async function loadIdeaComments() {
   const loadedComments = await loadComments(100, 0, "id", props.ideaId);
   comments.value = loadedComments.map((comment) => ({
     ...comment,
     expanded: false,
   }));
+
+  comments.value.forEach((c) => {
+    loadCommentReplies(c);
+  });
 }
 
 function toggleCommentReplies(comment) {
   comment.expanded = !comment.expanded;
+}
+
+function showCommentReplies(comment) {
+  comment.expanded = true;
+  if (getRepliesForComment(comment.id).length === 0) {
+    comment.isReply = false;
+    comment.hasReplies = true;
+  }
 }
 
 function redirectToCreateIdeaView() {
@@ -66,16 +82,108 @@ function toggleComments() {
 }
 
 async function loadCommentReplies(comment) {
-  comment.replies = await loadReplies(comment.id);
+  const response = await loadReplies(comment.id);
+
+  const existingRepliesIndex = commentReplies.value.findIndex(
+    (entry) => entry[0] === comment.id
+  );
+  if (existingRepliesIndex !== -1) {
+    commentReplies.value[existingRepliesIndex][1] = response;
+  } else {
+    commentReplies.value.push([comment.id, response]);
+  }
+
+  console.log(commentReplies.value);
+}
+
+function getCommentIdForReply(replyId) {
+  return commentReplies.value.find((entry) =>
+    entry[1].some((reply) => reply.id === replyId)
+  )
+    ? commentReplies.value.find((entry) =>
+        entry[1].some((reply) => reply.id === replyId)
+      )[0]
+    : null;
+}
+
+function getRepliesForComment(commentId) {
+  return commentReplies.value.find((entry) => entry[0] === commentId)
+    ? commentReplies.value.find((entry) => entry[0] === commentId)[1]
+    : [];
 }
 
 async function postCommentDynamic(username, ideaId, commentText) {
   try {
-    await postComment(username, ideaId, commentText);
-    clearInput();
-    await loadIdeaComments();
+    if (commentText.length !== 0) {
+      const comment = await postComment(username, ideaId, commentText);
+      comment.elapsedTime = "0 seconds";
+      comments.value.unshift(comment);
+      clearInput();
+
+      if (comments.value.length > 0) {
+        showComments.value = true;
+      }
+    } else throw error;
+  } catch (error) {
+    alert("Comment text must not be empty");
+  }
+}
+
+async function postReplyDynamic(username, parentId, commentText) {
+  try {
+    const reply = await postReply(username, parentId, commentText);
+    reply.elapsedTime = "0 seconds";
+    const parentReplies = getRepliesForComment(parentId);
+    parentReplies.unshift(reply);
+
+    const existingRepliesIndex = commentReplies.value.findIndex(
+      (entry) => entry[0] === parentId
+    );
+    if (existingRepliesIndex !== -1) {
+      commentReplies.value[existingRepliesIndex][1] = parentReplies;
+    } else {
+      commentReplies.value.push([parentId, parentReplies]);
+    }
   } catch (error) {
     console.error("Error posting comment:", error);
+  }
+}
+
+function deleteCommentDynamic(commentId) {
+  const indexToDelete = comments.value.findIndex((c) => c.id === commentId);
+  if (indexToDelete !== -1) {
+    comments.value.splice(indexToDelete, 1);
+  }
+
+  if (comments.value.length === 0) showComments.value = false;
+
+  console.log("Comment Delete Successful");
+}
+
+function deleteReplyDynamic(replyId) {
+  const entryIndex = commentReplies.value.findIndex((entry) => {
+    const repliesArray = entry[1];
+    return repliesArray.some((reply) => reply.id === replyId);
+  });
+
+  if (entryIndex !== -1) {
+    const replyIndexToDelete = commentReplies.value[entryIndex][1].findIndex(
+      (reply) => reply.id === replyId
+    );
+
+    if (replyIndexToDelete !== -1) {
+      commentReplies.value[entryIndex][1].splice(replyIndexToDelete, 1);
+      console.log("Reply Delete Successful");
+      if (commentReplies.value[entryIndex][1].length === 0) {
+        toggleCommentReplies(
+          comments.value.filter((c) => c.id === getCommentIdForReply(replyId))
+        );
+      }
+    } else {
+      console.error("Reply not found.");
+    }
+  } else {
+    console.error("Comment not found.");
   }
 }
 
@@ -114,16 +222,16 @@ function getShortenedText(text, maxLength, maxRows) {
       <div class="top-container">
         <div class="left-container">
           <div class="left-container-title">
-            {{ props.title }}
+            Title: {{ getShortenedTitle(title, 25) }}
           </div>
           <div class="left-container-text">
-            {{ props.text }}
+            Text: {{ getShortenedText(text) }}
           </div>
           <div class="left-container-buttons">
             <div class="left-container-buttons-grouped" v-if="isSelected">
-              <button>EDIT</button>
-              <button>VIEW</button>
-              <button>DELETE</button>
+              <button @click="editIdea" class="idea-button">EDIT</button>
+              <button @click="redirectToCreateIdeaView"  class="idea-button">VIEW</button>
+              <button  @click="showDeletePopup" class="idea-button">DELETE</button>
             </div>
             <div class="left-container-buttons-post">
            
@@ -151,6 +259,7 @@ function getShortenedText(text, maxLength, maxRows) {
 
         </div>
         <div class="bottom-container-center">
+          <div v-if="props.numberOfComments !=0">
           <button
           @click="
             loadIdeaComments();
@@ -170,6 +279,9 @@ function getShortenedText(text, maxLength, maxRows) {
           </span>
         </button>
         </div>
+        </div>
+
+
         <div class="bottom-container-right">
           <span v-if="buttonSelected">
                 <button
@@ -224,19 +336,22 @@ function getShortenedText(text, maxLength, maxRows) {
         :expanded="comment.expanded"
         :parentId="comment.id"
         :ideaId="comment.ideaId"
-        @showReplies="toggleCommentReplies(comment)"
+        :replies="getRepliesForComment(comment.id)"
+        @toggleReplies="toggleCommentReplies(comment)"
+        @showReplies="showCommentReplies(comment)"
         @loadReplies="loadCommentReplies(comment)"
-        @loadComments="loadIdeaComments()"
+        @postReply="postReplyDynamic"
+        @deleteComment="deleteCommentDynamic"
       />
       <div v-if="comment.expanded" class="replies-wrapper">
-        <div v-for="commentReply in comment.replies" class="reply-container">
+        <div v-for="reply in getRepliesForComment(comment.id)" class="reply-container">
           <CustomComment
-            :elapsedTime="commentReply.elapsedTime"
+            :elapsedTime="reply.elapsedTime"
             :isReply="true"
-            :replyId="commentReply.id"
-            :parentId="commentReply.parentId"
-            :text="commentReply.commentText"
-            :userName="commentReply.username"
+            :replyId="reply.id"
+            :text="reply.commentText"
+            :userName="reply.username"
+            @deleteReply="deleteReplyDynamic"
           />
         </div>
       </div>
@@ -389,17 +504,6 @@ function getShortenedText(text, maxLength, maxRows) {
   height: auto;
   width: 6vw;
 }
-.showComments {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  right: 45%;
-  bottom: 5px;
-  font-size: xx-large;
-  border: none;
-  background-color: unset;
-}
 .material-symbols-outlined {
   background-color: inherit;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
@@ -447,6 +551,16 @@ function getShortenedText(text, maxLength, maxRows) {
 button:hover {
   color: #ffa941;
 }
+
+.idea-button{
+  background-color:white;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-right: 10px;
+  min-width: 9vh;
+  max-width: 10vh;
+}
+
 
 .action-icon-button {
   background-color: rgba(255, 255, 255, 0);
