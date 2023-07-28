@@ -1,33 +1,42 @@
 <script setup>
-import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from '../components/CustomInput.vue';
 import { sendNewPassword } from '../services/user_service.js';
 import { ref } from 'vue';
 import router from "../router";
+import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 
 const usernameOrEmailText = ref('');
+const showErrorMessage = ref(false);
 
 function requestNewPassword() {
-  sendNewPassword(usernameOrEmailText.value)
-    .then(res => {
-      router.push('/password-changed');
-    })
-    .catch(error => {
-      usernameOrEmailText.value = '';
-    });
+  if(usernameOrEmailText.value) {
+    sendNewPassword(usernameOrEmailText.value)
+      .then(res => {
+        router.push('/password-changed');
+      });
+  } else {
+    showErrorMessage.value = true;
+  }
 }
 </script>
 
 <template>
   <CompanyLogo />
   <div class="container">
-    <FormTitle label="Password Recovery" />
+    <div>
+      <h1 id="name">AIMS</h1>
+      <h1>Password Recovery</h1>
+    </div>
     <div id="profile-img">
       <span class="material-symbols-outlined">
         account_circle
       </span>
     </div>
+    <InvalidInputMessage 
+      message="The field must not be empty"
+      :class="{ 'error-message-visible': showErrorMessage }"
+    />
     <div>
       <CustomInput
         type="text"
@@ -59,8 +68,21 @@ function requestNewPassword() {
   top: 80px;
 }
 
+.error-message-visible {
+  opacity: 1;
+}
+
 .material-symbols-outlined {
   font-size: 10vh;
+}
+
+h1 {
+  font-size: 30px;
+}
+
+#name {
+  color: var(--selected-color);
+  text-align: center;
 }
 
 img {

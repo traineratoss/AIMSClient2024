@@ -50,7 +50,7 @@ function logout() {
 <template>
   <CompanyLogo />
   <div class="container">
-    <FormTitle label="Log in" />
+    <FormTitle label="Log In" />
     <div id="profile-img">
       <span class="material-symbols-outlined">
         account_circle
