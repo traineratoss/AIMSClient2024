@@ -3,7 +3,7 @@ import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
 import { ref } from 'vue';
-import { loginUser } from "../services/user_service.js";
+import { loginUser, setCurrentUser } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
 import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 import bcrypt from "bcryptjs";
@@ -17,7 +17,8 @@ function redirectToRegister() {
 }
 
 function login() {
-  const hashPassword = bcrypt.hashSync(passwordText.value, 6);
+  const hashPassword = passwordText.value;
+  //const hashPassword = bcrypt.hashSync(passwordText.value, 6);
   console.log('crypted password', hashPassword);
   if(usernameOrEmailText.value && passwordText.value) {
     loginUser(usernameOrEmailText.value, hashPassword)
@@ -27,6 +28,7 @@ function login() {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('user', JSON.stringify(user));
         }
+        setCurrentUser(usernameOrEmailText.value);
         return user;
       })
       .catch(error => {

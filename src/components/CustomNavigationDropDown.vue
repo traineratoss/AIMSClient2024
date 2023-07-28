@@ -2,6 +2,7 @@
 import { defineProps, ref, computed, defineEmits } from "vue";
 import CustomButton from "../components/CustomButton.vue"
 import router from "../router";
+import { logout } from "../services/user_service";
 
 const dashboardIsHovered = ref(false);
 
@@ -34,6 +35,9 @@ function onMouseLeave(element) {
 }
 
 const onClickHandler = (element) => {
+  if(element.id === 'logout') {
+    logout();
+  }
   emits('clickedDropDown', element.id);
   router.push(element.route);
 };

@@ -4,10 +4,14 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
 import { ref } from "vue";
+import InvalidInputMessage from '../components/InvalidInputMessage.vue';
+import { getCurrentUser, updateUser } from "../services/user_service";
 
 const usernameText = ref("");
 const fullNameText = ref("");
 const emailText = ref("");
+const showErrorMessage = ref(false);
+const errorMessage = ref('');
 
 const slideImages = [
   {
@@ -34,15 +38,42 @@ const slideImages = [
 ];
 
 function saveChanges() {
-  console.log("username", usernameText.value);
-  console.log("full name", fullNameText.value);
-  console.log("email", emailText.value);
+  if(usernameText.value && fullNameText.value && emailText.value) {
+    const changesOK = true;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    if(!emailRegex.test(emailText.value)) {
+      errorMessage.value = 'Invalid email format';
+      showErrorMessage.value = true;
+      changesOK = false;
+    }
+
+    if(changesOK) {
+      updateUser(getCurrentUser().username, {
+        username: usernameText.value,
+        fullname: fullNameText.value,
+        email: emailText.value
+      })
+        .catch(error => {
+          errorMessage.value = 'Username already exists';
+          showErrorMessage.value = true;
+          changesOK = false;
+        });
+    }
+  } else {
+    errorMessage.value = 'All fields must be completed';
+    showErrorMessage.value = true;
+  }
 }
 </script>
 
 <template>
   <div class="my-profile">
     <h1>My profile</h1>
+    <InvalidInputMessage 
+      :message="errorMessage"
+      :class="{ 'error-message-visible': showErrorMessage }"
+    />
     <form action="">
       <div class="form-input">
         <label for="username"> Username </label>
@@ -84,6 +115,10 @@ function saveChanges() {
 
   margin-top: 20vh;
   width: 100vw;
+}
+
+.error-message-visible {
+  opacity: 1;
 }
 
 h1 {
