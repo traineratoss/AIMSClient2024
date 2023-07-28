@@ -51,8 +51,16 @@ async function filterIdeas(
   pageNumber,
   sortDirection
 ) {
+  switch (sortDirection) {
+    case 0:
+      sortDirection = "ASC";
+      break;
+    case 1:
+      sortDirection = "DESC";
+      break;
+  }
   let url = `${API_URL}/filterIdeas?pageNumber=${pageNumber}&sortDirection=${sortDirection}`;
-
+  console.log(url);
   if (title) url += `&title=${title}`;
   if (text) url += `&text=${text}`;
   if (status) url += `&status=${status}`;
@@ -70,6 +78,7 @@ async function filterIdeas(
     referrerPolicy: "no-referrer",
   });
   const data = await response.json();
+  console.log(data);
   return data;
 }
 

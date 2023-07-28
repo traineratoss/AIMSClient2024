@@ -21,6 +21,14 @@ const inputTitle = ref("");
 const inputText = ref("");
 const selectedDateFrom = ref("");
 const selectedDateTo = ref("");
+const sortOrder = ref("ASC");
+const props = defineProps({
+  sort: Number,
+});
+
+onMounted(() => {
+  console.log("mounted:" + props.sort);
+});
 
 const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
@@ -43,6 +51,9 @@ onMounted(async () => {
   const dataUser = await getUser(10, 0, "username");
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
+
+  //
+  sortOrder.value = "ASC";
 });
 
 const filter = async () => {
@@ -51,20 +62,16 @@ const filter = async () => {
   const category = categoriesSelected.value;
   const pageNumber = 0;
   const status = statusSelected.value;
-  const sortDirection = "ASC";
-  console.log(category);
-
   const filteredIdeas = await filterIdeas(
     title,
     text,
     status,
     category,
     pageNumber,
-    sortDirection
+    props.sort
   );
-
-  console.log(filteredIdeas.pagedIdeas.content);
-  console.log(filteredIdeas.total);
+  // console.log(filteredIdeas.pagedIdeas.content);
+  // console.log(filteredIdeas.total);
 };
 </script>
 

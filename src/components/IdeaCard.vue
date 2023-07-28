@@ -2,7 +2,6 @@
 import CustomComment from "../components/CustomComment.vue";
 import { ref, defineEmits, onMounted } from "vue";
 import router from "../router";
-import { inject } from "vue";
 import {
   loadComments,
   loadReplies,
@@ -39,6 +38,7 @@ function toggleCommentReplies(comment) {
 let comments = ref([]);
 let commentText = ref([]);
 let showComments = ref(false);
+let toggleReplies = ref(false);
 let currentUser = ref("");
 
 function redirectToCreateIdeaView() {
@@ -75,8 +75,18 @@ function getShortenedTitle(title, maxLength) {
   return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
 }
 
-function getShortenedText(text) {
-  return text; // NEED TO UPDATE!
+function getShortenedText(text, maxLength, maxRows) {
+  let shortenedText = '';
+  const totalCharacters = maxLength * maxRows;
+  const ellipsis = text.length > totalCharacters ? "..." : "";
+
+  for (let i = 0; i < maxRows; i++) {
+    const startIndex = i * maxLength;
+    const rowText = text.substr(startIndex, maxLength);
+    shortenedText += rowText + "\n";
+  }
+
+  return shortenedText.trimEnd() + ellipsis;
 }
 </script>
 
@@ -169,6 +179,7 @@ function getShortenedText(text) {
             :elapsedTime="commentReply.elapsedTime"
             :isReply="true"
             :replyId="commentReply.id"
+            :parentId="commentReply.parentId"
             :text="commentReply.commentText"
             :userName="commentReply.username"
           />

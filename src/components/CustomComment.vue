@@ -24,6 +24,7 @@ let postToggle = ref(false);
 let currentUser = ref("");
 let enableRepliesView = ref(false);
 let commentText = ref("");
+let buttonSelected = ref(false)
 
 onMounted(async () => {
   currentUser.value = getCurrentUser();
@@ -43,8 +44,7 @@ async function deleteCommentById(commentId) {
 async function deleteReplyById(replyId) {
   try {
     await deleteComment(replyId);
-    await loadCommentReplies();
-
+    emits("loadComments");
     console.log("Reply deleted successfully!");
   } catch (error) {
     console.error("Error deleting reply:", error);
@@ -68,7 +68,8 @@ async function postReplyDynamic(username, parentId, commentText) {
     await postReply(username, parentId, commentText);
     clearInput();
     await loadCommentReplies();
-    if (!props.hasReplies) emits("loadComments");
+    showExpandMore = !props.isReply && props.hasReplies && !props.expanded;
+    showExpandLess = !props.isReply && props.hasReplies && props.expanded;
   } catch (error) {
     console.error("Error posting reply:", error);
   }
@@ -137,9 +138,21 @@ function clearInput() {
         </div>
 
         <div class="footer-container-right">
-            <button class="action-icon-button" @click="postToggle = !postToggle">
-            <span class="material-symbols-outlined"> ink_pen </span>
-          </button>
+          <div class="footer-container-right-buttons">
+          <span v-if="buttonSelected">
+            <button
+              class="action-icon-button" :style="{'color':'orange'}"
+              @click="postToggle = !postToggle;buttonSelected=!buttonSelected">
+              <span class="material-symbols-outlined"> ink_pen </span>
+            </button>
+            </span>
+            <span v-if="!buttonSelected">
+            <button
+              class="action-icon-button"
+              @click="postToggle = !postToggle;buttonSelected=!buttonSelected">
+              <span class="material-symbols-outlined"> ink_pen </span>
+            </button>
+            </span>
           <button
             class="action-icon-button"
             @click="deleteCommentById(props.commentId)">
@@ -147,6 +160,9 @@ function clearInput() {
           </button>
         </div>
       </div>
+
+    </div>
+
     </div>
     <div class="reply-input-container" v-if="postToggle">
       <textarea
@@ -238,12 +254,18 @@ function clearInput() {
 
 .footer-container {
   background-color: rgb(255, 255, 255);
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 12% 76% 12%;
 }
 
 .footer-container-right {
-  margin-right: 7px;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
+
+.footer-container-right-buttons{
+  text-align: right;
 }
 
 .reply-input-container {
