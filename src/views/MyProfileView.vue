@@ -4,65 +4,71 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
 import { ref } from "vue";
-import InvalidInputMessage from '../components/InvalidInputMessage.vue';
+import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import { getCurrentUser, updateUser } from "../services/user_service";
+import router from "../router";
 
 const usernameText = ref("");
 const fullNameText = ref("");
 const emailText = ref("");
 const showErrorMessage = ref(false);
-const errorMessage = ref('');
+const errorMessage = ref("");
 
 const slideImages = [
-  {
-    url: "src/assets/img/avatars/avatar1.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar2.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar3.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar4.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar5.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar6.svg",
-  },
-  {
-    url: "src/assets/img/avatars/avatar7.svg",
-  },
+  "src/assets/img/avatars/avatar1.svg",
+  "src/assets/img/avatars/avatar2.svg",
+  "src/assets/img/avatars/avatar3.svg",
+  "src/assets/img/avatars/avatar4.svg",
+  "src/assets/img/avatars/avatar5.svg",
+  "src/assets/img/avatars/avatar6.svg",
+  "src/assets/img/avatars/avatar7.svg",
 ];
 
 function saveChanges() {
-  if(usernameText.value && fullNameText.value && emailText.value) {
-    let changesOK = true;
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  let changesOK = true;
+  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-    if(!emailRegex.test(emailText.value)) {
-      errorMessage.value = 'Invalid email format';
-      showErrorMessage.value = true;
+  let oldUsername = 'mihai'; //this needs to be loaded from cookies
+  let oldEmail = 'aa@gmail.com'; //this needs to be loaded from cookies
+  let oldAvatarId; //this needs to be loaded from cookies
+  let oldFullname = 'mihai_vul2'; //this needs to be loaded from cookies
+  let userId = 3; //this needs to be loaded from cookies
+
+  if(!emailRegex.test(emailText.value)) {
+    errorMessage.value = 'Invalid email format';
+    showErrorMessage.value = true;
+    changesOK = false;
+  }
+
+  if(changesOK) {
+    let userUpdateDTO = {};
+
+    if(usernameText.value !== oldUsername && usernameText.value !== '') {
+      userUpdateDTO.username = usernameText.value;
+    }
+    if(emailText.value !== oldEmail && emailText.value !== '') {
+      userUpdateDTO.email = emailText.value;
+    }
+    if(oldFullname === '') {
+      userUpdateDTO.fullName = fullNameText.value;
+    } else if(fullNameText.value !== oldFullname && fullNameText.value !== '') {
+      userUpdateDTO.fullName = fullNameText.value;
+    } else if(fullNameText.value === '') {
       changesOK = false;
+      errorMessage.value = 'Fullname must not be empty';
+      showErrorMessage.value = true;
     }
 
     if(changesOK) {
-      updateUser(getCurrentUser().username, {
-        username: usernameText.value,
-        fullname: fullNameText.value,
-        email: emailText.value
-      })
+      updateUser(oldUsername, userUpdateDTO)
+        .then(res => {
+          router.push('/my');
+        })
         .catch(error => {
-          errorMessage.value = 'Username already exists';
+          errorMessage.value = error.message;
           showErrorMessage.value = true;
-          changesOK = false;
         });
     }
-  } else {
-    errorMessage.value = 'All fields must be completed';
-    showErrorMessage.value = true;
   }
 }
 </script>
@@ -70,7 +76,7 @@ function saveChanges() {
 <template>
   <div class="my-profile">
     <h1>My profile</h1>
-    <InvalidInputMessage 
+    <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
@@ -113,7 +119,7 @@ function saveChanges() {
   align-items: center;
   gap: 5vh;
 
-  margin-top: 20vh;
+  margin-top: 10vh;
   width: 100vw;
 }
 
