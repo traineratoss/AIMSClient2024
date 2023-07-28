@@ -48,7 +48,7 @@ async function loadPreviousPage() {
       :title="idea.title"
       :text="idea.text"
       :status="idea.status"
-      :user="idea.username"
+      :username="idea.username"
       :ideaId="idea.id"
     />
   </div>

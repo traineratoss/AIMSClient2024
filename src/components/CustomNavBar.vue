@@ -224,6 +224,7 @@ nav {
   width: 100vw;
   align-items: center;
   height: 9vh;
+  margin-bottom: 20px;
 }
 
 .material-symbols-outlined {
