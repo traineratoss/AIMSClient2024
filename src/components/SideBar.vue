@@ -28,6 +28,7 @@ import CustomButtonGray from "../components/CustomButtonGray.vue";
 
   background-color: var(--sidebar-color);
   border: 1px solid black;
+
 }
 
 .btn {

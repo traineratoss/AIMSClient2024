@@ -20,21 +20,18 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-  // console.log(comments.value);
   currentUser.value = getCurrentUser();
-  // console.log(currentUser.value.username);
   loadIdeaComments();
 });
 
 const comments = ref([]);
 const commentText = ref([]);
 const showComments = ref(false);
-const toggleReplies = ref(false);
 const currentUser = ref("");
 const buttonSelected = ref(false);
 const postToggle = ref(false);
 const commentReplies = ref([]);
-const isSelected = ref(true)
+const isSelected = ref(false);
 
 async function loadIdeaComments() {
   const loadedComments = await loadComments(100, 0, "id", props.ideaId);
@@ -66,10 +63,12 @@ function redirectToCreateIdeaView() {
 
 function showDeletePopup() {
   router.push({ path: "/create-idea", query: { showDeletePopup: true } });
+  console.log("redirect");
 }
 
 function toggleComments() {
   showComments.value = !showComments.value;
+  console.log("toggle");
 }
 
 async function loadCommentReplies(comment) {
@@ -198,123 +197,151 @@ function getShortenedText(text, maxLength, maxRows) {
     if (i === 0) {
       shortenedText += rowText + "\n"; // First row, no need to add spaces
     } else {
-      const paddedRowText = rowText.padStart(rowText.length + 6, ' ');
+      const paddedRowText = rowText.padStart(rowText.length + 6, " ");
       shortenedText += paddedRowText + "\n";
     }
   }
 
   return shortenedText.trimEnd() + ellipsis;
 }
+
+function selectIdea() {
+  isSelected.value = !isSelected.value;
+  console.log(isSelected.value);
+}
+
 </script>
 
 <template>
   <div class="container">
-
-  <div class="wrapper">
-    <div class="border"></div>
-    <div class="idea-card">
-      <div class="top-container">
-        <div class="left-container">
-          <div class="left-container-title">
-            Title: {{ getShortenedTitle(title, 25) }}
-          </div>
-          <div class="left-container-text">
-            Text: {{ getShortenedText(text) }}
-          </div>
-          <div class="left-container-buttons">
-            <div class="left-container-buttons-grouped" v-if="isSelected">
-              <button @click="editIdea" class="idea-button">EDIT</button>
-              <button @click="redirectToCreateIdeaView"  class="idea-button">VIEW</button>
-              <button  @click="showDeletePopup" class="idea-button">DELETE</button>
+    <div class="clickable-container"  @click="selectIdea()">
+    <div
+      class="wrapper"
+      v-bind:class="isSelected ? 'selected-class' : ''"
+    >
+      <div
+        class="border"
+        v-bind:style="
+          isSelected
+            ? {
+                'pointer-events': 'none',
+                'background-color': '#ffa941',
+                'animation-play-state': 'paused',
+              }
+            : { 'background-color': 'white' }
+        "
+      ></div>
+      <div class="idea-card">
+        <div class="top-container">
+          <div class="left-container">
+            <div class="left-container-title">
+              Title: {{ getShortenedTitle(title, 25) }}
             </div>
-            <div class="left-container-buttons-post">
-           
+            <div class="left-container-text">
+              Text: {{ getShortenedText(text) }}
             </div>
-          </div>
-        </div>
-        <div class="right-container">
-          <div class="dummy-div"></div>
-          <div class="right-container-image">
-            <img
-              class="idea-image"
-              src="https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw"
-              alt="image"
-            />
-          </div>
-          <div class="right-container-status">
-            {{ props.numberOfComments }}
-            {{ props.status }}
-            {{ props.username }}
-          </div>
-        </div>
-      </div>
-      <div class="bottom-container">
-        <div class="bottom-container-left">
-
-        </div>
-        <div class="bottom-container-center">
-          <div v-if="props.numberOfComments !=0">
-          <button
-          @click="
-            loadIdeaComments();
-            toggleComments();
-          "
-          id="view-replies-button"
-        >
-          <span v-if="!showComments" class="material-symbols-outlined">
-            expand_more
-          </span>
-          <span
-            v-else
-            class="material-symbols-outlined"
-            :style="{ color: 'orange' }"
-          >
-            expand_less
-          </span>
-        </button>
-        </div>
-        </div>
-
-
-        <div class="bottom-container-right">
-          <span v-if="buttonSelected">
+            <div class="left-container-buttons">
+              <div class="left-container-buttons-grouped" v-show="isSelected">
+                <button @click.stop="editIdea()" class="idea-button">
+                  EDIT
+                </button>
                 <button
-                  class="action-icon-button"
+                  @click.stop="redirectToCreateIdeaView()"
+                  class="idea-button"
+                >
+                  VIEW
+                </button>
+                <button @click.stop="showDeletePopup()" class="idea-button">
+                  DELETE
+                </button>
+              </div>
+              <div class="left-container-buttons-post"></div>
+            </div>
+          </div>
+          <div class="right-container">
+            <div class="dummy-div"></div>
+            <div class="right-container-image">
+              <img
+                class="idea-image"
+                src="https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw"
+                alt="image"
+              />
+            </div>
+            <div class="right-container-status">
+              {{ props.numberOfComments }}
+              {{ props.status }}
+              {{ props.username }}
+            </div>
+          </div>
+        </div>
+        <div class="bottom-container">
+          <div class="bottom-container-left"></div>
+          <div class="bottom-container-center">
+            <div v-if="props.numberOfComments != 0 && isSelected">
+              <button
+                @click.stop="
+                  loadIdeaComments();
+                  toggleComments();
+                "
+                id="view-replies-button"
+              >
+                <span v-if="!showComments" class="material-symbols-outlined">
+                  expand_more
+                </span>
+                <span
+                  v-else
+                  class="material-symbols-outlined"
                   :style="{ color: 'orange' }"
-                  @click="
-                    postToggle = !postToggle;
-                    buttonSelected = !buttonSelected;
-                  "
                 >
-                  <span class="material-symbols-outlined"> add_comment </span>
-                </button>
-              </span>
-              <span v-if="!buttonSelected">
-                <button
-                  class="action-icon-button"
-                  @click="
-                    postToggle = !postToggle;
-                    buttonSelected = !buttonSelected;
-                  "
-                >
-                  <span class="material-symbols-outlined"> add_comment </span>
-                </button>
-              </span>
+                  expand_less
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bottom-container-right">
+            <span v-if="buttonSelected">
+              <button
+                class="action-icon-button"
+                :style="{ color: 'orange' }"
+                @click.stop="
+                  postToggle = !postToggle;
+                  buttonSelected = !buttonSelected;
+                "
+              >
+                <span class="material-symbols-outlined"> add_comment </span>
+              </button>
+            </span>
+            <span v-if="!buttonSelected && isSelected">
+              <button
+                class="action-icon-button"
+                @click.stop="
+                  postToggle = !postToggle;
+                  buttonSelected = !buttonSelected;
+                "
+              >
+                <span class="material-symbols-outlined"> add_comment </span>
+              </button>
+            </span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-    <div v-if="postToggle" class="comment-input-wrapper">
-        <div class="comment-input-container">
-          <textarea  id="comment-input-textarea" v-model="commentText">
-          </textarea>
-        </div>
-        <div class="comment-input-bottom">
-          <button @click="postCommentDynamic(currentUser.username,props.ideaId,commentText)">Post! </button>
-        </div>
     </div>
-
+    <div v-if="postToggle" class="comment-input-wrapper">
+      <div class="comment-input-container">
+        <textarea id="comment-input-textarea" v-model="commentText"> </textarea>
+      </div>
+      <div class="comment-input-bottom">
+        <button
+          @click.stop="
+            postCommentDynamic(currentUser.username, props.ideaId, commentText)
+          "
+        >
+          Post!
+        </button>
+      </div>
+    </div>
     <div
       class="comment-container"
       v-if="showComments"
@@ -339,7 +366,10 @@ function getShortenedText(text, maxLength, maxRows) {
         @deleteComment="deleteCommentDynamic"
       />
       <div v-if="comment.expanded" class="replies-wrapper">
-        <div v-for="reply in getRepliesForComment(comment.id)" class="reply-container">
+        <div
+          v-for="reply in getRepliesForComment(comment.id)"
+          class="reply-container"
+        >
           <CustomComment
             :elapsedTime="reply.elapsedTime"
             :isReply="true"
@@ -355,7 +385,15 @@ function getShortenedText(text, maxLength, maxRows) {
 </template>
 
 <style scoped>
-.wrapper{
+.container {
+  width: 30vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.wrapper {
   width: 30vw;
   display: grid;
   grid-template-columns: 1vw 29vw;
@@ -366,24 +404,31 @@ function getShortenedText(text, maxLength, maxRows) {
   position: relative;
   overflow: hidden;
   background-color: white;
-  cursor:pointer ;
 }
+/*
+   I know it might be repetitive but at the moment
+  i do no have enough time to further investigate this issue but 
+  i suspect that you can exclude a specific class from beeing hovered over
+*/
 
-.wrapper:hover .border{
+.wrapper:hover .border {
   background-color: #ffa941;
- 
-  animation: 1s normalState ;
+  animation: 1s normalState;
 }
 
+.selected-class {
+  pointer-events: none;
+  border: 1px solid black;
+}
 
-.border{
+.border {
   width: 2vw;
   min-height: 200px;
   max-height: 30vh;
   background-color: white;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  animation: 1s hover ;
+  animation: 1s hover;
 }
 
 @keyframes normalState {
@@ -399,7 +444,7 @@ function getShortenedText(text, maxLength, maxRows) {
 }
 
 @keyframes hover {
- 0% {
+  0% {
     transform: translateX(0);
     left: 0;
     background-color: #ffa941;
@@ -432,19 +477,17 @@ function getShortenedText(text, maxLength, maxRows) {
   grid-template-columns: 25% 50% 25%;
 }
 
-.bottom-container-center{
+.bottom-container-center {
   text-align: center;
 }
 
-.bottom-container-right{
+.bottom-container-right {
   text-align: right;
 }
-
 
 .left-container {
   display: grid;
   grid-template-rows: 20% auto 30px;
-
 }
 
 .left-container-title {
@@ -472,19 +515,18 @@ function getShortenedText(text, maxLength, maxRows) {
 }
 .right-container {
   display: grid;
-  grid-template-rows: 30px 40% 40% ;
+  grid-template-rows: 30px 40% 40%;
   max-height: 20vh;
-  
 }
 .right-container-image {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left:1px solid  #ffa941 ;
+  border-left: 1px solid #ffa941;
 }
 
-.right-container-status{
-  border-left:1px solid  #ffa941 ;
+.right-container-status {
+  border-left: 1px solid #ffa941;
 }
 
 .reply-container {
@@ -555,7 +597,7 @@ function getShortenedText(text, maxLength, maxRows) {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
-.comment-input-wrapper{
+.comment-input-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -570,20 +612,21 @@ function getShortenedText(text, maxLength, maxRows) {
   margin-top: 10px;
 }
 
-#comment-input-textarea{
+#comment-input-textarea {
   margin-top: 0.5vw;
   resize: none;
   width: 29vw;
   height: 10vh;
-  overflow:auto;
+  overflow: auto;
   box-sizing: border-box;
 }
 
-.comment-input-bottom{
+.comment-input-bottom {
   text-align: end;
   width: 29vw;
 }
 #view-replies-button {
+  pointer-events: all;
   background-color: white;
   border: none;
   padding: 0;
@@ -598,17 +641,25 @@ button:hover {
   color: #ffa941;
 }
 
-.idea-button{
-  background-color:white;
+.idea-button {
+  pointer-events: all;
+  background-color: white;
   border: 1px solid black;
   border-radius: 5px;
   margin-right: 10px;
   min-width: 9vh;
   max-width: 10vh;
+  transition: all 1s linear;
 }
 
+.idea-button:hover {
+  background-color: #ffa941;
+  color: black;
+  font-weight: 600;
+}
 
 .action-icon-button {
+  pointer-events: all;
   background-color: rgba(255, 255, 255, 0);
   border: none;
   padding: 0;
@@ -617,4 +668,6 @@ button:hover {
   outline: inherit;
   margin-right: 10px;
 }
+
+
 </style>

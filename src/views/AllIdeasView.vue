@@ -328,6 +328,10 @@ inputTitle.value = inputTitleParam;
 
 <style scoped>
 
+.idea-transition-item{
+  margin-bottom: 10px;
+}
+
 .ideas-transition-container {
   transition: opacity 0.5s;
 }
