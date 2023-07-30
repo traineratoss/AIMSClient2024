@@ -1,6 +1,6 @@
 <script setup>
 import SidePanel from "../components/SidePanel.vue";
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
 import { getCurrentUser } from "../services/user_service";
@@ -9,39 +9,63 @@ import Pagination from "../components/Pagination.vue";
 const ideasPerPage = 2;
 const currentPage = ref(1);
 const ideas = ref([]);
-let currentUser = ref("");
-const pagesPerView = 2;
+const loggedUser = ref("");
 const pageNumber = ref(1);
 const sortOrder = ref(0);
-const totalIdeas = ref(0);
+const totalPages = ref(0);
 
+// updated by ref inputs
+const inputTitle = ref("");
+const inputText = ref("");
+const inputStatus = ref([]);
+const inputCategory = ref([]);
+const inputUser = ref([]);
+const inputSelectedDateFrom = ref("");
+const inputSelectedDateTo = ref("");
+
+// non updated inputs, for sorting
+// if i leave the refs and if i press sort, it will filter, which should not happen
+// we put it non reactive so we update it only when the filter is pressed and the inputs are updated
+let currentTitle = "";
+let currentText = ""; 
+let currentStatus = [];
+let currentCategory = []; 
+let currentUser = [];
+let currentSelectedDateFrom = "";
+let currentSelectedDateTo = "";
 
 async function changePage(pageNumber) {
-  const data = await loadPagedIdeas(
-    pagesPerView,
+  // every time i change the page, i should filter the pages to check from the server every page, same aplies for every method which implies changing the ideas.value
+  // the ideas.value represents the ideas shown on the page, not all the images
+  // this is because, from the servers, i get a list of pageSize ideas (2, 3, ...), not the whole nr of ideas
+  // i emited all the filtering options for us to know which inputs are completed
+  const data = await filterIdeas(
+    currentTitle,
+    currentText,
+    currentStatus,
+    currentCategory,
+    currentUser,
+    currentSelectedDateFrom,
+    currentSelectedDateTo,
     pageNumber-1,
-    "date",
-    "ASC"
+    sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  currentUser.value = getCurrentUser();
-  currentPage.value = pageNumber;
+  loggedUser.value = getCurrentUser();
   ideas.value = data.pagedIdeas.content;
+  currentPage.value = pageNumber;
 }
 
 onMounted(async () => {
   const data = await loadPagedIdeas(
-    pagesPerView,
+    ideasPerPage,
     pageNumber.value-1,
     "date",
     "ASC"
   );
-  console.log(data); 
-  currentUser.value = getCurrentUser();
+  loggedUser.value = getCurrentUser();
   sortOrder.value = 0;
-  totalIdeas.value = Math.ceil(data.total / ideasPerPage);
+  totalPages.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
-  // console.log(totalIdeas.value)
-  // console.log(ideas.value)
 });
 
 const totalComments = computed(() => {
@@ -83,7 +107,7 @@ const implementedIdeasCount = computed(() => {
 const ideasPerUser = computed(() => {
   const users = new Set(ideas.value.map((idea) => idea.userId));
   if (users.size != 0) {
-    return totalIdeas.value / users.size;
+    return (totalPages.value * ideasPerPage) / users.size;
   } else {
    
     return 0;
@@ -101,25 +125,117 @@ const roundedNumber = (number) => {
   return Math.round(number * 100) / 100;
 };
 
-// const totalPages = computed(() => Math.ceil(ideas.value.length / ideasPerPage));
-
 function goToPage(pageNumber) {
   currentPage.value = pageNumber;
 }
 
-function updateSortOrder() {
- 
+// to update the current values, not the reactive ones
+function setCurrentVariables() {
+  currentTitle = inputTitle.value;
+  currentText = inputText.value;
+  currentStatus = inputStatus.value;
+  currentCategory = inputCategory.value;
+  currentUser = inputUser.value;
+  currentSelectedDateFrom = inputSelectedDateFrom.value;
+  currentSelectedDateTo = inputSelectedDateTo.value; 
+}
+
+// here, the page asc or desc is happening
+async function updateSortOrder() {
+
   if (sortOrder.value == 0) {
     sortOrder.value = 0;
-  }
-  if (sortOrder.value == 1) {
-    sortOrder.value = 1;
+    const data = await filterIdeas(
+      currentTitle,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value-1,
+      "ASC" 
+    );
+    loggedUser.value = getCurrentUser();
+    ideas.value = data.pagedIdeas.content;
+
+  } else if (sortOrder.value == 1) {
+      sortOrder.value = 1;
+      const data = await filterIdeas(
+        currentTitle,
+        currentText,
+        currentStatus,
+        currentCategory,
+        currentUser,
+        currentSelectedDateFrom,
+        currentSelectedDateTo,
+        currentPage.value-1,
+        "DESC" 
+      );
+      loggedUser.value = getCurrentUser();
+      ideas.value = data.pagedIdeas.content;
   }
 }
+
+// here, the filtering happens
 async function updateIdeas(filteredIdeas) {
-  ideas.value = filteredIdeas.pagedIdeas.content;
-  console.log("Updated ideas: ", ideas.value, "\n\n");
+  totalPages.value = Math.ceil(filteredIdeas.total / ideasPerPage); // the total nr of pages after filtering needs to be updated
+
+  if (currentPage.value > totalPages.value){ // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
+    // here, we go behind with one page each time so wwe know when we got to our good pageNumber
+    // we have to filter each time with each page to get our good ideas
+
+    while(currentPage.value>totalPages.value && totalPages.value != 0) {
+      currentPage.value = currentPage.value - 1;
+      const data = await filterIdeas(
+        inputTitle.value,
+        inputText.value,
+        inputStatus.value,
+        inputCategory.value,
+        inputUser.value,
+        inputSelectedDateFrom.value,
+        inputSelectedDateTo.value,
+        currentPage.value-1,
+        sortOrder.value,
+      );
+      setCurrentVariables();
+      loggedUser.value = getCurrentUser();
+      ideas.value = data.pagedIdeas != null ? data.pagedIdeas.content : [];
+    }
+
+    // if there are no ideas
+    if(totalPages.value === 0) {
+      setCurrentVariables();
+      loggedUser.value = getCurrentUser();
+      currentPage.value = 0;
+      ideas.value = [];
+    }
+
+  } else {
+
+    // being sure the current page doesnt go below 0
+    if(currentPage.value <= 0) {
+      currentPage.value = 1;
+    }
+
+    setCurrentVariables();
+    loggedUser.value = getCurrentUser();
+    ideas.value = filteredIdeas.pagedIdeas.content;
+  }
 }
+
+
+// Here I pass the vars from the side panel
+const onPassInputVariables = (inputTitleParam, inputTextParam, inputStatusParam, inputCategoryParam, inputUserParam, inputSelectedDateFromParam, inputSelectedDateToParam) => {
+  
+inputTitle.value = inputTitleParam;
+  inputText.value = inputTextParam;
+  inputStatus.value = inputStatusParam;
+  inputCategory.value = inputCategoryParam;
+  inputUser.value = inputUserParam;
+  inputSelectedDateFrom.value = inputSelectedDateFromParam;
+  inputSelectedDateTo.value = inputSelectedDateToParam;
+};
 
 // watch(ideas, () => {
 //   calculateStatistics();
@@ -136,7 +252,7 @@ async function updateIdeas(filteredIdeas) {
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel @filter="updateIdeas" :sort="sortOrder" />
+      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" />
     </div>
     <div class="main-container">
       <div class="left-space">
@@ -187,22 +303,68 @@ async function updateIdeas(filteredIdeas) {
           <option :value="1">Date descending</option>
         </select>
       </div>
-      <div class="idea-container" v-for="idea in ideas" :key="idea.id">
-        <IdeaCard
-          :title="idea.title"
-          :text="idea.text"
-          :status="idea.status"
-          :user="idea.username"
-          :ideaId="idea.id"
-          @filter="updateIdeas"
-        />
+      <div class="ideas-transition-container">
+        <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item">
+          <IdeaCard
+            :title="idea.title"
+            :text="idea.text"
+            :status="idea.status"
+            :user="idea.username"
+            :ideaId="idea.id"
+          />
+        </div>
+        <div v-if="ideas.length === 0" class="no-ideas-message">
+          No ideas found
+          <br />
+          <span class="material-symbols-outlined">search_off</span>
+        </div>
+        <div v-if="ideas.length > 0" class="pagination-container">
+          <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
+        </div>
       </div>
-      <Pagination :totalPages="totalIdeas" :currentPage="currentPage" @changePage="changePage" />
     </div>
   </div>
 </template>
 
 <style scoped>
+
+.ideas-transition-container {
+  transition: opacity 0.5s;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.no-ideas-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 500px; 
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center; 
+  color: #ffa941;
+  -webkit-text-stroke: 0.8px black;
+}
+
+.material-symbols-outlined {
+  transition: transform 0.1s ease; 
+  margin-top: 1vh;
+  font-size: 40px;
+}
+
+.material-symbols-outlined:hover {
+  transform: scale(1.1); 
+  color: red;
+}
+
 .sort-container {
   margin: 10px;
   font-weight: bold;

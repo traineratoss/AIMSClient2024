@@ -5,11 +5,12 @@
 
  -->
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import { getCategory, getUser } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
+import { defineEmits } from "vue";
 
 const statusOptions = ["OPEN", "DRAFT", "IMPLEMENTED"];
 const categoryOptions = ref([]);
@@ -25,38 +26,45 @@ const sortOrder = ref("ASC");
 const filteredIdeasEmit = ref({});
 const props = defineProps({
   sort: Number,
+  currentPage: Number
 });
 
-const emits = defineEmits("filter");
+const emit = defineEmits(["filter-listening","pass-input-variables"]);
 
-async function filterData() {
+watch(
+  [inputTitle, inputText, statusSelected, categoriesSelected, userSelected, selectedDateFrom, selectedDateTo],
+  ([newInputTitle, newInputText, newStatusSelected, newCategoriesSelected, newUserSelected, newSelectedDateFrom, newSelectedDateTo]) => {
+    emit("pass-input-variables", newInputTitle, newInputText, newStatusSelected, newCategoriesSelected, newUserSelected, newSelectedDateFrom, newSelectedDateTo);
+  }
+);
+
+
+const filterData = async () => {
   await filter();
-  emits("filter", filteredIdeasEmit.value);
-}
+  emit("filter-listening", filteredIdeasEmit.value); 
+};
 
-const handleSelectedCategories = (selectedCategories) => {
+
+
+async function handleSelectedCategories(selectedCategories) {
   categoriesSelected.value = selectedCategories;
 };
 
-const handleSelectedUsers = (selectedUsers) => {
+async function handleSelectedUsers (selectedUsers) {
   userSelected.value = selectedUsers;
 };
-const handleSelectedStatus = (selectedStatus) => {
+async function handleSelectedStatus (selectedStatus) {
   statusSelected.value = selectedStatus;
 };
 
 onMounted(async () => {
-  //getting all the available categories on mount
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
 
-  //getting all the available users on mount
   const dataUser = await getUser(10, 0, "username");
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
-  // console.log("users" + userOptions);
-  //
   sortOrder.value = "ASC";
 });
 
@@ -67,7 +75,6 @@ const filter = async () => {
   const dateFrom = selectedDateFrom.value;
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
-  const pageNumber = 0;
   const status = statusSelected.value;
   const filteredIdeas = await filterIdeas(
     title,
@@ -77,7 +84,7 @@ const filter = async () => {
     user,
     dateFrom,
     dateTo,
-    pageNumber,
+    props.currentPage-1,
     props.sort
   );
   filteredIdeasEmit.value = filteredIdeas;
@@ -99,6 +106,7 @@ const filter = async () => {
         class="status-select"
         :variants="statusOptions"
         @update:selectedCategories="handleSelectedStatus"
+        :canAddInDropdown="false"
       ></CustomDropDown>
 
       <span class="category">Category:</span>
@@ -106,6 +114,7 @@ const filter = async () => {
         class="category-select"
         :variants="categoryOptions"
         @update:selectedCategories="handleSelectedCategories"
+        :canAddInDropdown="false"
       ></CustomDropDown>
 
       <span class="user">User:</span>
@@ -113,6 +122,7 @@ const filter = async () => {
         class="user-select"
         :variants="userOptions"
         @update:selectedCategories="handleSelectedUsers"
+        :canAddInDropdown="false"
       ></CustomDropDown>
 
       <div class="date-chooser">

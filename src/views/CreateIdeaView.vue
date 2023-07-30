@@ -36,15 +36,6 @@ const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
 };
 
-
-// watch(textValue, (newValue) => {
-//   console.log(textValue.value);
-// });
-
-// watch(statusValue, (newValue) => {
-//   console.log("Status value changed. New value:", newValue);
-// });
-
 onMounted(async() => {
   categoriesSelected.value = [];
   titleError.value = false;
@@ -150,7 +141,7 @@ function clickImageButton(){
              :disabled="fieldsDisabled"
              :variants="categoryOptions"
              :error="categoryError"
-             
+             :canAddInDropdown="true"
              >
             </CustomDropDown>
         </div>

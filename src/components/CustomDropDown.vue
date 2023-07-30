@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps, onUnmounted, watch } from "vue";
+import { ref, onMounted, defineProps, watch } from "vue";
 
 const emit = defineEmits(["update:selectedCategories"]);
 
@@ -16,10 +16,25 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  canAddInDropdown: {
+    type: Boolean,
+    default: false,
+  }
 });
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
+const filteredIdeas = ref([])
+
+onMounted(() => {
+  comboInput.value.addEventListener("click", showDropdown);
+});
+
+// after fetching in the parent, we make a watch to check when the fetch is done and making the filteredIdeas the variants
+// we are using this reactive const because we need to update it with the component
+watch(() => props.variants, (newVariants) => {
+  filteredIdeas.value = newVariants;
+}, { immediate: true });
 
 const showDropdown = () => {
   isDropdownVisible.value = true;
@@ -35,18 +50,27 @@ const handleCheckboxChange = () => {
   emit("update:selectedCategories", selectedVariants);
 };
 
-onMounted(() => {});
-
 const handleInputKeyPress = (event) => {
-  if (event.key === "Enter" && event.target.value !== "") {
-    props.variants.push(event.target.value);
-    comboInput.value.value = "";
+  if (props.canAddInDropdown) { // this is used for checking if the variants can pe modified by pressing Enter or not
+    if (event.key === "Enter" && event.target.value !== "") {
+      props.variants.push(event.target.value);
+      filteredIdeas.value = props.variants
+      comboInput.value.value = "";
+    }
+    const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
+    const selectedVariants = Array.from(checkboxes)
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.value);
+    emit("update:selectedCategories", selectedVariants);
   }
-  const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
-  const selectedVariants = Array.from(checkboxes)
-    .filter((checkbox) => checkbox.checked)
-    .map((checkbox) => checkbox.value);
-  emit("update:selectedCategories", selectedVariants);
+};
+
+// filtering the search for the custom drop down for easier searches
+const handleInputBoxChange = () => {
+  const inputText = comboInput.value.value.toLowerCase(); // converting to lowercase so the search won't be case sensitive
+  filteredIdeas.value = props.variants.filter((variant) => {
+    return variant.toLowerCase().startsWith(inputText);
+  });
 };
 
 function onMouseEnter() {
@@ -57,9 +81,7 @@ function onMouseLeave() {
   isDropdownVisible.value = false;
 }
 
-onMounted(() => {
-  comboInput.value.addEventListener("click", showDropdown);
-});
+
 </script>
 
 <template>
@@ -71,6 +93,7 @@ onMounted(() => {
       :placeholder="error ? 'Select a category' : ''"
       :disabled="props.disabled"
       @keydown.enter="handleInputKeyPress"
+      @input="handleInputBoxChange"
       :class="{ error: props.error }"
       @mouseleave="onMouseLeave"
     />
@@ -81,7 +104,7 @@ onMounted(() => {
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >
-      <label v-for="variant in props.variants" :key="variant">
+      <label v-for="variant in filteredIdeas" :key="variant">
         <input
           type="checkbox"
           :value="variant"

@@ -89,6 +89,10 @@ async function filterIdeas(
       sortDirection = "DESC";
       break;
   }
+  if(pageNumber < 0) {
+    pageNumber = 0;
+  }
+  
   let url = `${API_URL}/filter?pageNumber=${pageNumber}&sortDirection=${sortDirection}`;
   if (title) url += `&title=${title}`;
   if (text) url += `&text=${text}`;
@@ -97,6 +101,8 @@ async function filterIdeas(
   if (user.length != 0) url += `&user=${user}`;
   if (selectedDateFrom) url += `&selectedDateFrom=${selectedDateFrom}`;
   if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
+
+  console.log(url)
 
   const response = await fetch(url, {
     method: "GET",
@@ -109,6 +115,8 @@ async function filterIdeas(
     redirect: "follow",
     referrerPolicy: "no-referrer",
   });
+
+
   const data = await response.json();
   return data;
 }
@@ -129,7 +137,6 @@ async function createIdea(title, status, text, categoryList, username) {
 
   const data = await response.json();
   const content = await data.content;
-  console.log(data);
 }
 
 async function addImage(imageData){
