@@ -178,7 +178,7 @@ function clearInput() {
       <button
         id="postButton"
         @click="
-          postReply(currentUser.username, props.parentId, commentText)
+          postReply(currentUser.username, props.parentId, commentText);postToggle = !postToggle
         "
       >
         Post reply

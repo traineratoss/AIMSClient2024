@@ -207,126 +207,135 @@ function getShortenedText(text, maxLength, maxRows) {
 
 function selectIdea() {
   isSelected.value = !isSelected.value;
+  if(showComments.value == true){
+    toggleComments();
+  }
   console.log(isSelected.value);
 }
-
 </script>
 
 <template>
   <div class="container">
-    <div class="clickable-container"  @click="selectIdea()">
-    <div
-      class="wrapper"
-      v-bind:class="isSelected ? 'selected-class' : ''"
-    >
-      <div
-        class="border"
-        v-bind:style="
-          isSelected
-            ? {
-                'pointer-events': 'none',
-                'background-color': '#ffa941',
-                'animation-play-state': 'paused',
-              }
-            : { 'background-color': 'white' }
-        "
-      ></div>
-      <div class="idea-card">
-        <div class="top-container">
-          <div class="left-container">
-            <div class="left-container-title">
-              Title: {{ getShortenedTitle(title, 25) }}
-            </div>
-            <div class="left-container-text">
-              Text: {{ getShortenedText(text) }}
-            </div>
-            <div class="left-container-buttons">
-              <div class="left-container-buttons-grouped" v-show="isSelected">
-                <button @click.stop="editIdea()" class="idea-button">
-                  EDIT
-                </button>
-                <button
-                  @click.stop="redirectToCreateIdeaView()"
-                  class="idea-button"
-                >
-                  VIEW
-                </button>
-                <button @click.stop="showDeletePopup()" class="idea-button">
-                  DELETE
-                </button>
+    <div class="clickable-container" @click="selectIdea()">
+      <div class="wrapper" v-bind:class="isSelected ? 'selected-class' : ''">
+        <div
+          class="border"
+          v-bind:style="
+            isSelected
+              ? {
+                  'pointer-events': 'none',
+                  'background-color': '#ffa941',
+                  'animation-play-state': 'paused',
+                }
+              : { 'background-color': 'white' }
+          "
+        ></div>
+        <div class="idea-card">
+          <div class="top-container">
+            <div class="left-container">
+              <div class="left-container-title">
+                Title: {{ getShortenedTitle(title, 25) }}
               </div>
-              <div class="left-container-buttons-post"></div>
+              <div class="left-container-text">
+                Text: {{ getShortenedText(text) }}
+              </div>
+              <div class="left-container-buttons">
+                <Transition>
+                  <div
+                    class="left-container-buttons-grouped"
+                    v-show="isSelected"
+                  >
+                    <button @click.stop="editIdea()" class="idea-button">
+                      EDIT
+                    </button>
+                    <button
+                      @click.stop="redirectToCreateIdeaView()"
+                      class="idea-button"
+                    >
+                      VIEW
+                    </button>
+                    <button @click.stop="showDeletePopup()" class="idea-button">
+                      DELETE
+                    </button>
+                  </div>
+                </Transition>
+                <div class="left-container-buttons-post"></div>
+              </div>
+            </div>
+            <div class="right-container">
+              <div class="dummy-div"></div>
+              <div class="right-container-image">
+                <img
+                  class="idea-image"
+                  src="https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw"
+                  alt="image"
+                />
+              </div>
+              <div class="right-container-status">
+                {{ props.numberOfComments }}
+                {{ props.status }}
+                {{ props.username }}
+              </div>
             </div>
           </div>
-          <div class="right-container">
-            <div class="dummy-div"></div>
-            <div class="right-container-image">
-              <img
-                class="idea-image"
-                src="https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw"
-                alt="image"
-              />
+          <div class="bottom-container">
+            <div class="bottom-container-left"></div>
+            <div class="bottom-container-center">
+              <Transition>
+                <div v-if="props.numberOfComments != 0 && isSelected">
+                  <button
+                    @click.stop="
+                      loadIdeaComments();
+                      toggleComments();
+                    "
+                    id="view-replies-button"
+                  >
+                    <span
+                      v-if="!showComments"
+                      class="material-symbols-outlined"
+                    >
+                      expand_more
+                    </span>
+                    <span
+                      v-else
+                      class="material-symbols-outlined"
+                      :style="{ color: 'orange' }"
+                    >
+                      expand_less
+                    </span>
+                  </button>
+                </div>
+              </Transition>
             </div>
-            <div class="right-container-status">
-              {{ props.numberOfComments }}
-              {{ props.status }}
-              {{ props.username }}
-            </div>
-          </div>
-        </div>
-        <div class="bottom-container">
-          <div class="bottom-container-left"></div>
-          <div class="bottom-container-center">
-            <div v-if="props.numberOfComments != 0 && isSelected">
-              <button
-                @click.stop="
-                  loadIdeaComments();
-                  toggleComments();
-                "
-                id="view-replies-button"
-              >
-                <span v-if="!showComments" class="material-symbols-outlined">
-                  expand_more
-                </span>
-                <span
-                  v-else
-                  class="material-symbols-outlined"
-                  :style="{ color: 'orange' }"
-                >
-                  expand_less
-                </span>
-              </button>
-            </div>
-          </div>
 
-          <div class="bottom-container-right">
-            <span v-if="buttonSelected">
-              <button
-                class="action-icon-button"
-                :style="{ color: 'orange' }"
-                @click.stop="
-                  postToggle = !postToggle;
-                  buttonSelected = !buttonSelected;
-                "
-              >
-                <span class="material-symbols-outlined"> add_comment </span>
-              </button>
-            </span>
-            <span v-if="!buttonSelected && isSelected">
-              <button
-                class="action-icon-button"
-                @click.stop="
-                  postToggle = !postToggle;
-                  buttonSelected = !buttonSelected;
-                "
-              >
-                <span class="material-symbols-outlined"> add_comment </span>
-              </button>
-            </span>
+            <div class="bottom-container-right">
+              <span v-if="buttonSelected">
+                <button
+                  class="action-icon-button"
+                  :style="{ color: 'orange' }"
+                  @click.stop="
+                    postToggle = !postToggle;
+                    buttonSelected = !buttonSelected;
+                  "
+                >
+                  <span class="material-symbols-outlined"> add_comment </span>
+                </button>
+              </span>
+              <span v-if="!buttonSelected && isSelected">
+                <button
+                  class="action-icon-button"
+                  @click.stop="
+                    postToggle = !postToggle;
+                    buttonSelected = !buttonSelected;
+                  "
+                >
+                  <span class="material-symbols-outlined"> add_comment </span>
+                </button>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
     <div v-if="postToggle" class="comment-input-wrapper">
       <div class="comment-input-container">
@@ -335,7 +344,7 @@ function selectIdea() {
       <div class="comment-input-bottom">
         <button
           @click.stop="
-            postCommentDynamic(currentUser.username, props.ideaId, commentText)
+            postCommentDynamic(currentUser.username, props.ideaId, commentText); postToggle = !postToggle
           "
         >
           Post!
@@ -479,6 +488,7 @@ function selectIdea() {
 
 .bottom-container-center {
   text-align: center;
+  margin-right: 1vw;
 }
 
 .bottom-container-right {
@@ -568,7 +578,7 @@ function selectIdea() {
 }
 
 .replies-wrapper:hover {
-  padding-right: 7px;
+  padding-right: 3px;
 }
 
 .replies-wrapper::-webkit-scrollbar {
@@ -577,7 +587,7 @@ function selectIdea() {
 
 .replies-wrapper:hover::-webkit-scrollbar {
   display: block;
-  width: 10px;
+  width: 5px;
 }
 
 .replies-wrapper:hover::-webkit-scrollbar-thumb {
@@ -649,7 +659,6 @@ button:hover {
   margin-right: 10px;
   min-width: 9vh;
   max-width: 10vh;
-  transition: all 1s linear;
 }
 
 .idea-button:hover {
@@ -669,5 +678,13 @@ button:hover {
   margin-right: 10px;
 }
 
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
 
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
 </style>

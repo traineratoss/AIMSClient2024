@@ -6,7 +6,7 @@ import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
 import { getCurrentUser } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
-const ideasPerPage = 2;
+const ideasPerPage = 15;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
@@ -255,7 +255,19 @@ inputTitle.value = inputTitleParam;
       <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" />
     </div>
     <div class="main-container">
-      <div class="left-space">
+
+        
+      
+      <div class="sort-container" style="text-align: right">
+        <label for="sortOrder">Sort by: </label>
+        <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
+          <option :value="0">Date ascending</option>
+          <option :value="1">Date descending</option>
+        </select>
+      </div>
+
+      
+      <div class="middle-container">
         <div class="stats-container">
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>
@@ -295,15 +307,8 @@ inputTitle.value = inputTitleParam;
             </div>
           </div>
         </div>
-      </div>
-      <div class="sort-container" style="text-align: right">
-        <label for="sortOrder">Sort by: </label>
-        <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
-          <option :value="0">Date ascending</option>
-          <option :value="1">Date descending</option>
-        </select>
-      </div>
-      <div class="ideas-transition-container">
+
+        <div class="ideas-transition-container">
         <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item">
           <IdeaCard
             :title="idea.title"
@@ -318,10 +323,14 @@ inputTitle.value = inputTitleParam;
           <br />
           <span class="material-symbols-outlined">search_off</span>
         </div>
-        <div v-if="ideas.length > 0" class="pagination-container">
+
+      </div>
+      </div>
+
+      <div v-if="ideas.length > 0" class="pagination-container">
           <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
         </div>
-      </div>
+  
     </div>
   </div>
 </template>
@@ -334,6 +343,12 @@ inputTitle.value = inputTitleParam;
 
 .ideas-transition-container {
   transition: opacity 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+
 }
 
 .fade-enter-active,
@@ -374,38 +389,40 @@ inputTitle.value = inputTitleParam;
   font-weight: bold;
 }
 .all-ideas-view-container {
-  width: 100%;
-  display: flex;
-  height: 100%;
-  align-items: stretch;
-  justify-content: stretch;
+  display: grid;
+  grid-template-columns: 20vw 80vw;
 }
 
-.left-space {
-  width: 20vw;
-  float: left;
-  background-color: #c8c8ca;
-  height: 92vh;
-  border: none;
-}
-
-.right-space {
-  width: 20vw;
-  float: right;
-  background-color: rgb(247, 161, 161);
-  height: 92vh;
-  border: none;
-}
 
 .sidebar-container {
-  width: 20%;
-  background-color: #b3b3b3;
   border: 1px solid black;
+  background-color: #b3b3b3;
+  height: 91vh;
+}
+.middle-container{
+  overflow-y: auto;
+}
+
+.middle-container::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+
+.middle-container:hover::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+
+.middle-container::-webkit-scrollbar-thumb {
+  background-color: #ffa941;
+  border-radius: 5px;
+  border: 1px solid slategray;
 }
 
 .main-container {
-  width: 70%;
-  height: auto;
+  height: 91vh;
+  display: grid;
+  grid-template-rows: 5% 90% 5%;
 }
 
 .idea-container {
@@ -419,11 +436,15 @@ inputTitle.value = inputTitleParam;
 .big-container {
   display: flex;
   justify-content: center;
-  height: 92vh;
+  height: 91vh;
 }
 .stats-container {
-  margin-top: 75px; /* Space between numbers */
+  margin-bottom: 75px;
   text-align: center;
+  position: fixed;
+  height: 91vh;
+  width: 15vw;
+  
 }
 .centered-number {
   margin: 1px 0; /* Space between numbers */
@@ -450,7 +471,10 @@ inputTitle.value = inputTitleParam;
 .pagination-container {
   display: flex;
   justify-content: flex-end;
-  margin-top: 10px;
+  align-items: center;
+  width: 80vw;
+  position: fixed;
+  bottom: 0;
 }
 
 .page-number {
