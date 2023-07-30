@@ -34,6 +34,33 @@ let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 
+const implementedIdeasCount = ref(0);
+const implementationPercentage = ref(0);
+
+onMounted(async () => {
+  const data = await loadPagedIdeas(
+    ideasPerPage,
+    pageNumber.value-1,
+    "date",
+    "ASC"
+  );
+  loggedUser.value = getCurrentUser();
+  sortOrder.value = 0;
+  totalPages.value = Math.ceil(data.total / ideasPerPage);
+  ideas.value = data.pagedIdeas.content;
+  const totalNumberOfIdeas = data.total;
+
+  //STILL WORKING, ENED TO RETREIVE ALL THE IDEAS UNPAGED FROM THE SV
+  //now, checking the nr of implemented ideas
+  // ideas.value.forEach(idea => {
+  //   if (idea.status === "IMPLEMENTED") {
+  //     implementedIdeasCount.value++;
+  //   }
+  // });
+
+  // implementationPercentage.value = 100 * (implementedIdeasCount.value / 15);
+});
+
 async function changePage(pageNumber) {
   // every time i change the page, i should filter the pages to check from the server every page, same aplies for every method which implies changing the ideas.value
   // the ideas.value represents the ideas shown on the page, not all the images
@@ -48,25 +75,13 @@ async function changePage(pageNumber) {
     currentSelectedDateFrom,
     currentSelectedDateTo,
     pageNumber-1,
+    ideasPerPage,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
   loggedUser.value = getCurrentUser();
   ideas.value = data.pagedIdeas.content;
   currentPage.value = pageNumber;
 }
-
-onMounted(async () => {
-  const data = await loadPagedIdeas(
-    ideasPerPage,
-    pageNumber.value-1,
-    "date",
-    "ASC"
-  );
-  loggedUser.value = getCurrentUser();
-  sortOrder.value = 0;
-  totalPages.value = Math.ceil(data.total / ideasPerPage);
-  ideas.value = data.pagedIdeas.content;
-});
 
 const totalComments = computed(() => {
   let total = 0;
@@ -94,16 +109,6 @@ const publicIdeasCount = computed(() => {
   return count;
 });
 
-const implementedIdeasCount = computed(() => {
-  let count = 0;
-  for (const idea of ideas.value) {
-    if (idea.isImplemented) {
-      count++;
-    }
-  }
-  return count;
-});
-
 const ideasPerUser = computed(() => {
   const users = new Set(ideas.value.map((idea) => idea.userId));
   if (users.size != 0) {
@@ -114,12 +119,12 @@ const ideasPerUser = computed(() => {
   }
 });
 
-const implementationPercentage = computed(() => {
-  if (publicIdeasCount.value === 0) {
-    return 0;
-  }
-  return (implementedIdeasCount.value / publicIdeasCount.value) * 100;
-});
+// const implementationPercentage = computed(() => {
+//   if (publicIdeasCount.value === 0) {
+//     return 0;
+//   }
+//   return (implementedIdeasCount.value / publicIdeasCount.value) * 100;
+// });
 
 const roundedNumber = (number) => {
   return Math.round(number * 100) / 100;
@@ -154,6 +159,7 @@ async function updateSortOrder() {
       currentSelectedDateFrom,
       currentSelectedDateTo,
       currentPage.value-1,
+      ideasPerPage,
       "ASC" 
     );
     loggedUser.value = getCurrentUser();
@@ -170,6 +176,7 @@ async function updateSortOrder() {
         currentSelectedDateFrom,
         currentSelectedDateTo,
         currentPage.value-1,
+        ideasPerPage,
         "DESC" 
       );
       loggedUser.value = getCurrentUser();
@@ -196,6 +203,7 @@ async function updateIdeas(filteredIdeas) {
         inputSelectedDateFrom.value,
         inputSelectedDateTo.value,
         currentPage.value-1,
+        ideasPerPage,
         sortOrder.value,
       );
       setCurrentVariables();
@@ -252,7 +260,7 @@ inputTitle.value = inputTitleParam;
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" />
+      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
     </div>
     <div class="main-container">
 
@@ -286,18 +294,18 @@ inputTitle.value = inputTitleParam;
               <b>{{ roundedNumber(ideasPerUser) }}</b>
             </p>
           </div>
-          <div class="spacer"></div>
+          <div class="spacer" style="height: 50px;"></div>
           <div class="stat-item">
+            <p class="stat-label"><b>Public Ideas</b></p>
             <p class="centered-number">
               <b>{{ publicIdeasCount }}</b>
             </p>
-            <p class="stat-label"><b>Public Ideas</b></p>
           </div>
           <div class="stat-item">
+            <p class="stat-label"><b>Implemented Ideas</b></p>
             <p class="centered-number">
               <b>{{ implementedIdeasCount }}</b>
             </p>
-            <p class="stat-label"><b>Implemented Ideas</b></p>
             <br />
             <div class="implementation-bar">
               <div
@@ -347,8 +355,6 @@ inputTitle.value = inputTitleParam;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-
 }
 
 .fade-enter-active,
@@ -474,7 +480,8 @@ inputTitle.value = inputTitleParam;
   align-items: center;
   width: 80vw;
   position: fixed;
-  bottom: 0;
+  bottom: 5vh;
+  right: 1vw; 
 }
 
 .page-number {

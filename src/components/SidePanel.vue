@@ -12,7 +12,7 @@ import { getCategory, getUser } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 
-const statusOptions = ["OPEN", "DRAFT", "IMPLEMENTED"];
+const statusOptions = ["OPEN", "IMPLEMENTED"];
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
 const userOptions = ref([]);
@@ -26,7 +26,8 @@ const sortOrder = ref("ASC");
 const filteredIdeasEmit = ref({});
 const props = defineProps({
   sort: Number,
-  currentPage: Number
+  currentPage: Number,
+  ideasPerPage: Number
 });
 
 const emit = defineEmits(["filter-listening","pass-input-variables"]);
@@ -85,6 +86,7 @@ const filter = async () => {
     dateFrom,
     dateTo,
     props.currentPage-1,
+    props.ideasPerPage,
     props.sort
   );
   filteredIdeasEmit.value = filteredIdeas;
