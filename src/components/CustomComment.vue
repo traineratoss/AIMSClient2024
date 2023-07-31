@@ -213,9 +213,9 @@ function clearInput() {
       >
       </textarea>
       <div class="chars">
-        {{ commentText.length }} / 500
-      </div>
-      <button
+        <div></div>
+       <p>{{ commentText.length }} / 500</p> 
+       <button
         id="postButton"
         @click="
           postReply(currentUser, props.parentId, commentText);
@@ -225,6 +225,8 @@ function clearInput() {
       >
         Post reply
       </button>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -238,7 +240,7 @@ function clearInput() {
   padding-right: 10px;
   margin: 5px;
   width: 30vw;
-  min-height: 7vh;
+  min-height: 9vh;
   max-height: 45vh;
   box-sizing: border-box;
 }
@@ -277,6 +279,7 @@ function clearInput() {
   justify-content: space-between;
   margin-right: 5px;
   margin-left: 5px;
+  margin-bottom: 2px;
   border-bottom: 1px solid #ffa941;
   align-items: center;
   max-width: 29vw;
@@ -290,11 +293,30 @@ function clearInput() {
 .comment-text-container {
   color: black;
   margin-left: 5px;
-  min-height: 3vh;
-  max-height: 20vh;
+  min-height: 4vh;
+  max-height: 15vh;
   max-width: 29vw;
   min-width: 25vw;
   border-radius: 5px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  overflow-x: hidden;
+  padding-right: 7px;
+}
+
+.comment-text-container::-webkit-scrollbar{
+  display: none;
+}
+
+.comment-text-container:hover::-webkit-scrollbar{
+  display: block;
+  width: 5px;
+}
+
+.comment-text-container::-webkit-scrollbar-thumb{
+  background-color: #ffa941;
+  border-radius: 5px;
+  /* border: 1px solid slategray; */
 }
 
 .footer-container {
@@ -360,7 +382,7 @@ button:hover {
   resize: none;
   min-height: 4vh;
   max-width: 28vw;
-  border: 1px solid rgba(0, 4, 8, 0.537);
+  border: 1px solid rgb(0, 0, 0);
   border-radius: 3px;
 }
 
@@ -376,15 +398,18 @@ button:hover {
 }
 
 #postButton {
-  margin-top: 5px;
   margin-bottom: 10px;
   align-self: flex-end;
   background-color: white;
   border: 1px solid #6d3d02;
   border-radius: 3px;
+  height: 30px;
 }
 
 .chars{
   text-align: center;
+  display: grid;
+  grid-template-columns:20% 60% 20%;
 }
+
 </style>
