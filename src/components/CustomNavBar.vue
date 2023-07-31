@@ -4,8 +4,8 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
-import { ref } from "vue";
-import { getCurrentUsername } from "../services/user_service";
+import { ref, onMounted } from "vue";
+import { getCurrentRole, getCurrentUsername } from "../services/user_service";
 
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
@@ -80,38 +80,48 @@ const dashboardElements = [
   },
 ];
 
-const userDashboardElements = [
-  {
+let userDashboardElements = [];
+
+router.beforeEach(() => {
+  userDashboardElements = [];
+
+  userDashboardElements.push({
     id: "profile",
     name: "Profile",
     route: "/my-profile",
     icon: "person",
-  },
-  {
+  });
+
+  userDashboardElements.push({
     id: "change-password",
     name: "Change Password",
     route: "/change",
     icon: "settings",
-  },
-  {
+  });
+
+  userDashboardElements.push({
     id: "my-ideas",
     name: "My ideas",
     route: "/my",
     icon: "lightbulb",
-  },
-  {
-    id: "dashboard",
-    name: "Dashboard",
-    route: "/admin-dashboard",
-    icon: "dashboard",
-  },
-  {
+  });
+
+  if(getCurrentRole() === 'ADMIN') {
+    userDashboardElements.push({
+      id: "dashboard",
+      name: "Dashboard",
+      route: "/admin-dashboard",
+      icon: "dashboard",
+    });
+  }
+  
+  userDashboardElements.push({
     id: "logout",
     name: "Log out",
     route: "/login",
     icon: "logout",
-  },
-];
+  });
+});
 </script>
 
 
@@ -145,6 +155,7 @@ const userDashboardElements = [
             :is-active="isPageWithIndexActive(3)"
             @mouseenter="onMouseEnterDashboard"
             @mouseleave="onMouseLeaveDashboard"
+            :style="{ display: !(getCurrentRole() === 'ADMIN') ? 'none' : '' }"
           >
             Dashboard
             <span class="material-symbols-outlined">
@@ -236,6 +247,10 @@ nav {
 
 .material-symbols-outlined {
   font-size: 2vw;
+}
+
+.disabled {
+  display: none;
 }
 
 .buttons {

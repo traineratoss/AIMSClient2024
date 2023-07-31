@@ -142,17 +142,16 @@ async function sendDeactivateEmail(usernameOrEmail) {
 // @TODO : Add a function to store that into local storage when login in
 
 function getCurrentUsername() {
-  return sessionStorage.getItem('username');
+    return sessionStorage.getItem('username');
 }
 
-function setCurrentUser(username) {
-  const currenUser = getUser(username);
-  localStorage.setItem("user", JSON.stringify(currenUser));
+function getCurrentRole() {
+    return sessionStorage.getItem('role');
 }
 
 function logout() {
-  sessionStorage.clear('username');
-  sessionStorage.clear('role');
+    sessionStorage.clear('username');
+    sessionStorage.clear('role');
 }
 
 export {
@@ -167,10 +166,10 @@ export {
   changePassword,
   loginUser,
   getCurrentUsername,
-  setCurrentUser,
   sendNewPassword,
   sendDeclineEmail,
   sendActivateEmail,
   sendDeactivateEmail,
   logout,
+  getCurrentRole,
 };

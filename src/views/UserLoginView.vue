@@ -3,7 +3,7 @@ import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
 import { ref } from 'vue';
-import { loginUser, setCurrentUser } from "../services/user_service.js";
+import { loginUser } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
 import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 import bcrypt from "bcryptjs";
@@ -31,11 +31,6 @@ async function login() {
   } else {
     showErrorMessage.value = true;
   }
-}
-
-function logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('user');
 }
 </script>
 
