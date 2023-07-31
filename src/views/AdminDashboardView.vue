@@ -5,7 +5,7 @@ import Pagination from "../components/Pagination.vue";
 import { getAllUsersForAdmin } from "../services/user_service.js";
 import { ref, onMounted } from "vue";
 
-const pageSize = 5;
+const pageSize = 10;
 const currentPage = ref(1);
 const users = ref([]);
 
@@ -59,6 +59,11 @@ function removeUser(user) {
               }
             "
             @decline-user="removeUser(user)"
+            @update-role="
+              user.role === 'ADMIN'
+                ? (user.role = 'STANDARD')
+                : (user.role = 'ADMIN')
+            "
           />
         </div>
         <Pagination

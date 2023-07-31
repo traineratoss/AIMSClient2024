@@ -6,6 +6,7 @@ import {
   sendDeactivateEmail,
   sendDeclineEmail,
   updateUser,
+  updateUserRole,
 } from "../services/user_service";
 
 const props = defineProps({
@@ -55,6 +56,16 @@ function declineUser() {
       console.log("Error!", error);
     });
 }
+
+function changeRole() {
+  updateUserRole(props.name)
+    .then((res) => {
+      emit("update-role", props.name);
+    })
+    .catch((error) => {
+      console.log("Error!", error);
+    });
+}
 </script>
 
 <template>
@@ -70,9 +81,9 @@ function declineUser() {
         Decline
       </button>
       <select v-model="role" @change="changeRole">
-        <option selected="selected">{{ userRole }}</option>
-        <option value="STANDARD">Standard</option>
-        <option value="ADMIN">Admin</option>
+        <option selected>{{ userRole }}</option>
+        <option value="STANDARD" v-if="userRole != 'STANDARD'">STANDARD</option>
+        <option value="ADMIN" v-if="userRole != 'ADMIN'">ADMIN</option>
       </select>
       <button
         id="activate-or-deactivate"
@@ -116,5 +127,9 @@ button {
 button {
   padding-left: 10px;
   padding-right: 10px;
+}
+
+select {
+  width: 5vw;
 }
 </style>
