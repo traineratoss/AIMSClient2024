@@ -8,7 +8,7 @@ import Pagination from "../components/Pagination.vue";
 
 const currentUsername = getCurrentUsername();
 
-const ideasPerPage = 15;
+const ideasPerPage = 1;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
