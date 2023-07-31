@@ -12,7 +12,7 @@ const users = ref([]);
 onMounted(() => {
   getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
     .then((res) => {
-      users.value = res.content;
+      users.value = res.pagedUsers.content;
     })
     .catch((error) => {
       console.log("Error");
