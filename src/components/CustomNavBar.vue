@@ -5,6 +5,7 @@ import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
 import { ref } from "vue";
+import { getCurrentUsername } from "../services/user_service";
 
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
@@ -180,12 +181,19 @@ const userDashboardElements = [
     </div>
     <div class="user">
       <div class="user-details">
-        <h3 style="font-size: 16px; font-weight: 550; height: 1vh">Username</h3>
+        <h3 
+          style="font-size: 16px; 
+          font-weight: 550; 
+          height: 1vh"
+        >
+          {{ getCurrentUsername() }}
+        </h3>
         <router-link
           to="/my-profile"
           style="text-decoration: none; color: black"
-          >User details</router-link
         >
+          User details
+        </router-link>
       </div>
       <CustomButton
         class="nav-button"
@@ -220,7 +228,7 @@ const userDashboardElements = [
 nav {
   background-color: white;
   display: flex;
-  gap: 5vw;
+  gap: 1vw;
   width: 100vw;
   align-items: center;
   height: 9vh;

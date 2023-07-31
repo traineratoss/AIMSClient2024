@@ -3,7 +3,7 @@ import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
-import { getCurrentUser } from "../services/user_service";
+import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
 const ideasPerPage = 15;
@@ -37,6 +37,10 @@ let currentSelectedDateTo = "";
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);
 
+function getCurrentUser() {
+  return "Adrian22"
+}
+
 onMounted(async () => {
   const data = await loadPagedIdeas(
     ideasPerPage,
@@ -44,7 +48,6 @@ onMounted(async () => {
     "date",
     "ASC"
   );
-  loggedUser.value = getCurrentUser();
   sortOrder.value = 0;
   totalPages.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
@@ -76,9 +79,10 @@ async function changePage(pageNumber) {
     currentSelectedDateTo,
     pageNumber-1,
     ideasPerPage,
+    null,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  loggedUser.value = getCurrentUser();
+  loggedUser.value = getCurrentUsername();
   ideas.value = data.pagedIdeas.content;
   currentPage.value = pageNumber;
 }
@@ -160,6 +164,7 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value-1,
       ideasPerPage,
+      null,
       "ASC" 
     );
     loggedUser.value = getCurrentUser();
@@ -177,6 +182,7 @@ async function updateSortOrder() {
         currentSelectedDateTo,
         currentPage.value-1,
         ideasPerPage,
+        null,
         "DESC" 
       );
       loggedUser.value = getCurrentUser();
@@ -204,6 +210,7 @@ async function updateIdeas(filteredIdeas) {
         inputSelectedDateTo.value,
         currentPage.value-1,
         ideasPerPage,
+        null,
         sortOrder.value,
       );
       setCurrentVariables();
@@ -260,7 +267,7 @@ inputTitle.value = inputTitleParam;
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
+      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="null" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
     </div>
     <div class="main-container">
 

@@ -1,47 +1,31 @@
 <template>
   <div class="pagination-container">
     <span
-      v-if="currentPage !== 1 && totalPages > 1"
-      class="page-number arrow"
-      @click="goToPage(1)"
+      v-for="pageNumber in generatePageNumbers()"
+      :key="pageNumber"
+      :class="{ 'page-number': true, active: pageNumber === currentPage }"
+      @click="goToPage(pageNumber)"
     >
-      <span class="material-symbols-outlined">keyboard_double_arrow_left</span>
-    </span>
-    <span
-      v-if="currentPage > 2"
-      class="page-number arrow"
-      @click="goToPage(currentPage - 1)"
-    >
-      <span class="material-symbols-outlined">navigate_before</span>
-    </span>
-    <span class="page-number current-page">
-      {{ currentPage }}
-    </span>
-    <span
-      v-if="currentPage < totalPages - 1"
-      class="page-number arrow"
-      @click="goToPage(currentPage + 1)"
-    >
-      <span class="material-symbols-outlined">navigate_next</span>
-    </span>
-    <span
-      v-if="currentPage !== totalPages && totalPages > 1"
-      class="page-number arrow"
-      @click="goToPage(totalPages)"
-    >
-      <span class="material-symbols-outlined">keyboard_double_arrow_right</span>
+      {{ pageNumber }}
     </span>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { defineProps, defineEmits } from "vue";
 
 const { currentPage, totalPages } = defineProps(["currentPage", "totalPages"]);
 const emit = defineEmits(["changePage"]);
 
+function generatePageNumbers() {
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+  return pageNumbers;
+}
+
 function goToPage(pageNumber) {
-  console.log("Clicked page number:", pageNumber); // Afișează numărul paginii în consolă
   emit("changePage", pageNumber);
 }
 </script>
@@ -68,11 +52,7 @@ function goToPage(pageNumber) {
   color: #fff;
 }
 
-.arrow {
-  cursor: pointer;
-}
-
-.arrow:hover {
+.page-number:hover {
   background-color: #000;
   color: #fff;
 }

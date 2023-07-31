@@ -8,7 +8,7 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
-import { getCurrentUser } from "../services/user_service";
+import { getCurrentUsername } from "../services/user_service";
 
 const props = defineProps({
   title: "",
@@ -20,7 +20,7 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-  currentUser.value = getCurrentUser();
+  currentUser.value = getCurrentUsername();
   loadIdeaComments();
 });
 
@@ -47,6 +47,7 @@ async function loadIdeaComments() {
 
 function toggleCommentReplies(comment) {
   comment.expanded = !comment.expanded;
+  loadCommentReplies(comment);
 }
 
 function showCommentReplies(comment) {
@@ -165,9 +166,7 @@ function deleteReplyDynamic(replyId) {
       commentReplies.value[entryIndex][1].splice(replyIndexToDelete, 1);
       console.log("Reply Delete Successful");
       if (commentReplies.value[entryIndex][1].length === 0) {
-        toggleCommentReplies(
-          comments.value.filter((c) => c.id === getCommentIdForReply(replyId))
-        );
+        loadIdeaComments();
       }
     } else {
       console.error("Reply not found.");
@@ -207,7 +206,7 @@ function getShortenedText(text, maxLength, maxRows) {
 
 function selectIdea() {
   isSelected.value = !isSelected.value;
-  if(showComments.value == true){
+  if (showComments.value == true) {
     toggleComments();
   }
   console.log(isSelected.value);
@@ -344,7 +343,8 @@ function selectIdea() {
       <div class="comment-input-bottom">
         <button
           @click.stop="
-            postCommentDynamic(currentUser.username, props.ideaId, commentText); postToggle = !postToggle
+            postCommentDynamic(currentUser.username, props.ideaId, commentText);
+            postToggle = !postToggle;
           "
         >
           Post!

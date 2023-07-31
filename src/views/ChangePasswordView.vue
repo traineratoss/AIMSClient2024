@@ -2,7 +2,7 @@
 import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from '../components/CustomInput.vue';
 import { ref } from 'vue';
-import { changePassword, getCurrentUser, logout } from "../services/user_service";
+import { changePassword, getCurrentUsername, logout } from "../services/user_service";
 import router from "../router";
 import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 
@@ -39,7 +39,7 @@ function submit() {
 
       if(passwordFormatOK) {
         changePassword({
-          username: getCurrentUser(),
+          username: getCurrentUsername(),
           oldPassword: oldPasswordText.value,
           newPassword: newPasswordText.value
         })
