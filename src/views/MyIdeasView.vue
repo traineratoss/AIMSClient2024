@@ -239,12 +239,9 @@ inputTitle.value = inputTitleParam;
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="currentUsername" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
+      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="currentUser" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
     </div>
     <div class="main-container">
-
-        
-      
       <div class="sort-container" style="text-align: right">
         <label for="sortOrder">Sort by: </label>
         <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
@@ -253,29 +250,36 @@ inputTitle.value = inputTitleParam;
         </select>
       </div>
 
-
+      <div class="middle-container">
         <div class="ideas-transition-container">
-        <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item">
-          <IdeaCard
-            :title="idea.title"
-            :text="idea.text"
-            :status="idea.status"
-            :user="idea.username"
-            :ideaId="idea.id"
-          />
+          <div
+            v-for="idea in ideas"
+            :key="idea.id"
+            class="idea-transition-item"
+          >
+            <IdeaCard
+              :title="idea.title"
+              :text="idea.text"
+              :status="idea.status"
+              :username="idea.username"
+              :ideaId="idea.id"
+            />
+          </div>
+          <div v-if="ideas.length === 0" class="no-ideas-message">
+            No ideas found
+            <br />
+            <span class="material-symbols-outlined">search_off</span>
+          </div>
         </div>
-        <div v-if="ideas.length === 0" class="no-ideas-message">
-          No ideas found
-          <br />
-          <span class="material-symbols-outlined">search_off</span>
-        </div>
-
       </div>
 
       <div v-if="ideas.length > 0" class="pagination-container">
-          <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
-        </div>
-  
+        <Pagination
+          :totalPages="totalPages"
+          :currentPage="currentPage"
+          @changePage="changePage"
+        />
+      </div>
     </div>
   </div>
 </template>

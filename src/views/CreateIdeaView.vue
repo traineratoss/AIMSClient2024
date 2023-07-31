@@ -78,6 +78,7 @@ async function createIdeaFunction() {
 
   if (!titleErrorFlag && !textErrorFlag && !statusErrorFlag && !categoryErrorFlag) {
     const categoryTexts = rawCategoriesValue.map((category) => ({ text: category }));
+    console.log(currentUsername);
     const data = await createIdea(
       inputValue.value,
       statusValue.value.toUpperCase(),
@@ -123,6 +124,14 @@ function clickImageButton(){
 
 }
 
+function onMouseLeave() {
+
+}
+
+function onMouseEnter() {
+
+}
+
 
 </script>
 
@@ -133,13 +142,21 @@ function clickImageButton(){
             <CustomInput 
             v-model="inputValue" 
             :disabled="fieldsDisabled" 
-            :placeholder="titleError ? 'Select a title' : ''"
+            placeholder="Write your title here..."
             :error="titleError" 
             />   
         </div>
         <div class="idea">
-         <label for="status-idea" class="label">Status:</label>
-            <select v-model="statusValue" :class="{status:statusError}" name="status-idea" id="status-idea" class="input-width" :disabled="fieldsDisabled">
+         <label for="status-idea" class="label" @mouseleave="onMouseLeave" @mouseenter="onMouseEnter" >Status:</label>
+            <select 
+              v-model="statusValue" 
+              :class="{status:statusError}"
+              @mouseenter="onMouseEnter" 
+              @mouseleave="onMouseLeave" name="status-idea" 
+              id="status-idea" 
+              class="input-width" 
+              :disabled="fieldsDisabled"
+            >
                 <option value="open">Open</option>
                 <option value="draft">Draft</option>
             </select> 
@@ -162,7 +179,7 @@ function clickImageButton(){
             <textarea 
             v-model="textValue" 
             :disabled="fieldsDisabled" 
-            :placeholder="textError ? 'Select a text' : ''" 
+            placeholder="Write your text here..." 
             :class="{textarea:textError}"></textarea>
         </div>
         <div class="idea">
@@ -207,19 +224,6 @@ function clickImageButton(){
     
 }
 
-.status {
-  border-color: red;
-  border-radius: 1px;
-}
-
-.textarea::placeholder {
-  color: red;
-}
-
-.textarea {
-  border-color: red;
-  border-radius: 1px;
-}
 .add-image-idea{
     background-color: gray;
     color: white;
