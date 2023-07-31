@@ -154,12 +154,13 @@ async function addImage(imageData){
     }
   });
   const data = await response.json();
+  return data;
 }
 
 async function getImage() {
   const response = await fetch(`http://localhost:8080/images`);
-  const json = await response.json();
-  return json;
+  const data = await response.json();
+  return data;
 }
 
 async function getPagedIdeasFromUser(

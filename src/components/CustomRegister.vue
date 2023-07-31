@@ -14,6 +14,7 @@ const usernameText = ref("");
 const emailText = ref("");
 const showErrorMessage = ref(false);
 const message = ref("");
+const buttonDisabled = ref(false);
 
 router.beforeEach((to, from) => {
   if(from.name === 'register' && to.name === 'terms') {
@@ -44,12 +45,14 @@ function signUp() {
       showErrorMessage.value = true;
     } else {
       if (validateEmail(emailText.value) === true) {
+        buttonDisabled.value = true;
         postUser(usernameText.value, emailText.value)
           .then((res) => {
             router.push("/registration-complete");
             showErrorMessage.value = false;
           })
           .catch((error) => {
+            buttonDisabled.value = false;
             usernameText.value = "";
             emailText.value = "";
             message.value = "Userame or email already exists";
@@ -111,7 +114,12 @@ function validateEmail(mail) {
         />
         <router-link to="/terms"> Agree Terms & Conditions </router-link>
       </label>
-      <CustomButton id="sign-up" class="sign-up-button" @click="signUp">
+      <CustomButton 
+        id="sign-up" 
+        class="sign-up-button" 
+        @click="signUp"
+        :disabled="buttonDisabled"
+      >
         Sign up
       </CustomButton>
     </div>
