@@ -257,6 +257,8 @@ const onPassInputVariables = (
 //   publicIdeasCount.value = calculatePublicIdeasCount();
 //   implementedIdeasCount.value = calculateImplementedIdeasCount();
 // }
+
+
 </script>
 
 <template>
@@ -324,7 +326,7 @@ const onPassInputVariables = (
               :title="idea.title"
               :text="idea.text"
               :status="idea.status"
-              :user="idea.username"
+              :username="idea.username"
               :ideaId="idea.id"
             />
           </div>

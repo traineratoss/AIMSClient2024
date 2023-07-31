@@ -108,7 +108,7 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button v-if="currentUser = props.username"
+          <button v-if="currentUser === props.username"
             class="action-icon-button"
             @click="
               showModal = true;
@@ -185,7 +185,7 @@ function clearInput() {
               <span class="material-symbols-outlined"> ink_pen </span>
             </button>
           </span>
-          <button v-if="currentUser = props.username"
+          <button v-if="currentUser === props.username"
             class="action-icon-button"
             @click=" showModal = true;"
           >

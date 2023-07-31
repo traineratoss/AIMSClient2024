@@ -21,7 +21,8 @@ const props = defineProps({
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
   loadIdeaComments();
-  console.log(comments.value)
+  console.log(comments.value);
+  sendNumberOfComments();
 });
 
 const comments = ref([]);
@@ -222,7 +223,6 @@ function selectIdea() {
           v-bind:style="
             isSelected
               ? {
-                  
                   'background-color': '#ffa941',
                   'animation-play-state': 'paused',
                 }
@@ -233,10 +233,18 @@ function selectIdea() {
           <div class="top-container">
             <div class="left-container">
               <div class="left-container-title">
-                Title: {{ getShortenedTitle(title, 25) }}
+                {{ getShortenedTitle(title, 25) }}
               </div>
               <div class="left-container-text">
-                Text: {{ getShortenedText(text) }}
+                <div class="text" v-if="isSelected">
+                  {{ props.text }}
+                </div>
+                <div class="text" v-else>
+                  {{ getShortenedText(props.text, 15, 3) }}
+                </div>
+                <div class="status">
+                  {{ props.status }}
+                </div>
               </div>
               <div class="left-container-buttons">
                 <Transition>
@@ -271,9 +279,11 @@ function selectIdea() {
                 />
               </div>
               <div class="right-container-status">
-                {{ props.numberOfComments }}
-                {{ props.status }}
-                {{ props.username }}
+                <div class="number-of-comments">
+                  {{ comments.length }}
+                  <span class="material-symbols-outlined"> comment </span>
+                </div>
+                <div class="author"><i> posted by </i>{{ props.username }}</div>
               </div>
             </div>
           </div>
@@ -281,7 +291,7 @@ function selectIdea() {
             <div class="bottom-container-left"></div>
             <div class="bottom-container-center">
               <Transition>
-                <div v-if=" comments.length > 0 && isSelected">
+                <div v-if="comments.length > 0 && isSelected">
                   <button
                     @click.stop="
                       loadIdeaComments();
@@ -290,7 +300,7 @@ function selectIdea() {
                     id="view-replies-button"
                   >
                     <span
-                      v-if="!showComments "
+                      v-if="!showComments"
                       class="material-symbols-outlined"
                     >
                       expand_more
@@ -413,8 +423,9 @@ function selectIdea() {
   border: 1px solid slategray;
   position: relative;
   overflow: hidden;
-  background-color: white;  
+  background-color: white;
   cursor: pointer;
+  user-select: none;
 }
 /*
    I know it might be repetitive but at the moment
@@ -540,6 +551,9 @@ function selectIdea() {
   border-left: 1px solid #ffa941;
 }
 
+.number-of-comments{
+  
+}
 .reply-container {
   display: flex;
   align-items: center;
@@ -687,5 +701,9 @@ button:hover {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 </style>
