@@ -27,7 +27,8 @@ const filteredIdeasEmit = ref({});
 const props = defineProps({
   sort: Number,
   currentPage: Number,
-  ideasPerPage: Number
+  ideasPerPage: Number,
+  currentUser: String
 });
 
 const emit = defineEmits(["filter-listening","pass-input-variables"]);
@@ -87,6 +88,7 @@ const filter = async () => {
     dateTo,
     props.currentPage-1,
     props.ideasPerPage,
+    props.currentUser,
     props.sort
   );
   filteredIdeasEmit.value = filteredIdeas;
@@ -119,8 +121,9 @@ const filter = async () => {
         :canAddInDropdown="false"
       ></CustomDropDown>
 
-      <span class="user">User:</span>
+      <span v-if="currentUser==null" class="user">User:</span>
       <CustomDropDown
+        v-if="currentUser==null"
         class="user-select"
         :variants="userOptions"
         @update:selectedCategories="handleSelectedUsers"
