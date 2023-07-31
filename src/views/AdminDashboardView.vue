@@ -11,7 +11,7 @@ const totalPages = ref(0);
 const users = ref([]);
 
 onMounted(() => {
-  getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
+  getAllUsersForAdmin(pageSize, currentPage.value - 1, "hasPassword")
     .then((res) => {
       users.value = res.pagedUsers.content;
       totalPages.value = Math.ceil(res.total / pageSize);
@@ -24,7 +24,7 @@ onMounted(() => {
 function changePage(pageNumber) {
   currentPage.value = pageNumber;
   console.log(currentPage);
-  getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
+  getAllUsersForAdmin(pageSize, currentPage.value - 1, "hasPassword")
     .then((res) => {
       users.value = res.pagedUsers.content;
     })
