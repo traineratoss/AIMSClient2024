@@ -62,7 +62,7 @@ function removeUser(user) {
             @update-role="
               user.role === 'ADMIN'
                 ? (user.role = 'STANDARD')
-                : (user.role = 'ADMIN')
+                : (user.role = 'ADMIN'); 
             "
           />
         </div>
