@@ -2,14 +2,13 @@
 import { ref, onMounted } from "vue";
 import { deleteComment } from "../services/comment.service";
 import { getCurrentUsername } from "../services/user_service";
+import CustomModal from "./CustomModal.vue";
 
 const props = defineProps({
   commentId: "",
   replyId: "",
   text: "",
-  creationDate: "",
   userName: "",
-  userId: "",
   ideaId: "",
   hasReplies: "",
   isReply: "",
@@ -31,15 +30,16 @@ const emits = defineEmits([
 let postToggle = ref(false);
 let currentUser = ref("");
 let commentText = ref("");
-let buttonSelected = ref(false)
+let buttonSelected = ref(false);
+const showModal = ref(false);
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
   console.log(currentUser.value.username);
 });
 
-function loadCommentReplies(){
-  emits('loadReplies')
+function loadCommentReplies() {
+  emits("loadReplies");
 }
 
 async function deleteCommentById(commentId) {
@@ -59,7 +59,7 @@ async function deleteCommentById(commentId) {
 async function deleteReplyById(replyId) {
   try {
     const response = await deleteComment(replyId);
-    loadCommentReplies()
+    loadCommentReplies();
     if (response.ok) {
       emits("deleteReply", replyId);
     } else {
@@ -71,12 +71,12 @@ async function deleteReplyById(replyId) {
 }
 
 function showReplies() {
-  emits("showReplies"); 
+  emits("showReplies");
 }
 
 function toggleReplies() {
   if (props.hasReplies) {
-    emits("toggleReplies"); 
+    emits("toggleReplies");
   }
 }
 
@@ -89,6 +89,11 @@ function postReply(username, parentId, commentText) {
 function clearInput() {
   commentText.value = "";
 }
+
+function askToDelete(){
+
+}
+
 </script>
 
 <template>
@@ -107,9 +112,21 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button class="action-icon-button" @click="deleteReplyById(props.replyId)">
+          <button
+            class="action-icon-button"
+            @click="
+              showModal = true;
+            "
+          >
             <span class="material-symbols-outlined"> delete </span>
           </button>
+          <Teleport to="body">
+            <CustomModal :show="showModal" @close="showModal = false" @delete="deleteReplyById(props.replyId)">
+              <template #header>
+                <h3>Do you want to delete this reply?</h3>
+              </template>
+            </CustomModal>
+          </Teleport>
         </div>
       </div>
     </div>
@@ -127,46 +144,66 @@ function clearInput() {
       </div>
 
       <div class="footer-container">
-        <div class="footer-container-left">
-        </div>
+        <div class="footer-container-left"></div>
 
-        <div class="footer-container-center" >
+        <div class="footer-container-center">
           <div v-if="props.hasReplies">
-          <button @click="toggleReplies()" id="view-replies-button">
-            <span
-              v-if="!props.isReply && props.hasReplies && !props.expanded"
-              class="material-symbols-outlined" 
-            >
-              expand_more
-            </span>
-            <span v-else class="material-symbols-outlined" :style="{'color':'orange'}"> expand_less </span>
-          </button>
-        </div>
+            <button @click="toggleReplies()" id="view-replies-button">
+              <span
+                v-if="!props.isReply && props.hasReplies && !props.expanded"
+                class="material-symbols-outlined"
+              >
+                expand_more
+              </span>
+              <span
+                v-else
+                class="material-symbols-outlined"
+                :style="{ color: 'orange' }"
+              >
+                expand_less
+              </span>
+            </button>
+          </div>
         </div>
         <div class="footer-container-right">
           <span v-if="buttonSelected">
             <button
-              class="action-icon-button" :style="{'color':'orange'}"
-              @click="postToggle = !postToggle;buttonSelected=!buttonSelected">
+              class="action-icon-button"
+              :style="{ color: 'orange' }"
+              @click="
+                postToggle = !postToggle;
+                buttonSelected = !buttonSelected;
+              "
+            >
               <span class="material-symbols-outlined"> ink_pen </span>
             </button>
-            </span>
-            <span v-if="!buttonSelected">
+          </span>
+          <span v-if="!buttonSelected">
             <button
               class="action-icon-button"
-              @click="postToggle = !postToggle;buttonSelected=!buttonSelected">
+              @click="
+                postToggle = !postToggle;
+                buttonSelected = !buttonSelected;
+              "
+            >
               <span class="material-symbols-outlined"> ink_pen </span>
             </button>
-            </span>
+          </span>
           <button
             class="action-icon-button"
-            @click="deleteCommentById(props.commentId)">
+            @click=" showModal = true;"
+          >
             <span class="material-symbols-outlined"> delete </span>
           </button>
+          <Teleport to="body">
+            <CustomModal :show="showModal" @close="showModal = false" @delete="deleteCommentById(props.commentId)">
+              <template #header>
+                <h3>Do you want to delete this comment?</h3>
+              </template>
+            </CustomModal>
+          </Teleport>
+        </div>
       </div>
-
-    </div>
-
     </div>
     <div class="reply-input-container" v-if="postToggle">
       <textarea
@@ -178,7 +215,8 @@ function clearInput() {
       <button
         id="postButton"
         @click="
-          postReply(currentUser.username, props.parentId, commentText);postToggle = !postToggle
+          postReply(currentUser.username, props.parentId, commentText);
+          postToggle = !postToggle;
         "
       >
         Post reply
@@ -264,7 +302,7 @@ function clearInput() {
   text-align: right;
 }
 
-.footer-container-center{
+.footer-container-center {
   text-align: center;
 }
 
@@ -291,8 +329,8 @@ function clearInput() {
   outline: inherit;
 }
 
-button:hover{
-  color:#ffa941 ;
+button:hover {
+  color: #ffa941;
 }
 
 .dummy-button {
