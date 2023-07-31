@@ -17,7 +17,11 @@ async function loginUser(username, hashPassword) {
     method: "POST",
     body: hashPassword,
   });
+  
   const json = await response.json();
+  if(!response.ok) {
+    throw new Error(json.message);
+  }
   return json;
 }
 
