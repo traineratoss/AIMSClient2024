@@ -47,14 +47,6 @@ function goToPage(pageNumber) {
   emit("changePage", pageNumber);
 }
 </script>
-<style>
-</style>
-
-
-
-
-
-
 
 <style>
 .pagination-container {

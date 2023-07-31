@@ -128,7 +128,7 @@ async function filterIdeas(
 }
 
 async function createIdea(title, status, text, categoryList, username) {
-  const response = await fetch(API_URL + "/createIdea?username=" + username, {
+  const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     body: JSON.stringify({
       title: title,
@@ -140,7 +140,6 @@ async function createIdea(title, status, text, categoryList, username) {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
-
   const data = await response.json();
   const content = await data.content;
 }

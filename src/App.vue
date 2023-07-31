@@ -75,7 +75,7 @@ import TestNavbar from "./components/TestNavbar.vue";
 import CustomNavBar from "./components/CustomNavBar.vue";
 import { ref } from "vue";
 import router from "./router";
-import { getCurrentRole, logout } from "./services/user_service";
+import { getCurrentRole, getCurrentUsername, logout } from "./services/user_service";
 
 const showNavbar = ref(true);
 
@@ -94,20 +94,37 @@ router.afterEach((to, from) => {
   } else {
     showNavbar.value = true;
   }
+
+  if(!(getCurrentRole() && getCurrentUsername())) {
+    showNavbar.value = false;
+  }
 });
 
 router.beforeEach((to, from) => {
   if(to.name === 'admin-dashboard' && getCurrentRole() !== 'ADMIN') {
     router.push('/page-not-found');
+    showNavbar.value = false;
     logout();
   }
+
+  if(to.name !== 'login' && 
+    to.name !== 'register' && 
+    to.name !== 'terms' && 
+    to.name !== 'recovery' &&
+    to.name !== 'registration-complete' &&
+    to.name !== 'page-not-found') {
+      if(!(getCurrentRole() && getCurrentUsername())) {
+        showNavbar.value = false;
+        router.push('/page-not-found');
+      }
+    }
 });
 </script>
 
 <template>
   <div class="app-container">
     <!-- <TestNavbar /> -->
-    <CustomNavBar :style="{ display: showNavbar ? '' : 'none' }" />
+    <CustomNavBar v-show="showNavbar" />
     <router-view />
   </div>
   <!-- <div id="app">

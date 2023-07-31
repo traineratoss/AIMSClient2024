@@ -353,21 +353,26 @@ function selectIdea() {
           id="comment-input-textarea"
           v-model="commentText"
           :maxlength="maxlength"
+          placeholder="  Write your comment here .."
         >
         </textarea>
       </div>
-      <div class="chars">{{ commentText.length }} / 500</div>
+
       <div class="comment-input-bottom">
-        <button
-          id="post-button"
-          @click.stop="
-            postCommentDynamic(currentUser, props.ideaId, commentText);
-            postToggle = !postToggle;
-            buttonSelected = !buttonSelected;
-          "
-        >
-          Post!
-        </button>
+        <div class="chars">
+          <div></div>
+          <p>{{ commentText.length }} / 500</p>
+          <button
+            id="post-button"
+            @click.stop="
+              postCommentDynamic(currentUser, props.ideaId, commentText);
+              postToggle = !postToggle;
+              buttonSelected = !buttonSelected;
+            "
+          >
+            Post comment
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -654,9 +659,9 @@ function selectIdea() {
 }
 
 .comment-input-bottom {
-  text-align: end;
   width: 29vw;
 }
+
 #view-replies-button {
   pointer-events: all;
   background-color: white;
@@ -701,18 +706,12 @@ button:hover {
 }
 
 #post-button {
-  pointer-events: all;
-  background-color: rgba(255, 255, 255, 0);
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  background-color: white;
-  border-radius: 5px;
-  border: 1px solid black;
-  width: 45px;
-
   margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #6d3d02;
+  border-radius: 3px;
+  height: 30px;
 }
 
 .v-enter-active,
@@ -727,5 +726,11 @@ button:hover {
 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+}
+
+.chars {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
 }
 </style>
