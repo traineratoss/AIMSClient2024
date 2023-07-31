@@ -256,7 +256,7 @@ function clearInput() {
   max-height: 40vh;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: 96% auto;
+  grid-template-columns: 96% 4%;
 }
 
 .reply-grid-main-container {
@@ -266,6 +266,7 @@ function clearInput() {
 
 .shrink-container {
   min-width: 10px;
+  /* border-right: 1px solid slategray; */
 }
 
 .comment-grid-main-container {
