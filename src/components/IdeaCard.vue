@@ -33,6 +33,7 @@ const buttonSelected = ref(false);
 const postToggle = ref(false);
 const commentReplies = ref([]);
 const isSelected = ref(false);
+const maxlength = 500;
 
 async function loadIdeaComments() {
   const loadedComments = await loadComments(100, 0, "id", props.ideaId);
@@ -212,6 +213,7 @@ function selectIdea() {
   }
   console.log(isSelected.value);
 }
+
 </script>
 
 <template>
@@ -348,7 +350,10 @@ function selectIdea() {
     </div>
     <div v-if="postToggle" class="comment-input-wrapper">
       <div class="comment-input-container">
-        <textarea id="comment-input-textarea" v-model="commentText"> </textarea>
+        <textarea id="comment-input-textarea" v-model="commentText" :maxlength=maxlength> </textarea>
+      </div>
+      <div class="chars">
+        {{ commentText.length }} / 500
       </div>
       <div class="comment-input-bottom">
         <button
@@ -552,7 +557,7 @@ function selectIdea() {
 }
 
 .number-of-comments{
-  
+
 }
 .reply-container {
   display: flex;

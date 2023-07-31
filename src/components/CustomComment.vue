@@ -27,11 +27,12 @@ const emits = defineEmits([
   "toggleHasReplies",
 ]);
 
-let postToggle = ref(false);
-let currentUser = ref("");
-let commentText = ref("");
-let buttonSelected = ref(false);
+const postToggle = ref(false);
+const currentUser = ref("");
+const commentText = ref("");
+const buttonSelected = ref(false);
 const showModal = ref(false);
+const maxlength = 500;
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
@@ -171,7 +172,7 @@ function clearInput() {
                 buttonSelected = !buttonSelected;
               "
             >
-              <span class="material-symbols-outlined"> ink_pen </span>
+              <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
           <span v-if="!buttonSelected">
@@ -182,7 +183,7 @@ function clearInput() {
                 buttonSelected = !buttonSelected;
               "
             >
-              <span class="material-symbols-outlined"> ink_pen </span>
+              <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
           <button v-if="currentUser === props.username"
@@ -202,12 +203,16 @@ function clearInput() {
       </div>
     </div>
     <div class="reply-input-container" v-if="postToggle">
-      <textarea
+      
+      <textarea :maxlength=maxlength
         v-model="commentText"
         placeholder="  Write your reply here .."
         id="insert-reply-textarea"
       >
       </textarea>
+      <div class="chars">
+        {{ commentText.length }} / 500
+      </div>
       <button
         id="postButton"
         @click="
@@ -375,5 +380,9 @@ button:hover {
   background-color: white;
   border: 1px solid #6d3d02;
   border-radius: 3px;
+}
+
+.chars{
+  text-align: center;
 }
 </style>
