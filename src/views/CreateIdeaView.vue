@@ -9,6 +9,7 @@ import { watch, ref, onMounted } from "vue";
 import {  useRoute } from "vue-router";
 import router from "../router";
 import { getCategory, getUser } from "../services/idea.service";
+import { getCurrentUsername } from "../services/user_service";
 
 
 const inputValue = ref("");
@@ -26,6 +27,7 @@ const slideImages = [
     'https://www.freecodecamp.org/news/content/images/2022/12/main-image.png',
     'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/blogs/34246/images/i9SaP0vNQZWCZNsLaVhr_Hobby.jpg'
 ];
+const currentUsername= getCurrentUsername();
 
 
 watch(categoriesSelected, (newValue) => {
@@ -73,7 +75,7 @@ async function createIdeaFunction() {
       statusValue.value.toUpperCase(),
       textValue.value,
       categoryTexts,
-      'AdminPopescu1'
+      currentUsername
     );
     return data;
   }

@@ -6,6 +6,8 @@ import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
+const currentUsername = getCurrentUsername();
+
 const ideasPerPage = 15;
 const currentPage = ref(1);
 const ideas = ref([]);
@@ -36,10 +38,6 @@ let currentSelectedDateTo = "";
 
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);
-
-function getCurrentUser() {
-  return "Adrian22"
-}
 
 onMounted(async () => {
   const data = await loadPagedIdeas(
@@ -82,7 +80,6 @@ async function changePage(pageNumber) {
     null,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  loggedUser.value = getCurrentUsername();
   ideas.value = data.pagedIdeas.content;
   currentPage.value = pageNumber;
 }
@@ -167,7 +164,6 @@ async function updateSortOrder() {
       null,
       "ASC" 
     );
-    loggedUser.value = getCurrentUser();
     ideas.value = data.pagedIdeas.content;
 
   } else if (sortOrder.value == 1) {
@@ -185,7 +181,6 @@ async function updateSortOrder() {
         null,
         "DESC" 
       );
-      loggedUser.value = getCurrentUser();
       ideas.value = data.pagedIdeas.content;
   }
 }
@@ -214,14 +209,12 @@ async function updateIdeas(filteredIdeas) {
         sortOrder.value,
       );
       setCurrentVariables();
-      loggedUser.value = getCurrentUser();
       ideas.value = data.pagedIdeas != null ? data.pagedIdeas.content : [];
     }
 
     // if there are no ideas
     if(totalPages.value === 0) {
       setCurrentVariables();
-      loggedUser.value = getCurrentUser();
       currentPage.value = 0;
       ideas.value = [];
     }
@@ -234,7 +227,6 @@ async function updateIdeas(filteredIdeas) {
     }
 
     setCurrentVariables();
-    loggedUser.value = getCurrentUser();
     ideas.value = filteredIdeas.pagedIdeas.content;
   }
 }

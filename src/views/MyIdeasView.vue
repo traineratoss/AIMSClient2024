@@ -6,7 +6,7 @@ import { filterIdeas, getPagedIdeasFromUser } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
-const currentUsername = ref("Adrian22");
+const currentUsername = getCurrentUsername();
 
 const ideasPerPage = 15;
 const currentPage = ref(1);
@@ -40,7 +40,7 @@ const implementationPercentage = ref(0);
 
 onMounted(async () => {
   const data = await getPagedIdeasFromUser(
-    currentUsername.value,
+    currentUsername,
     ideasPerPage,
     currentPage.value-1,
     "ASC"
@@ -65,7 +65,7 @@ async function changePage(pageNumber) {
     currentSelectedDateTo,
     pageNumber-1,
     ideasPerPage,
-    currentUsername.value,
+    currentUsername,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
   ideas.value = data.pagedIdeas.content;
@@ -141,7 +141,7 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value-1,
       ideasPerPage,
-      currentUsername.value,
+      currentUsername,
       "ASC" 
     );
     ideas.value = data.pagedIdeas.content;
@@ -158,7 +158,7 @@ async function updateSortOrder() {
         currentSelectedDateTo,
         currentPage.value-1,
         ideasPerPage,
-        currentUsername.value,
+        currentUsername,
         "DESC" 
       );
       ideas.value = data.pagedIdeas.content;
@@ -185,7 +185,7 @@ async function updateIdeas(filteredIdeas) {
         inputSelectedDateTo.value,
         currentPage.value-1,
         ideasPerPage,
-        currentUsername.value,
+        currentUsername,
         sortOrder.value,
       );
       setCurrentVariables();
