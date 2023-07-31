@@ -12,11 +12,6 @@ const usernameOrEmailText = ref('');
 const passwordText = ref('');
 const showErrorMessage = ref(false);
 
-const user = {
-  username: String,
-  role: String
-}
-
 function redirectToRegister() {
   router.push("/register/false");
 }
@@ -27,12 +22,6 @@ async function login() {
     loginUser(usernameOrEmailText.value, hashPassword)
       .then(res => {
         router.push('/my');
-        if (user.token) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('user', JSON.stringify(user));
-        }
-        setCurrentUser(usernameOrEmailText.value);
-        return user;
       })
       .catch(error => {
           usernameOrEmailText.value = '';

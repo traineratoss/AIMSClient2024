@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { deleteComment } from "../services/comment.service";
-import { getCurrentUser } from "../services/user_service";
+import { getCurrentUsername } from "../services/user_service";
 
 const props = defineProps({
   commentId: "",
@@ -34,7 +34,7 @@ let commentText = ref("");
 let buttonSelected = ref(false)
 
 onMounted(async () => {
-  currentUser.value = getCurrentUser();
+  currentUser.value = getCurrentUsername();
   console.log(currentUser.value.username);
 });
 

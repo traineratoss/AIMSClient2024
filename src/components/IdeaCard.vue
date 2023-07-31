@@ -8,7 +8,7 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
-import { getCurrentUser } from "../services/user_service";
+import { getCurrentUsername } from "../services/user_service";
 
 const props = defineProps({
   title: "",
@@ -20,7 +20,7 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-  currentUser.value = getCurrentUser();
+  currentUser.value = getCurrentUsername();
   loadIdeaComments();
 });
 

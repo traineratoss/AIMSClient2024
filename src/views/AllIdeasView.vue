@@ -3,7 +3,7 @@ import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
-import { getCurrentUser } from "../services/user_service";
+import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
 const ideasPerPage = 15;
@@ -78,7 +78,7 @@ async function changePage(pageNumber) {
     ideasPerPage,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  loggedUser.value = getCurrentUser();
+  loggedUser.value = getCurrentUsername();
   ideas.value = data.pagedIdeas.content;
   currentPage.value = pageNumber;
 }

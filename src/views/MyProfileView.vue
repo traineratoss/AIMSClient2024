@@ -5,7 +5,7 @@ import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
 import { ref } from "vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
-import { getCurrentUser, updateUser } from "../services/user_service";
+import { getCurrentUsername, updateUser } from "../services/user_service";
 import router from "../router";
 
 const usernameText = ref("");

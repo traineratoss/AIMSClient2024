@@ -17,10 +17,13 @@ async function loginUser(username, hashPassword) {
     method: "POST",
     body: hashPassword,
   });
-  
+
   const json = await response.json();
   if(!response.ok) {
     throw new Error(json.message);
+  } else {
+    sessionStorage.setItem('username', json.username);
+    sessionStorage.setItem('role', json.role);
   }
   return json;
 }
@@ -138,8 +141,8 @@ async function sendDeactivateEmail(usernameOrEmail) {
 
 // @TODO : Add a function to store that into local storage when login in
 
-function getCurrentUser() {
-  return JSON.parse(localStorage.getItem("user"));
+function getCurrentUsername() {
+  return sessionStorage.getItem('username');
 }
 
 function setCurrentUser(username) {
@@ -162,7 +165,7 @@ export {
   sendApproveEmail,
   changePassword,
   loginUser,
-  getCurrentUser,
+  getCurrentUsername,
   setCurrentUser,
   sendNewPassword,
   sendDeclineEmail,
