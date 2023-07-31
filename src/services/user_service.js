@@ -40,22 +40,39 @@ async function postUser(username, email) {
 }
 
 async function updateUser(username, userUpdateDto) {
-    const response = await fetch(`${API_URL}/update-profile?username=${username}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            "username": userUpdateDto.username,
-            "fullName": userUpdateDto.fullName,
-            "email": userUpdateDto.email,
-            "avatarId": userUpdateDto.avatarId
-        })
-    });
-
-    const json = await response.json();
-    if(!response.ok) {
-        throw new Error(json.message);
+  const response = await fetch(
+    `${API_URL}/update-profile?username=${username}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: userUpdateDto.username,
+        fullName: userUpdateDto.fullName,
+        email: userUpdateDto.email,
+        avatarId: userUpdateDto.avatarId,
+      }),
     }
-    return json;
+  );
+
+  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(json.message);
+  }
+  return json;
+}
+
+async function updateUserRole(username) {
+  const response = await fetch(`${API_URL}/update-role?username=${username}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  });
+
+  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(json.message);
+  }
+  return json;
 }
 
 async function getAllUsersForAdmin(pageSize, pageNumber, sortCategory) {
@@ -159,6 +176,7 @@ export {
   getUserByUsername,
   postUser,
   updateUser,
+  updateUserRole,
   getAllUsersForAdmin,
   getAllUserByUsername,
   getAllUserByIsActive,

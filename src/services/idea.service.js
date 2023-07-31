@@ -80,6 +80,7 @@ async function filterIdeas(
   selectedDateTo,
   pageNumber,
   pageSize,
+  username,
   sortDirection
 ) {
   switch (sortDirection) {
@@ -95,6 +96,7 @@ async function filterIdeas(
   }
   
   let url = `${API_URL}/filter?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}`;
+
   if (title) url += `&title=${title}`;
   if (text) url += `&text=${text}`;
   if (status.length != 0) url += `&status=${status}`;
@@ -102,6 +104,9 @@ async function filterIdeas(
   if (user.length != 0) url += `&user=${user}`;
   if (selectedDateFrom) url += `&selectedDateFrom=${selectedDateFrom}`;
   if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
+  if (username) url += `&username=${username}`;
+
+  console.log(url)
 
   console.log(url)
 
@@ -157,6 +162,45 @@ async function getImage() {
   return json;
 }
 
+async function getPagedIdeasFromUser(
+  username,
+  pageSize,
+  pageNumber,
+  sortDirection
+) {
+  switch (sortDirection) {
+    case 0:
+      sortDirection = "ASC";
+      break;
+    case 1:
+      sortDirection = "DESC";
+      break;
+  }
+
+  if(pageNumber < 0) {
+    pageNumber = 0;
+  }
+  
+  let url = `${API_URL}/allByUser?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}&username=${username}&sortCategory=date`;
+
+  console.log(url)
+
+  const response = await fetch(url, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  });
+
+  const json = await response.json();
+  return json;
+}
+
 
 export {
   loadPagedIdeas,
@@ -165,5 +209,6 @@ export {
   getUser,
   getImage,
   filterIdeas,
-  addImage
+  addImage,
+  getPagedIdeasFromUser
 };
