@@ -356,7 +356,7 @@ function selectIdea() {
         {{ commentText.length }} / 500
       </div>
       <div class="comment-input-bottom">
-        <button
+        <button id="post-button"
           @click.stop="
             postCommentDynamic(currentUser, props.ideaId, commentText);
             postToggle = !postToggle;
@@ -696,6 +696,21 @@ button:hover {
   cursor: pointer;
   outline: inherit;
   margin-right: 10px;
+}
+
+#post-button{
+  pointer-events: all;
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid black;
+  width: 45px;
+  
+  margin-bottom: 10px;
 }
 
 .v-enter-active,
