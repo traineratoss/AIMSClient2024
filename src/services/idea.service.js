@@ -127,13 +127,14 @@ async function filterIdeas(
   return data;
 }
 
-async function createIdea(title, status, text, categoryList, username) {
+async function createIdea(title, status, text, categoryList, image, username) {
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     body: JSON.stringify({
       title: title,
       status: status,
       text: text,
+      image: image,
       categoryList: categoryList,
     }),
     headers: {

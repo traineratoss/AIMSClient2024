@@ -3,16 +3,19 @@
 import { ref,defineProps,watchEffect } from 'vue';
 
 
-const slides = defineProps(["images"]);
+const slides = defineProps(['images']);
+const emit = defineEmits(['current-index']);
 const currentIndex = ref(0);
 
 const prevSlide = () => {
   currentIndex.value =
     (currentIndex.value - 1 + slides.images.length) % slides.images.length;
+  emit('current-index', currentIndex.value);
 };
 
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % slides.images.length;
+  emit('current-index', currentIndex.value);
 };
 
 watchEffect(() => {

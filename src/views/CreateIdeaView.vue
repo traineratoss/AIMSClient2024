@@ -26,11 +26,7 @@ const categoryError = ref(false);
 const currentUsername= getCurrentUsername();
 const slideImages = ref({});
 
-
-
-watch(categoriesSelected, (newValue) => {
-  console.log("Selected categories changed. New value:", newValue);
-});
+const currentImageIndex = ref(null);
 
 const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
@@ -43,7 +39,6 @@ onMounted(async() => {
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
-  console.log(categoryOptions.value);
 
   slideImages.value = [];
   const dataImage = await getImage();
@@ -52,8 +47,12 @@ onMounted(async() => {
   });
   slideImages.value = imageUrls;
   console.log(imageUrls);
-
+  
 });
+
+const getCurrentIndex = (currentIndex) => {
+  currentImageIndex.value = currentIndex;
+};
 
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
@@ -78,14 +77,15 @@ async function createIdeaFunction() {
 
   if (!titleErrorFlag && !textErrorFlag && !statusErrorFlag && !categoryErrorFlag) {
     const categoryTexts = rawCategoriesValue.map((category) => ({ text: category }));
-    console.log(currentUsername);
     const data = await createIdea(
       inputValue.value,
       statusValue.value.toUpperCase(),
       textValue.value,
       categoryTexts,
+      slideImages.value[currentImageIndex.value],
       currentUsername
     );
+    console.log(data)
     return data;
   }
 
@@ -144,6 +144,7 @@ function onMouseEnter() {
             :disabled="fieldsDisabled" 
             placeholder="Write your title here..."
             :error="titleError" 
+            class="input-width" 
             />   
         </div>
         <div class="idea">
@@ -170,6 +171,7 @@ function onMouseEnter() {
              :variants="categoryOptions"
              :error="categoryError"
              :canAddInDropdown="true"
+             class="input-width" 
              >
             </CustomDropDown>
         </div>
@@ -183,7 +185,7 @@ function onMouseEnter() {
             :class="{textarea:textError}"></textarea>
         </div>
         <div class="idea">
-             <CarouselImage :images="slideImages"/>
+          <CarouselImage :images="slideImages" @current-index="getCurrentIndex" />
         </div>
         <div class="add-image" >
             <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="fileUpload" @change="onImageUpload"/>

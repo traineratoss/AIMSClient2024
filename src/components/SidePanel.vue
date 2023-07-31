@@ -12,7 +12,6 @@ import { getCategory, getUser } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 
-const statusOptions = ["OPEN", "IMPLEMENTED"];
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
 const userOptions = ref([]);
@@ -30,6 +29,12 @@ const props = defineProps({
   ideasPerPage: Number,
   currentUser: String
 });
+
+const statusOptions =
+  props.currentUser === null
+    ? ["OPEN", "IMPLEMENTED"]
+    : ["OPEN", "DRAFT", "IMPLEMENTED"];
+
 
 const emit = defineEmits(["filter-listening","pass-input-variables"]);
 
