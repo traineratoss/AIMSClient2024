@@ -29,9 +29,9 @@ const inputSelectedDateTo = ref("");
 // if i leave the refs and if i press sort, it will filter, which should not happen
 // we put it non reactive so we update it only when the filter is pressed and the inputs are updated
 let currentTitle = "";
-let currentText = ""; 
+let currentText = "";
 let currentStatus = [];
-let currentCategory = []; 
+let currentCategory = [];
 let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
@@ -42,10 +42,11 @@ const implementationPercentage = ref(0);
 onMounted(async () => {
   const data = await loadPagedIdeas(
     ideasPerPage,
-    pageNumber.value-1,
+    pageNumber.value - 1,
     "date",
     "ASC"
   );
+  loggedUser.value = getCurrentUsername();
   sortOrder.value = 0;
   totalPages.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
@@ -75,7 +76,7 @@ async function changePage(pageNumber) {
     currentUser,
     currentSelectedDateFrom,
     currentSelectedDateTo,
-    pageNumber-1,
+    pageNumber - 1,
     ideasPerPage,
     null,
     sortOrder.value === 0 ? "ASC" : "DESC"
@@ -115,7 +116,6 @@ const ideasPerUser = computed(() => {
   if (users.size != 0) {
     return (totalPages.value * ideasPerPage) / users.size;
   } else {
-   
     return 0;
   }
 });
@@ -143,12 +143,11 @@ function setCurrentVariables() {
   currentCategory = inputCategory.value;
   currentUser = inputUser.value;
   currentSelectedDateFrom = inputSelectedDateFrom.value;
-  currentSelectedDateTo = inputSelectedDateTo.value; 
+  currentSelectedDateTo = inputSelectedDateTo.value;
 }
 
 // here, the page asc or desc is happening
 async function updateSortOrder() {
-
   if (sortOrder.value == 0) {
     sortOrder.value = 0;
     const data = await filterIdeas(
@@ -159,13 +158,12 @@ async function updateSortOrder() {
       currentUser,
       currentSelectedDateFrom,
       currentSelectedDateTo,
-      currentPage.value-1,
+      currentPage.value - 1,
       ideasPerPage,
       null,
       "ASC" 
     );
     ideas.value = data.pagedIdeas.content;
-
   } else if (sortOrder.value == 1) {
       sortOrder.value = 1;
       const data = await filterIdeas(
@@ -189,11 +187,12 @@ async function updateSortOrder() {
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.total / ideasPerPage); // the total nr of pages after filtering needs to be updated
 
-  if (currentPage.value > totalPages.value){ // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
+  if (currentPage.value > totalPages.value) {
+    // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
     // we have to filter each time with each page to get our good ideas
 
-    while(currentPage.value>totalPages.value && totalPages.value != 0) {
+    while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
       const data = await filterIdeas(
         inputTitle.value,
@@ -203,7 +202,7 @@ async function updateIdeas(filteredIdeas) {
         inputUser.value,
         inputSelectedDateFrom.value,
         inputSelectedDateTo.value,
-        currentPage.value-1,
+        currentPage.value - 1,
         ideasPerPage,
         null,
         sortOrder.value,
@@ -213,16 +212,14 @@ async function updateIdeas(filteredIdeas) {
     }
 
     // if there are no ideas
-    if(totalPages.value === 0) {
+    if (totalPages.value === 0) {
       setCurrentVariables();
       currentPage.value = 0;
       ideas.value = [];
     }
-
   } else {
-
     // being sure the current page doesnt go below 0
-    if(currentPage.value <= 0) {
+    if (currentPage.value <= 0) {
       currentPage.value = 1;
     }
 
@@ -231,11 +228,17 @@ async function updateIdeas(filteredIdeas) {
   }
 }
 
-
 // Here I pass the vars from the side panel
-const onPassInputVariables = (inputTitleParam, inputTextParam, inputStatusParam, inputCategoryParam, inputUserParam, inputSelectedDateFromParam, inputSelectedDateToParam) => {
-  
-inputTitle.value = inputTitleParam;
+const onPassInputVariables = (
+  inputTitleParam,
+  inputTextParam,
+  inputStatusParam,
+  inputCategoryParam,
+  inputUserParam,
+  inputSelectedDateFromParam,
+  inputSelectedDateToParam
+) => {
+  inputTitle.value = inputTitleParam;
   inputText.value = inputTextParam;
   inputStatus.value = inputStatusParam;
   inputCategory.value = inputCategoryParam;
@@ -262,9 +265,6 @@ inputTitle.value = inputTitleParam;
       <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="null" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
     </div>
     <div class="main-container">
-
-        
-      
       <div class="sort-container" style="text-align: right">
         <label for="sortOrder">Sort by: </label>
         <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
@@ -273,7 +273,6 @@ inputTitle.value = inputTitleParam;
         </select>
       </div>
 
-      
       <div class="middle-container">
         <div class="stats-container">
           <div class="stat-item">
@@ -293,7 +292,7 @@ inputTitle.value = inputTitleParam;
               <b>{{ roundedNumber(ideasPerUser) }}</b>
             </p>
           </div>
-          <div class="spacer" style="height: 50px;"></div>
+          <div class="spacer" style="height: 50px"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas</b></p>
             <p class="centered-number">
@@ -316,35 +315,40 @@ inputTitle.value = inputTitleParam;
         </div>
 
         <div class="ideas-transition-container">
-        <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item">
-          <IdeaCard
-            :title="idea.title"
-            :text="idea.text"
-            :status="idea.status"
-            :user="idea.username"
-            :ideaId="idea.id"
-          />
+          <div
+            v-for="idea in ideas"
+            :key="idea.id"
+            class="idea-transition-item"
+          >
+            <IdeaCard
+              :title="idea.title"
+              :text="idea.text"
+              :status="idea.status"
+              :user="idea.username"
+              :ideaId="idea.id"
+            />
+          </div>
+          <div v-if="ideas.length === 0" class="no-ideas-message">
+            No ideas found
+            <br />
+            <span class="material-symbols-outlined">search_off</span>
+          </div>
         </div>
-        <div v-if="ideas.length === 0" class="no-ideas-message">
-          No ideas found
-          <br />
-          <span class="material-symbols-outlined">search_off</span>
-        </div>
-
-      </div>
       </div>
 
       <div v-if="ideas.length > 0" class="pagination-container">
-          <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
-        </div>
-  
+        <Pagination
+          :totalPages="totalPages"
+          :currentPage="currentPage"
+          @changePage="changePage"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-
-.idea-transition-item{
+.idea-transition-item {
   margin-bottom: 10px;
 }
 
@@ -361,7 +365,8 @@ inputTitle.value = inputTitleParam;
   transition: opacity 0.5s;
 }
 
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 
@@ -370,22 +375,22 @@ inputTitle.value = inputTitleParam;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 500px; 
+  height: 500px;
   font-size: 30px;
   font-weight: bold;
-  text-align: center; 
+  text-align: center;
   color: #ffa941;
   -webkit-text-stroke: 0.8px black;
 }
 
 .material-symbols-outlined {
-  transition: transform 0.1s ease; 
+  transition: transform 0.1s ease;
   margin-top: 1vh;
   font-size: 40px;
 }
 
 .material-symbols-outlined:hover {
-  transform: scale(1.1); 
+  transform: scale(1.1);
   color: red;
 }
 
@@ -398,13 +403,12 @@ inputTitle.value = inputTitleParam;
   grid-template-columns: 20vw 80vw;
 }
 
-
 .sidebar-container {
   border: 1px solid black;
   background-color: #b3b3b3;
   height: 91vh;
 }
-.middle-container{
+.middle-container {
   overflow-y: auto;
 }
 
@@ -449,7 +453,6 @@ inputTitle.value = inputTitleParam;
   position: fixed;
   height: 91vh;
   width: 15vw;
-  
 }
 .centered-number {
   margin: 1px 0; /* Space between numbers */
@@ -479,8 +482,7 @@ inputTitle.value = inputTitleParam;
   align-items: center;
   width: 80vw;
   position: fixed;
-  bottom: 5vh;
-  right: 1vw; 
+  bottom: 0;
 }
 
 .page-number {

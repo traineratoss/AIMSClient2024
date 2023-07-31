@@ -16,12 +16,12 @@ const props = defineProps({
   status: "",
   username: "",
   ideaId: "",
-  numberOfComments: "",
 });
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
   loadIdeaComments();
+  console.log(comments.value)
 });
 
 const comments = ref([]);
@@ -222,7 +222,7 @@ function selectIdea() {
           v-bind:style="
             isSelected
               ? {
-                  'pointer-events': 'none',
+                  
                   'background-color': '#ffa941',
                   'animation-play-state': 'paused',
                 }
@@ -281,7 +281,7 @@ function selectIdea() {
             <div class="bottom-container-left"></div>
             <div class="bottom-container-center">
               <Transition>
-                <div v-if="props.numberOfComments != 0 && isSelected">
+                <div v-if=" comments.length > 0 && isSelected">
                   <button
                     @click.stop="
                       loadIdeaComments();
@@ -290,7 +290,7 @@ function selectIdea() {
                     id="view-replies-button"
                   >
                     <span
-                      v-if="!showComments"
+                      v-if="!showComments "
                       class="material-symbols-outlined"
                     >
                       expand_more
@@ -343,8 +343,9 @@ function selectIdea() {
       <div class="comment-input-bottom">
         <button
           @click.stop="
-            postCommentDynamic(currentUser.username, props.ideaId, commentText);
+            postCommentDynamic(currentUser, props.ideaId, commentText);
             postToggle = !postToggle;
+            buttonSelected = !buttonSelected;
           "
         >
           Post!
@@ -362,7 +363,7 @@ function selectIdea() {
         :isReply="false"
         :commentId="comment.id"
         :text="comment.commentText"
-        :userName="comment.username"
+        :username="comment.username"
         :hasReplies="comment.hasReplies"
         :expanded="comment.expanded"
         :parentId="comment.id"
@@ -384,7 +385,7 @@ function selectIdea() {
             :isReply="true"
             :replyId="reply.id"
             :text="reply.commentText"
-            :userName="reply.username"
+            :username="reply.username"
             @deleteReply="deleteReplyDynamic"
           />
         </div>
@@ -412,7 +413,8 @@ function selectIdea() {
   border: 1px solid slategray;
   position: relative;
   overflow: hidden;
-  background-color: white;
+  background-color: white;  
+  cursor: pointer;
 }
 /*
    I know it might be repetitive but at the moment
@@ -420,13 +422,12 @@ function selectIdea() {
   i suspect that you can exclude a specific class from beeing hovered over
 */
 
-.wrapper:hover .border {
+.wrapper:hover:not(.selected-class) .border {
   background-color: #ffa941;
   animation: 1s normalState;
 }
 
 .selected-class {
-  pointer-events: none;
   border: 1px solid black;
 }
 

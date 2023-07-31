@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { deleteComment } from "../services/comment.service";
-import { getCurrentUsername } from "../services/user_service";
+import { getCurrentUsername,getCurrentRole } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 
 const props = defineProps({
   commentId: "",
   replyId: "",
   text: "",
-  userName: "",
+  username: "",
   ideaId: "",
   hasReplies: "",
   isReply: "",
@@ -90,17 +90,13 @@ function clearInput() {
   commentText.value = "";
 }
 
-function askToDelete(){
-
-}
-
 </script>
 
 <template>
   <div v-if="props.isReply" class="reply-container">
     <div class="reply-grid-main-container">
       <div class="header-container">
-        <p>@{{ props.userName }}</p>
+        <p>@{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
 
@@ -112,7 +108,7 @@ function askToDelete(){
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button
+          <button v-if="currentUser = props.username"
             class="action-icon-button"
             @click="
               showModal = true;
@@ -135,7 +131,7 @@ function askToDelete(){
   <div v-if="!props.isReply" class="comment-container">
     <div class="comment-grid-main-container">
       <div class="header-container">
-        <p>{{ props.userName }}</p>
+        <p>{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
 
@@ -189,7 +185,7 @@ function askToDelete(){
               <span class="material-symbols-outlined"> ink_pen </span>
             </button>
           </span>
-          <button
+          <button v-if="currentUser = props.username"
             class="action-icon-button"
             @click=" showModal = true;"
           >
@@ -215,8 +211,9 @@ function askToDelete(){
       <button
         id="postButton"
         @click="
-          postReply(currentUser.username, props.parentId, commentText);
+          postReply(currentUser, props.parentId, commentText);
           postToggle = !postToggle;
+          buttonSelected = !buttonSelected;
         "
       >
         Post reply

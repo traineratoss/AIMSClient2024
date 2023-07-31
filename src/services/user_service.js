@@ -156,14 +156,12 @@ async function sendDeactivateEmail(usernameOrEmail) {
   });
 }
 
-// @TODO : Add a function to store that into local storage when login in
-
 function getCurrentUsername() {
     return sessionStorage.getItem('username');
 }
 
 function getCurrentRole() {
-    return sessionStorage.getItem('role');
+  return sessionStorage.getItem('role');
 }
 
 function logout() {
