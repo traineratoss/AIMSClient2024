@@ -228,7 +228,7 @@ const userDashboardElements = [
 nav {
   background-color: white;
   display: flex;
-  gap: 5vw;
+  gap: 1vw;
   width: 100vw;
   align-items: center;
   height: 9vh;

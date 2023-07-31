@@ -151,7 +151,8 @@ function setCurrentUser(username) {
 }
 
 function logout() {
-  localStorage.setItem("user", JSON.stringify(null));
+  sessionStorage.clear('username');
+  sessionStorage.clear('role');
 }
 
 export {
