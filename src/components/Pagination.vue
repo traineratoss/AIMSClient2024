@@ -1,7 +1,7 @@
 <template>
   <div class="pagination-container">
     <span
-      v-for="pageNumber in generatePageNumbers()"
+      v-for="pageNumber in pageNumbers"
       :key="pageNumber"
       :class="{ 'page-number': true, active: pageNumber === currentPage }"
       @click="goToPage(pageNumber)"
@@ -12,23 +12,49 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref, watch, onMounted } from "vue";
 
-const { currentPage, totalPages } = defineProps(["currentPage", "totalPages"]);
+const props = defineProps(["currentPage", "totalPages"]);
 const emit = defineEmits(["changePage"]);
 
-function generatePageNumbers() {
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
+const localTotalPages = ref(props.totalPages);
+const pageNumbers = ref([]);
+
+watch(
+  () => props.totalPages,
+  (newValue) => {
+    localTotalPages.value = newValue;
+    generatePageNumbers();
+    console.log("localTotalPages updated: " + localTotalPages.value);
   }
-  return pageNumbers;
+);
+
+onMounted(() => {
+  generatePageNumbers();
+});
+
+function generatePageNumbers() {
+  const numbers = [];
+  for (let i = 1; i <= localTotalPages.value; i++) {
+    numbers.push(i);
+  }
+  pageNumbers.value = numbers;
+  console.log("Page numbers generated: " + pageNumbers.value);
 }
 
 function goToPage(pageNumber) {
+  console.log("goToPage called with pageNumber: " + pageNumber);
   emit("changePage", pageNumber);
 }
 </script>
+<style>
+</style>
+
+
+
+
+
+
 
 <style>
 .pagination-container {

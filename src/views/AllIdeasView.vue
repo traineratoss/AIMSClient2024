@@ -8,7 +8,7 @@ import Pagination from "../components/Pagination.vue";
 
 const currentUsername = getCurrentUsername();
 
-const ideasPerPage = 15;
+const ideasPerPage = 1;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
@@ -257,6 +257,8 @@ const onPassInputVariables = (
 //   publicIdeasCount.value = calculatePublicIdeasCount();
 //   implementedIdeasCount.value = calculateImplementedIdeasCount();
 // }
+
+
 </script>
 
 <template>
@@ -324,7 +326,7 @@ const onPassInputVariables = (
               :title="idea.title"
               :text="idea.text"
               :status="idea.status"
-              :user="idea.username"
+              :username="idea.username"
               :ideaId="idea.id"
             />
           </div>
