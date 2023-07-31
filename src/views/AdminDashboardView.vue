@@ -7,23 +7,26 @@ import { ref, onMounted } from "vue";
 
 const pageSize = 10;
 const currentPage = ref(1);
+const totalPages = ref(0);
 const users = ref([]);
 
 onMounted(() => {
   getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
     .then((res) => {
       users.value = res.pagedUsers.content;
+      totalPages.value = Math.ceil(res.total / pageSize);
     })
     .catch((error) => {
       console.log("Error");
     });
 });
 
-function changePage() {
-  currentPage.value++;
+function changePage(pageNumber) {
+  currentPage.value = pageNumber;
+  console.log(currentPage);
   getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
     .then((res) => {
-      users.value = res.content;
+      users.value = res.pagedUsers.content;
     })
     .catch((error) => {
       console.log("Error");
@@ -62,11 +65,12 @@ function removeUser(user) {
             @update-role="
               user.role === 'ADMIN'
                 ? (user.role = 'STANDARD')
-                : (user.role = 'ADMIN'); 
+                : (user.role = 'ADMIN')
             "
           />
         </div>
         <Pagination
+          :totalPages="totalPages"
           :currentPage="currentPage"
           @changePage="changePage"
           class="pagination-container"

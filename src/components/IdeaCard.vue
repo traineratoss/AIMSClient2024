@@ -213,7 +213,6 @@ function selectIdea() {
   }
   console.log(isSelected.value);
 }
-
 </script>
 
 <template>
@@ -350,13 +349,17 @@ function selectIdea() {
     </div>
     <div v-if="postToggle" class="comment-input-wrapper">
       <div class="comment-input-container">
-        <textarea id="comment-input-textarea" v-model="commentText" :maxlength=maxlength> </textarea>
+        <textarea
+          id="comment-input-textarea"
+          v-model="commentText"
+          :maxlength="maxlength"
+        >
+        </textarea>
       </div>
-      <div class="chars">
-        {{ commentText.length }} / 500
-      </div>
+      <div class="chars">{{ commentText.length }} / 500</div>
       <div class="comment-input-bottom">
-        <button id="post-button"
+        <button
+          id="post-button"
           @click.stop="
             postCommentDynamic(currentUser, props.ideaId, commentText);
             postToggle = !postToggle;
@@ -556,8 +559,7 @@ function selectIdea() {
   border-left: 1px solid #ffa941;
 }
 
-.number-of-comments{
-
+.number-of-comments {
 }
 .reply-container {
   display: flex;
@@ -698,7 +700,7 @@ button:hover {
   margin-right: 10px;
 }
 
-#post-button{
+#post-button {
   pointer-events: all;
   background-color: rgba(255, 255, 255, 0);
   border: none;
@@ -709,7 +711,7 @@ button:hover {
   border-radius: 5px;
   border: 1px solid black;
   width: 45px;
-  
+
   margin-bottom: 10px;
 }
 
