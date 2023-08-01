@@ -112,7 +112,8 @@ router.beforeEach((to, from) => {
     to.name !== 'terms' && 
     to.name !== 'recovery' &&
     to.name !== 'registration-complete' &&
-    to.name !== 'page-not-found') {
+    to.name !== 'page-not-found' &&
+    to.name !== 'password-changed') {
       if(!(getCurrentRole() && getCurrentUsername())) {
         showNavbar.value = false;
         router.push('/page-not-found');
