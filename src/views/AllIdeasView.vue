@@ -43,7 +43,7 @@ onMounted(async () => {
   const data = await loadPagedIdeas(
     ideasPerPage,
     pageNumber.value - 1,
-    "date",
+    "creationDate",
     "ASC"
   );
   loggedUser.value = getCurrentUsername();
@@ -328,6 +328,8 @@ const onPassInputVariables = (
               :status="idea.status"
               :username="idea.username"
               :ideaId="idea.id"
+              :commentsNumber="idea.commentsNumber"
+              :elapsedTime="idea.elapsedTime"
             />
           </div>
           <div v-if="ideas.length === 0" class="no-ideas-message">
