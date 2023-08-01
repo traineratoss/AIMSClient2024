@@ -237,7 +237,12 @@ function selectIdea() {
           <div class="top-container">
             <div class="left-container">
               <div class="left-container-title">
-                {{ getShortenedTitle(title, 25) }}
+                <div class="text" v-if="isSelected">
+                  {{ getShortenedTitle(title, 100) }}
+                </div>
+                <div class="text" v-else>
+                  {{ getShortenedTitle(title, 50) }}
+                </div>
               </div>
               <div class="status">
                 {{ props.status }}
