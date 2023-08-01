@@ -11,7 +11,6 @@ import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
-import NewPasswordChanged from "../views/NewPasswordChanged.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import { getCurrentRole, getCurrentUsername } from "../services/user_service";
 
@@ -20,7 +19,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: 'default',
+      name: "default",
       component: UserLoginView,
     },
     {
@@ -82,11 +81,6 @@ const router = createRouter({
       path: "/admin-dashboard",
       name: "admin-dashboard",
       component: AdminDashboardView,
-    },
-    {
-      path: "/password-changed",
-      name: "password-changed",
-      component: NewPasswordChanged,
     },
     {
       path: "/:pathMatch(.*)*",
