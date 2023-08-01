@@ -24,8 +24,6 @@ const props = defineProps({
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
   loadIdeaComments();
-  console.log(comments.value);
-  sendNumberOfComments();
 });
 
 const comments = ref([]);
@@ -37,6 +35,7 @@ const postToggle = ref(false);
 const commentReplies = ref([]);
 const isSelected = ref(false);
 const maxCommentLength = 500;
+
 
 async function editIdea() {
   const data = await getIdea(props.ideaId);
@@ -252,11 +251,9 @@ function selectIdea() {
               <div class="left-container-title">
                 <div class="text" v-if="isSelected">
                   {{ getShortenedTitle(title, 100) }}
-                  {{ props.elapsedTime }}
                 </div>
                 <div class="text" v-else>
                   {{ getShortenedTitle(title, 50) }}
-                  {{ props.elapsedTime }}
                 </div>
               </div>
               <div class="status">
@@ -264,10 +261,10 @@ function selectIdea() {
               </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ getShortenedText(props.text, 35, 3) }}
+                  {{ getShortenedText(props.text, 60, 3) }}
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedText(props.text, 10, 6) }}
+                  {{ getShortenedText(props.text, 30, 3) }}
                 </div>
                 
               </div>
@@ -295,7 +292,6 @@ function selectIdea() {
               </div>
             </div>
             <div class="right-container">
-              <div class="dummy-div"></div>
               <div class="right-container-image">
                 <img
                   class="idea-image"
@@ -303,13 +299,15 @@ function selectIdea() {
                   alt="image"
                 />
               </div>
-              <div class="right-container-status">
+              <div class="right-container-info">
                 <div class="number-of-comments">
-                  {{ props.commentsNumber }}
+                  <p> {{ props.commentsNumber }}</p>
                   <span class="material-symbols-outlined"> comment </span>
                 </div>
-                <div class="author"><i> by </i>{{ props.username }}</div>
-                
+                <div class="author">
+                  <div> {{ props.elapsedTime }} ago </div>
+                  <div><i> by </i>{{ props.username }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -548,13 +546,16 @@ function selectIdea() {
 .left-container {
   display: grid;
   grid-template-rows: 20% 30px auto;
+  margin-left: 10px;
 }
 
 .left-container-title {
   display: flex;
   align-items: center;
-  margin-left: 3px;
+  margin-left: 5px;
   margin-top: 1vh;
+  font-weight: 600;
+  font-size:large;
 }
 
 .left-container-text {
@@ -574,7 +575,7 @@ function selectIdea() {
 }
 .right-container {
   display: grid;
-  grid-template-rows: 10% 60% 30%;
+  grid-template-rows: 60% 40% ;
 }
 .right-container-image {
   display: flex;
@@ -582,16 +583,33 @@ function selectIdea() {
   justify-content: center;
 }
 
-.right-container-status {
+.author{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+}
+
+.right-container-info {
   margin-left: 10px;
+  display: grid;
+  grid-template-rows: 20% 80%;
 }
 
 .status {
   margin-left: 5px;
+  font-weight: 400;
+  font-size:medium;
 }
 
 .number-of-comments {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
 }
+
 .reply-container {
   display: flex;
   align-items: center;
@@ -655,6 +673,10 @@ function selectIdea() {
   height: auto;
   width: 6vw;
 }
+img{
+  border: 1px solid slategray;
+}
+
 .material-symbols-outlined {
   background-color: inherit;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;

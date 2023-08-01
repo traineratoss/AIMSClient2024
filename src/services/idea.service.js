@@ -219,6 +219,11 @@ async function getPagedIdeasFromUser(
   return json;
 }
 
+async function getStats() {
+  const response = await fetch(API_URL+"/stats");
+  const data = await response.json();
+  return data;
+}
 
 export {
   loadPagedIdeas,
@@ -229,5 +234,6 @@ export {
   filterIdeas,
   addImage,
   getPagedIdeasFromUser,
-  getIdea
+  getIdea,
+  getStats
 };

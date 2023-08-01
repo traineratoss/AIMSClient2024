@@ -2,7 +2,7 @@
 import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
+import { filterIdeas, loadPagedIdeas,getStats } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
@@ -15,6 +15,8 @@ const loggedUser = ref("");
 const pageNumber = ref(1);
 const sortOrder = ref(0);
 const totalPages = ref(0);
+const stats = ref("")
+
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -51,6 +53,8 @@ onMounted(async () => {
   totalPages.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
   const totalNumberOfIdeas = data.total;
+  stats.value =await getStats();
+  console.log(stats.value);
 
   //STILL WORKING, ENED TO RETREIVE ALL THE IDEAS UNPAGED FROM THE SV
   //now, checking the nr of implemented ideas
@@ -279,32 +283,49 @@ const onPassInputVariables = (
         <div class="stats-container">
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>
-            <!-- <p class="centered-number"><b>{{ totalComments }}</b></p> -->
+            <b>{{ stats.totalNrOfComments }}</b>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Total Replies:</b></p>
             <p class="centered-number">
-              <b>{{ totalReplies }}</b>
+              <b>{{ stats.totalNrOfReplies }}</b>
             </p>
           </div>
-          <div class="spacer"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
             <p class="centered-number">
-              <b>{{ roundedNumber(ideasPerUser) }}</b>
+              <b>{{ stats.ideasPerUser }}</b>
             </p>
           </div>
           <div class="spacer" style="height: 50px"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas</b></p>
             <p class="centered-number">
-              <b>{{ publicIdeasCount }}</b>
+              <b>{{ stats.nrOfIdeas }}</b>
             </p>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Implemented Ideas</b></p>
             <p class="centered-number">
-              <b>{{ implementedIdeasCount }}</b>
+              <b>{{ stats.implementedIdeas }}</b>
+            </p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Drafted Ideas</b></p>
+            <p class="centered-number">
+              <b>{{ stats.draftIdeas }}</b>
+            </p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Open Ideas</b></p>
+            <p class="centered-number">
+              <b>{{ stats.openIdeas }}</b>
+            </p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Implemented Ideas</b></p>
+            <p class="centered-number">
+              <b>{{ stats.implementedIdeas }}</b>
             </p>
             <br />
             <div class="implementation-bar">
