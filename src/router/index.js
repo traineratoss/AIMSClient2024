@@ -13,14 +13,15 @@ import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
 import NewPasswordChanged from "../views/NewPasswordChanged.vue";
 import PageNotFound from "../views/PageNotFound.vue";
+import { getCurrentRole, getCurrentUsername } from "../services/user_service";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "home",
-      component: HomeView,
+      name: 'default',
+      component: UserLoginView,
     },
     {
       path: "/all",
