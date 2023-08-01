@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { deleteComment } from "../services/comment.service";
-import { getCurrentUsername } from "../services/user_service";
+import { getCurrentUsername,getCurrentRole } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 
 const props = defineProps({
   commentId: "",
   replyId: "",
   text: "",
-  userName: "",
+  username: "",
   ideaId: "",
   hasReplies: "",
   isReply: "",
@@ -27,11 +27,12 @@ const emits = defineEmits([
   "toggleHasReplies",
 ]);
 
-let postToggle = ref(false);
-let currentUser = ref("");
-let commentText = ref("");
-let buttonSelected = ref(false);
+const postToggle = ref(false);
+const currentUser = ref("");
+const commentText = ref("");
+const buttonSelected = ref(false);
 const showModal = ref(false);
+const maxlength = 500;
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
@@ -48,6 +49,7 @@ async function deleteCommentById(commentId) {
 
     if (response.ok) {
       emits("deleteComment", commentId);
+      showModal.value = false
     } else {
       console.log("Unable to delete");
     }
@@ -62,6 +64,7 @@ async function deleteReplyById(replyId) {
     loadCommentReplies();
     if (response.ok) {
       emits("deleteReply", replyId);
+      showModal.value = false
     } else {
       console.log("Unable to delete");
     }
@@ -90,17 +93,13 @@ function clearInput() {
   commentText.value = "";
 }
 
-function askToDelete(){
-
-}
-
 </script>
 
 <template>
   <div v-if="props.isReply" class="reply-container">
     <div class="reply-grid-main-container">
       <div class="header-container">
-        <p>@{{ props.userName }}</p>
+        <p>@{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
 
@@ -112,7 +111,7 @@ function askToDelete(){
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button
+          <button v-if="currentUser === props.username"
             class="action-icon-button"
             @click="
               showModal = true;
@@ -135,7 +134,7 @@ function askToDelete(){
   <div v-if="!props.isReply" class="comment-container">
     <div class="comment-grid-main-container">
       <div class="header-container">
-        <p>{{ props.userName }}</p>
+        <p>{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
 
@@ -175,7 +174,7 @@ function askToDelete(){
                 buttonSelected = !buttonSelected;
               "
             >
-              <span class="material-symbols-outlined"> ink_pen </span>
+              <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
           <span v-if="!buttonSelected">
@@ -186,10 +185,10 @@ function askToDelete(){
                 buttonSelected = !buttonSelected;
               "
             >
-              <span class="material-symbols-outlined"> ink_pen </span>
+              <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
-          <button
+          <button v-if="currentUser === props.username"
             class="action-icon-button"
             @click=" showModal = true;"
           >
@@ -206,21 +205,28 @@ function askToDelete(){
       </div>
     </div>
     <div class="reply-input-container" v-if="postToggle">
-      <textarea
+      
+      <textarea :maxlength=maxlength
         v-model="commentText"
         placeholder="  Write your reply here .."
         id="insert-reply-textarea"
       >
       </textarea>
-      <button
+      <div class="chars">
+        <div></div>
+       <p>{{ commentText.length }} / 500</p> 
+       <button
         id="postButton"
         @click="
-          postReply(currentUser.username, props.parentId, commentText);
+          postReply(currentUser, props.parentId, commentText);
           postToggle = !postToggle;
+          buttonSelected = !buttonSelected;
         "
       >
         Post reply
       </button>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -234,7 +240,7 @@ function askToDelete(){
   padding-right: 10px;
   margin: 5px;
   width: 30vw;
-  min-height: 7vh;
+  min-height: 9vh;
   max-height: 45vh;
   box-sizing: border-box;
 }
@@ -250,7 +256,7 @@ function askToDelete(){
   max-height: 40vh;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: 96% auto;
+  grid-template-columns: 96% 4%;
 }
 
 .reply-grid-main-container {
@@ -260,6 +266,7 @@ function askToDelete(){
 
 .shrink-container {
   min-width: 10px;
+  /* border-right: 1px solid slategray; */
 }
 
 .comment-grid-main-container {
@@ -273,6 +280,7 @@ function askToDelete(){
   justify-content: space-between;
   margin-right: 5px;
   margin-left: 5px;
+  margin-bottom: 2px;
   border-bottom: 1px solid #ffa941;
   align-items: center;
   max-width: 29vw;
@@ -286,11 +294,30 @@ function askToDelete(){
 .comment-text-container {
   color: black;
   margin-left: 5px;
-  min-height: 3vh;
-  max-height: 20vh;
+  min-height: 4vh;
+  max-height: 15vh;
   max-width: 29vw;
   min-width: 25vw;
   border-radius: 5px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  overflow-x: hidden;
+  padding-right: 7px;
+}
+
+.comment-text-container::-webkit-scrollbar{
+  display: none;
+}
+
+.comment-text-container:hover::-webkit-scrollbar{
+  display: block;
+  width: 5px;
+}
+
+.comment-text-container::-webkit-scrollbar-thumb{
+  background-color: #ffa941;
+  border-radius: 5px;
+  /* border: 1px solid slategray; */
 }
 
 .footer-container {
@@ -356,7 +383,7 @@ button:hover {
   resize: none;
   min-height: 4vh;
   max-width: 28vw;
-  border: 1px solid rgba(0, 4, 8, 0.537);
+  border: 1px solid rgb(0, 0, 0);
   border-radius: 3px;
 }
 
@@ -372,11 +399,18 @@ button:hover {
 }
 
 #postButton {
-  margin-top: 5px;
   margin-bottom: 10px;
   align-self: flex-end;
   background-color: white;
   border: 1px solid #6d3d02;
   border-radius: 3px;
+  height: 30px;
 }
+
+.chars{
+  text-align: center;
+  display: grid;
+  grid-template-columns:20% 60% 20%;
+}
+
 </style>

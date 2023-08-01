@@ -35,7 +35,11 @@ async function postUser(username, email) {
       method: "POST",
     }
   );
+  
   const json = await response.json();
+  if(!response.ok) {
+    throw new Error(json.message);
+  }
   return json;
 }
 
@@ -156,14 +160,12 @@ async function sendDeactivateEmail(usernameOrEmail) {
   });
 }
 
-// @TODO : Add a function to store that into local storage when login in
-
 function getCurrentUsername() {
     return sessionStorage.getItem('username');
 }
 
 function getCurrentRole() {
-    return sessionStorage.getItem('role');
+  return sessionStorage.getItem('role');
 }
 
 function logout() {

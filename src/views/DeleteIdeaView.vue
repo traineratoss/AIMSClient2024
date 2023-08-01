@@ -50,7 +50,6 @@ const category = ref("category1");
 const ideaText = ref("");
 
 function deleteIdea() {
-  
   router.push("/all"); 
 }
 </script>

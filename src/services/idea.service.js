@@ -127,20 +127,20 @@ async function filterIdeas(
   return data;
 }
 
-async function createIdea(title, status, text, categoryList, username) {
-  const response = await fetch(API_URL + "/createIdea?username=" + username, {
+async function createIdea(title, status, text, categoryList, image, username) {
+  const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     body: JSON.stringify({
       title: title,
       status: status,
       text: text,
+      image: image,
       categoryList: categoryList,
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
-
   const data = await response.json();
   const content = await data.content;
 }
@@ -154,12 +154,13 @@ async function addImage(imageData){
     }
   });
   const data = await response.json();
+  return data;
 }
 
 async function getImage() {
   const response = await fetch(`http://localhost:8080/images`);
-  const json = await response.json();
-  return json;
+  const data = await response.json();
+  return data;
 }
 
 async function getPagedIdeasFromUser(

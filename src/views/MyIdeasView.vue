@@ -72,46 +72,6 @@ async function changePage(pageNumber) {
   currentPage.value = pageNumber;
 }
 
-const totalComments = computed(() => {
-  let total = 0;
-  for (const idea of ideas.value) {
-    total += idea.comments || 0;
-  }
-  return total;
-});
-
-const totalReplies = computed(() => {
-  let total = 0;
-  for (const idea in ideas.value) {
-    total += idea.replies || 0;
-  }
-  return total;
-});
-
-const publicIdeasCount = computed(() => {
-  let count = 0;
-  for (const idea of ideas.value) {
-    if (idea.isPublic) {
-      count++;
-    }
-  }
-  return count;
-});
-
-const ideasPerUser = computed(() => {
-  const users = new Set(ideas.value.map((idea) => idea.userId));
-  if (users.size != 0) {
-    return (totalPages.value * ideasPerPage) / users.size;
-  } else {
-   
-    return 0;
-  }
-});
-
-const roundedNumber = (number) => {
-  return Math.round(number * 100) / 100;
-};
-
 function goToPage(pageNumber) {
   currentPage.value = pageNumber;
 }
@@ -168,7 +128,7 @@ async function updateSortOrder() {
 // here, the filtering happens
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.total / ideasPerPage); // the total nr of pages after filtering needs to be updated
-
+  console.log(currentUsername)
   if (currentPage.value > totalPages.value){ // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
     // we have to filter each time with each page to get our good ideas
@@ -242,9 +202,6 @@ inputTitle.value = inputTitleParam;
       <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="currentUsername" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
     </div>
     <div class="main-container">
-
-        
-      
       <div class="sort-container" style="text-align: right">
         <label for="sortOrder">Sort by: </label>
         <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
@@ -253,29 +210,36 @@ inputTitle.value = inputTitleParam;
         </select>
       </div>
 
-
+      <div class="middle-container">
         <div class="ideas-transition-container">
-        <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item">
-          <IdeaCard
-            :title="idea.title"
-            :text="idea.text"
-            :status="idea.status"
-            :user="idea.username"
-            :ideaId="idea.id"
-          />
+          <div
+            v-for="idea in ideas"
+            :key="idea.id"
+            class="idea-transition-item"
+          >
+            <IdeaCard
+              :title="idea.title"
+              :text="idea.text"
+              :status="idea.status"
+              :username="idea.username"
+              :ideaId="idea.id"
+            />
+          </div>
+          <div v-if="ideas.length === 0" class="no-ideas-message">
+            No ideas found
+            <br />
+            <span class="material-symbols-outlined">search_off</span>
+          </div>
         </div>
-        <div v-if="ideas.length === 0" class="no-ideas-message">
-          No ideas found
-          <br />
-          <span class="material-symbols-outlined">search_off</span>
-        </div>
-
       </div>
 
       <div v-if="ideas.length > 0" class="pagination-container">
-          <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
-        </div>
-  
+        <Pagination
+          :totalPages="totalPages"
+          :currentPage="currentPage"
+          @changePage="changePage"
+        />
+      </div>
     </div>
   </div>
 </template>

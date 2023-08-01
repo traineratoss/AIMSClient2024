@@ -1,6 +1,10 @@
 <script setup>
 import CustomButton from "../components/CustomButton.vue";
 import CustomButtonGray from "../components/CustomButtonGray.vue";
+import CustomInput from "./CustomInput.vue";
+import { ref } from "vue";
+
+const username = ref("");
 </script>
 
 
@@ -14,7 +18,7 @@ import CustomButtonGray from "../components/CustomButtonGray.vue";
       <h1>Filter by:</h1>
       <div class="input-filter">
         <label for="name">Name: </label>
-        <input type="text" id="name" />
+        <CustomInput type="text" id="username" />
       </div>
       <CustomButton class="btn" id="filter-btn">Filter</CustomButton>
     </div>
@@ -28,7 +32,6 @@ import CustomButtonGray from "../components/CustomButtonGray.vue";
 
   background-color: var(--sidebar-color);
   border: 1px solid black;
-
 }
 
 .btn {

@@ -16,12 +16,13 @@ const props = defineProps({
   status: "",
   username: "",
   ideaId: "",
-  numberOfComments: "",
 });
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
   loadIdeaComments();
+  console.log(comments.value);
+  sendNumberOfComments();
 });
 
 const comments = ref([]);
@@ -32,6 +33,7 @@ const buttonSelected = ref(false);
 const postToggle = ref(false);
 const commentReplies = ref([]);
 const isSelected = ref(false);
+const maxlength = 500;
 
 async function loadIdeaComments() {
   const loadedComments = await loadComments(100, 0, "id", props.ideaId);
@@ -222,7 +224,6 @@ function selectIdea() {
           v-bind:style="
             isSelected
               ? {
-                  'pointer-events': 'none',
                   'background-color': '#ffa941',
                   'animation-play-state': 'paused',
                 }
@@ -233,10 +234,19 @@ function selectIdea() {
           <div class="top-container">
             <div class="left-container">
               <div class="left-container-title">
-                Title: {{ getShortenedTitle(title, 25) }}
+                {{ getShortenedTitle(title, 25) }}
               </div>
+              <div class="status">
+                  {{ props.status }}
+                </div>
               <div class="left-container-text">
-                Text: {{ getShortenedText(text) }}
+                <div class="text" v-if="isSelected">
+                  {{ getShortenedText(props.text, 35, 3) }}
+                </div>
+                <div class="text" v-else>
+                  {{ getShortenedText(props.text, 10, 6) }}
+                </div>
+                
               </div>
               <div class="left-container-buttons">
                 <Transition>
@@ -271,9 +281,11 @@ function selectIdea() {
                 />
               </div>
               <div class="right-container-status">
-                {{ props.numberOfComments }}
-                {{ props.status }}
-                {{ props.username }}
+                <div class="number-of-comments">
+                  {{ comments.length }}
+                  <span class="material-symbols-outlined"> comment </span>
+                </div>
+                <div class="author"><i> by </i>{{ props.username }}</div>
               </div>
             </div>
           </div>
@@ -281,7 +293,7 @@ function selectIdea() {
             <div class="bottom-container-left"></div>
             <div class="bottom-container-center">
               <Transition>
-                <div v-if="props.numberOfComments != 0 && isSelected">
+                <div v-if="comments.length > 0 && isSelected">
                   <button
                     @click.stop="
                       loadIdeaComments();
@@ -338,17 +350,30 @@ function selectIdea() {
     </div>
     <div v-if="postToggle" class="comment-input-wrapper">
       <div class="comment-input-container">
-        <textarea id="comment-input-textarea" v-model="commentText"> </textarea>
-      </div>
-      <div class="comment-input-bottom">
-        <button
-          @click.stop="
-            postCommentDynamic(currentUser.username, props.ideaId, commentText);
-            postToggle = !postToggle;
-          "
+        <textarea
+          id="comment-input-textarea"
+          v-model="commentText"
+          :maxlength="maxlength"
+          placeholder="  Write your comment here .."
         >
-          Post!
-        </button>
+        </textarea>
+      </div>
+
+      <div class="comment-input-bottom">
+        <div class="chars">
+          <div></div>
+          <p>{{ commentText.length }} / 500</p>
+          <button
+            id="post-button"
+            @click.stop="
+              postCommentDynamic(currentUser, props.ideaId, commentText);
+              postToggle = !postToggle;
+              buttonSelected = !buttonSelected;
+            "
+          >
+            Post comment
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -362,7 +387,7 @@ function selectIdea() {
         :isReply="false"
         :commentId="comment.id"
         :text="comment.commentText"
-        :userName="comment.username"
+        :username="comment.username"
         :hasReplies="comment.hasReplies"
         :expanded="comment.expanded"
         :parentId="comment.id"
@@ -384,7 +409,7 @@ function selectIdea() {
             :isReply="true"
             :replyId="reply.id"
             :text="reply.commentText"
-            :userName="reply.username"
+            :username="reply.username"
             @deleteReply="deleteReplyDynamic"
           />
         </div>
@@ -413,6 +438,8 @@ function selectIdea() {
   position: relative;
   overflow: hidden;
   background-color: white;
+  cursor: pointer;
+  user-select: none;
 }
 /*
    I know it might be repetitive but at the moment
@@ -420,13 +447,12 @@ function selectIdea() {
   i suspect that you can exclude a specific class from beeing hovered over
 */
 
-.wrapper:hover .border {
+.wrapper:hover:not(.selected-class) .border {
   background-color: #ffa941;
   animation: 1s normalState;
 }
 
 .selected-class {
-  pointer-events: none;
   border: 1px solid black;
 }
 
@@ -497,7 +523,7 @@ function selectIdea() {
 
 .left-container {
   display: grid;
-  grid-template-rows: 20% auto 30px;
+  grid-template-rows: 20% 30px auto;
 }
 
 .left-container-title {
@@ -508,7 +534,6 @@ function selectIdea() {
 }
 
 .left-container-text {
-  margin-top: 1vh;
   margin-left: 3px;
 }
 
@@ -525,20 +550,26 @@ function selectIdea() {
 }
 .right-container {
   display: grid;
-  grid-template-rows: 30px 40% 40%;
-  max-height: 20vh;
+  grid-template-rows: 10% 60% 30%;
+
 }
 .right-container-image {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #ffa941;
+
 }
 
 .right-container-status {
-  border-left: 1px solid #ffa941;
+margin-left: 10px;
 }
 
+.status{
+  margin-left: 5px;
+}
+
+.number-of-comments {
+}
 .reply-container {
   display: flex;
   align-items: center;
@@ -632,9 +663,9 @@ function selectIdea() {
 }
 
 .comment-input-bottom {
-  text-align: end;
   width: 29vw;
 }
+
 #view-replies-button {
   pointer-events: all;
   background-color: white;
@@ -678,6 +709,15 @@ button:hover {
   margin-right: 10px;
 }
 
+#post-button {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #6d3d02;
+  border-radius: 3px;
+  height: 30px;
+}
+
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -686,5 +726,15 @@ button:hover {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+}
+
+.chars {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
 }
 </style>

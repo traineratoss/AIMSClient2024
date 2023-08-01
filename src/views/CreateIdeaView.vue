@@ -4,12 +4,13 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { createIdea,addImage } from "../services/idea.service";
+import { createIdea,addImage, getImage } from "../services/idea.service";
 import { watch, ref, onMounted } from "vue";
 import {  useRoute } from "vue-router";
 import router from "../router";
 import { getCategory, getUser } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
+
 
 
 const inputValue = ref("");
@@ -21,22 +22,16 @@ const titleError = ref(false);
 const statusError = ref(false);
 const textError = ref(false);
 const categoryError = ref(false);
-const slideImages = [
-    'https://imageio.forbes.com/specials-images/imageserve/5f85be4ed0acaafe77436710/0x0.jpg?format=jpg&width=1200',
-    'https://th-thumbnailer.cdn-si-edu.com/XJFrDNlNhvtv1uH-U6FKdBJ_U2U=/1000x750/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/04/8e/048ed839-a581-48af-a0ae-fac6fec00948/gettyimages-168346757_web.jpg',
-    'https://www.freecodecamp.org/news/content/images/2022/12/main-image.png',
-    'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/blogs/34246/images/i9SaP0vNQZWCZNsLaVhr_Hobby.jpg'
-];
+
 const currentUsername= getCurrentUsername();
+const slideImages = ref({});
 
-
-watch(categoriesSelected, (newValue) => {
-  console.log("Selected categories changed. New value:", newValue);
-});
+const currentImageIndex = ref(null);
 
 const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
 };
+
 
 onMounted(async() => {
   categoriesSelected.value = [];
@@ -44,8 +39,20 @@ onMounted(async() => {
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
-  console.log(categoryOptions.value);
-})
+
+  slideImages.value = [];
+  const dataImage = await getImage();
+  const imageUrls = dataImage.map(item => {
+    return `data:image/${item.fileType};base64,${item.base64Image}`;
+  });
+  slideImages.value = imageUrls;
+  console.log(imageUrls);
+  
+});
+
+const getCurrentIndex = (currentIndex) => {
+  currentImageIndex.value = currentIndex;
+};
 
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
@@ -75,10 +82,13 @@ async function createIdeaFunction() {
       statusValue.value.toUpperCase(),
       textValue.value,
       categoryTexts,
+      slideImages.value[currentImageIndex.value],
       currentUsername
     );
+    console.log(data)
     return data;
   }
+
 }
 const disableFields = useRoute().query.disableFields === 'true';
 const fieldsDisabled = ref(disableFields);
@@ -114,6 +124,14 @@ function clickImageButton(){
 
 }
 
+function onMouseLeave() {
+
+}
+
+function onMouseEnter() {
+
+}
+
 
 </script>
 
@@ -124,13 +142,22 @@ function clickImageButton(){
             <CustomInput 
             v-model="inputValue" 
             :disabled="fieldsDisabled" 
-            :placeholder="titleError ? 'Select a title' : ''"
+            placeholder="Write your title here..."
             :error="titleError" 
+            class="input-width" 
             />   
         </div>
         <div class="idea">
-         <label for="status-idea" class="label">Status:</label>
-            <select v-model="statusValue" :class="{status:statusError}" name="status-idea" id="status-idea" class="input-width" :disabled="fieldsDisabled">
+         <label for="status-idea" class="label" @mouseleave="onMouseLeave" @mouseenter="onMouseEnter" >Status:</label>
+            <select 
+              v-model="statusValue" 
+              :class="{status:statusError}"
+              @mouseenter="onMouseEnter" 
+              @mouseleave="onMouseLeave" name="status-idea" 
+              id="status-idea" 
+              class="input-width" 
+              :disabled="fieldsDisabled"
+            >
                 <option value="open">Open</option>
                 <option value="draft">Draft</option>
             </select> 
@@ -144,6 +171,7 @@ function clickImageButton(){
              :variants="categoryOptions"
              :error="categoryError"
              :canAddInDropdown="true"
+             class="input-width" 
              >
             </CustomDropDown>
         </div>
@@ -153,22 +181,22 @@ function clickImageButton(){
             <textarea 
             v-model="textValue" 
             :disabled="fieldsDisabled" 
-            :placeholder="textError ? 'Select a text' : ''" 
+            placeholder="Write your text here..." 
             :class="{textarea:textError}"></textarea>
         </div>
         <div class="idea">
-             <CarouselImage :images="slideImages"/>
+          <CarouselImage :images="slideImages" @current-index="getCurrentIndex" />
         </div>
         <div class="add-image" >
             <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="fileUpload" @change="onImageUpload"/>
-            <label   for="upload" class="add-image-idea" v-if="!deletePopup">Choose Image</label>
+            <label   for="upload" class="add-image-idea" v-if="!deletePopup">Upload Image</label>
         </div>
         <div>
             <CustomButton id="create-idea"  @click="createIdeaFunction"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Idea</CustomButton>
         </div>
-        <div>
+        <!-- <div>
             <CustomButton id="create-idea"  @click="clickImageButton"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Image</CustomButton>
-        </div>
+        </div> -->
         <CustomDialog 
         ref="customDialog" 
         :open="deletePopup" 
@@ -198,19 +226,6 @@ function clickImageButton(){
     
 }
 
-.status {
-  border-color: red;
-  border-radius: 1px;
-}
-
-.textarea::placeholder {
-  color: red;
-}
-
-.textarea {
-  border-color: red;
-  border-radius: 1px;
-}
 .add-image-idea{
     background-color: gray;
     color: white;

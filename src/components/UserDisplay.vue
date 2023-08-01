@@ -41,6 +41,7 @@ function approveUser() {
   sendApproveEmail(props.name)
     .then((res) => {
       emit("approve-user", props.name);
+      role.value = "STANDARD";
     })
     .catch((error) => {
       console.log("Error!", error);
@@ -80,8 +81,8 @@ function changeRole() {
       <button v-if="!hasPassword && !isActive" @click="declineUser">
         Decline
       </button>
-      <select v-model="role" @change="changeRole">
-        <option selected>{{ userRole }}</option>
+      <select v-model="role" @change="changeRole" v-if="hasPassword">
+        <option selected>{{ userRole == "" ? "STANDARD" : userRole }}</option>
         <option value="STANDARD" v-if="userRole != 'STANDARD'">STANDARD</option>
         <option value="ADMIN" v-if="userRole != 'ADMIN'">ADMIN</option>
       </select>
