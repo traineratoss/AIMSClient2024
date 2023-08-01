@@ -52,10 +52,14 @@ function signUp() {
             showErrorMessage.value = false;
           })
           .catch((error) => {
+            if(error.message === 'Server connection error') {
+              message.value = error.message;
+            } else {
+              message.value = "Userame or email already exists";
+            }
             buttonDisabled.value = false;
             usernameText.value = "";
             emailText.value = "";
-            message.value = "Userame or email already exists";
             showErrorMessage.value = true;
           });
       }

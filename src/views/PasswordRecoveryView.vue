@@ -8,15 +8,21 @@ import InvalidInputMessage from '../components/InvalidInputMessage.vue';
 
 const usernameOrEmailText = ref('');
 const showErrorMessage = ref(false);
+const errorMessage = ref('');
 
 function requestNewPassword() {
   if(usernameOrEmailText.value) {
     sendNewPassword(usernameOrEmailText.value)
       .then(res => {
-        router.push('/password-changed');
+        router.push('/login');
+      })
+      .catch(error => {
+        showErrorMessage.value = true;
+        errorMessage.value = error.message;
       });
   } else {
     showErrorMessage.value = true;
+    errorMessage.value = 'The field must not be empty';
   }
 }
 </script>
@@ -34,7 +40,7 @@ function requestNewPassword() {
       </span>
     </div>
     <InvalidInputMessage 
-      message="The field must not be empty"
+      :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
     <div>

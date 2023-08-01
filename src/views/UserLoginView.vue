@@ -11,6 +11,7 @@ import bcrypt from "bcryptjs";
 const usernameOrEmailText = ref("");
 const passwordText = ref("");
 const showErrorMessage = ref(false);
+const errorMessage = ref('');
 
 function redirectToRegister() {
   router.push("/register/false");
@@ -30,9 +31,11 @@ async function login() {
         usernameOrEmailText.value = "";
         passwordText.value = "";
         showErrorMessage.value = true;
+        errorMessage.value = error.message;
       });
   } else {
     showErrorMessage.value = true;
+    errorMessage.value = 'The fields must not be empty'
   }
 }
 </script>
@@ -45,7 +48,7 @@ async function login() {
       <span class="material-symbols-outlined"> account_circle </span>
     </div>
     <InvalidInputMessage
-      message="Incorrect username or password"
+      :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
     <div>
