@@ -162,6 +162,6 @@ function onMouseLeave() {
 }
 
 .input-dropdown {
-  width: 192px;
+  width: 10vw;
 }
 </style>

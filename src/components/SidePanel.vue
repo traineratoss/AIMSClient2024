@@ -167,6 +167,7 @@ const filter = async () => {
 
 .side-panel-container {
   margin-top: 1vh; 
+  width: 20vw;
 }
 .date-input {
   display: grid;
@@ -201,6 +202,9 @@ const filter = async () => {
   grid-gap: 20px;
   font-size: 20;
   font-weight: bold;
+  margin-left: 1vw;
+  margin-right: 1vw;
+  width: 20vw;
 }
 .filterby {
   grid-column: 1/2;
@@ -228,21 +232,24 @@ const filter = async () => {
   grid-row: 6/7;
 }
 .title-input {
-  grid-column: 2/3;
+  grid-column: 2/4;
   grid-row: 2/3;
+  width: 10vw;
 }
 .text-input {
-  grid-column: 2/3;
+  grid-column: 2/4;
   grid-row: 3/4;
   z-index: 5;
+  width: 10vw;
 }
 .status-select {
-  grid-column: 2/3;
+  grid-column: 2/4;
   grid-row: 4/5;
   z-index: 6;
+  width: 10vw;
 }
 .category-select {
-  grid-column: 2/3;
+  grid-column: 2/4;
   grid-row: 5/6;
   z-index: 5;
 }
