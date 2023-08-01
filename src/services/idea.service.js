@@ -127,6 +127,23 @@ async function filterIdeas(
   return data;
 }
 
+async function getIdea(id) {
+  const response = await fetch(API_URL + "/get?id=" + id, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  });
+  const data = await response.json();
+  console.log(data);
+  return data;
+}
+
 async function createIdea(title, status, text, categoryList, image, username) {
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
@@ -211,5 +228,6 @@ export {
   getImage,
   filterIdeas,
   addImage,
-  getPagedIdeasFromUser
+  getPagedIdeasFromUser,
+  getIdea
 };

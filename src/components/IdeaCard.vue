@@ -9,6 +9,7 @@ import {
   postReply,
 } from "../services/comment.service";
 import { getCurrentUsername } from "../services/user_service";
+import { getIdea } from "../services/idea.service"
 
 const props = defineProps({
   title: "",
@@ -34,6 +35,13 @@ const postToggle = ref(false);
 const commentReplies = ref([]);
 const isSelected = ref(false);
 const maxlength = 500;
+
+async function editIdea() {
+  const data = await getIdea(props.ideaId);
+  if (getCurrentUsername() === data.username) {
+    router.push("/create-idea")
+  }
+}
 
 async function loadIdeaComments() {
   const loadedComments = await loadComments(100, 0, "id", props.ideaId);
