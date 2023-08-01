@@ -199,7 +199,7 @@ async function getPagedIdeasFromUser(
     pageNumber = 0;
   }
   
-  let url = `${API_URL}/allByUser?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}&username=${username}&sortCategory=date`;
+  let url = `${API_URL}/allByUser?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}&username=${username}&sortCategory=creationDate`;
 
   console.log(url)
 
