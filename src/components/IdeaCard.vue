@@ -9,6 +9,7 @@ import {
   postReply,
 } from "../services/comment.service";
 import { getCurrentUsername } from "../services/user_service";
+import { getIdea } from "../services/idea.service"
 
 const props = defineProps({
   title: "",
@@ -16,6 +17,8 @@ const props = defineProps({
   status: "",
   username: "",
   ideaId: "",
+  commentsNumber:"",
+  elapsedTime: ""
 });
 
 onMounted(async () => {
@@ -33,10 +36,17 @@ const buttonSelected = ref(false);
 const postToggle = ref(false);
 const commentReplies = ref([]);
 const isSelected = ref(false);
-const maxlength = 500;
+const maxCommentLength = 500;
+
+async function editIdea() {
+  const data = await getIdea(props.ideaId);
+  if (getCurrentUsername() === data.username) {
+    router.push("/create-idea")
+  }
+}
 
 async function loadIdeaComments() {
-  const loadedComments = await loadComments(100, 0, "id", props.ideaId);
+  const loadedComments = await loadComments(maxCommentLength, 0, "id", props.ideaId);
   comments.value = loadedComments.map((comment) => ({
     ...comment,
     expanded: false,
@@ -193,10 +203,13 @@ function getShortenedText(text, maxLength, maxRows) {
 
   for (let i = 0; i < maxRows; i++) {
     const startIndex = i * maxLength;
-    const rowText = text.substring(startIndex, startIndex + maxLength);
+    const rowText = text.substr(startIndex, maxLength);
 
-    if (rowText.length === 0) {
-      break;
+    if (i === 0) {
+      shortenedText += rowText + "\n"; // First row, no need to add spaces
+    } else {
+      const paddedRowText = rowText.padStart(rowText.length + 6, " ");
+      shortenedText += paddedRowText + "\n";
     }
 
     shortenedText += (i === 0 ? "" : "\n") + rowText.trim();
@@ -239,9 +252,11 @@ function selectIdea() {
               <div class="left-container-title">
                 <div class="text" v-if="isSelected">
                   {{ getShortenedTitle(title, 100) }}
+                  {{ props.elapsedTime }}
                 </div>
                 <div class="text" v-else>
                   {{ getShortenedTitle(title, 50) }}
+                  {{ props.elapsedTime }}
                 </div>
               </div>
               <div class="status">
@@ -249,11 +264,12 @@ function selectIdea() {
               </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ getShortenedText(props.text, 500, 3) }}
+                  {{ getShortenedText(props.text, 35, 3) }}
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedText(props.text, 50, 3) }}
+                  {{ getShortenedText(props.text, 10, 6) }}
                 </div>
+                
               </div>
               <div class="left-container-buttons">
                 <Transition>
@@ -289,10 +305,11 @@ function selectIdea() {
               </div>
               <div class="right-container-status">
                 <div class="number-of-comments">
-                  {{ comments.length }}
+                  {{ props.commentsNumber }}
                   <span class="material-symbols-outlined"> comment </span>
                 </div>
                 <div class="author"><i> by </i>{{ props.username }}</div>
+                
               </div>
             </div>
           </div>
@@ -360,7 +377,7 @@ function selectIdea() {
         <textarea
           id="comment-input-textarea"
           v-model="commentText"
-          :maxlength="maxlength"
+          :maxlength="maxCommentLength"
           placeholder="  Write your comment here .."
         >
         </textarea>

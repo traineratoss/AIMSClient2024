@@ -9,7 +9,7 @@ import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import { useRoute } from "vue-router";
 
-const acceptedTermsAndConditions = ref(useRoute().params.accepted == 'true');
+const acceptedTermsAndConditions = ref(useRoute().params.accepted == "true");
 const usernameText = ref("");
 const emailText = ref("");
 const showErrorMessage = ref(false);
@@ -17,19 +17,19 @@ const message = ref("");
 const buttonDisabled = ref(false);
 
 router.beforeEach((to, from) => {
-  if(from.name === 'register' && to.name === 'terms') {
-    sessionStorage.setItem('username', usernameText.value);
-    sessionStorage.setItem('email', emailText.value);
+  if (from.name === "register" && to.name === "terms") {
+    sessionStorage.setItem("username", usernameText.value);
+    sessionStorage.setItem("email", emailText.value);
   }
 });
 
 onMounted(() => {
-  if(sessionStorage.getItem('username') && sessionStorage.getItem('email')) {
-    usernameText.value = sessionStorage.getItem('username');
-    emailText.value = sessionStorage.getItem('email');
+  if (sessionStorage.getItem("username") && sessionStorage.getItem("email")) {
+    usernameText.value = sessionStorage.getItem("username");
+    emailText.value = sessionStorage.getItem("email");
 
-    sessionStorage.removeItem('username');
-    sessionStorage.removeItem('email');
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("email");
   }
 });
 
@@ -81,9 +81,7 @@ function validateEmail(mail) {
     <CompanyLogo />
     <div class="register">
       <FormTitle label="Register" />
-      <span class="material-symbols-outlined">
-        account_circle
-      </span>
+      <span class="material-symbols-outlined"> account_circle </span>
       <InvalidInputMessage
         :message="message"
         :class="{ 'error-message-visible': showErrorMessage }"
@@ -102,6 +100,7 @@ function validateEmail(mail) {
             type="email"
             id="email"
             placeholder="E-mail"
+            @keydown.enter="signUp"
             v-model:model-value="emailText"
           />
         </label>
@@ -114,9 +113,9 @@ function validateEmail(mail) {
         />
         <router-link to="/terms"> Agree Terms & Conditions </router-link>
       </label>
-      <CustomButton 
-        id="sign-up" 
-        class="sign-up-button" 
+      <CustomButton
+        id="sign-up"
+        class="sign-up-button"
         @click="signUp"
         :disabled="buttonDisabled"
       >

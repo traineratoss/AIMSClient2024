@@ -1,63 +1,77 @@
 <script setup>
 import CompanyLogo from "../components/CompanyLogo.vue";
-import CustomInput from '../components/CustomInput.vue';
-import { ref } from 'vue';
-import { changePassword, getCurrentUsername, logout } from "../services/user_service";
+import CustomInput from "../components/CustomInput.vue";
+import { ref } from "vue";
+import {
+  changePassword,
+  getCurrentUsername,
+  logout,
+} from "../services/user_service";
 import router from "../router";
-import InvalidInputMessage from '../components/InvalidInputMessage.vue';
+import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 
-const oldPasswordText = ref('');
-const newPasswordText = ref('');
-const confirmNewPassword = ref('');
+const oldPasswordText = ref("");
+const newPasswordText = ref("");
+const confirmNewPassword = ref("");
 const showErrorMessage = ref(false);
-const errorMessage = ref('');
+const errorMessage = ref("");
 
 function submit() {
-  if(oldPasswordText.value && newPasswordText.value && confirmNewPassword.value) {
-    if(newPasswordText.value === confirmNewPassword.value) {
+  if (
+    oldPasswordText.value &&
+    newPasswordText.value &&
+    confirmNewPassword.value
+  ) {
+    if (newPasswordText.value === confirmNewPassword.value) {
       let passwordFormatOK = true;
       const upperCaseRegex = /[A-Z]/;
       const specialCharacterRegex = /[#$^&*_@]/;
 
-      if(newPasswordText.value.length < 8) {
-        errorMessage.value = 'The new password must contain at least 8 characters';
+      if (newPasswordText.value.length < 8) {
+        errorMessage.value =
+          "The new password must contain at least 8 characters";
         showErrorMessage.value = true;
         passwordFormatOK = false;
       }
 
-      if(!upperCaseRegex.test(newPasswordText.value) && passwordFormatOK) {
-        errorMessage.value = 'The new password must contain at least one uppercase character';
+      if (!upperCaseRegex.test(newPasswordText.value) && passwordFormatOK) {
+        errorMessage.value =
+          "The new password must contain at least one uppercase character";
         showErrorMessage.value = true;
         passwordFormatOK = false;
       }
 
-      if(!specialCharacterRegex.test(newPasswordText.value) && passwordFormatOK) {
-        errorMessage.value = 'The new password must contain at least one special character(#$^&*_@)';
+      if (
+        !specialCharacterRegex.test(newPasswordText.value) &&
+        passwordFormatOK
+      ) {
+        errorMessage.value =
+          "The new password must contain at least one special character(#$^&*_@)";
         showErrorMessage.value = true;
         passwordFormatOK = false;
       }
 
-      if(passwordFormatOK) {
+      if (passwordFormatOK) {
         changePassword({
           username: getCurrentUsername(),
           oldPassword: oldPasswordText.value,
-          newPassword: newPasswordText.value
+          newPassword: newPasswordText.value,
         })
-          .then(res => {
+          .then((res) => {
             logout();
-            router.push('/login');
+            router.push("/login");
           })
-          .catch(error => {
-            errorMessage.value = 'Old password is incorrect';
+          .catch((error) => {
+            errorMessage.value = "Old password is incorrect";
             showErrorMessage.value = true;
           });
       }
     } else {
-      errorMessage.value = 'Passwords are not equal';
+      errorMessage.value = "Passwords are not equal";
       showErrorMessage.value = true;
     }
   } else {
-    errorMessage.value = 'All fields must be completed';
+    errorMessage.value = "All fields must be completed";
     showErrorMessage.value = true;
   }
 }
@@ -72,11 +86,9 @@ function submit() {
     </h1>
     <div id="profile-img">
       <!-- TODO: Show current logged user avatar here -->
-      <span class="material-symbols-outlined">
-        account_circle
-      </span>
+      <span class="material-symbols-outlined"> account_circle </span>
     </div>
-    <InvalidInputMessage 
+    <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
@@ -102,16 +114,12 @@ function submit() {
         id="current-password-input"
         placeholder="Confirm new password"
         v-model:model-value="confirmNewPassword"
+        @keydown.enter="submit"
       />
     </div>
     <div id="controls-container">
       <router-link to="/my-profile" id="cancel"> Cancel </router-link>
-      <button 
-        id="submit"
-        @click="submit"
-      >
-        Submit
-      </button>
+      <button id="submit" @click="submit">Submit</button>
     </div>
   </div>
 </template>

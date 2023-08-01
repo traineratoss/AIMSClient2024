@@ -2,14 +2,14 @@
 import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
-import { ref } from 'vue';
+import { ref } from "vue";
 import { loginUser } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
-import InvalidInputMessage from '../components/InvalidInputMessage.vue';
+import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import bcrypt from "bcryptjs";
 
-const usernameOrEmailText = ref('');
-const passwordText = ref('');
+const usernameOrEmailText = ref("");
+const passwordText = ref("");
 const showErrorMessage = ref(false);
 
 function redirectToRegister() {
@@ -17,16 +17,19 @@ function redirectToRegister() {
 }
 
 async function login() {
-  const hashPassword = await bcrypt.hash(passwordText.value, "$2a$10$QkRidA35ea0Fzm/ObrOEgO");
-  if(usernameOrEmailText.value && passwordText.value) {
+  const hashPassword = await bcrypt.hash(
+    passwordText.value,
+    "$2a$10$QkRidA35ea0Fzm/ObrOEgO"
+  );
+  if (usernameOrEmailText.value && passwordText.value) {
     loginUser(usernameOrEmailText.value, hashPassword)
-      .then(res => {
-        router.push('/my');
+      .then((res) => {
+        router.push("/my");
       })
-      .catch(error => {
-          usernameOrEmailText.value = '';
-          passwordText.value = '';
-          showErrorMessage.value = true;
+      .catch((error) => {
+        usernameOrEmailText.value = "";
+        passwordText.value = "";
+        showErrorMessage.value = true;
       });
   } else {
     showErrorMessage.value = true;
@@ -39,11 +42,9 @@ async function login() {
   <div class="container">
     <FormTitle label="Log In" />
     <div id="profile-img">
-      <span class="material-symbols-outlined">
-        account_circle
-      </span>
+      <span class="material-symbols-outlined"> account_circle </span>
     </div>
-    <InvalidInputMessage 
+    <InvalidInputMessage
       message="Incorrect username or password"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
@@ -56,20 +57,16 @@ async function login() {
       />
     </div>
     <div>
-      <CustomInput 
-        type="password" 
-        id="password-input" 
+      <CustomInput
+        type="password"
+        id="password-input"
         placeholder="Password"
+        @keydown.enter="login"
         v-model:model-value="passwordText"
       />
     </div>
     <div>
-      <button 
-        id="sign-in"
-        @click="login"
-      >
-        Sign in
-      </button>
+      <button id="sign-in" @click="login">Sign in</button>
     </div>
     <div id="forgot-password">
       <router-link to="/recovery"> Forgot password? </router-link>
