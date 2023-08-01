@@ -13,31 +13,54 @@ async function getUserByEmail(email) {
 }
 
 async function loginUser(username, hashPassword) {
-  const response = await fetch(`${API_URL}/login?username=${username}`, {
-    method: "POST",
-    body: hashPassword,
-  });
+  let connectionError = false;
+  let response;
+  try {
+    response = await fetch(`${API_URL}/login?username=${username}`, {
+        method: "POST",
+        body: hashPassword,
+    });
+  } catch (error) {
+    connectionError = true;
+  }
+
+  if(connectionError) {
+    throw new Error('Server connection error');
+  }  
+
 
   const json = await response.json();
   if(!response.ok) {
-    throw new Error(json.message);
+      throw new Error('Invalid username or password');
   } else {
     /* sessionStorage.setItem('username', json.username);
     sessionStorage.setItem('role', json.role); */
-
     localStorage.setItem('username', json.username);
     localStorage.setItem('role', json.role);
+    localStorage.setItem('email', json.email);
+    localStorage.setItem('fullName', json.fullName);
+    localStorage.setItem('avatarId', json.avatarId);
   }
   return json;
 }
 
 async function postUser(username, email) {
-  const response = await fetch(
-    `${API_URL}?username=${username}&email=${email}`,
-    {
-      method: "POST",
-    }
-  );
+  let response;
+  let connectionError = false;
+  try {
+    response = await fetch(
+      `${API_URL}?username=${username}&email=${email}`,
+      {
+        method: "POST",
+      }
+    );
+  } catch (error) {
+    connectionError = true;
+  }
+
+  if(connectionError) {
+    throw new Error('Server connection error');
+  }
 
   const json = await response.json();
   if(!response.ok) {
@@ -123,10 +146,21 @@ async function changePassword(changePasswordDTO) {
 }
 
 async function sendNewPassword(usernameOrEmail) {
-  const response = await fetch(`${API_URL}/send-forgot-password`, {
-    method: "POST",
-    body: usernameOrEmail,
-  });
+  let response;
+  let connectionError = false;
+  try {
+    response = await fetch(`${API_URL}/send-forgot-password`, {
+      method: "POST",
+      body: usernameOrEmail,
+    });
+  } catch (error) {
+    connectionError = true;
+  }
+  
+  if(connectionError) {
+    throw new Error('Server connection error');
+  }
+
   const json = await response.json();
   return json;
 }
@@ -173,6 +207,18 @@ function getCurrentRole() {
   return localStorage.getItem('role');
 }
 
+function getCurrentEmail() {
+  return localStorage.getItem('email');
+}
+
+function getCurrentFullName() {
+  return localStorage.getItem('fullName');
+}
+
+function getCurrentAvatarId() {
+  return localStorage.getItem('avatarId');
+}
+
 function logout() {
     /* sessionStorage.clear('username');
     sessionStorage.clear('role'); */
@@ -200,4 +246,7 @@ export {
   sendDeactivateEmail,
   logout,
   getCurrentRole,
+  getCurrentEmail,
+  getCurrentFullName,
+  getCurrentAvatarId
 };

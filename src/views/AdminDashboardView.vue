@@ -5,7 +5,7 @@ import Pagination from "../components/Pagination.vue";
 import { getAllUsersForAdmin } from "../services/user_service.js";
 import { ref, onMounted } from "vue";
 
-const pageSize = 10;
+const pageSize = 5;
 const currentPage = ref(1);
 const totalPages = ref(0);
 const users = ref([]);
