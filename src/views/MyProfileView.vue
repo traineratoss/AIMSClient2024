@@ -5,12 +5,19 @@ import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
 import { ref, onMounted } from "vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
-import { getCurrentUsername, updateUser } from "../services/user_service";
+import { 
+  getCurrentUsername, 
+  updateUser, 
+  getCurrentEmail, 
+  getCurrentFullName, 
+  getCurrentAvatarId 
+} from "../services/user_service";
 import router from "../router";
 
 const usernameText = ref("");
 const fullNameText = ref("");
 const emailText = ref("");
+const avatarIdText = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
 
@@ -26,6 +33,9 @@ const slideImages = [
 
 onMounted(() => {
   usernameText.value = getCurrentUsername();
+  fullNameText.value = getCurrentFullName();
+  emailText.value = getCurrentEmail();
+  avatarIdText.value = getCurrentAvatarId() - 1;
 });
 
 function saveChanges() {
@@ -33,9 +43,9 @@ function saveChanges() {
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   let oldUsername = getCurrentUsername(); //this needs to be loaded from cookies
-  let oldEmail = 'aa@gmail.com'; //this needs to be loaded from cookies
-  let oldAvatarId; //this needs to be loaded from cookies
-  let oldFullname = 'mihai_vul2'; //this needs to be loaded from cookies
+  let oldEmail = getCurrentEmail(); //this needs to be loaded from cookies
+  let oldAvatarId = getCurrentAvatarId(); //this needs to be loaded from cookies
+  let oldFullname = getCurrentFullName(); //this needs to be loaded from cookies
 
   if(!emailRegex.test(emailText.value)) {
     errorMessage.value = 'Invalid email format';

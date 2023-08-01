@@ -24,9 +24,11 @@ async function loginUser(username, hashPassword) {
   } else {
     /* sessionStorage.setItem('username', json.username);
     sessionStorage.setItem('role', json.role); */
-
     localStorage.setItem('username', json.username);
     localStorage.setItem('role', json.role);
+    localStorage.setItem('email', json.email);
+    localStorage.setItem('fullName', json.fullName);
+    localStorage.setItem('avatarId', json.avatarId);
   }
   return json;
 }
@@ -173,6 +175,18 @@ function getCurrentRole() {
   return localStorage.getItem('role');
 }
 
+function getCurrentEmail() {
+  return localStorage.getItem('email');
+}
+
+function getCurrentFullName() {
+  return localStorage.getItem('fullName');
+}
+
+function getCurrentAvatarId() {
+  return localStorage.getItem('avatarId');
+}
+
 function logout() {
     /* sessionStorage.clear('username');
     sessionStorage.clear('role'); */
@@ -200,4 +214,7 @@ export {
   sendDeactivateEmail,
   logout,
   getCurrentRole,
+  getCurrentEmail,
+  getCurrentFullName,
+  getCurrentAvatarId
 };
