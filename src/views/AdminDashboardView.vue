@@ -5,12 +5,12 @@ import Pagination from "../components/Pagination.vue";
 import { getAllUsersForAdmin } from "../services/user_service.js";
 import { ref, onMounted } from "vue";
 
-const pageSize = 10;
+const pageSize = 5;
 const currentPage = ref(1);
 const users = ref([]);
 
 onMounted(() => {
-  getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
+  getAllUsersForAdmin(pageSize, currentPage.value - 1, "hasPassword")
     .then((res) => {
       users.value = res.pagedUsers.content;
     })
@@ -21,7 +21,7 @@ onMounted(() => {
 
 function changePage() {
   currentPage.value++;
-  getAllUsersForAdmin(pageSize, currentPage.value - 1, "username")
+  getAllUsersForAdmin(pageSize, currentPage.value - 1, "hasPassword")
     .then((res) => {
       users.value = res.content;
     })
