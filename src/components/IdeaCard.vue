@@ -193,13 +193,16 @@ function getShortenedText(text, maxLength, maxRows) {
 
   for (let i = 0; i < maxRows; i++) {
     const startIndex = i * maxLength;
-    const rowText = text.substr(startIndex, maxLength);
+    const rowText = text.substring(startIndex, startIndex + maxLength);
 
-    if (i === 0) {
-      shortenedText += rowText + "\n"; // First row, no need to add spaces
-    } else {
-      const paddedRowText = rowText.padStart(rowText.length + 6, " ");
-      shortenedText += paddedRowText + "\n";
+    if (rowText.length === 0) {
+      break;
+    }
+
+    shortenedText += (i === 0 ? "" : "\n") + rowText.trim();
+
+    if (shortenedText.length >= totalCharacters) {
+      break;
     }
   }
 
@@ -237,16 +240,15 @@ function selectIdea() {
                 {{ getShortenedTitle(title, 25) }}
               </div>
               <div class="status">
-                  {{ props.status }}
-                </div>
+                {{ props.status }}
+              </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ getShortenedText(props.text, 35, 3) }}
+                  {{ getShortenedText(props.text, 500, 3) }}
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedText(props.text, 10, 6) }}
+                  {{ getShortenedText(props.text, 50, 3) }}
                 </div>
-                
               </div>
               <div class="left-container-buttons">
                 <Transition>
@@ -551,20 +553,18 @@ function selectIdea() {
 .right-container {
   display: grid;
   grid-template-rows: 10% 60% 30%;
-
 }
 .right-container-image {
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 .right-container-status {
-margin-left: 10px;
+  margin-left: 10px;
 }
 
-.status{
+.status {
   margin-left: 5px;
 }
 
