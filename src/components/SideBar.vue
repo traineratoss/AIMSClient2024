@@ -82,15 +82,21 @@ function filterUsers() {
 
 #filter-btn {
   margin-left: 5.19vw;
+  margin-top: 5vh;
 }
 
 .input-filter {
   display: flex;
-  gap: 3vw;
+  align-items: center;
+  gap: 5vw;
 }
 
 input {
-  width: 5vw;
+  width: 10vw;
   border: 0.5 solid black;
+}
+
+label {
+  font-weight: bold;
 }
 </style>
