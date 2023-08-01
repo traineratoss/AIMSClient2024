@@ -2,7 +2,7 @@
 import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas,getStats } from "../services/idea.service";
+import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 
@@ -15,8 +15,6 @@ const loggedUser = ref("");
 const pageNumber = ref(1);
 const sortOrder = ref(0);
 const totalPages = ref(0);
-const stats = ref("")
-
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -53,8 +51,6 @@ onMounted(async () => {
   totalPages.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
   const totalNumberOfIdeas = data.total;
-  stats.value =await getStats();
-  console.log(stats.value);
 
   //STILL WORKING, ENED TO RETREIVE ALL THE IDEAS UNPAGED FROM THE SV
   //now, checking the nr of implemented ideas
@@ -283,49 +279,32 @@ const onPassInputVariables = (
         <div class="stats-container">
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>
-            <b>{{ stats.totalNrOfComments }}</b>
+            <!-- <p class="centered-number"><b>{{ totalComments }}</b></p> -->
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Total Replies:</b></p>
             <p class="centered-number">
-              <b>{{ stats.totalNrOfReplies }}</b>
+              <b>{{ totalReplies }}</b>
             </p>
           </div>
+          <div class="spacer"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
             <p class="centered-number">
-              <b>{{ stats.ideasPerUser }}</b>
+              <b>{{ roundedNumber(ideasPerUser) }}</b>
             </p>
           </div>
           <div class="spacer" style="height: 50px"></div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas</b></p>
             <p class="centered-number">
-              <b>{{ stats.nrOfIdeas }}</b>
+              <b>{{ publicIdeasCount }}</b>
             </p>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Implemented Ideas</b></p>
             <p class="centered-number">
-              <b>{{ stats.implementedIdeas }}</b>
-            </p>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Drafted Ideas</b></p>
-            <p class="centered-number">
-              <b>{{ stats.draftIdeas }}</b>
-            </p>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Open Ideas</b></p>
-            <p class="centered-number">
-              <b>{{ stats.openIdeas }}</b>
-            </p>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Implemented Ideas</b></p>
-            <p class="centered-number">
-              <b>{{ stats.implementedIdeas }}</b>
+              <b>{{ implementedIdeasCount }}</b>
             </p>
             <br />
             <div class="implementation-bar">
@@ -354,9 +333,11 @@ const onPassInputVariables = (
             />
           </div>
           <div v-if="ideas.length === 0" class="no-ideas-message">
-            No ideas found
+            <img 
+                src="../assets/img/curiosity-search.svg"
+            >
             <br />
-            <span class="material-symbols-outlined">search_off</span>
+            <span class="black-font">Your search returned no results</span>
           </div>
         </div>
       </div>
@@ -378,16 +359,24 @@ const onPassInputVariables = (
 }
 
 .ideas-transition-container {
+  margin-top: 10%;
   transition: opacity 0.5s;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  font-weight: normal;
 }
 
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
+}
+
+.black-font {
+  color: #000;
+  font-family: "Segoe UI","Lato",Arial,sans-serif;
+  font-weight: normal;
 }
 
 .fade-enter,

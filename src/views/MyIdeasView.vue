@@ -226,9 +226,11 @@ inputTitle.value = inputTitleParam;
             />
           </div>
           <div v-if="ideas.length === 0" class="no-ideas-message">
-            No ideas found
+            <img 
+                src="../assets/img/curiosity-search.svg"
+            >
             <br />
-            <span class="material-symbols-outlined">search_off</span>
+            <span class="black-font">Your search returned no results</span>
           </div>
         </div>
       </div>
@@ -251,6 +253,7 @@ inputTitle.value = inputTitleParam;
 }
 
 .ideas-transition-container {
+  margin-top: 10%;
   transition: opacity 0.5s;
   display: flex;
   justify-content: center;
@@ -261,6 +264,12 @@ inputTitle.value = inputTitleParam;
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
+}
+
+.black-font {
+  color: #000;
+  font-family: "Segoe UI","Lato",Arial,sans-serif;
+  font-weight: normal;
 }
 
 .fade-enter, .fade-leave-to {
