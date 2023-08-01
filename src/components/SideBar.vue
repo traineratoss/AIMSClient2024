@@ -3,8 +3,21 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomInput from "./CustomInput.vue";
 import { ref } from "vue";
+import { getAllUserByUsername } from "../services/user_service";
 
 const username = ref("");
+
+const emit = defineEmits(["filter-users"]);
+
+function filterUsers() {
+  getAllUserByUsername(username.value)
+    .then((res) => {
+      emit("filter-users", res.content);
+    })
+    .catch((error) => {
+      username.value = "";
+    });
+}
 </script>
 
 
@@ -18,9 +31,11 @@ const username = ref("");
       <h1>Filter by:</h1>
       <div class="input-filter">
         <label for="name">Name: </label>
-        <CustomInput type="text" id="username" />
+        <CustomInput type="text" id="username" v-model:model-value="username" />
       </div>
-      <CustomButton class="btn" id="filter-btn">Filter</CustomButton>
+      <CustomButton class="btn" id="filter-btn" @click="filterUsers"
+        >Filter</CustomButton
+      >
     </div>
   </div>
 </template>

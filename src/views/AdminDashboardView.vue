@@ -39,11 +39,16 @@ function removeUser(user) {
     users.value.splice(index, 1);
   }
 }
+
+function search(content) {
+  console.log(content);
+  users.value = content;
+}
 </script>
 
 <template>
   <div class="container">
-    <SideBar />
+    <SideBar @filter-users="search" />
     <div class="right-container">
       <div class="main-container">
         <div class="user-container">

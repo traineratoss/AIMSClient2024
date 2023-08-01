@@ -22,8 +22,11 @@ async function loginUser(username, hashPassword) {
   if(!response.ok) {
     throw new Error(json.message);
   } else {
-    sessionStorage.setItem('username', json.username);
-    sessionStorage.setItem('role', json.role);
+    /* sessionStorage.setItem('username', json.username);
+    sessionStorage.setItem('role', json.role); */
+
+    localStorage.setItem('username', json.username);
+    localStorage.setItem('role', json.role);
   }
   return json;
 }
@@ -35,7 +38,7 @@ async function postUser(username, email) {
       method: "POST",
     }
   );
-  
+
   const json = await response.json();
   if(!response.ok) {
     throw new Error(json.message);
@@ -161,16 +164,21 @@ async function sendDeactivateEmail(usernameOrEmail) {
 }
 
 function getCurrentUsername() {
-    return sessionStorage.getItem('username');
+    //return sessionStorage.getItem('username');
+    return localStorage.getItem('username');
 }
 
 function getCurrentRole() {
-  return sessionStorage.getItem('role');
+  //return sessionStorage.getItem('role');
+  return localStorage.getItem('role');
 }
 
 function logout() {
-    sessionStorage.clear('username');
-    sessionStorage.clear('role');
+    /* sessionStorage.clear('username');
+    sessionStorage.clear('role'); */
+
+    localStorage.clear('username');
+    localStorage.clear('role');
 }
 
 export {

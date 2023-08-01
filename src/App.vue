@@ -88,7 +88,8 @@ router.afterEach((to, from) => {
     to.name === "recovery" ||
     to.name === "registration-complete" ||
     to.name === "page-not-found" ||
-    to.name === 'password-changed'
+    to.name === 'password-changed' ||
+    to.name === 'default'
   ) {
     showNavbar.value = false;
   } else {
@@ -101,6 +102,12 @@ router.afterEach((to, from) => {
 });
 
 router.beforeEach((to, from) => {
+  if(to.name === 'default') {
+    if(getCurrentRole() && getCurrentUsername()) {
+      router.push('/my');
+    }
+  }
+
   if(to.name === 'admin-dashboard' && getCurrentRole() !== 'ADMIN') {
     router.push('/page-not-found');
     showNavbar.value = false;
@@ -112,7 +119,9 @@ router.beforeEach((to, from) => {
     to.name !== 'terms' && 
     to.name !== 'recovery' &&
     to.name !== 'registration-complete' &&
-    to.name !== 'page-not-found') {
+    to.name !== 'page-not-found' &&
+    to.name !== 'password-changed' &&
+    to.name !== 'default') {
       if(!(getCurrentRole() && getCurrentUsername())) {
         showNavbar.value = false;
         router.push('/page-not-found');
