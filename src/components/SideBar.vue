@@ -31,7 +31,12 @@ function filterUsers() {
       <h1>Filter by:</h1>
       <div class="input-filter">
         <label for="name">Name: </label>
-        <CustomInput type="text" id="username" v-model:model-value="username" />
+        <CustomInput
+          type="text"
+          id="username"
+          v-model:model-value="username"
+          @keydown.enter="filterUsers"
+        />
       </div>
       <CustomButton class="btn" id="filter-btn" @click="filterUsers"
         >Filter</CustomButton
