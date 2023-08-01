@@ -236,16 +236,17 @@ function selectIdea() {
               <div class="left-container-title">
                 {{ getShortenedTitle(title, 25) }}
               </div>
-              <div class="left-container-text">
-                <div class="text" v-if="isSelected">
-                  {{ props.text }}
-                </div>
-                <div class="text" v-else>
-                  {{ getShortenedText(props.text, 15, 3) }}
-                </div>
-                <div class="status">
+              <div class="status">
                   {{ props.status }}
                 </div>
+              <div class="left-container-text">
+                <div class="text" v-if="isSelected">
+                  {{ getShortenedText(props.text, 35, 3) }}
+                </div>
+                <div class="text" v-else>
+                  {{ getShortenedText(props.text, 10, 6) }}
+                </div>
+                
               </div>
               <div class="left-container-buttons">
                 <Transition>
@@ -284,7 +285,7 @@ function selectIdea() {
                   {{ comments.length }}
                   <span class="material-symbols-outlined"> comment </span>
                 </div>
-                <div class="author"><i> posted by </i>{{ props.username }}</div>
+                <div class="author"><i> by </i>{{ props.username }}</div>
               </div>
             </div>
           </div>
@@ -522,7 +523,7 @@ function selectIdea() {
 
 .left-container {
   display: grid;
-  grid-template-rows: 20% auto 30px;
+  grid-template-rows: 20% 30px auto;
 }
 
 .left-container-title {
@@ -533,7 +534,6 @@ function selectIdea() {
 }
 
 .left-container-text {
-  margin-top: 1vh;
   margin-left: 3px;
 }
 
@@ -550,18 +550,22 @@ function selectIdea() {
 }
 .right-container {
   display: grid;
-  grid-template-rows: 30px 40% 40%;
-  max-height: 20vh;
+  grid-template-rows: 10% 60% 30%;
+
 }
 .right-container-image {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #ffa941;
+
 }
 
 .right-container-status {
-  border-left: 1px solid #ffa941;
+margin-left: 10px;
+}
+
+.status{
+  margin-left: 5px;
 }
 
 .number-of-comments {
@@ -570,7 +574,6 @@ function selectIdea() {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: ;
 }
 
 .input-container {
@@ -588,7 +591,7 @@ function selectIdea() {
 }
 
 .replies-wrapper {
-  
+  border: 1px solid slategray;
   margin: 5px;
   display: flex;
   gap: 5px;
@@ -600,27 +603,25 @@ function selectIdea() {
   border-radius: 5px;
   width: 30vw;
   overflow-x: hidden;
-  overflow-y:scroll;
+  overflow-y: scroll;
   scrollbar-width: none;
   box-sizing: border-box;
-  /* padding-left: 5px; */
 }
 
 .replies-wrapper:hover {
-  
+  padding-right: 3px;
 }
 
 .replies-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.replies-wrapper:hover::-webkit-scrollbar {
   display: block;
   width: 5px;
 }
 
-/* .replies-wrapper:hover::-webkit-scrollbar {
-  display: block;
-  width: 5px;
-} */
-
-.replies-wrapper::-webkit-scrollbar-thumb {
+.replies-wrapper:hover::-webkit-scrollbar-thumb {
   background-color: #ffa941;
   border-radius: 5px;
   border: 1px solid slategray;
