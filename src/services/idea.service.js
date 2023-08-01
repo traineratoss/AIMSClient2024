@@ -140,7 +140,23 @@ async function getIdea(id) {
     referrerPolicy: "no-referrer",
   });
   const data = await response.json();
-  console.log(data);
+  return data;
+}
+
+async function updateIdea(id, ideaUpdateDTO) {
+  const response = await fetch(API_URL + "/update?id=" + id, {
+      method: "PATCH",
+      body: JSON.stringify({
+        title: ideaUpdateDTO.title,
+        status: ideaUpdateDTO.status,
+        text: ideaUpdateDTO.text
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8",
+      },
+  });
+
+  const data = await response.json();
   return data;
 }
 
@@ -235,5 +251,6 @@ export {
   addImage,
   getPagedIdeasFromUser,
   getIdea,
-  getStats
+  getStats,
+  updateIdea
 };

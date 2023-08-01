@@ -5,11 +5,12 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
 import { createIdea,addImage, getImage } from "../services/idea.service";
-import { watch, ref, onMounted } from "vue";
+import { watch, ref, onMounted, watchEffect, computed } from "vue";
 import {  useRoute } from "vue-router";
 import router from "../router";
-import { getCategory, getUser } from "../services/idea.service";
+import { getCategory, getUser, getIdea, updateIdea } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
+import FormTitle from "../components/FormTitle.vue";
 
 
 
@@ -17,7 +18,7 @@ const inputValue = ref("");
 const statusValue = ref("");
 const textValue = ref("");
 const categoryOptions = ref([]);
-const categoriesSelected = ref({});
+const categoriesSelected = ref([]);
 const titleError = ref(false);
 const statusError = ref(false);
 const textError = ref(false);
@@ -27,6 +28,10 @@ const currentUsername= getCurrentUsername();
 const slideImages = ref({});
 
 const currentImageIndex = ref(null);
+
+const updatedIdea = ref(null);
+updatedIdea.value = useRoute().query;
+console.log("obj:"+JSON.stringify(updatedIdea.value))
 
 const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
@@ -46,9 +51,55 @@ onMounted(async() => {
     return `data:image/${item.fileType};base64,${item.base64Image}`;
   });
   slideImages.value = imageUrls;
-  console.log(imageUrls);
-  
 });
+
+watchEffect(() => {
+  if (updatedIdea.value != null) {
+    updateIdeaFields();
+  }
+});
+
+const isUpdatedIdeaEmpty = computed(() => {
+  return JSON.stringify(updatedIdea.value) === '{}';
+});
+
+async function updateIdeaFunction() {
+    const updatedIdeaId = updatedIdea.value.updateId; 
+    const newTitle = inputValue.value;
+    const newStatus = statusValue.value;
+    const newText = textValue.value;
+    const newCategoryList = categoriesSelected.value;
+
+    const data = await updateIdea(
+        updatedIdeaId,
+        {
+            title: newTitle,
+            status: newStatus,
+            text: newText,
+            categoryList: newCategoryList,
+        }
+    );
+}
+
+async function shouldCreateOrUpdate() {
+  if (JSON.stringify(updatedIdea.value) === '{}') {
+    createIdeaFunction();
+  } else {
+    updateIdeaFunction();
+  }
+}
+
+async function updateIdeaFields() {
+  if(updatedIdea.value != null) {
+    inputValue.value = updatedIdea.value.updateTitle;
+    textValue.value = updatedIdea.value.updateText;
+    statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
+    const categoryArray = JSON.parse(updatedIdea.value.updateCategoryList);
+    categoryArray.forEach(category => {
+      categoriesSelected.value.push(category.text)
+    });
+  }
+}
 
 const getCurrentIndex = (currentIndex) => {
   currentImageIndex.value = currentIndex;
@@ -59,7 +110,6 @@ async function createIdeaFunction() {
 
   const setError = (errorFlag, errorMessage) => {
     if (errorFlag) {
-      console.log(errorMessage);
       return true;
     }
     return false;
@@ -85,7 +135,6 @@ async function createIdeaFunction() {
       slideImages.value[currentImageIndex.value],
       currentUsername
     );
-    console.log(data)
     return data;
   }
 
@@ -160,6 +209,7 @@ function onMouseEnter() {
             >
                 <option value="open">Open</option>
                 <option value="draft">Draft</option>
+                <option value="implemented">Implemented</option>
             </select> 
 
         </div>
@@ -171,6 +221,7 @@ function onMouseEnter() {
              :variants="categoryOptions"
              :error="categoryError"
              :canAddInDropdown="true"
+             :selectedCategories="categoriesSelected"
              class="input-width" 
              >
             </CustomDropDown>
@@ -192,7 +243,15 @@ function onMouseEnter() {
             <label   for="upload" class="add-image-idea" v-if="!deletePopup">Upload Image</label>
         </div>
         <div>
-            <CustomButton id="create-idea"  @click="createIdeaFunction"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Idea</CustomButton>
+            <CustomButton 
+              id="create-idea" 
+              @click="shouldCreateOrUpdate" 
+              :disabled="fieldsDisabled" 
+              v-if="!deletePopup"
+            >
+            {{ isUpdatedIdeaEmpty ? 'Create Idea' : 'Update Idea' }}
+
+            </CustomButton>
         </div>
         <!-- <div>
             <CustomButton id="create-idea"  @click="clickImageButton"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Image</CustomButton>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps, watch } from "vue";
+import { ref, onMounted, defineProps, watch, watchEffect } from "vue";
 
 const emit = defineEmits(["update:selectedCategories"]);
 
@@ -19,22 +19,35 @@ const props = defineProps({
   canAddInDropdown: {
     type: Boolean,
     default: false,
+  },
+  selectedCategories : {
+    type: Array,
+    default: () => []
   }
 });
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
-const filteredIdeas = ref([])
+const filteredIdeas = ref([]);
+
+const initialSelectedCategories = ref(props.selectedCategories.join(", "));
 
 onMounted(() => {
   comboInput.value.addEventListener("click", showDropdown);
+  comboInput.value.value = initialSelectedCategories.value;
 });
 
-// after fetching in the parent, we make a watch to check when the fetch is done and making the filteredIdeas the variants
-// we are using this reactive const because we need to update it with the component
-watch(() => props.variants, (newVariants) => {
-  filteredIdeas.value = newVariants;
-}, { immediate: true });
+watch(
+  () => props.variants,
+  (newVariants) => {
+    filteredIdeas.value = newVariants;
+  },
+  { immediate: true }
+);
+
+const isVariantSelected = (variant) => {
+  return props.selectedCategories.includes(variant);
+};
 
 const showDropdown = () => {
   isDropdownVisible.value = true;
@@ -105,11 +118,11 @@ function onMouseLeave() {
       @mouseleave="onMouseLeave"
     >
       <label v-for="variant in filteredIdeas" :key="variant">
-        <input
-          type="checkbox"
-          :value="variant"
-          @change="handleCheckboxChange"
-        />
+        <input 
+        type="checkbox" 
+        :value="variant" 
+        :checked="isVariantSelected(variant)"
+         @change="handleCheckboxChange" />
         {{ variant }}
       </label>
     </div>

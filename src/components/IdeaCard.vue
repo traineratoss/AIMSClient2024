@@ -39,8 +39,23 @@ const maxCommentLength = 500;
 
 async function editIdea() {
   const data = await getIdea(props.ideaId);
+  const username = data.username;
+  const title = data.title;
+  const text = data.text;
+  const categoryList = JSON.stringify(data.categoryList);
+  const status = data.status;
   if (getCurrentUsername() === data.username) {
-    router.push("/create-idea")
+    router.push({
+      name: 'create-idea',
+      query: { 
+        updateId: props.ideaId,
+        updateUsername: username,
+        updateTitle: title,
+        updateText: text,
+        updateCategoryList: categoryList ,
+        updateStatus: status,
+      }, 
+    });
   }
 }
 
@@ -75,12 +90,12 @@ function redirectToCreateIdeaView() {
 
 function showDeletePopup() {
   router.push({ path: "/create-idea", query: { showDeletePopup: true } });
-  console.log("redirect");
+  //console.log("redirect");
 }
 
 function toggleComments() {
   showComments.value = !showComments.value;
-  console.log("toggle");
+  //console.log("toggle");
 }
 
 async function loadCommentReplies(comment) {
@@ -95,7 +110,7 @@ async function loadCommentReplies(comment) {
     commentReplies.value.push([comment.id, response]);
   }
 
-  console.log(commentReplies.value);
+  //console.log(commentReplies.value);
 }
 
 function getCommentIdForReply(replyId) {
@@ -147,7 +162,7 @@ async function postReplyDynamic(username, parentId, commentText) {
       commentReplies.value.push([parentId, parentReplies]);
     }
   } catch (error) {
-    console.error("Error posting comment:", error);
+    //console.error("Error posting comment:", error);
   }
 }
 
@@ -159,7 +174,7 @@ function deleteCommentDynamic(commentId) {
 
   if (comments.value.length === 0) showComments.value = false;
 
-  console.log("Comment Delete Successful");
+  //console.log("Comment Delete Successful");
 }
 
 function deleteReplyDynamic(replyId) {
@@ -175,15 +190,15 @@ function deleteReplyDynamic(replyId) {
 
     if (replyIndexToDelete !== -1) {
       commentReplies.value[entryIndex][1].splice(replyIndexToDelete, 1);
-      console.log("Reply Delete Successful");
+      //console.log("Reply Delete Successful");
       if (commentReplies.value[entryIndex][1].length === 0) {
         loadIdeaComments();
       }
     } else {
-      console.error("Reply not found.");
+      //console.error("Reply not found.");
     }
   } else {
-    console.error("Comment not found.");
+    //console.error("Comment not found.");
   }
 }
 
@@ -226,7 +241,7 @@ function selectIdea() {
   if (showComments.value == true) {
     toggleComments();
   }
-  console.log(isSelected.value);
+  //console.log(isSelected.value);
 }
 </script>
 
