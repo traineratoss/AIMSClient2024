@@ -8,7 +8,7 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
-import { getCurrentUsername } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import { getIdea } from "../services/idea.service";
 
 const props = defineProps({
@@ -47,7 +47,7 @@ async function editIdea() {
   const text = data.text;
   const categoryList = JSON.stringify(data.categoryList);
   const status = data.status;
-  if (getCurrentUsername() === data.username) {
+  if (getCurrentUsername() === data.username || getCurrentRole() === 'ADMIN') {
     router.push({
       name: "create-idea",
       query: {
@@ -255,6 +255,8 @@ function selectIdea() {
   }
   //console.log(isSelected.value);
 }
+
+const isAdmin = getCurrentRole() === 'ADMIN';
 </script>
 
 <template>
@@ -301,7 +303,7 @@ function selectIdea() {
                     v-show="isSelected"
                   >
                     <button
-                      v-if="currentUser === props.username"
+                      v-if="currentUser === props.username || isAdmin"
                       @click.stop="editIdea()"
                       class="idea-button"
                     >
@@ -315,7 +317,7 @@ function selectIdea() {
                     </button>
                     <button
                       @click.stop="showDeletePopup()"
-                      v-if="currentUser === props.username"
+                      v-if="currentUser === props.username || isAdmin"
                       class="idea-button"
                     >
                       DELETE
