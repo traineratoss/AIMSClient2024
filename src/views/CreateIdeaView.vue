@@ -59,16 +59,21 @@ onMounted(async () => {
   slideImages.value = imageUrls;
 });
 
+//If the component is handling the update, we update the fields only once, we dont wanna update them multiple times
+// that s why we have a var
 watchEffect(() => {
   if (!isWatchEffectExecuted.value && updatedIdea.value !== null) {
     updateIdeaFields();
     isWatchEffectExecuted.value = true;
   }
 });
+
+//This function is very important since it checks if the component is gonna update or create an idea
 const isUpdatedIdeaEmpty = computed(() => {
   return JSON.stringify(updatedIdea.value) === "{}";
 });
 
+//This is the function that is handling the updating in the db
 async function updateIdeaFunction() {
   const updatedIdeaId = updatedIdea.value.updateId;
   const newTitle = inputValue.value;
@@ -86,8 +91,10 @@ async function updateIdeaFunction() {
     newCategoryList,
     null
   );
+  router.push({ name: 'my'})
 }
 
+//Checking what we want to do (update or create) since we use the same component
 async function shouldCreateOrUpdate() {
   if (JSON.stringify(updatedIdea.value) === "{}") {
     createIdeaFunction();
@@ -96,6 +103,7 @@ async function shouldCreateOrUpdate() {
   }
 }
 
+//This is used for updating all the fields in the view when clicking update
 async function updateIdeaFields() {
   if (updatedIdea.value != null) {
     inputValue.value = updatedIdea.value.updateTitle;
@@ -108,6 +116,7 @@ async function updateIdeaFields() {
   }
 }
 
+// we stringify the categories selected and send it to the dropdown and then parse it there
 const stringifyCategory = () => {
   return JSON.stringify(categoriesSelected.value);
 };
@@ -119,33 +128,37 @@ const getCurrentIndex = (currentIndex) => {
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
 
-  const setError = (errorFlag, errorMessage) => {
-    if (errorFlag) {
-      return true;
-    }
-    return false;
-  };
-
-  const categoryErrorFlag =
+  //CHECKING IF ALL THE FIELDS ARE CORRECTLY INTRODUCED
+  const categoryErrorCheck =
     !Array.isArray(rawCategoriesValue) || rawCategoriesValue.length === 0;
-  const titleErrorFlag = inputValue.value === null || inputValue.value === "";
-  const statusErrorFlag =
+  const titleErrorCheck = inputValue.value === null || inputValue.value === "";
+  const statusErrorCheck =
     statusValue.value === null || statusValue.value === "";
-  const textErrorFlag = textValue.value === null || textValue.value === "";
+  const textErrorCheck = textValue.value === null || textValue.value === "";
 
-  categoryError.value = setError(
-    categoryErrorFlag,
-    "Please select at least one category"
-  );
-  titleError.value = setError(titleErrorFlag, "Please select a title");
-  statusError.value = setError(statusErrorFlag, "Please select a status");
-  textError.value = setError(textErrorFlag, "Please select a text");
+
+  // WE MIGHT USE THESE IF WE WANNA SHOW A KIND OF ERROR WHEN NOT INTRODUCING IN THE FIELD
+
+  //const setError = (errorFlag, errorMessage) => {
+  //   if (errorFlag) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
+
+  // categoryError.value = setError(
+  //   categoryErrorFlag,
+  //   "Please select at least one category"
+  // );
+  // titleError.value = setError(titleErrorFlag, "Please select a title");
+  // statusError.value = setError(statusErrorFlag, "Please select a status");
+  // textError.value = setError(textErrorFlag, "Please select a text");
 
   if (
-    !titleErrorFlag &&
-    !textErrorFlag &&
-    !statusErrorFlag &&
-    !categoryErrorFlag
+    !titleErrorCheck &&
+    !textErrorCheck &&
+    !statusErrorCheck &&
+    !categoryErrorCheck
   ) {
     const categoryTexts = rawCategoriesValue.map((category) => ({
       text: category,
@@ -158,6 +171,7 @@ async function createIdeaFunction() {
       slideImages.value[currentImageIndex.value],
       currentUsername
     );
+    router.push({ name: 'my'})
     return data;
   }
 }
@@ -224,7 +238,6 @@ function onMouseEnter() {}
         v-model="inputValue"
         :disabled="fieldsDisabled"
         placeholder="Write your title here..."
-        :error="titleError"
         class="input-width"
       />
     </div>
@@ -258,9 +271,9 @@ function onMouseEnter() {}
         @update:selectedCategories="handleSelectedCategories"
         :disabled="fieldsDisabled"
         :variants="categoryOptions"
-        :error="categoryError"
         :canAddInDropdown="true"
-        :selectedCategories="stringifyCategory()"
+        :selectedObjects="stringifyCategory()"
+        :input-placeholder="`Select your categories`"
         class="input-width"
       >
       </CustomDropDown>

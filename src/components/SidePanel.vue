@@ -131,11 +131,11 @@ function clearSelection() {
   <div class="side-panel-container">
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
-      <span class="title"> Title: </span>
-      <CustomInput v-model="inputTitle" class="title-input" />
+      <span class="title"> Title </span>
+      <CustomInput v-model="inputTitle" class="title-input" :placeholder="`Write a title...`"/>
 
       <span class="text">Text:</span>
-      <CustomInput v-model="inputText" class="text-input" />
+      <CustomInput v-model="inputText" class="text-input" :placeholder="`Write a text...`" />
 
       <span class="status">Status:</span>
       <CustomDropDown
@@ -143,6 +143,7 @@ function clearSelection() {
         :variants="statusOptions"
         @update:selectedCategories="handleSelectedStatus"
         :canAddInDropdown="false"
+        :input-placeholder="`Select your statuses...`"
       ></CustomDropDown>
 
       <span class="category">Category:</span>
@@ -151,6 +152,7 @@ function clearSelection() {
         :variants="categoryOptions"
         @update:selectedCategories="handleSelectedCategories"
         :canAddInDropdown="false"
+        :input-placeholder="`Select your categories...`"
       ></CustomDropDown>
 
       <span
@@ -167,6 +169,7 @@ function clearSelection() {
         :variants="userOptions"
         @update:selectedCategories="handleSelectedUsers"
         :canAddInDropdown="false"
+        :input-placeholder="`Select your users...`"
       ></CustomDropDown>
       <span v-else class="empty-span"></span>
       <div v-else class="empty-user"></div>
