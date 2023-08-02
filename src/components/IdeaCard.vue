@@ -8,8 +8,8 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
-import { getCurrentUsername } from "../services/user_service";
-import { getIdea } from "../services/idea.service"
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
+import { getIdea } from "../services/idea.service";
 
 const props = defineProps({
   title: "",
@@ -17,9 +17,11 @@ const props = defineProps({
   status: "",
   username: "",
   ideaId: "",
-  commentsNumber:"",
-  elapsedTime: ""
+  commentsNumber: "",
+  elapsedTime: "",
 });
+
+const emits = defineEmits(["commentCounterAdd", "commentCounterSub"]);
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
@@ -36,7 +38,6 @@ const commentReplies = ref([]);
 const isSelected = ref(false);
 const maxCommentLength = 500;
 
-
 async function editIdea() {
   const data = await getIdea(props.ideaId);
   const username = data.username;
@@ -44,23 +45,28 @@ async function editIdea() {
   const text = data.text;
   const categoryList = JSON.stringify(data.categoryList);
   const status = data.status;
-  if (getCurrentUsername() === data.username) {
+  if (getCurrentUsername() === data.username || getCurrentRole() === "ADMIN") {
     router.push({
-      name: 'create-idea',
-      query: { 
+      name: "create-idea",
+      query: {
         updateId: props.ideaId,
         updateUsername: username,
         updateTitle: title,
         updateText: text,
-        updateCategoryList: categoryList ,
+        updateCategoryList: categoryList,
         updateStatus: status,
-      }, 
+      },
     });
   }
 }
 
 async function loadIdeaComments() {
-  const loadedComments = await loadComments(maxCommentLength, 0, "id", props.ideaId);
+  const loadedComments = await loadComments(
+    maxCommentLength,
+    0,
+    "id",
+    props.ideaId
+  );
   comments.value = loadedComments.map((comment) => ({
     ...comment,
     expanded: false,
@@ -85,11 +91,17 @@ function showCommentReplies(comment) {
 }
 
 function redirectToCreateIdeaView() {
-  router.push({ path: "/create-idea", query: { disableFields: true } });
+  router.push({
+    path: "/create-idea",
+    query: { disableFields: true, id: props.ideaId },
+  });
 }
 
 function showDeletePopup() {
-  router.push({ path: "/create-idea", query: { showDeletePopup: true } });
+  router.push({
+    path: "/create-idea",
+    query: { showDeletePopup: true, id: props.ideaId },
+  });
   //console.log("redirect");
 }
 
@@ -136,7 +148,7 @@ async function postCommentDynamic(username, ideaId, commentText) {
       comment.elapsedTime = "0 seconds";
       comments.value.unshift(comment);
       clearInput();
-
+      emits("commentCounterAdd");
       if (comments.value.length > 0) {
         showComments.value = true;
       }
@@ -171,7 +183,7 @@ function deleteCommentDynamic(commentId) {
   if (indexToDelete !== -1) {
     comments.value.splice(indexToDelete, 1);
   }
-
+  emits("commentCounterSub");
   if (comments.value.length === 0) showComments.value = false;
 
   //console.log("Comment Delete Successful");
@@ -243,6 +255,8 @@ function selectIdea() {
   }
   //console.log(isSelected.value);
 }
+
+const isAdmin = getCurrentRole() === "ADMIN";
 </script>
 
 <template>
@@ -281,7 +295,6 @@ function selectIdea() {
                 <div class="text" v-else>
                   {{ getShortenedText(props.text, 30, 3) }}
                 </div>
-                
               </div>
               <div class="left-container-buttons">
                 <Transition>
@@ -289,7 +302,11 @@ function selectIdea() {
                     class="left-container-buttons-grouped"
                     v-show="isSelected"
                   >
-                    <button @click.stop="editIdea()" class="idea-button">
+                    <button
+                      v-if="currentUser === props.username || isAdmin"
+                      @click.stop="editIdea()"
+                      class="idea-button"
+                    >
                       EDIT
                     </button>
                     <button
@@ -298,7 +315,11 @@ function selectIdea() {
                     >
                       VIEW
                     </button>
-                    <button @click.stop="showDeletePopup()" class="idea-button">
+                    <button
+                      @click.stop="showDeletePopup()"
+                      v-if="currentUser === props.username || isAdmin"
+                      class="idea-button"
+                    >
                       DELETE
                     </button>
                   </div>
@@ -316,11 +337,11 @@ function selectIdea() {
               </div>
               <div class="right-container-info">
                 <div class="number-of-comments">
-                  <p> {{ props.commentsNumber }}</p>
+                  <p>{{ props.commentsNumber }}</p>
                   <span class="material-symbols-outlined"> comment </span>
                 </div>
                 <div class="author">
-                  <div> {{ props.elapsedTime }} ago </div>
+                  <div>{{ props.elapsedTime }} ago</div>
                   <div><i> by </i>{{ props.username }}</div>
                 </div>
               </div>
@@ -570,7 +591,7 @@ function selectIdea() {
   margin-left: 5px;
   margin-top: 1vh;
   font-weight: 600;
-  font-size:large;
+  font-size: large;
 }
 
 .left-container-text {
@@ -590,7 +611,7 @@ function selectIdea() {
 }
 .right-container {
   display: grid;
-  grid-template-rows: 60% 40% ;
+  grid-template-rows: 60% 40%;
 }
 .right-container-image {
   display: flex;
@@ -598,12 +619,11 @@ function selectIdea() {
   justify-content: center;
 }
 
-.author{
+.author {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-
 }
 
 .right-container-info {
@@ -615,14 +635,14 @@ function selectIdea() {
 .status {
   margin-left: 5px;
   font-weight: 400;
-  font-size:medium;
+  font-size: medium;
 }
 
 .number-of-comments {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .reply-container {
@@ -646,10 +666,8 @@ function selectIdea() {
 }
 
 .replies-wrapper {
-  border: 1px solid slategray;
   margin: 5px;
   display: flex;
-  gap: 5px;
   gap: 5px;
   flex-direction: column;
   margin-top: 5px;
@@ -663,20 +681,12 @@ function selectIdea() {
   box-sizing: border-box;
 }
 
-.replies-wrapper:hover {
-  padding-right: 3px;
-}
-
 .replies-wrapper::-webkit-scrollbar {
-  display: none;
-}
-
-.replies-wrapper:hover::-webkit-scrollbar {
   display: block;
   width: 5px;
 }
 
-.replies-wrapper:hover::-webkit-scrollbar-thumb {
+.replies-wrapper::-webkit-scrollbar-thumb {
   background-color: #ffa941;
   border-radius: 5px;
   border: 1px solid slategray;
@@ -688,7 +698,7 @@ function selectIdea() {
   height: auto;
   width: 6vw;
 }
-img{
+img {
   border: 1px solid slategray;
 }
 

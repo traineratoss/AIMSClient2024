@@ -20,21 +20,31 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  selectedCategories : {
-    type: Array,
-    default: () => []
+  selectedCategories: {
+    type: Object,
+    default: null,
   }
 });
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
 const filteredIdeas = ref([]);
+const loading = ref(true);
 
-const initialSelectedCategories = ref(props.selectedCategories.join(", "));
+const parsedSelectedCategories = ref(JSON.parse(props.selectedCategories));
 
-onMounted(() => {
+const initialSelectedCategories = ref(null);
+
+onMounted(async () => {
   comboInput.value.addEventListener("click", showDropdown);
   comboInput.value.value = initialSelectedCategories.value;
+});
+
+watchEffect(() => {
+  if (props.selectedCategories && props.selectedCategories.length > 0 && loading.value) {
+    initialSelectedCategories.value = parsedSelectedCategories.value.join(", ");
+    loading.value = false; 
+  }
 });
 
 watch(
@@ -46,7 +56,9 @@ watch(
 );
 
 const isVariantSelected = (variant) => {
-  return props.selectedCategories.includes(variant);
+  if (!loading.value) {
+    return parsedSelectedCategories.value.includes(variant);
+  }
 };
 
 const showDropdown = () => {
@@ -61,6 +73,7 @@ const handleCheckboxChange = () => {
 
   comboInput.value.value = selectedVariants.join(", ");
   emit("update:selectedCategories", selectedVariants);
+  console.log(selectedVariants)
 };
 
 const handleInputKeyPress = (event) => {

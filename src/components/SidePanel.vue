@@ -1,9 +1,3 @@
-<!-- 
-    FlorinCP
-    Shall be either deleted of modified 
-    It was created in order to assure better fiting for the components development
-
- -->
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import CustomInput from "../components/CustomInput.vue";
@@ -98,6 +92,17 @@ const filter = async () => {
   );
   filteredIdeasEmit.value = filteredIdeas;
 };
+
+// not 100% working 
+function clearSelection(){
+  inputTitle.value=''
+  inputText.value=''
+  categoriesSelected.value=''
+  selectedDateFrom.value=''
+  selectedDateTo.value=''
+  userSelected.value=''
+  statusSelected.value=''
+}
 </script>
 
 <template>
@@ -136,7 +141,11 @@ const filter = async () => {
         :canAddInDropdown="false"
       ></CustomDropDown>
 
+
       <div class="date-chooser">
+        
+        <div><button @click="clearSelection()">Clear all</button></div>
+
         <fieldset style="border: 0.1px black solid">
           <legend style="margin-left: 1em; padding: 0.2em 0.8em">
             Creation Date
@@ -166,8 +175,10 @@ const filter = async () => {
 <style scoped>
 
 .side-panel-container {
-  margin-top: 1vh; 
   width: 20vw;
+  padding-top: 2vw;
+  border: 1px solid slategray;
+  height: 91vh;
 }
 .date-input {
   display: grid;
