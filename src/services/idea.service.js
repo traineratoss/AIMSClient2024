@@ -158,7 +158,7 @@ async function updateIdea(id, title, text, status, categoryList, image) {
       title: title,
       text: text,
       status: status.toUpperCase(),
-      categoryList: categoryList,
+      // categoryList: categoryList,
     }),
     redirect: "follow",
     referrerPolicy: "no-referrer",
