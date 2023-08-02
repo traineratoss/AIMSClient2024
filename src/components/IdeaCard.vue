@@ -8,8 +8,8 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
-import { getCurrentUsername } from "../services/user_service";
-import { getIdea } from "../services/idea.service"
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
+import { getIdea } from "../services/idea.service";
 
 const props = defineProps({
   title: "",
@@ -17,15 +17,15 @@ const props = defineProps({
   status: "",
   username: "",
   ideaId: "",
-  commentsNumber:"",
-  elapsedTime: ""
+  commentsNumber: "",
+  elapsedTime: "",
 });
+
+const emits = defineEmits(["commentCounterAdd", "commentCounterSub"]);
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
   loadIdeaComments();
-  console.log(comments.value);
-  sendNumberOfComments();
 });
 
 const comments = ref([]);
@@ -40,13 +40,33 @@ const maxCommentLength = 500;
 
 async function editIdea() {
   const data = await getIdea(props.ideaId);
-  if (getCurrentUsername() === data.username) {
-    router.push("/create-idea")
+  const username = data.username;
+  const title = data.title;
+  const text = data.text;
+  const categoryList = JSON.stringify(data.categoryList);
+  const status = data.status;
+  if (getCurrentUsername() === data.username || getCurrentRole() === "ADMIN") {
+    router.push({
+      name: "create-idea",
+      query: {
+        updateId: props.ideaId,
+        updateUsername: username,
+        updateTitle: title,
+        updateText: text,
+        updateCategoryList: categoryList,
+        updateStatus: status,
+      },
+    });
   }
 }
 
 async function loadIdeaComments() {
-  const loadedComments = await loadComments(maxCommentLength, 0, "id", props.ideaId);
+  const loadedComments = await loadComments(
+    maxCommentLength,
+    0,
+    "id",
+    props.ideaId
+  );
   comments.value = loadedComments.map((comment) => ({
     ...comment,
     expanded: false,
@@ -71,17 +91,23 @@ function showCommentReplies(comment) {
 }
 
 function redirectToCreateIdeaView() {
-  router.push({ path: "/create-idea", query: { disableFields: true } });
+  router.push({
+    path: "/create-idea",
+    query: { disableFields: true, id: props.ideaId },
+  });
 }
 
 function showDeletePopup() {
-  router.push({ path: "/create-idea", query: { showDeletePopup: true } });
-  console.log("redirect");
+  router.push({
+    path: "/create-idea",
+    query: { showDeletePopup: true, id: props.ideaId },
+  });
+  //console.log("redirect");
 }
 
 function toggleComments() {
   showComments.value = !showComments.value;
-  console.log("toggle");
+  //console.log("toggle");
 }
 
 async function loadCommentReplies(comment) {
@@ -96,7 +122,7 @@ async function loadCommentReplies(comment) {
     commentReplies.value.push([comment.id, response]);
   }
 
-  console.log(commentReplies.value);
+  //console.log(commentReplies.value);
 }
 
 function getCommentIdForReply(replyId) {
@@ -122,7 +148,7 @@ async function postCommentDynamic(username, ideaId, commentText) {
       comment.elapsedTime = "0 seconds";
       comments.value.unshift(comment);
       clearInput();
-
+      emits("commentCounterAdd");
       if (comments.value.length > 0) {
         showComments.value = true;
       }
@@ -148,7 +174,7 @@ async function postReplyDynamic(username, parentId, commentText) {
       commentReplies.value.push([parentId, parentReplies]);
     }
   } catch (error) {
-    console.error("Error posting comment:", error);
+    //console.error("Error posting comment:", error);
   }
 }
 
@@ -157,10 +183,10 @@ function deleteCommentDynamic(commentId) {
   if (indexToDelete !== -1) {
     comments.value.splice(indexToDelete, 1);
   }
-
+  emits("commentCounterSub");
   if (comments.value.length === 0) showComments.value = false;
 
-  console.log("Comment Delete Successful");
+  //console.log("Comment Delete Successful");
 }
 
 function deleteReplyDynamic(replyId) {
@@ -176,15 +202,15 @@ function deleteReplyDynamic(replyId) {
 
     if (replyIndexToDelete !== -1) {
       commentReplies.value[entryIndex][1].splice(replyIndexToDelete, 1);
-      console.log("Reply Delete Successful");
+      //console.log("Reply Delete Successful");
       if (commentReplies.value[entryIndex][1].length === 0) {
         loadIdeaComments();
       }
     } else {
-      console.error("Reply not found.");
+      //console.error("Reply not found.");
     }
   } else {
-    console.error("Comment not found.");
+    //console.error("Comment not found.");
   }
 }
 
@@ -196,30 +222,37 @@ function getShortenedTitle(title, maxLength) {
   return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
 }
 
-function getShortenedText(text, maxLength, maxRows) {
-  let shortenedText = "";
-  const totalCharacters = maxLength * maxRows;
-  const ellipsis = text.length > totalCharacters ? "..." : "";
+function getShortText(text, numberOfRows, numberOfCharacters) {
+  let shortText = "";
+  let row = "";
+  let countRows = 1;
 
-  for (let i = 0; i < maxRows; i++) {
-    const startIndex = i * maxLength;
-    const rowText = text.substr(startIndex, maxLength);
+  if (text.length <= numberOfCharacters * numberOfRows) return text;
 
-    if (i === 0) {
-      shortenedText += rowText + "\n"; // First row, no need to add spaces
-    } else {
-      const paddedRowText = rowText.padStart(rowText.length + 6, " ");
-      shortenedText += paddedRowText + "\n";
-    }
+  const wordsArray = text.split(" ");
 
-    shortenedText += (i === 0 ? "" : "\n") + rowText.trim();
-
-    if (shortenedText.length >= totalCharacters) {
-      break;
+  for (let word of wordsArray) {
+    if (row.length + word.length <= numberOfCharacters - 1) row += " " + word;
+    else {
+      console.log("Am intrat in else din cauza lui: ", word);
+      if (countRows === numberOfRows) {
+        row += " ";
+        for (let letter of word) {
+          if (row.length <= numberOfCharacters - 4) row += letter;
+        }
+        row += "...";
+        shortText += row;
+        break;
+      } else {
+        row += "\n";
+        shortText += row;
+        countRows++;
+        row = word;
+      }
     }
   }
 
-  return shortenedText.trimEnd() + ellipsis;
+  return shortText;
 }
 
 function selectIdea() {
@@ -227,8 +260,10 @@ function selectIdea() {
   if (showComments.value == true) {
     toggleComments();
   }
-  console.log(isSelected.value);
+  //console.log(isSelected.value);
 }
+
+const isAdmin = getCurrentRole() === "ADMIN";
 </script>
 
 <template>
@@ -252,11 +287,9 @@ function selectIdea() {
               <div class="left-container-title">
                 <div class="text" v-if="isSelected">
                   {{ getShortenedTitle(title, 100) }}
-                  {{ props.elapsedTime }}
                 </div>
                 <div class="text" v-else>
                   {{ getShortenedTitle(title, 50) }}
-                  {{ props.elapsedTime }}
                 </div>
               </div>
               <div class="status">
@@ -264,12 +297,11 @@ function selectIdea() {
               </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ getShortenedText(props.text, 35, 3) }}
+                  {{ props.text }}
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedText(props.text, 10, 6) }}
+                  {{ getShortText(props.text, 3, 59) }}
                 </div>
-                
               </div>
               <div class="left-container-buttons">
                 <Transition>
@@ -277,7 +309,11 @@ function selectIdea() {
                     class="left-container-buttons-grouped"
                     v-show="isSelected"
                   >
-                    <button @click.stop="editIdea()" class="idea-button">
+                    <button
+                      v-if="currentUser === props.username || isAdmin"
+                      @click.stop="editIdea()"
+                      class="idea-button"
+                    >
                       EDIT
                     </button>
                     <button
@@ -286,7 +322,11 @@ function selectIdea() {
                     >
                       VIEW
                     </button>
-                    <button @click.stop="showDeletePopup()" class="idea-button">
+                    <button
+                      @click.stop="showDeletePopup()"
+                      v-if="currentUser === props.username || isAdmin"
+                      class="idea-button"
+                    >
                       DELETE
                     </button>
                   </div>
@@ -295,7 +335,6 @@ function selectIdea() {
               </div>
             </div>
             <div class="right-container">
-              <div class="dummy-div"></div>
               <div class="right-container-image">
                 <img
                   class="idea-image"
@@ -303,13 +342,15 @@ function selectIdea() {
                   alt="image"
                 />
               </div>
-              <div class="right-container-status">
+              <div class="right-container-info">
                 <div class="number-of-comments">
-                  {{ props.commentsNumber }}
+                  <p>{{ props.commentsNumber }}</p>
                   <span class="material-symbols-outlined"> comment </span>
                 </div>
-                <div class="author"><i> by </i>{{ props.username }}</div>
-                
+                <div class="author">
+                  <div>{{ props.elapsedTime }} ago</div>
+                  <div><i> by </i>{{ props.username }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -548,13 +589,16 @@ function selectIdea() {
 .left-container {
   display: grid;
   grid-template-rows: 20% 30px auto;
+  margin-left: 10px;
 }
 
 .left-container-title {
   display: flex;
   align-items: center;
-  margin-left: 3px;
+  margin-left: 5px;
   margin-top: 1vh;
+  font-weight: 600;
+  font-size: large;
 }
 
 .left-container-text {
@@ -574,7 +618,7 @@ function selectIdea() {
 }
 .right-container {
   display: grid;
-  grid-template-rows: 10% 60% 30%;
+  grid-template-rows: 60% 40%;
 }
 .right-container-image {
   display: flex;
@@ -582,16 +626,32 @@ function selectIdea() {
   justify-content: center;
 }
 
-.right-container-status {
+.author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.right-container-info {
   margin-left: 10px;
+  display: grid;
+  grid-template-rows: 20% 80%;
 }
 
 .status {
   margin-left: 5px;
+  font-weight: 400;
+  font-size: medium;
 }
 
 .number-of-comments {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
+
 .reply-container {
   display: flex;
   align-items: center;
@@ -613,10 +673,8 @@ function selectIdea() {
 }
 
 .replies-wrapper {
-  border: 1px solid slategray;
   margin: 5px;
   display: flex;
-  gap: 5px;
   gap: 5px;
   flex-direction: column;
   margin-top: 5px;
@@ -630,20 +688,12 @@ function selectIdea() {
   box-sizing: border-box;
 }
 
-.replies-wrapper:hover {
-  padding-right: 3px;
-}
-
 .replies-wrapper::-webkit-scrollbar {
-  display: none;
-}
-
-.replies-wrapper:hover::-webkit-scrollbar {
   display: block;
   width: 5px;
 }
 
-.replies-wrapper:hover::-webkit-scrollbar-thumb {
+.replies-wrapper::-webkit-scrollbar-thumb {
   background-color: #ffa941;
   border-radius: 5px;
   border: 1px solid slategray;
@@ -655,6 +705,10 @@ function selectIdea() {
   height: auto;
   width: 6vw;
 }
+img {
+  border: 1px solid slategray;
+}
+
 .material-symbols-outlined {
   background-color: inherit;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
@@ -682,6 +736,8 @@ function selectIdea() {
   height: 10vh;
   overflow: auto;
   box-sizing: border-box;
+  border: 1px solid slategray;
+  border-radius: 3px;
 }
 
 .comment-input-bottom {
@@ -735,7 +791,7 @@ button:hover {
   margin-bottom: 10px;
   align-self: flex-end;
   background-color: white;
-  border: 1px solid #6d3d02;
+  border: 1px solid #000000;
   border-radius: 3px;
   height: 30px;
 }
@@ -754,9 +810,15 @@ button:hover {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
-.chars {
+/* .chars {
   text-align: center;
   display: grid;
   grid-template-columns: 33% 33% 33%;
+} */
+
+.chars {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
 }
 </style>

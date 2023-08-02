@@ -22,39 +22,8 @@ async function loadPagedIdeas(
       "&sortCategory=" +
       sortCategory +
       "&sortDirection=" +
-      sortDirection
-  , {
-    method: "GET",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  });
-  const data = await response.json();
-  return data;
-}
-async function getCategory() {
-  const response = await fetch(`http://localhost:8080/aims/api/v1/ideas/categories/all`, {
-    method: "GET",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  });
-  const json = await response.json();
-  return json;
-}
-async function getUser(pageSize, pageNumber, sortCategory) {
-  const response = await fetch(
-    `http://localhost:8080/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`, {
+      sortDirection,
+    {
       method: "GET",
       mode: "cors",
       cache: "no-cache",
@@ -64,7 +33,44 @@ async function getUser(pageSize, pageNumber, sortCategory) {
       },
       redirect: "follow",
       referrerPolicy: "no-referrer",
-    });
+    }
+  );
+  const data = await response.json();
+  return data;
+}
+async function getCategory() {
+  const response = await fetch(
+    `http://localhost:8080/aims/api/v1/ideas/categories/all`,
+    {
+      method: "GET",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+    }
+  );
+  const json = await response.json();
+  return json;
+}
+async function getUser(pageSize, pageNumber, sortCategory) {
+  const response = await fetch(
+    `http://localhost:8080/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`,
+    {
+      method: "GET",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+    }
+  );
   const json = await response.json();
   const content = await json.content;
   return content;
@@ -91,10 +97,10 @@ async function filterIdeas(
       sortDirection = "DESC";
       break;
   }
-  if(pageNumber < 0) {
+  if (pageNumber < 0) {
     pageNumber = 0;
   }
-  
+
   let url = `${API_URL}/filter?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}`;
 
   if (title) url += `&title=${title}`;
@@ -106,9 +112,9 @@ async function filterIdeas(
   if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
   if (username) url += `&username=${username}`;
 
-  console.log(url)
+  console.log(url);
 
-  console.log(url)
+  console.log(url);
 
   const response = await fetch(url, {
     method: "GET",
@@ -121,7 +127,6 @@ async function filterIdeas(
     redirect: "follow",
     referrerPolicy: "no-referrer",
   });
-
 
   const data = await response.json();
   return data;
@@ -140,17 +145,40 @@ async function getIdea(id) {
     referrerPolicy: "no-referrer",
   });
   const data = await response.json();
-  console.log(data);
   return data;
 }
 
-async function createIdea(title, status, text, categoryList, image, username) {
+async function updateIdea(id, title, text, status, categoryList, image) {
+  console.log(categoryList)
+  const response = await fetch(API_URL + "/update?id=" + id, {
+    method: "PATCH",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    body: JSON.stringify({
+      title: title,
+      text: text,
+      status: status.toUpperCase(),
+      categoryList: categoryList,
+    }),
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+
+  const data = await response.json();
+  return data;
+}
+
+async function createIdea(title, text, status, categoryList, image, username) {
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     body: JSON.stringify({
       title: title,
-      status: status,
       text: text,
+      status: status.toUpperCase(),
       image: image,
       categoryList: categoryList,
     }),
@@ -162,13 +190,13 @@ async function createIdea(title, status, text, categoryList, image, username) {
   const content = await data.content;
 }
 
-async function addImage(imageData){
-  const response = await fetch(`http://localhost:8080/images/addImage`,{
-    method: 'POST',
+async function addImage(imageData) {
+  const response = await fetch(`http://localhost:8080/images/addImage`, {
+    method: "POST",
     body: imageData,
     headers: {
-      'content-type': 'application/json;multipart/form-data',
-    }
+      "content-type": "application/json;multipart/form-data",
+    },
   });
   const data = await response.json();
   return data;
@@ -195,13 +223,13 @@ async function getPagedIdeasFromUser(
       break;
   }
 
-  if(pageNumber < 0) {
+  if (pageNumber < 0) {
     pageNumber = 0;
   }
-  
+
   let url = `${API_URL}/allByUser?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}&username=${username}&sortCategory=creationDate`;
 
-  console.log(url)
+  console.log(url);
 
   const response = await fetch(url, {
     method: "GET",
@@ -219,7 +247,16 @@ async function getPagedIdeasFromUser(
   return json;
 }
 
-
+async function getStats() {
+  const response = await fetch(API_URL + "/stats");
+  const data = await response.json();
+  return data;
+}
+async function deleteIdea(ideaId) {
+  return fetch("http://localhost:8080/aims/api/v1/ideas/delete?id=" + ideaId, {
+    method: "DELETE",
+  });
+}
 export {
   loadPagedIdeas,
   createIdea,
@@ -229,5 +266,8 @@ export {
   filterIdeas,
   addImage,
   getPagedIdeasFromUser,
-  getIdea
+  getIdea,
+  getStats,
+  updateIdea,
+  deleteIdea,
 };

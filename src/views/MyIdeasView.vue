@@ -1,5 +1,6 @@
 <script setup>
 import SidePanel from "../components/SidePanel.vue";
+
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, getPagedIdeasFromUser } from "../services/idea.service";
@@ -28,9 +29,9 @@ const inputSelectedDateTo = ref("");
 // if i leave the refs and if i press sort, it will filter, which should not happen
 // we put it non reactive so we update it only when the filter is pressed and the inputs are updated
 let currentTitle = "";
-let currentText = ""; 
+let currentText = "";
 let currentStatus = [];
-let currentCategory = []; 
+let currentCategory = [];
 let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
@@ -42,7 +43,7 @@ onMounted(async () => {
   const data = await getPagedIdeasFromUser(
     currentUsername,
     ideasPerPage,
-    currentPage.value-1,
+    currentPage.value - 1,
     "ASC"
   );
   sortOrder.value = 0;
@@ -63,7 +64,7 @@ async function changePage(pageNumber) {
     currentUser,
     currentSelectedDateFrom,
     currentSelectedDateTo,
-    pageNumber-1,
+    pageNumber - 1,
     ideasPerPage,
     currentUsername,
     sortOrder.value === 0 ? "ASC" : "DESC"
@@ -84,7 +85,7 @@ function setCurrentVariables() {
   currentCategory = inputCategory.value;
   currentUser = inputUser.value;
   currentSelectedDateFrom = inputSelectedDateFrom.value;
-  currentSelectedDateTo = inputSelectedDateTo.value; 
+  currentSelectedDateTo = inputSelectedDateTo.value;
 }
 
 // here, the page asc or desc is happening
@@ -99,41 +100,41 @@ async function updateSortOrder() {
       currentUser,
       currentSelectedDateFrom,
       currentSelectedDateTo,
-      currentPage.value-1,
+      currentPage.value - 1,
       ideasPerPage,
       currentUsername,
-      "ASC" 
+      "ASC"
     );
     ideas.value = data.pagedIdeas.content;
-
   } else if (sortOrder.value == 1) {
-      sortOrder.value = 1;
-      const data = await filterIdeas(
-        currentTitle,
-        currentText,
-        currentStatus,
-        currentCategory,
-        currentUser,
-        currentSelectedDateFrom,
-        currentSelectedDateTo,
-        currentPage.value-1,
-        ideasPerPage,
-        currentUsername,
-        "DESC" 
-      );
-      ideas.value = data.pagedIdeas.content;
+    sortOrder.value = 1;
+    const data = await filterIdeas(
+      currentTitle,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideasPerPage,
+      currentUsername,
+      "DESC"
+    );
+    ideas.value = data.pagedIdeas.content;
   }
 }
 
 // here, the filtering happens
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.total / ideasPerPage); // the total nr of pages after filtering needs to be updated
-  console.log(currentUsername)
-  if (currentPage.value > totalPages.value){ // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
+  console.log(currentUsername);
+  if (currentPage.value > totalPages.value) {
+    // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
     // we have to filter each time with each page to get our good ideas
 
-    while(currentPage.value>totalPages.value && totalPages.value != 0) {
+    while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
       const data = await filterIdeas(
         inputTitle.value,
@@ -143,26 +144,24 @@ async function updateIdeas(filteredIdeas) {
         inputUser.value,
         inputSelectedDateFrom.value,
         inputSelectedDateTo.value,
-        currentPage.value-1,
+        currentPage.value - 1,
         ideasPerPage,
         currentUsername,
-        sortOrder.value,
+        sortOrder.value
       );
       setCurrentVariables();
       ideas.value = data.pagedIdeas != null ? data.pagedIdeas.content : [];
     }
 
     // if there are no ideas
-    if(totalPages.value === 0) {
+    if (totalPages.value === 0) {
       setCurrentVariables();
       currentPage.value = 0;
       ideas.value = [];
     }
-
   } else {
-
     // being sure the current page doesnt go below 0
-    if(currentPage.value <= 0) {
+    if (currentPage.value <= 0) {
       currentPage.value = 1;
     }
 
@@ -171,11 +170,17 @@ async function updateIdeas(filteredIdeas) {
   }
 }
 
-
 // Here I pass the vars from the side panel
-const onPassInputVariables = (inputTitleParam, inputTextParam, inputStatusParam, inputCategoryParam, inputUserParam, inputSelectedDateFromParam, inputSelectedDateToParam) => {
-  
-inputTitle.value = inputTitleParam;
+const onPassInputVariables = (
+  inputTitleParam,
+  inputTextParam,
+  inputStatusParam,
+  inputCategoryParam,
+  inputUserParam,
+  inputSelectedDateFromParam,
+  inputSelectedDateToParam
+) => {
+  inputTitle.value = inputTitleParam;
   inputText.value = inputTextParam;
   inputStatus.value = inputStatusParam;
   inputCategory.value = inputCategoryParam;
@@ -199,7 +204,16 @@ inputTitle.value = inputTitleParam;
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="currentUsername" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
+      <SidePanel
+        @filter-listening="updateIdeas"
+        :sort="sortOrder"
+        :currentUser="null"
+        :currentPage="currentPage"
+        @pass-input-variables="onPassInputVariables"
+        :ideasPerPage="ideasPerPage"
+        :hideUser="true"
+      />
+      />
     </div>
     <div class="main-container">
       <div class="sort-container" style="text-align: right">
@@ -226,9 +240,9 @@ inputTitle.value = inputTitleParam;
             />
           </div>
           <div v-if="ideas.length === 0" class="no-ideas-message">
-            No ideas found
+            <img src="../assets/img/curiosity-search.svg" />
             <br />
-            <span class="material-symbols-outlined">search_off</span>
+            <span class="black-font">Your search returned no results</span>
           </div>
         </div>
       </div>
@@ -245,12 +259,12 @@ inputTitle.value = inputTitleParam;
 </template>
 
 <style scoped>
-
-.idea-transition-item{
+.idea-transition-item {
   margin-bottom: 10px;
 }
 
 .ideas-transition-container {
+  margin-top: 10%;
   transition: opacity 0.5s;
   display: flex;
   justify-content: center;
@@ -263,7 +277,14 @@ inputTitle.value = inputTitleParam;
   transition: opacity 0.5s;
 }
 
-.fade-enter, .fade-leave-to {
+.black-font {
+  color: #000;
+  font-family: "Segoe UI", "Lato", Arial, sans-serif;
+  font-weight: normal;
+}
+
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 
@@ -272,22 +293,22 @@ inputTitle.value = inputTitleParam;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 500px; 
+  height: 500px;
   font-size: 30px;
   font-weight: bold;
-  text-align: center; 
+  text-align: center;
   color: #ffa941;
   -webkit-text-stroke: 0.8px black;
 }
 
 .material-symbols-outlined {
-  transition: transform 0.1s ease; 
+  transition: transform 0.1s ease;
   margin-top: 1vh;
   font-size: 40px;
 }
 
 .material-symbols-outlined:hover {
-  transform: scale(1.1); 
+  transform: scale(1.1);
   color: red;
 }
 
@@ -300,13 +321,10 @@ inputTitle.value = inputTitleParam;
   grid-template-columns: 20vw 80vw;
 }
 
-
 .sidebar-container {
-  border: 1px solid black;
   background-color: #b3b3b3;
-  height: 91vh;
 }
-.middle-container{
+.middle-container {
   overflow-y: auto;
 }
 
@@ -351,7 +369,6 @@ inputTitle.value = inputTitleParam;
   position: fixed;
   height: 91vh;
   width: 15vw;
-  
 }
 .centered-number {
   margin: 1px 0; /* Space between numbers */
@@ -382,7 +399,7 @@ inputTitle.value = inputTitleParam;
   width: 80vw;
   position: fixed;
   bottom: 5vh;
-  right: 1vw; 
+  right: 1vw;
 }
 
 .page-number {

@@ -2,9 +2,14 @@
 import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
-import { getCurrentUsername } from "../services/user_service";
+import {
+  filterIdeas,
+  loadPagedIdeas,
+  getStats,
+} from "../services/idea.service";
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
+import CustomStatistics from "../components/CustomStatistics.vue";
 
 const currentUsername = getCurrentUsername();
 
@@ -15,6 +20,7 @@ const loggedUser = ref("");
 const pageNumber = ref(1);
 const sortOrder = ref(0);
 const totalPages = ref(0);
+const stats = ref("");
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -51,6 +57,8 @@ onMounted(async () => {
   totalPages.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
   const totalNumberOfIdeas = data.total;
+  stats.value = await getStats();
+  console.log(stats.value);
 
   //STILL WORKING, ENED TO RETREIVE ALL THE IDEAS UNPAGED FROM THE SV
   //now, checking the nr of implemented ideas
@@ -85,56 +93,6 @@ async function changePage(pageNumber) {
   currentPage.value = pageNumber;
 }
 
-const totalComments = computed(() => {
-  let total = 0;
-  for (const idea of ideas.value) {
-    total += idea.comments || 0;
-  }
-  return total;
-});
-
-const totalReplies = computed(() => {
-  let total = 0;
-  for (const idea in ideas.value) {
-    total += idea.replies || 0;
-  }
-  return total;
-});
-
-const publicIdeasCount = computed(() => {
-  let count = 0;
-  for (const idea of ideas.value) {
-    if (idea.isPublic) {
-      count++;
-    }
-  }
-  return count;
-});
-
-const ideasPerUser = computed(() => {
-  const users = new Set(ideas.value.map((idea) => idea.userId));
-  if (users.size != 0) {
-    return (totalPages.value * ideasPerPage) / users.size;
-  } else {
-    return 0;
-  }
-});
-
-// const implementationPercentage = computed(() => {
-//   if (publicIdeasCount.value === 0) {
-//     return 0;
-//   }
-//   return (implementedIdeasCount.value / publicIdeasCount.value) * 100;
-// });
-
-const roundedNumber = (number) => {
-  return Math.round(number * 100) / 100;
-};
-
-function goToPage(pageNumber) {
-  currentPage.value = pageNumber;
-}
-
 // to update the current values, not the reactive ones
 function setCurrentVariables() {
   currentTitle = inputTitle.value;
@@ -161,25 +119,25 @@ async function updateSortOrder() {
       currentPage.value - 1,
       ideasPerPage,
       null,
-      "ASC" 
+      "ASC"
     );
     ideas.value = data.pagedIdeas.content;
   } else if (sortOrder.value == 1) {
-      sortOrder.value = 1;
-      const data = await filterIdeas(
-        currentTitle,
-        currentText,
-        currentStatus,
-        currentCategory,
-        currentUser,
-        currentSelectedDateFrom,
-        currentSelectedDateTo,
-        currentPage.value-1,
-        ideasPerPage,
-        null,
-        "DESC" 
-      );
-      ideas.value = data.pagedIdeas.content;
+    sortOrder.value = 1;
+    const data = await filterIdeas(
+      currentTitle,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideasPerPage,
+      null,
+      "DESC"
+    );
+    ideas.value = data.pagedIdeas.content;
   }
 }
 
@@ -205,7 +163,7 @@ async function updateIdeas(filteredIdeas) {
         currentPage.value - 1,
         ideasPerPage,
         null,
-        sortOrder.value,
+        sortOrder.value
       );
       setCurrentVariables();
       ideas.value = data.pagedIdeas != null ? data.pagedIdeas.content : [];
@@ -257,95 +215,70 @@ const onPassInputVariables = (
 //   publicIdeasCount.value = calculatePublicIdeasCount();
 //   implementedIdeasCount.value = calculateImplementedIdeasCount();
 // }
-
-
 </script>
 
 <template>
   <div class="all-ideas-view-container">
-    <div class="sidebar-container">
-      <SidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="null" :currentPage="currentPage" @pass-input-variables="onPassInputVariables" :ideasPerPage="ideasPerPage" />
+    <div class="left-container">
+      <SidePanel
+        @filter-listening="updateIdeas"
+        :sort="sortOrder"
+        :currentUser="null"
+        :currentPage="currentPage"
+        @pass-input-variables="onPassInputVariables"
+        :ideasPerPage="ideasPerPage"
+      />
     </div>
-    <div class="main-container">
-      <div class="sort-container" style="text-align: right">
-        <label for="sortOrder">Sort by: </label>
-        <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
-          <option :value="0">Date ascending</option>
-          <option :value="1">Date descending</option>
-        </select>
-      </div>
+    <div class="right-container">
+      <CustomStatistics> </CustomStatistics>
 
-      <div class="middle-container">
-        <div class="stats-container">
-          <div class="stat-item">
-            <p class="stat-label"><b>Total Comments:</b></p>
-            <!-- <p class="centered-number"><b>{{ totalComments }}</b></p> -->
+      <div class="main-container">
+        <div class="middle-container">
+          <div class="sort-container" style="text-align: right">
+            <label for="sortOrder">Sort by: </label>
+            <select
+              id="sortOrder"
+              v-model="sortOrder"
+              @change="updateSortOrder"
+            >
+              <option :value="0">Date ascending</option>
+              <option :value="1">Date descending</option>
+            </select>
           </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Total Replies:</b></p>
-            <p class="centered-number">
-              <b>{{ totalReplies }}</b>
-            </p>
-          </div>
-          <div class="spacer"></div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Ideas/User:</b></p>
-            <p class="centered-number">
-              <b>{{ roundedNumber(ideasPerUser) }}</b>
-            </p>
-          </div>
-          <div class="spacer" style="height: 50px"></div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Public Ideas</b></p>
-            <p class="centered-number">
-              <b>{{ publicIdeasCount }}</b>
-            </p>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Implemented Ideas</b></p>
-            <p class="centered-number">
-              <b>{{ implementedIdeasCount }}</b>
-            </p>
-            <br />
-            <div class="implementation-bar">
-              <div
-                class="fill"
-                :style="{ width: implementationPercentage + '%' }"
-              ></div>
+
+          <div class="ideas-transition-container">
+            <div
+              v-for="idea in ideas"
+              :key="idea.id"
+              class="idea-transition-item"
+            >
+              <IdeaCard
+                :title="idea.title"
+                :text="idea.text"
+                :status="idea.status"
+                :username="idea.username"
+                :ideaId="idea.id"
+                :commentsNumber="idea.commentsNumber"
+                :elapsedTime="idea.elapsedTime"
+                @comment-counter-add="idea.commentsNumber++"
+                @comment-counter-sub="idea.commentsNumber--"
+              />
+            </div>
+            <div v-if="ideas.length === 0" class="no-ideas-message">
+              No ideas found
+              <br />
+              <span class="material-symbols-outlined">search_off</span>
             </div>
           </div>
         </div>
 
-        <div class="ideas-transition-container">
-          <div
-            v-for="idea in ideas"
-            :key="idea.id"
-            class="idea-transition-item"
-          >
-            <IdeaCard
-              :title="idea.title"
-              :text="idea.text"
-              :status="idea.status"
-              :username="idea.username"
-              :ideaId="idea.id"
-              :commentsNumber="idea.commentsNumber"
-              :elapsedTime="idea.elapsedTime"
-            />
-          </div>
-          <div v-if="ideas.length === 0" class="no-ideas-message">
-            No ideas found
-            <br />
-            <span class="material-symbols-outlined">search_off</span>
-          </div>
+        <div v-if="ideas.length > 0" class="pagination-container">
+          <Pagination
+            :totalPages="totalPages"
+            :currentPage="currentPage"
+            @changePage="changePage"
+          />
         </div>
-      </div>
-
-      <div v-if="ideas.length > 0" class="pagination-container">
-        <Pagination
-          :totalPages="totalPages"
-          :currentPage="currentPage"
-          @changePage="changePage"
-        />
       </div>
     </div>
   </div>
@@ -357,16 +290,24 @@ const onPassInputVariables = (
 }
 
 .ideas-transition-container {
+  margin-top: 20px;
   transition: opacity 0.5s;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  font-weight: normal;
 }
 
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
+}
+
+.black-font {
+  color: #000;
+  font-family: "Segoe UI", "Lato", Arial, sans-serif;
+  font-weight: normal;
 }
 
 .fade-enter,
@@ -405,6 +346,16 @@ const onPassInputVariables = (
 .all-ideas-view-container {
   display: grid;
   grid-template-columns: 20vw 80vw;
+  height: 91vh;
+}
+
+.left-container {
+  background-color: #b3b3b3;
+}
+
+.right-container {
+  display: grid;
+  grid-template-columns: auto auto;
 }
 
 .sidebar-container {
@@ -412,8 +363,10 @@ const onPassInputVariables = (
   background-color: #b3b3b3;
   height: 91vh;
 }
+
 .middle-container {
   overflow-y: auto;
+  min-width: 60vw;
 }
 
 .middle-container::-webkit-scrollbar {
@@ -435,7 +388,7 @@ const onPassInputVariables = (
 .main-container {
   height: 91vh;
   display: grid;
-  grid-template-rows: 5% 90% 5%;
+  grid-template-rows: 95% 5%;
 }
 
 .idea-container {
@@ -451,42 +404,11 @@ const onPassInputVariables = (
   justify-content: center;
   height: 91vh;
 }
-.stats-container {
-  margin-bottom: 75px;
-  text-align: center;
-  position: fixed;
-  height: 91vh;
-  width: 15vw;
-}
-.centered-number {
-  margin: 1px 0; /* Space between numbers */
-}
 
-.spacer {
-  height: 15rem;
-}
-
-.implementation-bar {
-  width: 75%;
-  height: 20px;
-  background-color: #fff;
-  margin: 0 auto;
-  border-radius: 7.5px;
-  overflow: hidden;
-}
-
-.fill {
-  height: 100%;
-  background-color: #ffa941;
-  transition: width 0.3s ease;
-}
 .pagination-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  width: 80vw;
-  position: fixed;
-  bottom: 0;
 }
 
 .page-number {

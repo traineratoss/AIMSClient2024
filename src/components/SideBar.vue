@@ -3,20 +3,13 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomInput from "./CustomInput.vue";
 import { ref } from "vue";
-import { getAllUserByUsername } from "../services/user_service";
 
 const username = ref("");
 
 const emit = defineEmits(["filter-users"]);
 
 function filterUsers() {
-  getAllUserByUsername(username.value)
-    .then((res) => {
-      emit("filter-users", res.content);
-    })
-    .catch((error) => {
-      username.value = "";
-    });
+  emit("filter-users", username.value);
 }
 </script>
 
@@ -82,15 +75,21 @@ function filterUsers() {
 
 #filter-btn {
   margin-left: 5.19vw;
+  margin-top: 5vh;
 }
 
 .input-filter {
   display: flex;
-  gap: 3vw;
+  align-items: center;
+  gap: 5vw;
 }
 
 input {
-  width: 5vw;
+  width: 10vw;
   border: 0.5 solid black;
+}
+
+label {
+  font-weight: bold;
 }
 </style>

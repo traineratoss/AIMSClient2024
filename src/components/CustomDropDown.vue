@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps, watch } from "vue";
+import { ref, onMounted, defineProps, watch, watchEffect } from "vue";
 
 const emit = defineEmits(["update:selectedCategories"]);
 
@@ -19,22 +19,58 @@ const props = defineProps({
   canAddInDropdown: {
     type: Boolean,
     default: false,
+  },
+  //we need a prop to update from outside the selected objects
+  selectedObjects: {
+    type: Object,
+    default: null,
+  },
+  inputPlaceholder: {
+    type: String,
+    default: null,
   }
 });
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
-const filteredIdeas = ref([])
+// loading is used for checking when the props are updated and fully loaded, since i cant use it in the onMount (async function)
+const loading = ref(true);
+// this is the reactive value with the initial value of the objects selected
+const selectedObjectsReactive = ref(props.selectedObjects); 
+// the ref is stringified so i parse it to receive the full array
+const parsedSelectedCategories = ref(JSON.parse(selectedObjectsReactive.value)); // i receive
 
-onMounted(() => {
+const initialSelectedObjects = ref(null);
+
+onMounted(async () => {
   comboInput.value.addEventListener("click", showDropdown);
+  // i set the input to be equal to the initially selected values (from the props)
+  //comboInput.value.value = initialSelectedObjects.value;
 });
 
-// after fetching in the parent, we make a watch to check when the fetch is done and making the filteredIdeas the variants
-// we are using this reactive const because we need to update it with the component
-watch(() => props.variants, (newVariants) => {
-  filteredIdeas.value = newVariants;
-}, { immediate: true });
+watchEffect(() => {
+  //while its still loading, i check if the initialselectedcategories received the prop corectly from the parent
+  // and only then i set it
+  if (props.selectedObjects && props.selectedObjects.length > 0 && loading.value) {
+    initialSelectedObjects.value = parsedSelectedCategories.value.join(", ");
+    loading.value = false; 
+  }
+});
+
+watch(
+  () => props.variants,
+  (newVariants) => {
+    //when the variants are updated, im updating the selected ones
+    selectedObjectsReactive.value = newVariants;
+  },
+  { immediate: true }
+);
+
+const isVariantSelected = (variant) => {
+  if (!loading.value) {
+    return parsedSelectedCategories.value.includes(variant);
+  }
+};
 
 const showDropdown = () => {
   isDropdownVisible.value = true;
@@ -46,29 +82,46 @@ const handleCheckboxChange = () => {
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
 
-  comboInput.value.value = selectedVariants.join(", ");
+  //comboInput.value.value = selectedVariants.join(", ");
   emit("update:selectedCategories", selectedVariants);
 };
 
 const handleInputKeyPress = (event) => {
   if (props.canAddInDropdown) { // this is used for checking if the variants can pe modified by pressing Enter or not
-    if (event.key === "Enter" && event.target.value !== "") {
+    const checkDuplicate = false; // this var is used for preventing creation of an existant category
+    props.variants.forEach(variant => {
+      if(variant == event.target.value) {
+        checkDuplicate = true;
+      }
+    });
+    if (event.key === "Enter" && event.target.value !== "" && !checkDuplicate) {
+      const newCategory = event.target.value.trim();
       props.variants.push(event.target.value);
-      filteredIdeas.value = props.variants
+      selectedObjectsReactive.value = props.variants
       comboInput.value.value = "";
+      const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
+      const updatedSelectedVariants = Array.from(checkboxes)
+        .filter((checkbox) => checkbox.checked)
+        .map((checkbox) => checkbox.value);
+      setTimeout(() => {
+        const checkbox = dropdown.value.querySelector(`input[value="${newCategory}"]`); // we check the idea after we create it
+
+        if (checkbox) {
+          checkbox.checked = true;
+        }
+      }, 10); // we use a small timeout since the reactive vars arent updating instanlty so we have to check the variant after we create it
+      if (checkbox) {
+        checkbox.checked = true;
+      }
+      emit("update:selectedCategories", updatedSelectedVariants)
     }
-    const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
-    const selectedVariants = Array.from(checkboxes)
-      .filter((checkbox) => checkbox.checked)
-      .map((checkbox) => checkbox.value);
-    emit("update:selectedCategories", selectedVariants);
   }
 };
 
 // filtering the search for the custom drop down for easier searches
 const handleInputBoxChange = () => {
   const inputText = comboInput.value.value.toLowerCase(); // converting to lowercase so the search won't be case sensitive
-  filteredIdeas.value = props.variants.filter((variant) => {
+  selectedObjectsReactive.value = props.variants.filter((variant) => {
     return variant.toLowerCase().startsWith(inputText);
   });
 };
@@ -81,6 +134,10 @@ function onMouseLeave() {
   isDropdownVisible.value = false;
 }
 
+function getInputPlaceholder() {
+  return props.inputPlaceholder;
+}
+
 
 </script>
 
@@ -90,7 +147,7 @@ function onMouseLeave() {
       type="text"
       ref="comboInput"
       class="input-dropdown"
-      :placeholder="error ? 'Select a category' : ''"
+      :placeholder="getInputPlaceholder()"
       :disabled="props.disabled"
       @keydown.enter="handleInputKeyPress"
       @input="handleInputBoxChange"
@@ -104,12 +161,12 @@ function onMouseLeave() {
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >
-      <label v-for="variant in filteredIdeas" :key="variant">
-        <input
-          type="checkbox"
-          :value="variant"
-          @change="handleCheckboxChange"
-        />
+      <label v-for="variant in selectedObjectsReactive" :key="variant">
+        <input 
+        type="checkbox" 
+        :value="variant" 
+        :checked="isVariantSelected(variant)"
+         @change="handleCheckboxChange" />
         {{ variant }}
       </label>
     </div>
@@ -162,6 +219,6 @@ function onMouseLeave() {
 }
 
 .input-dropdown {
-  width: 192px;
+  width: 10vw;
 }
 </style>

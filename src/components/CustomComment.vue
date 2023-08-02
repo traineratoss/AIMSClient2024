@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { deleteComment } from "../services/comment.service";
-import { getCurrentUsername,getCurrentRole } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 
 const props = defineProps({
@@ -29,6 +29,7 @@ const emits = defineEmits([
 
 const postToggle = ref(false);
 const currentUser = ref("");
+const currentUserRole = ref("");
 const commentText = ref("");
 const buttonSelected = ref(false);
 const showModal = ref(false);
@@ -36,6 +37,7 @@ const maxlength = 500;
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
+  currentUserRole.value = getCurrentRole();
   console.log(currentUser.value.username);
 });
 
@@ -49,7 +51,7 @@ async function deleteCommentById(commentId) {
 
     if (response.ok) {
       emits("deleteComment", commentId);
-      showModal.value = false
+      showModal.value = false;
     } else {
       console.log("Unable to delete");
     }
@@ -64,7 +66,7 @@ async function deleteReplyById(replyId) {
     loadCommentReplies();
     if (response.ok) {
       emits("deleteReply", replyId);
-      showModal.value = false
+      showModal.value = false;
     } else {
       console.log("Unable to delete");
     }
@@ -92,13 +94,12 @@ function postReply(username, parentId, commentText) {
 function clearInput() {
   commentText.value = "";
 }
-
 </script>
 
 <template>
   <div v-if="props.isReply" class="reply-container">
     <div class="reply-grid-main-container">
-      <div class="header-container">
+      <div class="header-container-reply">
         <p>@{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
@@ -111,16 +112,19 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button v-if="currentUser === props.username"
+          <button
+            v-if="currentUser === props.username"
             class="action-icon-button"
-            @click="
-              showModal = true;
-            "
+            @click="showModal = true"
           >
             <span class="material-symbols-outlined"> delete </span>
           </button>
           <Teleport to="body">
-            <CustomModal :show="showModal" @close="showModal = false" @delete="deleteReplyById(props.replyId)">
+            <CustomModal
+              :show="showModal"
+              @close="showModal = false"
+              @delete="deleteReplyById(props.replyId)"
+            >
               <template #header>
                 <h3>Do you want to delete this reply?</h3>
               </template>
@@ -129,7 +133,6 @@ function clearInput() {
         </div>
       </div>
     </div>
-    <div class="shrink-container"></div>
   </div>
   <div v-if="!props.isReply" class="comment-container">
     <div class="comment-grid-main-container">
@@ -188,14 +191,19 @@ function clearInput() {
               <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
-          <button v-if="currentUser === props.username"
+          <button
+            v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
-            @click=" showModal = true;"
+            @click="showModal = true"
           >
             <span class="material-symbols-outlined"> delete </span>
           </button>
           <Teleport to="body">
-            <CustomModal :show="showModal" @close="showModal = false" @delete="deleteCommentById(props.commentId)">
+            <CustomModal
+              :show="showModal"
+              @close="showModal = false"
+              @delete="deleteCommentById(props.commentId)"
+            >
               <template #header>
                 <h3>Do you want to delete this comment?</h3>
               </template>
@@ -205,8 +213,8 @@ function clearInput() {
       </div>
     </div>
     <div class="reply-input-container" v-if="postToggle">
-      
-      <textarea :maxlength=maxlength
+      <textarea
+        :maxlength="maxlength"
         v-model="commentText"
         placeholder="  Write your reply here .."
         id="insert-reply-textarea"
@@ -214,19 +222,18 @@ function clearInput() {
       </textarea>
       <div class="chars">
         <div></div>
-       <p>{{ commentText.length }} / 500</p> 
-       <button
-        id="postButton"
-        @click="
-          postReply(currentUser, props.parentId, commentText);
-          postToggle = !postToggle;
-          buttonSelected = !buttonSelected;
-        "
-      >
-        Post reply
-      </button>
+        <p>{{ commentText.length }} / 500</p>
+        <button
+          id="postButton"
+          @click="
+            postReply(currentUser, props.parentId, commentText);
+            postToggle = !postToggle;
+            buttonSelected = !buttonSelected;
+          "
+        >
+          Post reply
+        </button>
       </div>
-      
     </div>
   </div>
 </template>
@@ -245,13 +252,13 @@ function clearInput() {
   box-sizing: border-box;
 }
 .reply-container {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(250, 250, 250);
   border-radius: 5px;
   border: 1px solid slategray;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  width: 30vw;
+  width: 29vw;
   min-height: 5vh;
   max-height: 40vh;
   box-sizing: border-box;
@@ -266,7 +273,7 @@ function clearInput() {
 
 .shrink-container {
   min-width: 10px;
-  /* border-right: 1px solid slategray; */
+  border-right: 1px solid slategray;
 }
 
 .comment-grid-main-container {
@@ -276,6 +283,18 @@ function clearInput() {
 
 .header-container {
   background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: space-between;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid #ffa941;
+  align-items: center;
+  max-width: 29vw;
+}
+
+.header-container-reply {
+  background-color: rgb(250, 250, 250);
   display: flex;
   justify-content: space-between;
   margin-right: 5px;
@@ -304,22 +323,6 @@ function clearInput() {
   overflow-x: hidden;
   padding-right: 7px;
 }
-
-.comment-text-container::-webkit-scrollbar{
-  display: none;
-}
-
-.comment-text-container:hover::-webkit-scrollbar{
-  display: block;
-  width: 5px;
-}
-
-.comment-text-container::-webkit-scrollbar-thumb{
-  background-color: #ffa941;
-  border-radius: 5px;
-  /* border: 1px solid slategray; */
-}
-
 .footer-container {
   display: grid;
   grid-template-columns: 25% 50% 25%;
@@ -348,7 +351,7 @@ function clearInput() {
   margin-right: 5px;
 }
 .action-icon-button {
-  background-color: rgba(255, 255, 255, 0.797);
+  background-color: inherit;
   border: none;
   padding: 0;
   font: inherit;
@@ -381,9 +384,9 @@ button:hover {
 
 #insert-reply-textarea {
   resize: none;
-  min-height: 4vh;
-  max-width: 28vw;
-  border: 1px solid rgb(0, 0, 0);
+  min-height: 5vh;
+  max-width: 29vw;
+  border: 1px solid slategray;
   border-radius: 3px;
 }
 
@@ -402,15 +405,14 @@ button:hover {
   margin-bottom: 10px;
   align-self: flex-end;
   background-color: white;
-  border: 1px solid #6d3d02;
+  border: 1px solid #000000;
   border-radius: 3px;
   height: 30px;
 }
 
-.chars{
+.chars {
   text-align: center;
   display: grid;
-  grid-template-columns:20% 60% 20%;
+  grid-template-columns: 20% 60% 20%;
 }
-
 </style>

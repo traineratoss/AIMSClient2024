@@ -21,7 +21,7 @@ async function loadComments(pageSize, pageNumber, sortCategory, ideaId) {
   );
 
   const data = await response.json();
-  console.log(data.content);
+  //console.log(data.content);
   return data.content;
 }
 
@@ -38,9 +38,9 @@ async function postComment(username, ideaId, commentText) {
     },
   });
 
-  console.log(username);
+  //console.log(username);
   const data = await response.json();
-  console.log(data);
+  //console.log(data);
 
   return data;
 }
@@ -58,7 +58,7 @@ async function postReply(username, parentId, commentText) {
 
   const response = await fetch(API_URL + "/comments/reply", requestOptions);
   const data = await response.json();
-  console.log(data);
+  //console.log(data);
 
   return data;
 }
@@ -69,7 +69,7 @@ async function loadReplies(commentId) {
   );
 
   const data = await response.json();
-  console.log(data);
+  //console.log(data);
   return data;
 }
 

@@ -2,16 +2,28 @@
 import SideBar from "../components/SideBar.vue";
 import UserDisplay from "../components/UserDisplay.vue";
 import Pagination from "../components/Pagination.vue";
-import { getAllUsersForAdmin } from "../services/user_service.js";
+import {
+  getAllUsersForAdmin,
+  getAllUserByUsername,
+} from "../services/user_service.js";
 import { ref, onMounted } from "vue";
 
 const pageSize = 5;
 const currentPage = ref(1);
 const totalPages = ref(0);
 const users = ref([]);
+const showImage = ref(false);
+const usernameSearch = ref("");
+const sortCategory = ref("hasPassword");
 
 onMounted(() => {
-  getAllUsersForAdmin(pageSize, currentPage.value - 1, "hasPassword")
+  const username = usernameSearch.value;
+  getAllUserByUsername(
+    pageSize,
+    currentPage.value - 1,
+    sortCategory.value,
+    username
+  )
     .then((res) => {
       users.value = res.pagedUsers.content;
       totalPages.value = Math.ceil(res.total / pageSize);
@@ -21,18 +33,6 @@ onMounted(() => {
     });
 });
 
-function changePage(pageNumber) {
-  currentPage.value = pageNumber;
-  console.log(currentPage);
-  getAllUsersForAdmin(pageSize, currentPage.value - 1, "hasPassword")
-    .then((res) => {
-      users.value = res.pagedUsers.content;
-    })
-    .catch((error) => {
-      console.log("Error");
-    });
-}
-
 function removeUser(user) {
   const index = users.value.indexOf(user);
   if (index !== -1) {
@@ -40,9 +40,42 @@ function removeUser(user) {
   }
 }
 
-function search(content) {
-  console.log(content);
-  users.value = content;
+function search(username) {
+  usernameSearch.value = username;
+  getAllUserByUsername(
+    pageSize,
+    currentPage.value - 1,
+    sortCategory.value,
+    username
+  )
+    .then((res) => {
+      users.value = res.pagedUsers.content;
+      totalPages.value = Math.ceil(res.total / pageSize);
+      if (totalPages.value != 0) {
+        currentPage.value = 1;
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+function changePage(pageNumber) {
+  currentPage.value = pageNumber;
+  console.log(pageNumber);
+  getAllUserByUsername(
+    pageSize,
+    currentPage.value - 1,
+    sortCategory.value,
+    usernameSearch.value
+  )
+    .then((res) => {
+      users.value = res.pagedUsers.content;
+      totalPages.value = Math.ceil(res.total / pageSize);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 </script>
 
@@ -52,8 +85,10 @@ function search(content) {
     <div class="right-container">
       <div class="main-container">
         <div class="user-container">
+          <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
           <UserDisplay
             v-for="user in users"
+            v-if="!showImage"
             :key="user.username"
             :name="user.username"
             :hasPassword="user.hasPassword"
@@ -111,5 +146,9 @@ function search(content) {
   position: absolute;
   bottom: 1vh;
   right: 3vh;
+}
+
+img {
+  height: 60vh;
 }
 </style>
