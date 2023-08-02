@@ -277,11 +277,11 @@ const onPassInputVariables = (
     </div>
 
     <div class="right-container">
-      <div class="statistics-container">
+
         <CustomStatistics>
           
         </CustomStatistics>
-      </div>
+
 
       <div class="main-container">
         <div class="middle-container">
@@ -311,6 +311,8 @@ const onPassInputVariables = (
                 :ideaId="idea.id"
                 :commentsNumber="idea.commentsNumber"
                 :elapsedTime="idea.elapsedTime"
+                @comment-counter-add="idea.commentsNumber++"
+                @comment-counter-sub="idea.commentsNumber--"
               />
             </div>
             <div v-if="ideas.length === 0" class="no-ideas-message">

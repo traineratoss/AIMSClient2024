@@ -21,6 +21,10 @@ const props = defineProps({
   elapsedTime: ""
 });
 
+const emits = defineEmits([
+  'commentCounterAdd','commentCounterSub'
+])
+
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
   loadIdeaComments();
@@ -136,10 +140,11 @@ async function postCommentDynamic(username, ideaId, commentText) {
       comment.elapsedTime = "0 seconds";
       comments.value.unshift(comment);
       clearInput();
-
+      emits('commentCounterAdd')
       if (comments.value.length > 0) {
         showComments.value = true;
       }
+
     } else throw error;
   } catch (error) {
     alert("Comment text must not be empty");
@@ -171,7 +176,7 @@ function deleteCommentDynamic(commentId) {
   if (indexToDelete !== -1) {
     comments.value.splice(indexToDelete, 1);
   }
-
+  emits('commentCounterSub')
   if (comments.value.length === 0) showComments.value = false;
 
   //console.log("Comment Delete Successful");
