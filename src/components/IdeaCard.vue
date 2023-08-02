@@ -669,7 +669,6 @@ const isAdmin = getCurrentRole() === "ADMIN";
   margin: 5px;
   display: flex;
   gap: 5px;
-  gap: 5px;
   flex-direction: column;
   margin-top: 5px;
   overflow-y: auto;

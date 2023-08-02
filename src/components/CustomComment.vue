@@ -252,7 +252,7 @@ function clearInput() {
   box-sizing: border-box;
 }
 .reply-container {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(250, 250, 250);
   border-radius: 5px;
   border: 1px solid slategray;
   padding-top: 10px;
@@ -294,7 +294,7 @@ function clearInput() {
 }
 
 .header-container-reply {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(250, 250, 250);
   display: flex;
   justify-content: space-between;
   margin-right: 5px;
@@ -358,10 +358,6 @@ function clearInput() {
   flex-direction: column;
 }
 
-.material-symbols-outlined {
-  background-color: inherit;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
-}
 .material-symbols-outlined {
   background-color: inherit;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
