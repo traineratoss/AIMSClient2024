@@ -1,16 +1,32 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getStats } from "../services/idea.service";
+import { getCurrentRole } from "../services/user_service";
+
 const stats = ref("");
+const implementationPercentage = ref(0);
+const isAdmin = ref(false);
 
 onMounted(async () => {
-  stats.value = await getStats();
-  console.log(stats.value);
+  isAdmin.value = getCurrentRole() === 'ADMIN';
+  if (isAdmin.value) {
+    stats.value = await getStats();
+    console.log(stats.value);
+    calculateImplementationPercentage();
+  }
 });
+
+const calculateImplementationPercentage = () => {
+  if (stats.value.nrOfIdeas > 0) {
+    implementationPercentage.value = (stats.value.implementedIdeas / stats.value.nrOfIdeas) * 100;
+  } else {
+    implementationPercentage.value = 0;
+  }
+};
 </script>
 
 <template>
-  <div class="stats-wrapper">
+  <div v-if="isAdmin" class="stats-wrapper">
     <div class="stats-container">
       <div class="title">
         <b>AIMS </b>Statistics
