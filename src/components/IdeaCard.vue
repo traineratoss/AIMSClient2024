@@ -222,30 +222,37 @@ function getShortenedTitle(title, maxLength) {
   return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
 }
 
-function getShortenedText(text, maxLength, maxRows) {
-  let shortenedText = "";
-  const totalCharacters = maxLength * maxRows;
-  const ellipsis = text.length > totalCharacters ? "..." : "";
+function getShortText(text, numberOfRows, numberOfCharacters) {
+  let shortText = "";
+  let row = "";
+  let countRows = 1;
 
-  for (let i = 0; i < maxRows; i++) {
-    const startIndex = i * maxLength;
-    const rowText = text.substr(startIndex, maxLength);
+  if (text.length <= numberOfCharacters * numberOfRows) return text;
 
-    if (i === 0) {
-      shortenedText += rowText + "\n"; // First row, no need to add spaces
-    } else {
-      const paddedRowText = rowText.padStart(rowText.length + 6, " ");
-      shortenedText += paddedRowText + "\n";
-    }
+  const wordsArray = text.split(" ");
 
-    shortenedText += (i === 0 ? "" : "\n") + rowText.trim();
-
-    if (shortenedText.length >= totalCharacters) {
-      break;
+  for (let word of wordsArray) {
+    if (row.length + word.length <= numberOfCharacters - 1) row += " " + word;
+    else {
+      console.log("Am intrat in else din cauza lui: ", word);
+      if (countRows === numberOfRows) {
+        row += " ";
+        for (let letter of word) {
+          if (row.length <= numberOfCharacters - 4) row += letter;
+        }
+        row += "...";
+        shortText += row;
+        break;
+      } else {
+        row += "\n";
+        shortText += row;
+        countRows++;
+        row = word;
+      }
     }
   }
 
-  return shortenedText.trimEnd() + ellipsis;
+  return shortText;
 }
 
 function selectIdea() {
@@ -290,10 +297,10 @@ const isAdmin = getCurrentRole() === "ADMIN";
               </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ getShortenedText(props.text, 60, 3) }}
+                  {{ props.text }}
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedText(props.text, 30, 3) }}
+                  {{ getShortText(props.text, 3, 59) }}
                 </div>
               </div>
               <div class="left-container-buttons">
@@ -729,6 +736,8 @@ img {
   height: 10vh;
   overflow: auto;
   box-sizing: border-box;
+  border: 1px solid slategray;
+  border-radius: 3px;
 }
 
 .comment-input-bottom {
@@ -782,7 +791,7 @@ button:hover {
   margin-bottom: 10px;
   align-self: flex-end;
   background-color: white;
-  border: 1px solid #6d3d02;
+  border: 1px solid #000000;
   border-radius: 3px;
   height: 30px;
 }
@@ -801,9 +810,15 @@ button:hover {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
-.chars {
+/* .chars {
   text-align: center;
   display: grid;
   grid-template-columns: 33% 33% 33%;
+} */
+
+.chars {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
 }
 </style>

@@ -323,22 +323,6 @@ function clearInput() {
   overflow-x: hidden;
   padding-right: 7px;
 }
-
-.comment-text-container::-webkit-scrollbar {
-  display: none;
-}
-
-.comment-text-container:hover::-webkit-scrollbar {
-  display: block;
-  width: 5px;
-}
-
-.comment-text-container::-webkit-scrollbar-thumb {
-  background-color: #ffa941;
-  border-radius: 5px;
-  /* border: 1px solid slategray; */
-}
-
 .footer-container {
   display: grid;
   grid-template-columns: 25% 50% 25%;
@@ -400,9 +384,9 @@ button:hover {
 
 #insert-reply-textarea {
   resize: none;
-  min-height: 4vh;
-  max-width: 28vw;
-  border: 1px solid rgb(0, 0, 0);
+  min-height: 5vh;
+  max-width: 29vw;
+  border: 1px solid slategray;
   border-radius: 3px;
 }
 
@@ -421,7 +405,7 @@ button:hover {
   margin-bottom: 10px;
   align-self: flex-end;
   background-color: white;
-  border: 1px solid #6d3d02;
+  border: 1px solid #000000;
   border-radius: 3px;
   height: 30px;
 }
