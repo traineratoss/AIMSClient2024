@@ -3,7 +3,6 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomInput from "./CustomInput.vue";
 import { ref } from "vue";
-import { getAllUserByUsername } from "../services/user_service";
 
 const username = ref("");
 
