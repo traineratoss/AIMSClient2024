@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { deleteComment } from "../services/comment.service";
-import { getCurrentUsername,getCurrentRole } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 
 const props = defineProps({
@@ -29,6 +29,7 @@ const emits = defineEmits([
 
 const postToggle = ref(false);
 const currentUser = ref("");
+const currentUserRole = ref("");
 const commentText = ref("");
 const buttonSelected = ref(false);
 const showModal = ref(false);
@@ -36,6 +37,7 @@ const maxlength = 500;
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
+  currentUserRole.value = getCurrentRole();
   console.log(currentUser.value.username);
 });
 
@@ -111,7 +113,7 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button v-if="currentUser === props.username"
+          <button v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
             @click="
               showModal = true;
@@ -188,7 +190,7 @@ function clearInput() {
               <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
-          <button v-if="currentUser === props.username"
+          <button v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
             @click=" showModal = true;"
           >
