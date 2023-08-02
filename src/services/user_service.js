@@ -231,14 +231,6 @@ function setCurrentUsername(username) {
   localStorage.setItem('username', username);
 }
 
-function setCurrentRole(role) {
-  
-}
-
-function setCurrentUsername(username) {
-  localStorage.setItem('username', username);
-}
-
 function logout() {
     /* sessionStorage.clear('username');
     sessionStorage.clear('role'); */
