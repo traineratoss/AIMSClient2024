@@ -2,7 +2,11 @@
 import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas,getStats } from "../services/idea.service";
+import {
+  filterIdeas,
+  loadPagedIdeas,
+  getStats,
+} from "../services/idea.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
@@ -225,12 +229,8 @@ const onPassInputVariables = (
         :ideasPerPage="ideasPerPage"
       />
     </div>
-
     <div class="right-container">
-        <CustomStatistics>
-          
-        </CustomStatistics>
-
+      <CustomStatistics> </CustomStatistics>
 
       <div class="main-container">
         <div class="middle-container">
@@ -306,7 +306,7 @@ const onPassInputVariables = (
 
 .black-font {
   color: #000;
-  font-family: "Segoe UI","Lato",Arial,sans-serif;
+  font-family: "Segoe UI", "Lato", Arial, sans-serif;
   font-weight: normal;
 }
 

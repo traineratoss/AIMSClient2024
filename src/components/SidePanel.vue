@@ -21,7 +21,8 @@ const props = defineProps({
   sort: Number,
   currentPage: Number,
   ideasPerPage: Number,
-  currentUser: String
+  currentUser: String,
+  hideUser: Boolean,
 });
 
 const statusOptions =
@@ -29,34 +30,55 @@ const statusOptions =
     ? ["OPEN", "IMPLEMENTED"]
     : ["OPEN", "DRAFT", "IMPLEMENTED"];
 
-
-const emit = defineEmits(["filter-listening","pass-input-variables"]);
+const emit = defineEmits(["filter-listening", "pass-input-variables"]);
 
 watch(
-  [inputTitle, inputText, statusSelected, categoriesSelected, userSelected, selectedDateFrom, selectedDateTo],
-  ([newInputTitle, newInputText, newStatusSelected, newCategoriesSelected, newUserSelected, newSelectedDateFrom, newSelectedDateTo]) => {
-    emit("pass-input-variables", newInputTitle, newInputText, newStatusSelected, newCategoriesSelected, newUserSelected, newSelectedDateFrom, newSelectedDateTo);
+  [
+    inputTitle,
+    inputText,
+    statusSelected,
+    categoriesSelected,
+    userSelected,
+    selectedDateFrom,
+    selectedDateTo,
+  ],
+  ([
+    newInputTitle,
+    newInputText,
+    newStatusSelected,
+    newCategoriesSelected,
+    newUserSelected,
+    newSelectedDateFrom,
+    newSelectedDateTo,
+  ]) => {
+    emit(
+      "pass-input-variables",
+      newInputTitle,
+      newInputText,
+      newStatusSelected,
+      newCategoriesSelected,
+      newUserSelected,
+      newSelectedDateFrom,
+      newSelectedDateTo
+    );
   }
 );
 
-
 const filterData = async () => {
   await filter();
-  emit("filter-listening", filteredIdeasEmit.value); 
+  emit("filter-listening", filteredIdeasEmit.value);
 };
-
-
 
 async function handleSelectedCategories(selectedCategories) {
   categoriesSelected.value = selectedCategories;
-};
+}
 
-async function handleSelectedUsers (selectedUsers) {
+async function handleSelectedUsers(selectedUsers) {
   userSelected.value = selectedUsers;
-};
-async function handleSelectedStatus (selectedStatus) {
+}
+async function handleSelectedStatus(selectedStatus) {
   statusSelected.value = selectedStatus;
-};
+}
 
 onMounted(async () => {
   const dataCategory = await getCategory();
@@ -85,7 +107,7 @@ const filter = async () => {
     user,
     dateFrom,
     dateTo,
-    props.currentPage-1,
+    props.currentPage - 1,
     props.ideasPerPage,
     props.currentUser,
     props.sort
@@ -93,24 +115,23 @@ const filter = async () => {
   filteredIdeasEmit.value = filteredIdeas;
 };
 
-// not 100% working 
-function clearSelection(){
-  inputTitle.value=''
-  inputText.value=''
-  categoriesSelected.value=''
-  selectedDateFrom.value=''
-  selectedDateTo.value=''
-  userSelected.value=''
-  statusSelected.value=''
+// not 100% working
+function clearSelection() {
+  inputTitle.value = "";
+  inputText.value = "";
+  categoriesSelected.value = "";
+  selectedDateFrom.value = "";
+  selectedDateTo.value = "";
+  userSelected.value = "";
+  statusSelected.value = "";
 }
 </script>
 
 <template>
   <div class="side-panel-container">
     <div class="control-container">
-      
       <span class="filter-by">Filter By:</span>
-      <span class="title"> Title </span>
+      <span class="title"> Title: </span>
       <CustomInput v-model="inputTitle" class="title-input" />
 
       <span class="text">Text:</span>
@@ -132,18 +153,25 @@ function clearSelection(){
         :canAddInDropdown="false"
       ></CustomDropDown>
 
-      <span v-if="currentUser==null" class="user">User:</span>
+      <span
+        :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
+        v-if="currentUser == null"
+        class="user"
+        >User:</span
+      >
+
       <CustomDropDown
-        v-if="currentUser==null"
+        :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
+        v-if="currentUser == null"
         class="user-select"
         :variants="userOptions"
         @update:selectedCategories="handleSelectedUsers"
         :canAddInDropdown="false"
       ></CustomDropDown>
-
+      <span v-else class="empty-span"></span>
+      <div v-else class="empty-user"></div>
 
       <div class="date-chooser">
-        
         <div><button @click="clearSelection()">Clear all</button></div>
 
         <fieldset style="border: 0.1px black solid">
@@ -173,7 +201,6 @@ function clearSelection(){
 </template>
 
 <style scoped>
-
 .side-panel-container {
   width: 20vw;
   padding-top: 2vw;
@@ -279,5 +306,14 @@ function clearSelection(){
   align-self: stretch;
   background-color: orange;
   font-weight: bold;
+}
+.empty-user {
+  grid-column: 2/3;
+  grid-row: 6/7;
+  width: 10px;
+}
+.empty-span {
+  grid-column: 1/2;
+  grid-row: 6/7;
 }
 </style>
