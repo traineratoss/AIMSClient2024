@@ -28,13 +28,15 @@ async function loginUser(username, hashPassword) {
     throw new Error('Server connection error');
   }  
 
-
   const json = await response.json();
+
+  if(json.message === 'User was deactivated') {
+    throw new Error(json.message);
+  }
+
   if(!response.ok) {
       throw new Error('Invalid username or password');
   } else {
-    /* sessionStorage.setItem('username', json.username);
-    sessionStorage.setItem('role', json.role); */
     localStorage.setItem('username', json.username);
     localStorage.setItem('role', json.role);
     localStorage.setItem('email', json.email);
@@ -198,12 +200,10 @@ async function sendDeactivateEmail(usernameOrEmail) {
 }
 
 function getCurrentUsername() {
-    //return sessionStorage.getItem('username');
-    return localStorage.getItem('username');
+  return localStorage.getItem('username');
 }
 
 function getCurrentRole() {
-  //return sessionStorage.getItem('role');
   return localStorage.getItem('role');
 }
 
@@ -220,9 +220,6 @@ function getCurrentAvatarId() {
 }
 
 function logout() {
-    /* sessionStorage.clear('username');
-    sessionStorage.clear('role'); */
-
     localStorage.clear('username');
     localStorage.clear('role');
 }
