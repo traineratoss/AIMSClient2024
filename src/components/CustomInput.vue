@@ -1,20 +1,27 @@
 <script setup>
+import { ref } from 'vue';
 
-const {modelValue, placeholder, error} = defineProps(['modelValue', 'placeholder', 'error']);
+const {modelValue, placeholder, error} = defineProps(['modelValue', 'placeholder', 'error', 'type']);
 const emit = defineEmits(['update:modelValue'])
 
+const inputValue = ref(modelValue);
 
+function inputChange() {
+    emit('update:modelValue', inputValue.value);
+}
 
 </script>
 
 <template>
 
     <input
+        :type="type"
         :value="modelValue"
         :placeholder="placeholder"
         :class="{input:error}"
         required="true"
-        @input="$emit('update:modelValue', $event.target.value)"
+        v-model="inputValue"
+        @keyup="inputChange"
     />
 </template>
 

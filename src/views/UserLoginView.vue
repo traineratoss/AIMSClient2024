@@ -7,6 +7,7 @@ import { loginUser } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import bcrypt from "bcryptjs";
+import PasswordInput from "../components/PasswordInput.vue";
 
 const usernameOrEmailText = ref("");
 const passwordText = ref("");
@@ -36,7 +37,12 @@ async function login() {
   } else {
     showErrorMessage.value = true;
     errorMessage.value = 'The fields must not be empty'
+    passwordText.value = "";
   }
+}
+
+function handlePasswordTextChanged(password) {
+  passwordText.value = password;
 }
 </script>
 
@@ -59,17 +65,21 @@ async function login() {
         v-model:model-value="usernameOrEmailText"
       />
     </div>
-    <div>
-      <CustomInput
-        type="password"
-        id="password-input"
-        placeholder="Password"
-        @keydown.enter="login"
-        v-model:model-value="passwordText"
+    <div id="password-input">
+      <PasswordInput 
+        :label="'Password'"
+        :value="passwordText"
+        @password-changed="handlePasswordTextChanged"
+        @enter-password="login"
       />
     </div>
     <div>
-      <button id="sign-in" @click="login">Sign in</button>
+      <button 
+        id="sign-in" 
+        @click="login"
+      >
+        Sign in
+      </button>
     </div>
     <div id="forgot-password">
       <router-link to="/recovery"> Forgot password? </router-link>
