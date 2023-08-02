@@ -19,24 +19,21 @@ const props = defineProps({
   ideaId: "",
   commentsNumber: "",
   elapsedTime: "",
+  image: "",
+  loggedUser: "",
 });
 
 const emits = defineEmits(["commentCounterAdd", "commentCounterSub"]);
 
-onMounted(async () => {
-  currentUser.value = getCurrentUsername();
-  loadIdeaComments();
-});
-
-const comments = ref([]);
+const allLoadedComments = ref([]);
 const commentText = ref([]);
-const showComments = ref(false);
-const currentUser = ref("");
+const showCommentsToggle = ref(false);
 const buttonSelected = ref(false);
 const postToggle = ref(false);
-const commentReplies = ref([]);
+const arrayOfCommentIdAndReplyPair = ref([]);
 const isSelected = ref(false);
 const maxCommentLength = 500;
+const numberOfDisplayedComments = ref(10);
 
 async function editIdea() {
   const data = await getIdea(props.ideaId);
@@ -62,19 +59,35 @@ async function editIdea() {
 
 async function loadIdeaComments() {
   const loadedComments = await loadComments(
-    maxCommentLength,
+    numberOfDisplayedComments.value,
     0,
     "id",
     props.ideaId
   );
-  comments.value = loadedComments.map((comment) => ({
+
+  allLoadedComments.value = loadedComments.map((comment) => ({
     ...comment,
-    expanded: false,
   }));
 
-  comments.value.forEach((c) => {
-    loadCommentReplies(c);
-  });
+  console.log(loadedComments);
+}
+
+async function loadCommentReplies(comment) {
+  const response = await loadReplies(
+    numberOfDisplayedComments.value,
+    0,
+    "id",
+    comment.id
+  );
+
+  const existingRepliesIndex = arrayOfCommentIdAndReplyPair.value.findIndex(
+    (entry) => entry[0] === comment.id
+  );
+  if (existingRepliesIndex !== -1) {
+    arrayOfCommentIdAndReplyPair.value[existingRepliesIndex][1] = response;
+  } else {
+    arrayOfCommentIdAndReplyPair.value.push([comment.id, response]);
+  }
 }
 
 function toggleCommentReplies(comment) {
@@ -102,42 +115,19 @@ function showDeletePopup() {
     path: "/create-idea",
     query: { showDeletePopup: true, id: props.ideaId },
   });
-  //console.log("redirect");
 }
 
 function toggleComments() {
-  showComments.value = !showComments.value;
-  //console.log("toggle");
-}
-
-async function loadCommentReplies(comment) {
-  const response = await loadReplies(comment.id);
-
-  const existingRepliesIndex = commentReplies.value.findIndex(
-    (entry) => entry[0] === comment.id
-  );
-  if (existingRepliesIndex !== -1) {
-    commentReplies.value[existingRepliesIndex][1] = response;
-  } else {
-    commentReplies.value.push([comment.id, response]);
-  }
-
-  //console.log(commentReplies.value);
-}
-
-function getCommentIdForReply(replyId) {
-  return commentReplies.value.find((entry) =>
-    entry[1].some((reply) => reply.id === replyId)
-  )
-    ? commentReplies.value.find((entry) =>
-        entry[1].some((reply) => reply.id === replyId)
-      )[0]
-    : null;
+  showCommentsToggle.value = !showCommentsToggle.value;
 }
 
 function getRepliesForComment(commentId) {
-  return commentReplies.value.find((entry) => entry[0] === commentId)
-    ? commentReplies.value.find((entry) => entry[0] === commentId)[1]
+  return arrayOfCommentIdAndReplyPair.value.find(
+    (entry) => entry[0] === commentId
+  )
+    ? arrayOfCommentIdAndReplyPair.value.find(
+        (entry) => entry[0] === commentId
+      )[1]
     : [];
 }
 
@@ -146,11 +136,11 @@ async function postCommentDynamic(username, ideaId, commentText) {
     if (commentText.length !== 0) {
       const comment = await postComment(username, ideaId, commentText);
       comment.elapsedTime = "0 seconds";
-      comments.value.unshift(comment);
+      allLoadedComments.value.unshift(comment);
       clearInput();
       emits("commentCounterAdd");
-      if (comments.value.length > 0) {
-        showComments.value = true;
+      if (allLoadedComments.value.length > 0) {
+        showCommentsToggle.value = true;
       }
     } else throw error;
   } catch (error) {
@@ -165,52 +155,54 @@ async function postReplyDynamic(username, parentId, commentText) {
     const parentReplies = getRepliesForComment(parentId);
     parentReplies.unshift(reply);
 
-    const existingRepliesIndex = commentReplies.value.findIndex(
+    const existingRepliesIndex = arrayOfCommentIdAndReplyPair.value.findIndex(
       (entry) => entry[0] === parentId
     );
     if (existingRepliesIndex !== -1) {
-      commentReplies.value[existingRepliesIndex][1] = parentReplies;
+      arrayOfCommentIdAndReplyPair.value[existingRepliesIndex][1] =
+        parentReplies;
     } else {
-      commentReplies.value.push([parentId, parentReplies]);
+      arrayOfCommentIdAndReplyPair.value.push([parentId, parentReplies]);
     }
-  } catch (error) {
-    //console.error("Error posting comment:", error);
-  }
+  } catch (error) {}
 }
 
 function deleteCommentDynamic(commentId) {
-  const indexToDelete = comments.value.findIndex((c) => c.id === commentId);
+  const indexToDelete = allLoadedComments.value.findIndex(
+    (c) => c.id === commentId
+  );
   if (indexToDelete !== -1) {
-    comments.value.splice(indexToDelete, 1);
+    allLoadedComments.value.splice(indexToDelete, 1);
   }
   emits("commentCounterSub");
-  if (comments.value.length === 0) showComments.value = false;
-
-  //console.log("Comment Delete Successful");
+  if (allLoadedComments.value.length === 0) showCommentsToggle.value = false;
 }
 
 function deleteReplyDynamic(replyId) {
-  const entryIndex = commentReplies.value.findIndex((entry) => {
+  const entryIndex = arrayOfCommentIdAndReplyPair.value.findIndex((entry) => {
     const repliesArray = entry[1];
     return repliesArray.some((reply) => reply.id === replyId);
   });
 
   if (entryIndex !== -1) {
-    const replyIndexToDelete = commentReplies.value[entryIndex][1].findIndex(
-      (reply) => reply.id === replyId
-    );
+    const replyIndexToDelete = arrayOfCommentIdAndReplyPair.value[
+      entryIndex
+    ][1].findIndex((reply) => reply.id === replyId);
 
     if (replyIndexToDelete !== -1) {
-      commentReplies.value[entryIndex][1].splice(replyIndexToDelete, 1);
-      //console.log("Reply Delete Successful");
-      if (commentReplies.value[entryIndex][1].length === 0) {
+      arrayOfCommentIdAndReplyPair.value[entryIndex][1].splice(
+        replyIndexToDelete,
+        1
+      );
+      console.log("Reply Delete Successful");
+      if (arrayOfCommentIdAndReplyPair.value[entryIndex][1].length === 0) {
         loadIdeaComments();
       }
     } else {
-      //console.error("Reply not found.");
+      console.error("Reply not found.");
     }
   } else {
-    //console.error("Comment not found.");
+    console.error("Comment not found.");
   }
 }
 
@@ -234,7 +226,6 @@ function getShortText(text, numberOfRows, numberOfCharacters) {
   for (let word of wordsArray) {
     if (row.length + word.length <= numberOfCharacters - 1) row += " " + word;
     else {
-      console.log("Am intrat in else din cauza lui: ", word);
       if (countRows === numberOfRows) {
         row += " ";
         for (let letter of word) {
@@ -257,10 +248,9 @@ function getShortText(text, numberOfRows, numberOfCharacters) {
 
 function selectIdea() {
   isSelected.value = !isSelected.value;
-  if (showComments.value == true) {
+  if (showCommentsToggle.value == true) {
     toggleComments();
   }
-  //console.log(isSelected.value);
 }
 
 const isAdmin = getCurrentRole() === "ADMIN";
@@ -310,7 +300,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
                     v-show="isSelected"
                   >
                     <button
-                      v-if="currentUser === props.username || isAdmin"
+                      v-if="props.loggedUser === props.username || isAdmin"
                       @click.stop="editIdea()"
                       class="idea-button"
                     >
@@ -324,7 +314,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
                     </button>
                     <button
                       @click.stop="showDeletePopup()"
-                      v-if="currentUser === props.username || isAdmin"
+                      v-if="props.loggedUser === props.username || isAdmin"
                       class="idea-button"
                     >
                       DELETE
@@ -358,8 +348,9 @@ const isAdmin = getCurrentRole() === "ADMIN";
             <div class="bottom-container-left"></div>
             <div class="bottom-container-center">
               <Transition>
-                <div v-if="comments.length > 0 && isSelected">
+                <div v-if="isSelected">
                   <button
+                    v-if="props.commentsNumber > 0"
                     @click.stop="
                       loadIdeaComments();
                       toggleComments();
@@ -367,7 +358,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
                     id="view-replies-button"
                   >
                     <span
-                      v-if="!showComments"
+                      v-if="!showCommentsToggle"
                       class="material-symbols-outlined"
                     >
                       expand_more
@@ -431,7 +422,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
           <button
             id="post-button"
             @click.stop="
-              postCommentDynamic(currentUser, props.ideaId, commentText);
+              postCommentDynamic(props.loggedUser, props.ideaId, commentText);
               postToggle = !postToggle;
               buttonSelected = !buttonSelected;
             "
@@ -443,8 +434,8 @@ const isAdmin = getCurrentRole() === "ADMIN";
     </div>
     <div
       class="comment-container"
-      v-if="showComments"
-      v-for="comment in comments"
+      v-if="showCommentsToggle"
+      v-for="comment in allLoadedComments"
       :key="comment.id"
     >
       <CustomComment
@@ -454,17 +445,16 @@ const isAdmin = getCurrentRole() === "ADMIN";
         :text="comment.commentText"
         :username="comment.username"
         :hasReplies="comment.hasReplies"
-        :expanded="comment.expanded"
         :parentId="comment.id"
         :ideaId="comment.ideaId"
-        :replies="getRepliesForComment(comment.id)"
+        :loggedUser="props.loggedUser"
         @toggleReplies="toggleCommentReplies(comment)"
         @showReplies="showCommentReplies(comment)"
         @loadReplies="loadCommentReplies(comment)"
         @postReply="postReplyDynamic"
         @deleteComment="deleteCommentDynamic"
       />
-      <div v-if="comment.expanded" class="replies-wrapper">
+      <div class="replies-wrapper">
         <div
           v-for="reply in getRepliesForComment(comment.id)"
           class="reply-container"
@@ -475,6 +465,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
             :replyId="reply.id"
             :text="reply.commentText"
             :username="reply.username"
+            :loggedUser="props.loggedUser"
             @deleteReply="deleteReplyDynamic"
           />
         </div>

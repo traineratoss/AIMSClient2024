@@ -13,7 +13,7 @@ import CustomStatistics from "../components/CustomStatistics.vue";
 
 const currentUsername = getCurrentUsername();
 
-const ideasPerPage = 15;
+const ideasPerPage = 4;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
@@ -56,19 +56,7 @@ onMounted(async () => {
   sortOrder.value = 0;
   totalPages.value = Math.ceil(data.total / ideasPerPage);
   ideas.value = data.pagedIdeas.content;
-  const totalNumberOfIdeas = data.total;
   stats.value = await getStats();
-  console.log(stats.value);
-
-  //STILL WORKING, ENED TO RETREIVE ALL THE IDEAS UNPAGED FROM THE SV
-  //now, checking the nr of implemented ideas
-  // ideas.value.forEach(idea => {
-  //   if (idea.status === "IMPLEMENTED") {
-  //     implementedIdeasCount.value++;
-  //   }
-  // });
-
-  // implementationPercentage.value = 100 * (implementedIdeasCount.value / 15);
 });
 
 async function changePage(pageNumber) {
@@ -141,7 +129,6 @@ async function updateSortOrder() {
   }
 }
 
-// here, the filtering happens
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.total / ideasPerPage); // the total nr of pages after filtering needs to be updated
 
@@ -205,16 +192,6 @@ const onPassInputVariables = (
   inputSelectedDateTo.value = inputSelectedDateToParam;
 };
 
-// watch(ideas, () => {
-//   calculateStatistics();
-// });
-
-// function calculateStatistics() {
-//   totalComments.value = calculateTotalComments();
-//   totalReplies.value = calculateTotalReplies();
-//   publicIdeasCount.value = calculatePublicIdeasCount();
-//   implementedIdeasCount.value = calculateImplementedIdeasCount();
-// }
 </script>
 
 <template>
@@ -260,15 +237,17 @@ const onPassInputVariables = (
                 :ideaId="idea.id"
                 :commentsNumber="idea.commentsNumber"
                 :elapsedTime="idea.elapsedTime"
+                :image="idea.image"
+                :loggedUser="loggedUser"
                 @comment-counter-add="idea.commentsNumber++"
                 @comment-counter-sub="idea.commentsNumber--"
               />
             </div>
             <div v-if="ideas.length === 0" class="no-ideas-message">
-              No ideas found
-              <br />
-              <span class="material-symbols-outlined">search_off</span>
-            </div>
+            <img src="../assets/img/curiosity-search.svg" />
+            <br />
+            <span class="black-font">Your search returned no results</span>
+          </div>
           </div>
         </div>
 

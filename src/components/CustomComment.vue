@@ -14,7 +14,7 @@ const props = defineProps({
   isReply: "",
   parentId: "",
   elapsedTime: "",
-  expanded: "",
+  loggedUser:""
 });
 
 const emits = defineEmits([
@@ -24,11 +24,10 @@ const emits = defineEmits([
   "postReply",
   "deleteComment",
   "deleteReply",
-  "toggleHasReplies",
 ]);
 
 const postToggle = ref(false);
-const currentUser = ref("");
+const currentUser = props.loggedUser;
 const currentUserRole = ref("");
 const commentText = ref("");
 const buttonSelected = ref(false);
@@ -36,9 +35,7 @@ const showModal = ref(false);
 const maxlength = 500;
 
 onMounted(async () => {
-  currentUser.value = getCurrentUsername();
   currentUserRole.value = getCurrentRole();
-  console.log(currentUser.value.username);
 });
 
 function loadCommentReplies() {
@@ -80,9 +77,7 @@ function showReplies() {
 }
 
 function toggleReplies() {
-  if (props.hasReplies) {
     emits("toggleReplies");
-  }
 }
 
 function postReply(username, parentId, commentText) {
@@ -150,9 +145,9 @@ function clearInput() {
 
         <div class="footer-container-center">
           <div v-if="props.hasReplies">
-            <button @click="toggleReplies()" id="view-replies-button">
+            <button @click="toggleReplies();" id="view-replies-button">
               <span
-                v-if="!props.isReply && props.hasReplies && !props.expanded"
+                v-if="!props.isReply && props.hasReplies"
                 class="material-symbols-outlined"
               >
                 expand_more
@@ -252,7 +247,7 @@ function clearInput() {
   box-sizing: border-box;
 }
 .reply-container {
-  background-color: rgb(250, 250, 250);
+  background-color: rgb(255, 255, 255);
   border-radius: 5px;
   border: 1px solid slategray;
   padding-top: 10px;
@@ -294,7 +289,7 @@ function clearInput() {
 }
 
 .header-container-reply {
-  background-color: rgb(250, 250, 250);
+  background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: space-between;
   margin-right: 5px;
