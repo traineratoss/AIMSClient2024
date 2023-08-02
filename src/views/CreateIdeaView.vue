@@ -31,7 +31,7 @@ const currentImageIndex = ref(null);
 
 const updatedIdea = ref(null);
 updatedIdea.value = useRoute().query;
-console.log("obj:"+JSON.stringify(updatedIdea.value))
+const isWatchEffectExecuted = ref(false);
 
 const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
@@ -51,34 +51,30 @@ onMounted(async() => {
     return `data:image/${item.fileType};base64,${item.base64Image}`;
   });
   slideImages.value = imageUrls;
+
+  
 });
 
 watchEffect(() => {
-  if (updatedIdea.value != null) {
+  if (!isWatchEffectExecuted.value && updatedIdea.value !== null) {
     updateIdeaFields();
+    isWatchEffectExecuted.value = true;
   }
 });
-
 const isUpdatedIdeaEmpty = computed(() => {
   return JSON.stringify(updatedIdea.value) === '{}';
 });
 
 async function updateIdeaFunction() {
-    const updatedIdeaId = updatedIdea.value.updateId; 
-    const newTitle = inputValue.value;
-    const newStatus = statusValue.value;
-    const newText = textValue.value;
-    const newCategoryList = categoriesSelected.value;
+  const updatedIdeaId = updatedIdea.value.updateId;
+  const newTitle = inputValue.value;
+  const newStatus = statusValue.value;
+  const newText = textValue.value;
+  const newCategoryList = categoriesSelected.value.map((category) => {
+    return { text: category };
+  });
 
-    const data = await updateIdea(
-        updatedIdeaId,
-        {
-            title: newTitle,
-            status: newStatus,
-            text: newText,
-            categoryList: newCategoryList,
-        }
-    );
+  await updateIdea(updatedIdeaId, newTitle, newText, newStatus, newCategoryList, null);
 }
 
 async function shouldCreateOrUpdate() {
@@ -95,10 +91,14 @@ async function updateIdeaFields() {
     textValue.value = updatedIdea.value.updateText;
     statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
     const categoryArray = JSON.parse(updatedIdea.value.updateCategoryList);
-    categoryArray.forEach(category => {
+    categoryArray.forEach((category,index) => {
       categoriesSelected.value.push(category.text)
     });
   }
+}
+
+const stringifyCategory = () => {
+  return JSON.stringify(categoriesSelected.value);
 }
 
 const getCurrentIndex = (currentIndex) => {
@@ -129,8 +129,8 @@ async function createIdeaFunction() {
     const categoryTexts = rawCategoriesValue.map((category) => ({ text: category }));
     const data = await createIdea(
       inputValue.value,
-      statusValue.value.toUpperCase(),
       textValue.value,
+      statusValue.value.toUpperCase(),
       categoryTexts,
       slideImages.value[currentImageIndex.value],
       currentUsername
@@ -221,7 +221,7 @@ function onMouseEnter() {
              :variants="categoryOptions"
              :error="categoryError"
              :canAddInDropdown="true"
-             :selectedCategories="categoriesSelected"
+             :selectedCategories="stringifyCategory()"
              class="input-width" 
              >
             </CustomDropDown>

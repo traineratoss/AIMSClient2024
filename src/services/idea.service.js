@@ -143,32 +143,38 @@ async function getIdea(id) {
   return data;
 }
 
-async function updateIdea(id, ideaUpdateDTO) {
-  const response = await fetch(API_URL + "/update?id=" + id, {
+async function updateIdea(id, title, text, status, categoryList, image) {
+    const response = await fetch(API_URL + "/update?id=" + id, {
       method: "PATCH",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
       body: JSON.stringify({
-        title: ideaUpdateDTO.title,
-        status: ideaUpdateDTO.status,
-        text: ideaUpdateDTO.text
+        title: title,
+        text: text,
+        status: status.toUpperCase(),
+        categoryList: categoryList
       }),
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
       headers: {
-          "Content-type": "application/json; charset=UTF-8",
+        "Content-type": "application/json; charset=UTF-8",
       },
-  });
+    });
 
-  const data = await response.json();
-  return data;
+    const data = await response.json();
+    return data;
 }
 
-async function createIdea(title, status, text, categoryList, image, username) {
+async function createIdea(title, text, status, categoryList, image, username) {
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     body: JSON.stringify({
       title: title,
-      status: status,
       text: text,
+      status: status.toUpperCase(),
       image: image,
-      categoryList: categoryList,
+      categoryList: categoryList
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
