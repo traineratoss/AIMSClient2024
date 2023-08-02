@@ -10,13 +10,7 @@ const username = ref("");
 const emit = defineEmits(["filter-users"]);
 
 function filterUsers() {
-  getAllUserByUsername(username.value)
-    .then((res) => {
-      emit("filter-users", res.content);
-    })
-    .catch((error) => {
-      username.value = "";
-    });
+  emit("filter-users", username.value);
 }
 </script>
 

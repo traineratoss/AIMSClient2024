@@ -1,7 +1,7 @@
 const API_URL = "http://localhost:8080/users";
 
 async function getUserByUsername(username) {
-  const response = await fetch(`${API_URL}/username?username=${username}`);
+  const response = await fetch(`${API_URL}?username=${username}`);
   const json = await response.json();
   return json;
 }
@@ -17,29 +17,28 @@ async function loginUser(username, hashPassword) {
   let response;
   try {
     response = await fetch(`${API_URL}/login?username=${username}`, {
-        method: "POST",
-        body: hashPassword,
+      method: "POST",
+      body: hashPassword,
     });
   } catch (error) {
     connectionError = true;
   }
 
-  if(connectionError) {
-    throw new Error('Server connection error');
-  }  
-
+  if (connectionError) {
+    throw new Error("Server connection error");
+  }
 
   const json = await response.json();
-  if(!response.ok) {
-      throw new Error('Invalid username or password');
+  if (!response.ok) {
+    throw new Error("Invalid username or password");
   } else {
     /* sessionStorage.setItem('username', json.username);
     sessionStorage.setItem('role', json.role); */
-    localStorage.setItem('username', json.username);
-    localStorage.setItem('role', json.role);
-    localStorage.setItem('email', json.email);
-    localStorage.setItem('fullName', json.fullName);
-    localStorage.setItem('avatarId', json.avatarId);
+    localStorage.setItem("username", json.username);
+    localStorage.setItem("role", json.role);
+    localStorage.setItem("email", json.email);
+    localStorage.setItem("fullName", json.fullName);
+    localStorage.setItem("avatarId", json.avatarId);
   }
   return json;
 }
@@ -48,22 +47,19 @@ async function postUser(username, email) {
   let response;
   let connectionError = false;
   try {
-    response = await fetch(
-      `${API_URL}?username=${username}&email=${email}`,
-      {
-        method: "POST",
-      }
-    );
+    response = await fetch(`${API_URL}?username=${username}&email=${email}`, {
+      method: "POST",
+    });
   } catch (error) {
     connectionError = true;
   }
 
-  if(connectionError) {
-    throw new Error('Server connection error');
+  if (connectionError) {
+    throw new Error("Server connection error");
   }
 
   const json = await response.json();
-  if(!response.ok) {
+  if (!response.ok) {
     throw new Error(json.message);
   }
   return json;
@@ -126,8 +122,15 @@ async function getAllUserByIsActive(
   return json;
 }
 
-async function getAllUserByUsername(username) {
-  const response = await fetch(`${API_URL}/allByUsername?username=${username}`);
+async function getAllUserByUsername(
+  pageSize,
+  pageNumber,
+  sortCategory,
+  username
+) {
+  const response = await fetch(
+    `${API_URL}/allByUsername?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}&username=${username}`
+  );
   const json = await response.json();
   return json;
 }
@@ -156,9 +159,9 @@ async function sendNewPassword(usernameOrEmail) {
   } catch (error) {
     connectionError = true;
   }
-  
-  if(connectionError) {
-    throw new Error('Server connection error');
+
+  if (connectionError) {
+    throw new Error("Server connection error");
   }
 
   const json = await response.json();
@@ -198,33 +201,33 @@ async function sendDeactivateEmail(usernameOrEmail) {
 }
 
 function getCurrentUsername() {
-    //return sessionStorage.getItem('username');
-    return localStorage.getItem('username');
+  //return sessionStorage.getItem('username');
+  return localStorage.getItem("username");
 }
 
 function getCurrentRole() {
   //return sessionStorage.getItem('role');
-  return localStorage.getItem('role');
+  return localStorage.getItem("role");
 }
 
 function getCurrentEmail() {
-  return localStorage.getItem('email');
+  return localStorage.getItem("email");
 }
 
 function getCurrentFullName() {
-  return localStorage.getItem('fullName');
+  return localStorage.getItem("fullName");
 }
 
 function getCurrentAvatarId() {
-  return localStorage.getItem('avatarId');
+  return localStorage.getItem("avatarId");
 }
 
 function logout() {
-    /* sessionStorage.clear('username');
+  /* sessionStorage.clear('username');
     sessionStorage.clear('role'); */
 
-    localStorage.clear('username');
-    localStorage.clear('role');
+  localStorage.clear("username");
+  localStorage.clear("role");
 }
 
 export {
@@ -248,5 +251,5 @@ export {
   getCurrentRole,
   getCurrentEmail,
   getCurrentFullName,
-  getCurrentAvatarId
+  getCurrentAvatarId,
 };
