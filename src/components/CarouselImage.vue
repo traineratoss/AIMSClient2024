@@ -1,11 +1,13 @@
 <script setup>
-
 import { ref,defineProps,watchEffect } from 'vue';
 
 
-const slides = defineProps(['images']);
+const slides = defineProps(['images', 'selectedImage']);
 const emit = defineEmits(['current-index']);
-const currentIndex = ref(0);
+const avatarId = parseInt(localStorage.getItem('avatarId'));
+const currentIndex = ref(avatarId);
+
+console.log("index>>", currentIndex.value);
 
 const prevSlide = () => {
   currentIndex.value =
@@ -17,10 +19,6 @@ const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % slides.images.length;
   emit('current-index', currentIndex.value);
 };
-
-watchEffect(() => {
-  currentIndex.value = 0;
-});
 </script>
 
 <template>
@@ -37,7 +35,8 @@ watchEffect(() => {
           v-for="(slide, index) in images"
           :key="index"
           class="slide"
-          :class="{ active: currentIndex === index }"
+          :class="{ active: currentIndex === index + selectedImage }"
+          
         >
           <img :src="slide" />
         </div>
@@ -59,6 +58,7 @@ watchEffect(() => {
   z-index: 10;
   margin-top: 10px;
   height: 20vh;
+  
 }
 
 .slide-container {

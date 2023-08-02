@@ -20,6 +20,8 @@ const emailText = ref("");
 const avatarIdText = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
+const index = parseInt(localStorage.getItem('avatarId')) + 1;
+const carouselImageIndex = ref(index);
 
 const slideImages = [
   "src/assets/img/avatars/avatar1.svg",
@@ -30,6 +32,10 @@ const slideImages = [
   "src/assets/img/avatars/avatar6.svg",
   "src/assets/img/avatars/avatar7.svg",
 ];
+
+function onImageChange(index) {
+  carouselImageIndex.value = index;
+}
 
 onMounted(() => {
   usernameText.value = getCurrentUsername();
@@ -56,16 +62,24 @@ function saveChanges() {
   if(changesOK) {
     let userUpdateDTO = {};
 
+    userUpdateDTO.avatarId = carouselImageIndex.value;
+    localStorage.setItem('avatarId', userUpdateDTO.avatarId);
+    console.log(carouselImageIndex.value);
+
     if(usernameText.value !== oldUsername && usernameText.value !== '') {
       userUpdateDTO.username = usernameText.value;
+      localStorage.setItem('username', userUpdateDTO.username);      
     }
     if(emailText.value !== oldEmail && emailText.value !== '') {
       userUpdateDTO.email = emailText.value;
+      localStorage.setItem('email', userUpdateDTO.email);
     }
     if(oldFullname === '') {
       userUpdateDTO.fullName = fullNameText.value;
+      localStorage.setItem('fullName', userUpdateDTO.fullName);
     } else if(fullNameText.value !== oldFullname && fullNameText.value !== '') {
       userUpdateDTO.fullName = fullNameText.value;
+      localStorage.setItem('fullName', userUpdateDTO.fullName);
     } else if(fullNameText.value === '') {
       changesOK = false;
       errorMessage.value = 'Fullname must not be empty';
@@ -109,7 +123,12 @@ function saveChanges() {
         <CustomInput type="email" v-model:model-value="emailText" />
       </div>
     </form>
-    <CarouselImage :images="slideImages" class="avatar-carousel" />
+    <CarouselImage
+      :images="slideImages"
+      :selectedImage="carouselImageIndex"
+      class="avatar-carousel"
+      @current-index="onImageChange"
+    />
     <CustomButtonGray
       id="avatar-button"
       label="Select avatar"

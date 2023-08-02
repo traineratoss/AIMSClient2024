@@ -49,6 +49,8 @@ async function postUser(username, email) {
 }
 
 async function updateUser(username, userUpdateDto) {
+  console.log(userUpdateDto.avatarId);
+
   const response = await fetch(
     `${API_URL}/update-profile?username=${username}`,
     {
@@ -67,6 +69,8 @@ async function updateUser(username, userUpdateDto) {
   if (!response.ok) {
     throw new Error(json.message);
   }
+  // update local storage
+  localStorage.setItem('avatarId', userUpdateDto.avatarId);
   return json;
 }
 
@@ -187,12 +191,23 @@ function getCurrentAvatarId() {
   return localStorage.getItem('avatarId');
 }
 
+function setCurrentUsername(username) {
+  localStorage.setItem('username', username);
+}
+
+function setCurrentRole(role) {
+  
+}
+
 function logout() {
     /* sessionStorage.clear('username');
     sessionStorage.clear('role'); */
 
     localStorage.clear('username');
     localStorage.clear('role');
+    localStorage.clear('email');
+    localStorage.clear('fullName');
+    localStorage.clear('avatarId');
 }
 
 export {
