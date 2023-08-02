@@ -44,7 +44,9 @@ const handleSelectedCategories = (selectedCategories) => {
 };
 
 onMounted(async () => {
-  categoriesSelected.value = [];
+  if (updatedIdea.value == null) {
+    categoriesSelected.value = [];
+  }
   titleError.value = false;
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
@@ -76,7 +78,7 @@ async function updateIdeaFunction() {
   const newCategoryList = categoriesSelected.value.map((category) => {
     return { text: category };
   });
-
+  console.log(newCategoryList)
   await updateIdea(
     updatedIdeaId,
     newTitle,

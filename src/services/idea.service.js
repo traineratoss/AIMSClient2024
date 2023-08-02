@@ -149,6 +149,7 @@ async function getIdea(id) {
 }
 
 async function updateIdea(id, title, text, status, categoryList, image) {
+  console.log(categoryList)
   const response = await fetch(API_URL + "/update?id=" + id, {
     method: "PATCH",
     mode: "cors",
@@ -158,7 +159,7 @@ async function updateIdea(id, title, text, status, categoryList, image) {
       title: title,
       text: text,
       status: status.toUpperCase(),
-      // categoryList: categoryList,
+      categoryList: categoryList,
     }),
     redirect: "follow",
     referrerPolicy: "no-referrer",
