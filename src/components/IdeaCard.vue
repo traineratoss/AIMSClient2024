@@ -21,9 +21,7 @@ const props = defineProps({
   elapsedTime: "",
 });
 
-const emits = defineEmits([
-  'commentCounterAdd','commentCounterSub'
-])
+const emits = defineEmits(["commentCounterAdd", "commentCounterSub"]);
 
 onMounted(async () => {
   currentUser.value = getCurrentUsername();
@@ -47,7 +45,7 @@ async function editIdea() {
   const text = data.text;
   const categoryList = JSON.stringify(data.categoryList);
   const status = data.status;
-  if (getCurrentUsername() === data.username || getCurrentRole() === 'ADMIN') {
+  if (getCurrentUsername() === data.username || getCurrentRole() === "ADMIN") {
     router.push({
       name: "create-idea",
       query: {
@@ -93,7 +91,10 @@ function showCommentReplies(comment) {
 }
 
 function redirectToCreateIdeaView() {
-  router.push({ path: "/create-idea", query: { disableFields: true } });
+  router.push({
+    path: "/create-idea",
+    query: { disableFields: true, id: props.ideaId },
+  });
 }
 
 function showDeletePopup() {
@@ -147,11 +148,10 @@ async function postCommentDynamic(username, ideaId, commentText) {
       comment.elapsedTime = "0 seconds";
       comments.value.unshift(comment);
       clearInput();
-      emits('commentCounterAdd')
+      emits("commentCounterAdd");
       if (comments.value.length > 0) {
         showComments.value = true;
       }
-
     } else throw error;
   } catch (error) {
     alert("Comment text must not be empty");
@@ -183,7 +183,7 @@ function deleteCommentDynamic(commentId) {
   if (indexToDelete !== -1) {
     comments.value.splice(indexToDelete, 1);
   }
-  emits('commentCounterSub')
+  emits("commentCounterSub");
   if (comments.value.length === 0) showComments.value = false;
 
   //console.log("Comment Delete Successful");
@@ -256,7 +256,7 @@ function selectIdea() {
   //console.log(isSelected.value);
 }
 
-const isAdmin = getCurrentRole() === 'ADMIN';
+const isAdmin = getCurrentRole() === "ADMIN";
 </script>
 
 <template>
@@ -666,7 +666,6 @@ const isAdmin = getCurrentRole() === 'ADMIN';
 }
 
 .replies-wrapper {
-  border: 1px solid slategray;
   margin: 5px;
   display: flex;
   gap: 5px;
@@ -683,20 +682,12 @@ const isAdmin = getCurrentRole() === 'ADMIN';
   box-sizing: border-box;
 }
 
-.replies-wrapper:hover {
-  padding-right: 3px;
-}
-
 .replies-wrapper::-webkit-scrollbar {
-  display: none;
-}
-
-.replies-wrapper:hover::-webkit-scrollbar {
   display: block;
   width: 5px;
 }
 
-.replies-wrapper:hover::-webkit-scrollbar-thumb {
+.replies-wrapper::-webkit-scrollbar-thumb {
   background-color: #ffa941;
   border-radius: 5px;
   border: 1px solid slategray;

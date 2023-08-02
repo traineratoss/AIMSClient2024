@@ -38,7 +38,6 @@ const isWatchEffectExecuted = ref(false);
 
 const onlyForDeleteCategories = ref([]);
 
-
 const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
 };
@@ -78,7 +77,7 @@ async function updateIdeaFunction() {
   const newCategoryList = categoriesSelected.value.map((category) => {
     return { text: category };
   });
-  console.log(newCategoryList)
+  console.log(newCategoryList);
   await updateIdea(
     updatedIdeaId,
     newTitle,
@@ -170,6 +169,7 @@ const deletePopup = ref(showDeletePopup);
 const ideaId = useRoute().query.id;
 
 if (showDeletePopup) loadIdeaForDelete();
+if (disableFields) loadIdeaForDelete();
 
 async function loadIdeaForDelete() {
   const response = await getIdea(ideaId);
@@ -254,7 +254,7 @@ function onMouseEnter() {}
     <div class="idea">
       <label for="category-idea" class="label">Category:</label>
       <CustomDropDown
-        v-if="!showDeletePopup"
+        v-if="!showDeletePopup && !disableFields"
         @update:selectedCategories="handleSelectedCategories"
         :disabled="fieldsDisabled"
         :variants="categoryOptions"
@@ -265,9 +265,10 @@ function onMouseEnter() {}
       >
       </CustomDropDown>
       <input
-        v-if="showDeletePopup"
+        v-if="showDeletePopup || disableFields"
         v-model="onlyForDeleteCategories"
         class="input-width"
+        :disabled="disableFields"
       />
     </div>
 
