@@ -20,7 +20,7 @@ const emailText = ref("");
 const avatarIdText = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
-const index = parseInt(localStorage.getItem('avatarId')) + 1;
+const index = parseInt(localStorage.getItem('avatarId'));
 const carouselImageIndex = ref(index);
 
 const slideImages = [
