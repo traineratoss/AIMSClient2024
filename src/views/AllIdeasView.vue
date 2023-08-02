@@ -2,10 +2,10 @@
 import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import CustomStatistics from "../components/CustomStatistics.vue";
 import { filterIdeas, loadPagedIdeas,getStats } from "../services/idea.service";
-import { getCurrentUsername } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
+import CustomStatistics from "../components/CustomStatistics.vue";
 
 const currentUsername = getCurrentUsername();
 
@@ -86,56 +86,6 @@ async function changePage(pageNumber) {
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
   ideas.value = data.pagedIdeas.content;
-  currentPage.value = pageNumber;
-}
-
-const totalComments = computed(() => {
-  let total = 0;
-  for (const idea of ideas.value) {
-    total += idea.comments || 0;
-  }
-  return total;
-});
-
-const totalReplies = computed(() => {
-  let total = 0;
-  for (const idea in ideas.value) {
-    total += idea.replies || 0;
-  }
-  return total;
-});
-
-const publicIdeasCount = computed(() => {
-  let count = 0;
-  for (const idea of ideas.value) {
-    if (idea.isPublic) {
-      count++;
-    }
-  }
-  return count;
-});
-
-const ideasPerUser = computed(() => {
-  const users = new Set(ideas.value.map((idea) => idea.userId));
-  if (users.size != 0) {
-    return (totalPages.value * ideasPerPage) / users.size;
-  } else {
-    return 0;
-  }
-});
-
-// const implementationPercentage = computed(() => {
-//   if (publicIdeasCount.value === 0) {
-//     return 0;
-//   }
-//   return (implementedIdeasCount.value / publicIdeasCount.value) * 100;
-// });
-
-const roundedNumber = (number) => {
-  return Math.round(number * 100) / 100;
-};
-
-function goToPage(pageNumber) {
   currentPage.value = pageNumber;
 }
 
@@ -277,7 +227,6 @@ const onPassInputVariables = (
     </div>
 
     <div class="right-container">
-
         <CustomStatistics>
           
         </CustomStatistics>

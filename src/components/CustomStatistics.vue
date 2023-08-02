@@ -7,6 +7,21 @@ onMounted(async () => {
   stats.value = await getStats();
   console.log(stats.value);
 });
+
+const implementationPercentage = ref(0);
+
+const calculateImplementationPercentage = () => {
+  if (stats.value.nrOfIdeas > 0) {
+    implementationPercentage.value = (stats.value.implementedIdeas / stats.value.nrOfIdeas) * 100;
+  } else {
+    implementationPercentage.value = 0;
+  }
+};
+
+onMounted(async () => {
+  stats.value = await getStats();
+  calculateImplementationPercentage();
+});
 </script>
 
 <template>
