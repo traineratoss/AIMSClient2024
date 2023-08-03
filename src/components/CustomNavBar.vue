@@ -122,6 +122,14 @@ router.beforeEach(() => {
     icon: "logout",
   });
 });
+
+const searchAnIdeaByTitle = () => {
+  console.log("d")
+}
+
+const handleSelected = () => {
+  console.log("d")
+}
 </script>
 
 
@@ -187,6 +195,7 @@ router.beforeEach(() => {
           id="search-an-idea"
           placeholder="&#xF002; Search an Idea (Title)"
           style="font-family: Segoe UI, FontAwesome"
+          :type="'text'"
         />
       </div>
     </div>
