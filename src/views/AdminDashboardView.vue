@@ -5,6 +5,7 @@ import Pagination from "../components/Pagination.vue";
 import {
   getAllUsersForAdmin,
   getAllUserByUsername,
+  getCurrentUsername,
 } from "../services/user_service.js";
 import { ref, onMounted } from "vue";
 
@@ -15,6 +16,7 @@ const users = ref([]);
 const showImage = ref(false);
 const usernameSearch = ref("");
 const sortCategory = ref("hasPassword");
+const currentUsername = getCurrentUsername();
 
 onMounted(() => {
   const username = usernameSearch.value;
@@ -22,7 +24,8 @@ onMounted(() => {
     pageSize,
     currentPage.value - 1,
     sortCategory.value,
-    username
+    username,
+    currentUsername
   )
     .then((res) => {
       users.value = res.pagedUsers.content;
@@ -46,7 +49,8 @@ function search(username) {
     pageSize,
     currentPage.value - 1,
     sortCategory.value,
-    username
+    username,
+    currentUsername
   )
     .then((res) => {
       users.value = res.pagedUsers.content;
@@ -67,7 +71,8 @@ function changePage(pageNumber) {
     pageSize,
     currentPage.value - 1,
     sortCategory.value,
-    usernameSearch.value
+    usernameSearch.value,
+    currentUsername
   )
     .then((res) => {
       users.value = res.pagedUsers.content;
