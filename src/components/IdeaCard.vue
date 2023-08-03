@@ -30,6 +30,7 @@ const commentText = ref([]);
 const showCommentsToggle = ref(false);
 const buttonSelected = ref(false);
 const postToggle = ref(false);
+const replyToggle = ref(false)
 const arrayOfCommentIdAndReplyPair = ref([]);
 const isSelected = ref(false);
 const maxCommentLength = 500;
@@ -91,7 +92,7 @@ async function loadCommentReplies(comment) {
 }
 
 function toggleCommentReplies(comment) {
-  comment.expanded = !comment.expanded;
+  replyToggle.value =! replyToggle.value
   loadCommentReplies(comment);
 }
 
@@ -258,7 +259,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
 
 <template>
   <div class="container">
-    <div class="clickable-container" @click="selectIdea()">
+    <div class="clickable-container" @click="selectIdea(); loadIdeaComments();">
       <div class="wrapper" v-bind:class="isSelected ? 'selected-class' : ''">
         <div
           class="border"
@@ -297,7 +298,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
                 <Transition>
                   <div
                     class="left-container-buttons-grouped"
-                    v-show="isSelected"
+                    v-if="isSelected"
                   >
                     <button
                       v-if="props.loggedUser === props.username || isAdmin"
@@ -352,7 +353,6 @@ const isAdmin = getCurrentRole() === "ADMIN";
                   <button
                     v-if="props.commentsNumber > 0"
                     @click.stop="
-                      loadIdeaComments();
                       toggleComments();
                     "
                     id="view-replies-button"
@@ -454,7 +454,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
         @postReply="postReplyDynamic"
         @deleteComment="deleteCommentDynamic"
       />
-      <div class="replies-wrapper">
+      <div class="replies-wrapper" v-if="replyToggle">
         <div
           v-for="reply in getRepliesForComment(comment.id)"
           class="reply-container"

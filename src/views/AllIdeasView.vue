@@ -10,6 +10,7 @@ import {
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
+import CustomLoader from "../components/CustomLoader.vue";
 
 const currentUsername = getCurrentUsername();
 
@@ -191,7 +192,6 @@ const onPassInputVariables = (
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
 };
-
 </script>
 
 <template>
@@ -243,11 +243,10 @@ const onPassInputVariables = (
                 @comment-counter-sub="idea.commentsNumber--"
               />
             </div>
-            <div v-if="ideas.length === 0" class="no-ideas-message">
-            <img src="../assets/img/curiosity-search.svg" />
-            <br />
-            <span class="black-font">Your search returned no results</span>
-          </div>
+            <div v-if="ideas.length === 0" class="loading-placeholder">
+              <CustomLoader
+              :size="100"/>
+            </div>
           </div>
         </div>
 
@@ -264,6 +263,7 @@ const onPassInputVariables = (
 </template>
 
 <style scoped>
+
 .idea-transition-item {
   margin-bottom: 10px;
 }
@@ -294,17 +294,13 @@ const onPassInputVariables = (
   opacity: 0;
 }
 
-.no-ideas-message {
+.loading-placeholder {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 500px;
-  font-size: 30px;
-  font-weight: bold;
   text-align: center;
-  color: #ffa941;
-  -webkit-text-stroke: 0.8px black;
+  height: 91vh;
 }
 
 .material-symbols-outlined {

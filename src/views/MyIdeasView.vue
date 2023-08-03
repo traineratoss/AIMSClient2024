@@ -237,6 +237,7 @@ const onPassInputVariables = (
               :status="idea.status"
               :username="idea.username"
               :ideaId="idea.id"
+              :loggedUser="getCurrentUsername()"
             />
           </div>
           <div v-if="ideas.length === 0" class="no-ideas-message">

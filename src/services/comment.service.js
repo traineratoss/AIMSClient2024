@@ -57,7 +57,6 @@ async function postReply(username, parentId, commentText) {
 
   const response = await fetch(API_URL + "/comments/reply", requestOptions);
   const data = await response.json();
-  //console.log(data);
 
   return data;
 }
