@@ -133,10 +133,11 @@ async function getAllUserByUsername(
   pageSize,
   pageNumber,
   sortCategory,
-  username
+  username,
+  currentUsername
 ) {
   const response = await fetch(
-    `${API_URL}/allByUsername?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}&username=${username}`
+    `${API_URL}/allByUsername?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}&username=${username}&currentUsername=${currentUsername}`
   );
   const json = await response.json();
   return json;

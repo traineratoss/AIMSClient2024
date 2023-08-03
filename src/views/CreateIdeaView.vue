@@ -262,7 +262,8 @@ function onMouseEnter() {}
       >
         <option value="open">Open</option>
         <option value="draft">Draft</option>
-        <option value="implemented" disabled>Implemented</option>
+        <option v-if="isUpdatedIdeaEmpty" value="implemented" disabled>Implemented</option>
+        <option v-else value="implemented">Implemented</option>
       </select>
     </div>
     <div class="idea">
