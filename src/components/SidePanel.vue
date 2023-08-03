@@ -132,10 +132,12 @@ function clearSelection() {
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
       <span class="title"> Title </span>
-      <CustomInput v-model="inputTitle" class="title-input" :placeholder="`Write a title...`"/>
+      <CustomInput v-model="inputTitle" class="title-input" :placeholder="`Write a title...`"
+      @keydown.enter="filterData"/>
 
       <span class="text">Text:</span>
-      <CustomInput v-model="inputText" class="text-input" :placeholder="`Write a text...`" />
+      <CustomInput v-model="inputText" class="text-input" :placeholder="`Write a text...`" 
+      @keydown.enter="filterData"/>
 
       <span class="status">Status:</span>
       <CustomDropDown
@@ -144,6 +146,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedStatus"
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
+        @keydown.enter="filterData"
       ></CustomDropDown>
 
       <span class="category">Category:</span>
@@ -153,6 +156,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedCategories"
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
+        @keydown.enter="filterData"
       ></CustomDropDown>
 
       <span
@@ -170,6 +174,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedUsers"
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
+        @keydown.enter="filterData"
       ></CustomDropDown>
       <span v-else class="empty-span"></span>
       <div v-else class="empty-user"></div>
@@ -187,18 +192,20 @@ function clearSelection() {
               v-model="selectedDateFrom"
               type="date"
               class="form-input"
+              @keydown.enter="filterData"
             />
             <span class="to-date"> To: </span>
             <CustomInput
               v-model="selectedDateTo"
               type="date"
               class="to-input"
+              @keydown.enter="filterData"
             />
           </div>
         </fieldset>
       </div>
 
-      <button class="filter-button" @click="filterData">filter</button>
+      <button class="filter-button" @click="filterData">Filter</button>
     </div>
   </div>
 </template>
