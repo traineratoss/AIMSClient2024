@@ -261,7 +261,7 @@ function onMouseEnter() {}
       >
         <option value="open">Open</option>
         <option value="draft">Draft</option>
-        <option value="implemented">Implemented</option>
+        <option value="implemented" disabled>Implemented</option>
       </select>
     </div>
     <div class="idea">
