@@ -12,6 +12,7 @@ import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
 import PageNotFound from "../views/PageNotFound.vue";
+import TestView from "../views/TestView.vue";
 import { getCurrentRole, getCurrentUsername } from "../services/user_service";
 
 const router = createRouter({
@@ -81,6 +82,11 @@ const router = createRouter({
       path: "/admin-dashboard",
       name: "admin-dashboard",
       component: AdminDashboardView,
+    },
+    {
+      path: "/test",
+      name: "test",
+      component: TestView,
     },
     {
       path: "/:pathMatch(.*)*",

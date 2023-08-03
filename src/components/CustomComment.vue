@@ -26,6 +26,7 @@ const emits = defineEmits([
   "deleteReply",
 ]);
 
+const replyToggled = ref(false)
 const postToggle = ref(false);
 const currentUser = props.loggedUser;
 const currentUserRole = ref("");
@@ -77,6 +78,7 @@ function showReplies() {
 }
 
 function toggleReplies() {
+  replyToggled.value =! replyToggled.value
     emits("toggleReplies");
 }
 
@@ -147,7 +149,7 @@ function clearInput() {
           <div v-if="props.hasReplies">
             <button @click="toggleReplies();" id="view-replies-button">
               <span
-                v-if="!props.isReply && props.hasReplies"
+                v-if="!replyToggled"
                 class="material-symbols-outlined"
               >
                 expand_more

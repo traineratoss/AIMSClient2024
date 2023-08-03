@@ -191,7 +191,6 @@ const onPassInputVariables = (
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
 };
-
 </script>
 
 <template>
@@ -244,10 +243,8 @@ const onPassInputVariables = (
               />
             </div>
             <div v-if="ideas.length === 0" class="no-ideas-message">
-            <img src="../assets/img/curiosity-search.svg" />
-            <br />
-            <span class="black-font">Your search returned no results</span>
-          </div>
+              <div class="loader"></div>
+            </div>
           </div>
         </div>
 
@@ -264,6 +261,30 @@ const onPassInputVariables = (
 </template>
 
 <style scoped>
+.loader {
+  margin: auto;
+  border: 20px solid #dedede;
+  border-radius: 50%;
+
+  width: 100px;
+  height: 100px;
+  animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+    border-top: 20px solid #ffa941;
+  }
+  50% {
+    border-top: 20px solid #dedede;
+  }
+  100% {
+    transform: rotate(360deg);
+    border-top: 20px solid #ffa941;
+  }
+}
+
 .idea-transition-item {
   margin-bottom: 10px;
 }
@@ -299,12 +320,8 @@ const onPassInputVariables = (
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 500px;
-  font-size: 30px;
-  font-weight: bold;
   text-align: center;
-  color: #ffa941;
-  -webkit-text-stroke: 0.8px black;
+  height: 91vh;
 }
 
 .material-symbols-outlined {
