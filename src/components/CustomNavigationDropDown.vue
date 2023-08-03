@@ -25,12 +25,12 @@ props.element.forEach((element) => {
 });
 
 function onMouseEnter(element) {
-  element.isHovered.value = true;
+  element.isHovered = true;
   dashboardIsHovered.value = true;
 }
 
 function onMouseLeave(element) {
-  element.isHovered.value = false;
+  element.isHovered = false;
   dashboardIsHovered.value = false;
 }
 
