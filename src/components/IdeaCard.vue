@@ -30,7 +30,6 @@ const commentText = ref([]);
 const showCommentsToggle = ref(false);
 const buttonSelected = ref(false);
 const postToggle = ref(false);
-const replyToggle = ref(false)
 const arrayOfCommentIdAndReplyPair = ref([]);
 const isSelected = ref(false);
 const maxCommentLength = 500;
@@ -92,14 +91,13 @@ async function loadCommentReplies(comment) {
 }
 
 function toggleCommentReplies(comment) {
-  replyToggle.value =! replyToggle.value
+  comment.replyToggle = !comment.replyToggle;
   loadCommentReplies(comment);
 }
 
 function showCommentReplies(comment) {
-  comment.expanded = true;
+  comment.replyToggle = true;
   if (getRepliesForComment(comment.id).length === 0) {
-    comment.isReply = false;
     comment.hasReplies = true;
   }
 }
@@ -259,7 +257,13 @@ const isAdmin = getCurrentRole() === "ADMIN";
 
 <template>
   <div class="container">
-    <div class="clickable-container" @click="selectIdea(); loadIdeaComments();">
+    <div
+      class="clickable-container"
+      @click="
+        selectIdea();
+        loadIdeaComments();
+      "
+    >
       <div class="wrapper" v-bind:class="isSelected ? 'selected-class' : ''">
         <div
           class="border"
@@ -296,10 +300,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
               </div>
               <div class="left-container-buttons">
                 <Transition>
-                  <div
-                    class="left-container-buttons-grouped"
-                    v-if="isSelected"
-                  >
+                  <div class="left-container-buttons-grouped" v-if="isSelected">
                     <button
                       v-if="props.loggedUser === props.username || isAdmin"
                       @click.stop="editIdea()"
@@ -352,9 +353,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
                 <div v-if="isSelected">
                   <button
                     v-if="props.commentsNumber > 0"
-                    @click.stop="
-                      toggleComments();
-                    "
+                    @click.stop="toggleComments()"
                     id="view-replies-button"
                   >
                     <span
@@ -454,7 +453,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
         @postReply="postReplyDynamic"
         @deleteComment="deleteCommentDynamic"
       />
-      <div class="replies-wrapper" v-if="replyToggle">
+      <div class="replies-wrapper" v-if="comment.replyToggle">
         <div
           v-for="reply in getRepliesForComment(comment.id)"
           class="reply-container"
