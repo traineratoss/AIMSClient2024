@@ -10,6 +10,7 @@ import {
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
+import CustomLoader from "../components/CustomLoader.vue";
 
 const currentUsername = getCurrentUsername();
 
@@ -242,8 +243,9 @@ const onPassInputVariables = (
                 @comment-counter-sub="idea.commentsNumber--"
               />
             </div>
-            <div v-if="ideas.length === 0" class="no-ideas-message">
-              <div class="loader"></div>
+            <div v-if="ideas.length === 0" class="loading-placeholder">
+              <CustomLoader
+              :size="100"/>
             </div>
           </div>
         </div>
@@ -261,29 +263,6 @@ const onPassInputVariables = (
 </template>
 
 <style scoped>
-.loader {
-  margin: auto;
-  border: 20px solid #dedede;
-  border-radius: 50%;
-
-  width: 100px;
-  height: 100px;
-  animation: spinner 1s linear infinite;
-}
-
-@keyframes spinner {
-  0% {
-    transform: rotate(0deg);
-    border-top: 20px solid #ffa941;
-  }
-  50% {
-    border-top: 20px solid #dedede;
-  }
-  100% {
-    transform: rotate(360deg);
-    border-top: 20px solid #ffa941;
-  }
-}
 
 .idea-transition-item {
   margin-bottom: 10px;
@@ -315,7 +294,7 @@ const onPassInputVariables = (
   opacity: 0;
 }
 
-.no-ideas-message {
+.loading-placeholder {
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -1,26 +1,28 @@
-<script setup></script>
+<!-- 
+    The container in which this component should be placed
+    should be the hight of the entire avb. screen 
+    and flex display with everything centerd.
+ -->
+
+<script setup>
+
+const props = defineProps({
+    size:""
+})
+
+
+
+</script>
 
 <template>
-  <div class="container">
-    <div class="loader"></div>
-  </div>
+    <div class="loader" :style="{height:props.size + 'px',width:props.size + 'px'}"></div>
 </template>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 91vh;
-}
-
 .loader {
   margin: auto;
   border: 20px solid #dedede;
   border-radius: 50%;
-  
-  width: 150px;
-  height: 150px;
   animation: spinner 1s linear infinite;
 }
 
