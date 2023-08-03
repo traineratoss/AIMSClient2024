@@ -1,5 +1,5 @@
 <script setup>
-  import { defineProps, defineEmits } from 'vue';
+  import { defineProps, defineEmits, ref } from 'vue';
   
   const { modelValue, placeholder, error, type, inputRef } = defineProps([
     'modelValue',
@@ -8,16 +8,23 @@
     'type',
     'inputRef'
   ]);
+
+  const focused = ref(false);
   
   const emit = defineEmits(['update:modelValue']);
   
   const inputChange = (event) => {
     emit('update:modelValue', event.target.value);
   };
-  
-  const handleSelected = () => {
-    console.log('Dd');
-  };
+
+  const handleFocus = () => {
+    focused.value = true;
+  }
+
+  const handleBlur = () => {
+    focused.value = false;
+  }
+
 </script>
 
 <template>
@@ -29,7 +36,8 @@
       required
       :value="modelValue"
       @input="inputChange"
-      @selected="handleSelected"
+      @focus="handleFocus"
+      @blur="handleBlur"
     />
 </template>
   
