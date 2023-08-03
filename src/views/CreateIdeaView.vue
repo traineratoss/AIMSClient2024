@@ -113,6 +113,7 @@ async function updateIdeaFields() {
     categoryArray.forEach((category, index) => {
       categoriesSelected.value.push(category.text);
     });
+    console.log(categoriesSelected.value)
   }
 }
 

@@ -22,7 +22,7 @@ const props = defineProps({
   },
   //we need a prop to update from outside the selected objects
   selectedObjects: {
-    type: Object,
+    type: String,
     default: null,
   },
   inputPlaceholder: {
@@ -38,7 +38,7 @@ const loading = ref(true);
 // this is the reactive value with the initial value of the objects selected
 const selectedObjectsReactive = ref(props.selectedObjects); 
 // the ref is stringified so i parse it to receive the full array
-const parsedSelectedCategories = ref(JSON.parse(selectedObjectsReactive.value)); // i receive
+const parsedSelectedCategories = ref(JSON.parse(selectedObjectsReactive.value));
 
 const initialSelectedObjects = ref(null);
 
@@ -99,21 +99,25 @@ const handleInputKeyPress = (event) => {
       props.variants.push(event.target.value);
       selectedObjectsReactive.value = props.variants
       comboInput.value.value = "";
-      const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
-      const updatedSelectedVariants = Array.from(checkboxes)
-        .filter((checkbox) => checkbox.checked)
-        .map((checkbox) => checkbox.value);
-      setTimeout(() => {
-        const checkbox = dropdown.value.querySelector(`input[value="${newCategory}"]`); // we check the idea after we create it
-
-        if (checkbox) {
+      isDropdownVisible.value = true;
+      setTimeout(() => { // we set a small timeout because
+        const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
+        console.log(checkboxes)
+        const checkbox = dropdown.value.querySelector(`input[value="${newCategory}"]`);
+        if(checkbox) {
           checkbox.checked = true;
         }
-      }, 10); // we use a small timeout since the reactive vars arent updating instanlty so we have to check the variant after we create it
-      if (checkbox) {
-        checkbox.checked = true;
-      }
-      emit("update:selectedCategories", updatedSelectedVariants)
+        const updatedSelectedVariants = Array.from(checkboxes)
+        .filter((checkbox) => checkbox.checked)
+        .map((checkbox) => checkbox.value);
+        setTimeout(() => {
+          emit("update:selectedCategories", updatedSelectedVariants)
+        }, 10); // we use a small timeout since the reactive vars arent updating instanlty so we have to check the variant after we create it
+      
+      }, 0)
+      
+      
+      
     }
   }
 };
@@ -151,13 +155,13 @@ function getInputPlaceholder() {
       :disabled="props.disabled"
       @keydown.enter="handleInputKeyPress"
       @input="handleInputBoxChange"
-      :class="{ error: props.error }"
       @mouseleave="onMouseLeave"
     />
     <div
       v-show="isDropdownVisible && !props.disabled"
       class="dropdown"
       ref="dropdown"
+      id="dropdown"
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >

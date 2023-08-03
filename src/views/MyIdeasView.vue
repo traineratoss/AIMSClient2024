@@ -207,7 +207,7 @@ const onPassInputVariables = (
       <SidePanel
         @filter-listening="updateIdeas"
         :sort="sortOrder"
-        :currentUser="null"
+        :currentUser="getCurrentUsername()"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideasPerPage"
@@ -232,12 +232,17 @@ const onPassInputVariables = (
             class="idea-transition-item"
           >
             <IdeaCard
-              :title="idea.title"
-              :text="idea.text"
-              :status="idea.status"
-              :username="idea.username"
-              :ideaId="idea.id"
-              :loggedUser="getCurrentUsername()"
+            :title="idea.title"
+                :text="idea.text"
+                :status="idea.status"
+                :username="idea.username"
+                :ideaId="idea.id"
+                :commentsNumber="idea.commentsNumber"
+                :elapsedTime="idea.elapsedTime"
+                :image="idea.image"
+                :loggedUser="getCurrentUsername()"
+                @comment-counter-add="idea.commentsNumber++"
+                @comment-counter-sub="idea.commentsNumber--"
             />
           </div>
           <div v-if="ideas.length === 0" class="no-ideas-message">
