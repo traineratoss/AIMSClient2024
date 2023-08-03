@@ -5,7 +5,7 @@ import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
 import { ref, onMounted } from "vue";
-import { getCurrentRole, getCurrentUsername } from "../services/user_service";
+import { getCurrentAvatarId, getCurrentRole, getCurrentUsername } from "../services/user_service";
 
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
@@ -54,6 +54,16 @@ function onMouseEnterUser() {
 function onMouseLeaveUser() {
   disabledUser.value = true;
 }
+
+const slideImages = [
+  "src/assets/img/avatars/avatar1.svg",
+  "src/assets/img/avatars/avatar2.svg",
+  "src/assets/img/avatars/avatar3.svg",
+  "src/assets/img/avatars/avatar4.svg",
+  "src/assets/img/avatars/avatar5.svg",
+  "src/assets/img/avatars/avatar6.svg",
+  "src/assets/img/avatars/avatar7.svg",
+];
 
 function dropDownClicked(elementId) {
   if (elementId === "my-ideas") {
@@ -220,10 +230,13 @@ const handleSelected = () => {
         id="user-details-button"
         @mouseenter="onMouseEnterUser"
         @mouseleave="onMouseLeaveUser"
+        style="padding: 20px 5px;"
       >
-        <span class="material-symbols-outlined">
-          person
-        </span>
+        <img 
+          :src="slideImages[getCurrentAvatarId()]" 
+          alt="avatar not found"
+          style="height: auto; width: 2vw;"
+        >
         <span class="material-symbols-outlined">
           keyboard_arrow_down
         </span>
