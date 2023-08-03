@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { createIdea, addImage, getImage } from "../services/idea.service";
+import { createIdea, getImage } from "../services/idea.service";
 import { watch, ref, onMounted, watchEffect, computed } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
@@ -27,8 +27,8 @@ const statusError = ref(false);
 const textError = ref(false);
 const categoryError = ref(false);
 
-const currentUsername = getCurrentUsername();
-const slideImages = ref({});
+const currentUsername= getCurrentUsername();
+const slideImages = ref([]);
 
 const currentImageIndex = ref(null);
 
@@ -169,7 +169,7 @@ async function createIdeaFunction() {
       textValue.value,
       statusValue.value.toUpperCase(),
       categoryTexts,
-      slideImages.value[currentImageIndex.value],
+      array,
       currentUsername
     );
     router.push({ name: 'my'})
@@ -212,20 +212,32 @@ async function handleConfirm() {
   await router.push({ path: "/all" });
 }
 
-const fileUpload1 = ref(null);
-function onImageUpload(event) {
-  const file = event.target.files[0];
-  fileUpload1.value = new FormData();
-  fileUpload1.value.append("file", file);
-  slideImages.push(URL.createObjectURL(file));
+const uploadedImage = ref(null);
+async function uploadImage (event){
+
+  uploadedImage.value = event.target.files[0];
+  const blob = await ImageRenderFromBlob();
+  const formData = new FormData();
+  formData.append("file",uploadedImage.value);
+    fetch('http://localhost:8080/aims/api/v1/images/addImage', {
+        method: 'POST',
+        body: formData,
+      });
+  slideImages.value.push(URL.createObjectURL(uploadedImage.value));
 }
 
-function clickImageButton() {
-  const file = fileUpload1.value;
-  addImage(file);
-  //"research" send byte []
+
+async function blobFromImage() {
+  return new Blob([await new Response
+  (uploadedImage.value).arrayBuffer()], 
+  { type: 'application/json'});
 }
 
+async function ImageRenderFromBlob() {
+  var blob = await blobFromImage();
+  const array = new Uint8Array(await blob.arrayBuffer());
+  return array;
+}
 function onMouseLeave() {}
 
 function onMouseEnter() {}
@@ -287,42 +299,33 @@ function onMouseEnter() {}
       />
     </div>
 
-    <div class="idea-text">
-      <label for="category-idea" class="label-text">Idea text:</label>
-      <textarea
-        v-model="textValue"
-        :disabled="fieldsDisabled"
-        placeholder="Write your text here..."
-        :class="{ textarea: textError }"
-      ></textarea>
-    </div>
-    <div class="idea">
-      <CarouselImage :images="slideImages" @current-index="getCurrentIndex" />
-    </div>
-    <div class="add-image">
-      <input
-        type="file"
-        id="upload"
-        hidden
-        :disabled="fieldsDisabled"
-        ref="fileUpload"
-        @change="onImageUpload"
-      />
-      <label for="upload" class="add-image-idea" v-if="!deletePopup"
-        >Upload Image</label
-      >
-    </div>
-    <div>
-      <CustomButton
-        id="create-idea"
-        @click="shouldCreateOrUpdate"
-        :disabled="fieldsDisabled"
-        v-if="!deletePopup"
-      >
-        {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
-      </CustomButton>
-    </div>
-    <!-- <div>
+        <div class="idea-text">
+            <label for="category-idea" class="label-text" >Idea text:</label>
+            <textarea 
+            v-model="textValue" 
+            :disabled="fieldsDisabled" 
+            placeholder="Write your text here..." 
+            :class="{textarea:textError}"></textarea>
+        </div>
+        <div class="idea">
+          <CarouselImage :images="slideImages" @current-index="getCurrentIndex" />
+        </div>
+        <div class="add-image" >
+            <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="uploadedImage" v-on:change="uploadImage($event)"/>
+            <label   for="upload" class="add-image-idea" v-if="!deletePopup">Upload Image</label>
+        </div>
+        <div>
+            <CustomButton 
+              id="create-idea" 
+              @click="shouldCreateOrUpdate" 
+              :disabled="fieldsDisabled" 
+              v-if="!deletePopup"
+            >
+            {{ isUpdatedIdeaEmpty ? 'Create Idea' : 'Update Idea' }}
+
+            </CustomButton>
+        </div>
+        <!-- <div>
             <CustomButton id="create-idea"  @click="clickImageButton"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Image</CustomButton>
         </div> -->
     <CustomDialog
