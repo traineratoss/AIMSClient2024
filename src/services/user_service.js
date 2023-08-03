@@ -80,7 +80,7 @@ async function updateUser(username, userUpdateDto) {
         username: userUpdateDto.username,
         fullName: userUpdateDto.fullName,
         email: userUpdateDto.email,
-        avatarId: userUpdateDto.avatarId,
+        avatarId: userUpdateDto.avatarId + 1,
       }),
     }
   );

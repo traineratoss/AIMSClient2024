@@ -78,7 +78,6 @@ const nextSlide = () => {
   flex: 0 0 100%;
   background-color: transparent;
   box-sizing: border-box;
-  border-style: double;
 }
 
 .slide.active {

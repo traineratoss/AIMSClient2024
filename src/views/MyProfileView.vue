@@ -41,7 +41,7 @@ onMounted(() => {
   usernameText.value = getCurrentUsername();
   fullNameText.value = getCurrentFullName();
   emailText.value = getCurrentEmail();
-  avatarIdText.value = getCurrentAvatarId() - 1;
+  avatarIdText.value = getCurrentAvatarId();
 });
 
 function saveChanges() {
@@ -64,8 +64,7 @@ function saveChanges() {
 
     userUpdateDTO.avatarId = carouselImageIndex.value;
     localStorage.setItem('avatarId', userUpdateDTO.avatarId);
-    console.log(carouselImageIndex.value);
-
+    
     if(usernameText.value !== oldUsername && usernameText.value !== '') {
       userUpdateDTO.username = usernameText.value;
       localStorage.setItem('username', userUpdateDTO.username);      
@@ -88,11 +87,17 @@ function saveChanges() {
 
     if(changesOK) {
       updateUser(oldUsername, userUpdateDTO)
-        .then(res => {
-          router.push('/my');
+      .then(res => {
+        router.push('/my');
         })
         .catch(error => {
           errorMessage.value = error.message;
+          if(error.message == "Username already exists!") {
+            localStorage.setItem('username', oldUsername);
+          }
+          if(error.message == "Email already exists!") {
+            localStorage.setItem('email', oldEmail);
+          }
           showErrorMessage.value = true;
         });
     }
@@ -128,11 +133,6 @@ function saveChanges() {
       :selectedImage="carouselImageIndex"
       class="avatar-carousel"
       @current-index="onImageChange"
-    />
-    <CustomButtonGray
-      id="avatar-button"
-      label="Select avatar"
-      class="avatar-button"
     />
     <CustomButton
       id="save-changes"
