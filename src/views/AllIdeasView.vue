@@ -244,8 +244,7 @@ const onPassInputVariables = (
               />
             </div>
             <div v-if="ideas.length === 0" class="loading-placeholder">
-              <CustomLoader
-              :size="100"/>
+              <CustomLoader :size="100" />
             </div>
           </div>
         </div>
@@ -263,7 +262,6 @@ const onPassInputVariables = (
 </template>
 
 <style scoped>
-
 .idea-transition-item {
   margin-bottom: 10px;
 }

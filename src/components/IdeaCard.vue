@@ -281,7 +281,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
             <div class="left-container">
               <div class="left-container-title">
                 <div class="text" v-if="isSelected">
-                  {{ getShortenedTitle(title, 100) }}
+                  {{ props.title }}
                 </div>
                 <div class="text" v-else>
                   {{ getShortenedTitle(title, 50) }}
@@ -455,6 +455,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
       />
       <div class="replies-wrapper" v-if="comment.replyToggle">
         <div
+          v-if="!toggleReplyAnimation"
           v-for="reply in getRepliesForComment(comment.id)"
           class="reply-container"
         >

@@ -86,6 +86,7 @@ function postReply(username, parentId, commentText) {
   emits("postReply", username, parentId, commentText);
   clearInput();
   showReplies();
+  replyToggled.value = true;
 }
 
 function clearInput() {
