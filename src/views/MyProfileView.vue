@@ -85,8 +85,14 @@ function saveChanges() {
     localStorage.setItem('avatarId', userUpdateDTO.avatarId);
     
     if(usernameText.value !== oldUsername && usernameText.value !== '') {
-      userUpdateDTO.username = usernameText.value;
-      localStorage.setItem('username', userUpdateDTO.username);      
+      if (validateUsername(usernameText.value)) {
+        userUpdateDTO.username = usernameText.value;
+        localStorage.setItem('username', userUpdateDTO.username);        
+      } else {
+        errorMessage.value = "Invalid username format!";
+        showErrorMessage.value = true;
+        changesOK = false;
+      }
     }
     if (emailText.value !== oldEmail && emailText.value !== "") {
       userUpdateDTO.email = emailText.value;
