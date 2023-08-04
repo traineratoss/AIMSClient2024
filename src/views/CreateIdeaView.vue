@@ -3,8 +3,7 @@ import CarouselImage from "../components/CarouselImage.vue";
 import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
-import CustomDialog from "../components/CustomDialog.vue";
-import { createIdea, getImage } from "../services/idea.service";
+import CustomDialog from "../components/CustomDialog.vue"
 import { watch, ref, onMounted, watchEffect, computed } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
@@ -14,6 +13,8 @@ import {
   getIdea,
   updateIdea,
   deleteIdea,
+  getAllImages,
+  createIdea
 } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 
@@ -52,11 +53,13 @@ onMounted(async () => {
   categoryOptions.value = categoryNames;
 
   slideImages.value = [];
-  const dataImage = await getImage();
+  const dataImage = await getAllImages();
   const imageUrls = dataImage.map((item) => {
     return `data:image/${item.fileType};base64,${item.base64Image}`;
   });
   slideImages.value = imageUrls;
+
+  console.log(currentUsername)
 });
 
 //If the component is handling the update, we update the fields only once, we dont wanna update them multiple times
@@ -88,7 +91,7 @@ async function updateIdeaFunction() {
     newTitle,
     newText,
     newStatus,
-    newCategoryList,
+    newCategoryList.value,
     null
   );
   router.push({ name: 'my'})
@@ -169,10 +172,10 @@ async function createIdeaFunction() {
       textValue.value,
       statusValue.value.toUpperCase(),
       categoryTexts,
-      array,
       currentUsername
     );
     router.push({ name: 'my'})
+    console.log(data);
     return data;
   }
 }
@@ -227,17 +230,17 @@ async function uploadImage (event){
 }
 
 
-async function blobFromImage() {
-  return new Blob([await new Response
-  (uploadedImage.value).arrayBuffer()], 
-  { type: 'application/json'});
-}
+// async function blobFromImage() {
+//   return new Blob([await new Response
+//   (uploadedImage.value).arrayBuffer()], 
+//   { type: 'application/json'});
+// }
 
-async function ImageRenderFromBlob() {
-  var blob = await blobFromImage();
-  const array = new Uint8Array(await blob.arrayBuffer());
-  return array;
-}
+// async function ImageRenderFromBlob() {
+//   var blob = await blobFromImage();
+//   const array = new Uint8Array(await blob.arrayBuffer());
+//   return array;
+// }
 function onMouseLeave() {}
 
 function onMouseEnter() {}
@@ -274,8 +277,7 @@ function onMouseEnter() {}
       >
         <option value="open">Open</option>
         <option value="draft">Draft</option>
-        <option v-if="isUpdatedIdeaEmpty" value="implemented" disabled>Implemented</option>
-        <option v-else value="implemented">Implemented</option>
+        <option v-if="!isUpdatedIdeaEmpty" value="implemented">Implemented</option>
       </select>
     </div>
     <div class="idea">

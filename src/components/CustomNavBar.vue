@@ -13,6 +13,30 @@ import {
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
 const disabledUser = ref(true);
+const currentUsername = ref("");
+const currentAvatarId = ref(-1);
+
+const slideImages = [
+  "src/assets/img/avatars/avatar1.svg",
+  "src/assets/img/avatars/avatar2.svg",
+  "src/assets/img/avatars/avatar3.svg",
+  "src/assets/img/avatars/avatar4.svg",
+  "src/assets/img/avatars/avatar5.svg",
+  "src/assets/img/avatars/avatar6.svg",
+  "src/assets/img/avatars/avatar7.svg",
+];
+
+router.beforeEach((to, from) => {
+  if (to.name === "my" && from.name === "my-profile") {
+    currentUsername.value = getCurrentUsername();
+    currentAvatarId.value = getCurrentAvatarId();
+  }
+});
+
+onMounted(() => {
+  currentUsername.value = getCurrentUsername();
+  currentAvatarId.value = getCurrentAvatarId();
+});
 
 function redirectToAllIdeas() {
   indexOfActivePage.value = 1;
@@ -57,16 +81,6 @@ function onMouseEnterUser() {
 function onMouseLeaveUser() {
   disabledUser.value = true;
 }
-
-const slideImages = [
-  "src/assets/img/avatars/avatar1.svg",
-  "src/assets/img/avatars/avatar2.svg",
-  "src/assets/img/avatars/avatar3.svg",
-  "src/assets/img/avatars/avatar4.svg",
-  "src/assets/img/avatars/avatar5.svg",
-  "src/assets/img/avatars/avatar6.svg",
-  "src/assets/img/avatars/avatar7.svg",
-];
 
 function dropDownClicked(elementId) {
   if (elementId === "my-ideas") {
@@ -211,7 +225,7 @@ const handleSelected = () => {
     <div class="user">
       <div class="user-details">
         <h3 style="font-size: 16px; font-weight: 550; height: 1vh">
-          {{ getCurrentUsername() }}
+          {{ currentUsername }}
         </h3>
         <router-link
           to="/my-profile"
@@ -228,7 +242,7 @@ const handleSelected = () => {
         style="padding: 20px 5px"
       >
         <img
-          :src="slideImages[getCurrentAvatarId()]"
+          :src="slideImages[currentAvatarId]"
           alt="avatar not found"
           style="height: auto; width: 2vw"
         />

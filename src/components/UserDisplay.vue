@@ -8,6 +8,7 @@ import {
   updateUser,
   updateUserRole,
 } from "../services/user_service";
+import UserApproveDeclineModal from "./UserApproveDeclineModal.vue";
 
 const props = defineProps({
   name: String,
@@ -16,8 +17,10 @@ const props = defineProps({
   hasPassword: Boolean,
 });
 
+const showPopup = ref(false);
+const popupMessage = ref('');
 const role = ref(props.userRole);
-const emit = defineEmits(["activation-successful", "deactivation-successful"]);
+const emit = defineEmits(["activation-successful", "deactivation-successful", 'multiple-admin-action']);
 
 async function changeStatus() {
   if (!props.isActive) {
@@ -25,6 +28,8 @@ async function changeStatus() {
       await sendActivateEmail(props.name);
       emit("change-status-successful", props.name);
     } catch (error) {
+      popupMessage.value = error.message;
+      showPopup.value = true;
       console.log("Error!", error);
     }
   } else {
@@ -32,6 +37,8 @@ async function changeStatus() {
       await sendDeactivateEmail(props.name);
       emit("change-status-successful", props.name);
     } catch (error) {
+      popupMessage.value = error.message;
+      showPopup.value = true;
       console.log("Error!", error);
     }
   }
@@ -44,6 +51,8 @@ function approveUser() {
       role.value = "STANDARD";
     })
     .catch((error) => {
+      popupMessage.value = error.message;
+      showPopup.value = true;
       console.log("Error!", error);
     });
 }
@@ -54,6 +63,8 @@ function declineUser() {
       emit("decline-user", props.name);
     })
     .catch((error) => {
+      popupMessage.value = error.message;
+      showPopup.value = true;
       console.log("Error!", error);
     });
 }
@@ -66,6 +77,11 @@ function changeRole() {
     .catch((error) => {
       console.log("Error!", error);
     });
+}
+
+function handleOK() {
+  showPopup.value = false;
+  emit('multiple-admin-action');
 }
 </script>
 
@@ -89,6 +105,13 @@ function changeRole() {
         <option value="STANDARD" v-if="userRole != 'STANDARD'">STANDARD</option>
         <option value="ADMIN" v-if="userRole != 'ADMIN'">ADMIN</option>
       </select>
+      <Teleport to="body">
+          <UserApproveDeclineModal
+            :message="popupMessage"
+            :show="showPopup"
+            @ok="handleOK"
+          />
+      </Teleport>
       <button
         id="activate-or-deactivate"
         @click="changeStatus"
