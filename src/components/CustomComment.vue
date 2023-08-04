@@ -50,6 +50,7 @@ async function deleteCommentById(commentId) {
     if (response.ok) {
       emits("deleteComment", commentId);
       showModal.value = false;
+      console.log("Comment deleted successfully");
     } else {
       console.log("Unable to delete");
     }
@@ -65,6 +66,7 @@ async function deleteReplyById(replyId) {
     if (response.ok) {
       emits("deleteReply", replyId);
       showModal.value = false;
+      console.log("Reply deleted successfully");
     } else {
       console.log("Unable to delete");
     }
