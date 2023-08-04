@@ -6,6 +6,7 @@ import {
   filterIdeas,
   loadPagedIdeas,
   getStats,
+  sendDataForCustomStats
 } from "../services/idea.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
@@ -24,6 +25,7 @@ const loggedUser = ref("");
 const sortOrder = ref(0);
 const totalPages = ref(0);
 const stats = ref("");
+const transtStatistics = ref()
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -33,6 +35,7 @@ const inputCategory = ref([]);
 const inputUser = ref([]);
 const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
+const isAdmin = ref("")
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -44,6 +47,8 @@ let currentCategory = [];
 let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
+let currentUserRole = "";
+
 
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);
@@ -59,11 +64,14 @@ onMounted(async () => {
     "ASC"
   );
   loggedUser.value = getCurrentUsername();
+  currentUserRole = getCurrentRole();
+  checkAdmin();
+  console.log(currentUserRole)
   sortOrder.value = 0;
   totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
   ideas.value = data.content;
   stats.value = await getStats();
-  loadingPage.value = false;
+
 });
 
 watch(searchValue, async(newValue) => {
@@ -104,6 +112,13 @@ async function changePage(pageNumber) {
   );
   ideas.value = data.content;
   currentPage.value = pageNumber;
+}
+
+// check if user is admin
+function checkAdmin(){
+  if(currentUserRole === 'ADMIN'){
+    isAdmin.value = true;
+  }
 }
 
 // to update the current values, not the reactive ones
@@ -227,11 +242,17 @@ const onPassInputVariables = (
         :currentUser="null"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
+        @generatedStatistics="transtStatistics = generatedStatistics"
         :ideasPerPage="ideasPerPage"
       />
     </div>
-    <div class="right-container">
-      <CustomStatistics> </CustomStatistics>
+    <div class="right-container" :style=" isAdmin ? {' grid-template-columns':'auto auto'} : {'grid-template-columns':'80vw'}">
+      <div v-if="isAdmin">
+        <CustomStatistics 
+      :generatedStatistics="transtStatistics"
+      />
+      </div>
+      
 
       <div class="main-container">
         <div class="middle-container">

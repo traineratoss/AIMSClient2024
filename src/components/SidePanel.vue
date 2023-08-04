@@ -1,10 +1,19 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
-import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
-import { getCategory, getUser } from "../services/idea.service";
+import CustomInput from "./CustomInput.vue";
+import { getCategory, getUser, sendDataForCustomStats } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
+import generatedStatisticsToBeSend from "../utils/stats-transition-container";
+
+const props = defineProps({
+  sort: Number,
+  currentPage: Number,
+  ideasPerPage: Number,
+  currentUser: String,
+  hideUser: Boolean,
+});
 
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
@@ -17,20 +26,15 @@ const selectedDateFrom = ref("");
 const selectedDateTo = ref("");
 const sortOrder = ref("ASC");
 const filteredIdeasEmit = ref({});
-const props = defineProps({
-  sort: Number,
-  currentPage: Number,
-  ideasPerPage: Number,
-  currentUser: String,
-  hideUser: Boolean,
-});
+const enableStatistics = ref(false)
+const generatedStatistics = ref()
 
 const statusOptions =
   props.currentUser === null
     ? ["OPEN", "IMPLEMENTED"]
     : ["OPEN", "DRAFT", "IMPLEMENTED"];
 
-const emit = defineEmits(["filter-listening", "pass-input-variables"]);
+const emits = defineEmits(["filter-listening", "pass-input-variables", "generatedStatistics"]);
 
 watch(
   [
@@ -51,7 +55,7 @@ watch(
     newSelectedDateFrom,
     newSelectedDateTo,
   ]) => {
-    emit(
+    emits(
       "pass-input-variables",
       newInputTitle,
       newInputText,
@@ -66,7 +70,7 @@ watch(
 
 const filterData = async () => {
   await filter();
-  emit("filter-listening", filteredIdeasEmit.value);
+  emits("filter-listening", filteredIdeasEmit.value);
 };
 
 async function handleSelectedCategories(selectedCategories) {
@@ -99,6 +103,21 @@ const filter = async () => {
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
   const status = statusSelected.value;
+
+  if(enableStatistics){
+    generatedStatisticsToBeSend.value = await sendDataForCustomStats(
+    title,
+    text,
+    status,
+    category,
+    user,
+    dateFrom,
+    dateTo
+    )
+
+    console.log('generatedStatisticsToBeSend      ',generatedStatisticsToBeSend.value)
+  }
+
   const filteredIdeas = await filterIdeas(
     title,
     text,
@@ -177,8 +196,17 @@ function clearSelection() {
       ></CustomDropDown>
 
       <div class="date-chooser">
+        <div class="buttons-container">
         <div><button @click="clearSelection()">Clear all</button></div>
 
+        <div>
+          <button @click="enableStatistics =! enableStatistics"
+          :style=" enableStatistics ? {'background-color':'green'} : {}"
+          >Generate Statistics</button>
+        </div>
+
+
+        </div>
         <fieldset style="border: 1px solid slategray;">
           <legend style="margin-left: 1em; padding: 0.2em 0.8em">
             Creation Date

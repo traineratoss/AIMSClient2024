@@ -1,24 +1,29 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { getStats } from "../services/idea.service";
-import { getCurrentRole } from "../services/user_service";
+import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 
 const stats = ref(null);
 const implementationPercentage = ref(0);
-const isAdmin = ref(false);
+const recievedStats = ref('')
 
 const isLoading = ref(true);
 
 onMounted(async () => {
-  isAdmin.value = getCurrentRole() === "ADMIN";
-  if (isAdmin.value) {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    stats.value = await getStats();
-    console.log(stats.value);
-    calculateImplementationPercentage();
-    isLoading.value = false;
-  }
+  stats.value = await getStats();
+  
+  console.log('shared obj ',generatedStatisticsToBeSend.value);
+  console.log('recieved stats ',recievedStats.value);
+  calculateImplementationPercentage();
+  isLoading.value = false;
 });
+
+
+watch(generatedStatisticsToBeSend, (newX) => {
+  console.log('the new recievedStats are ',newX)
+  recievedStats.value = generatedStatisticsToBeSend.value
+})
+
 
 const calculateImplementationPercentage = () => {
   if (stats.value && stats.value.nrOfIdeas > 0) {
@@ -31,15 +36,16 @@ const calculateImplementationPercentage = () => {
 </script>
 
 <template>
-  <div>
-    <transition name="skeleton-fade">
-      <div v-if="isLoading && isAdmin" class="skeleton-loader">
-        <div class="loader"></div>
-      </div>
-    </transition>
+  <transition name="skeleton-fade">
+    <div v-if="isLoading" class="skeleton-loader">
+      <div class="loader"></div>
+    </div>
+  </transition>
 
-    <transition name="stats-fade">
-      <div class="stats-wrapper" v-if="!isLoading && isAdmin">
+  <transition name="stats-fade">
+    <div class="stats-wrapper" v-if="!isLoading">
+
+      <div class="general-statistics" v-if="recievedStats">
         <div class="stats-container">
           <div class="title">
             <b>AIMS </b>Statistics
@@ -86,10 +92,71 @@ const calculateImplementationPercentage = () => {
               ></div>
             </div>
           </div>
+          <button @click="console.log(generatedStatistics.value)">
+            apasa ma puternic
+          </button>
         </div>
       </div>
-    </transition>
-  </div>
+
+      <div class="generated-statistics" v-else>
+        <div class="stats-container">
+          <div class="title">
+            <b>AIMS </b>Statistics
+            <span class="material-symbols-outlined"> query_stats </span>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Number of Users:</b></p>
+            <b>{{ stats.nrOfUsers }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Total Comments:</b></p>
+            <b>{{ stats.totalNrOfComments }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Total Comments in provided selection:</b></p>
+            <!-- <b>{{ props.generatedStatistics.totalNrOfComments }}</b> -->
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Total Replies:</b></p>
+            <b>{{ stats.totalNrOfReplies }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Ideas/User:</b></p>
+            <b>{{ stats.ideasPerUser }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Public Ideas:</b></p>
+            <b>{{ stats.nrOfIdeas }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Implemented Ideas:</b></p>
+            <b>{{ stats.implementedIdeas }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Drafted Ideas:</b></p>
+            <b>{{ stats.draftIdeas }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Open Ideas:</b></p>
+            <b>{{ stats.openIdeas }}</b>
+          </div>
+          <div class="stat-item">
+            <br />
+            <div class="implementation-bar">
+              <div
+                class="fill"
+                :style="{ width: implementationPercentage + '%' }"
+              ></div>
+            </div>
+          </div>
+          <button @click="console.log(props.generatedStatistics)">
+            apasa ma puternic
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </transition>
 </template>
 
 <style>

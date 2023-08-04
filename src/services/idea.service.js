@@ -38,6 +38,7 @@ async function loadPagedIdeas(
   const data = await response.json();
   return data;
 }
+
 async function getCategory() {
   const response = await fetch(
     `http://localhost:8080/aims/api/v1/ideas/categories/all`,
@@ -56,6 +57,7 @@ async function getCategory() {
   const json = await response.json();
   return json;
 }
+
 async function getUser(pageSize, pageNumber, sortCategory) {
   const response = await fetch(
     `http://localhost:8080/users/all?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`,
@@ -112,9 +114,57 @@ async function filterIdeas(
   if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
   if (username) url += `&username=${username}`;
 
-  console.log(url);
+  const response = await fetch(url, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  });
 
-  console.log(url);
+  const data = await response.json();
+  return data;
+}
+
+async function sendDataForCustomStats(
+  title,
+  text,
+  status,
+  category,
+  user,
+  selectedDateFrom,
+  selectedDateTo,
+  pageNumber,
+  pageSize,
+  username,
+  sortDirection
+) {
+  switch (sortDirection) {
+    case 0:
+      sortDirection = "ASC";
+      break;
+    case 1:
+      sortDirection = "DESC";
+      break;
+  }
+  if (pageNumber < 0) {
+    pageNumber = 0;
+  }
+
+  let url = `${API_URL}/filtered-stats?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}`;
+
+  if (title) url += `&title=${title}`;
+  if (text) url += `&text=${text}`;
+  if (status.length != 0) url += `&status=${status}`;
+  if (category.length != 0) url += `&category=${category}`;
+  if (user.length != 0) url += `&user=${user}`;
+  if (selectedDateFrom) url += `&selectedDateFrom=${selectedDateFrom}`;
+  if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
+  if (username) url += `&username=${username}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -274,4 +324,5 @@ export {
   getStats,
   updateIdea,
   deleteIdea,
+  sendDataForCustomStats
 };
