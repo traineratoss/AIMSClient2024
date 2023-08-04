@@ -29,10 +29,10 @@ function removeUser(user) {
   }
 }
 
-function search(username) {
+async function search(username) {
   usernameSearch.value = username;
   usernameSearch.value = usernameSearch.value.toLowerCase();
-  getAllUserByUsername(
+  await getAllUserByUsername(
     pageSize,
     currentPage.value - 1,
     sortCategory.value,
@@ -58,9 +58,9 @@ function search(username) {
     });
 }
 
-function changePage(pageNumber) {
+async function changePage(pageNumber) {
   currentPage.value = pageNumber;
-  getAllUserByUsername(
+  await getAllUserByUsername(
     pageSize,
     currentPage.value - 1,
     sortCategory.value,
