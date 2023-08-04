@@ -88,7 +88,7 @@ const handleCheckboxChange = () => {
 
 const handleInputKeyPress = (event) => {
   if (props.canAddInDropdown) { // this is used for checking if the variants can pe modified by pressing Enter or not
-    const checkDuplicate = false; // this var is used for preventing creation of an existant category
+    let checkDuplicate = false; // this var is used for preventing creation of an existant category
     props.variants.forEach(variant => {
       if(variant == event.target.value) {
         checkDuplicate = true;

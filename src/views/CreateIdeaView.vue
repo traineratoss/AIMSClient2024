@@ -57,6 +57,8 @@ onMounted(async () => {
     return `data:image/${item.fileType};base64,${item.base64Image}`;
   });
   slideImages.value = imageUrls;
+
+  console.log(currentUsername)
 });
 
 //If the component is handling the update, we update the fields only once, we dont wanna update them multiple times
@@ -169,7 +171,6 @@ async function createIdeaFunction() {
       textValue.value,
       statusValue.value.toUpperCase(),
       categoryTexts,
-      array,
       currentUsername
     );
     router.push({ name: 'my'})

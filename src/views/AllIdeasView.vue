@@ -12,6 +12,7 @@ import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 
+
 const currentUsername = getCurrentUsername();
 
 const ideasPerPage = 4;
@@ -58,6 +59,11 @@ onMounted(async () => {
   totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
   ideas.value = data.content;
   stats.value = await getStats();
+
+  this.emitter.on("filter-ideas-by-title", condition => {
+      console.log("dd");
+    });
+
 });
 
 async function changePage(pageNumber) {

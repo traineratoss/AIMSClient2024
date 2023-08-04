@@ -172,15 +172,15 @@ async function updateIdea(id, title, text, status, categoryList, image) {
   return data;
 }
 
-async function createIdea(title, text, status, categoryList, image, username) {
-  const imageBlob = await fetch(image).then((response) => response.blob());
+async function createIdea(title, text, status, categoryList, username) {
+  // const imageBlob = await fetch(image).then((response) => response.blob());
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     body: JSON.stringify({
       title: title,
       text: text,
       status: status.toUpperCase(),
-      image: image,
+      // image: image,
       categoryList: categoryList,
     }),
     headers: {
