@@ -31,11 +31,12 @@ function removeUser(user) {
 
 function search(username) {
   usernameSearch.value = username;
+  usernameSearch.value = usernameSearch.value.toLowerCase();
   getAllUserByUsername(
     pageSize,
     currentPage.value - 1,
     sortCategory.value,
-    username,
+    usernameSearch.value,
     currentUsername
   )
     .then((res) => {
