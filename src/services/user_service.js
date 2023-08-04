@@ -233,14 +233,27 @@ function setCurrentUsername(username) {
 }
 
 function logout() {
-    /* sessionStorage.clear('username');
-    sessionStorage.clear('role'); */
-
     localStorage.clear('username');
     localStorage.clear('role');
     localStorage.clear('email');
     localStorage.clear('fullName');
     localStorage.clear('avatarId');
+}
+
+function validateUsername(username) {
+  /* 
+    Usernames can only have: 
+    - Lowercase Letters (a-z) 
+    - Numbers (0-9)
+    - Dots (.)
+    - Underscores (_)
+  */
+  const res = /^[a-z0-9_\.]+$/.exec(username);
+  const valid = !!res;
+  if (valid) {
+    return true;
+  }
+  return false;
 }
 
 export {
@@ -265,4 +278,5 @@ export {
   getCurrentEmail,
   getCurrentFullName,
   getCurrentAvatarId,
+  validateUsername
 };

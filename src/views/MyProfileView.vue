@@ -10,7 +10,8 @@ import {
   updateUser, 
   getCurrentEmail, 
   getCurrentFullName, 
-  getCurrentAvatarId 
+  getCurrentAvatarId,
+  validateUsername
 } from "../services/user_service";
 import router from "../router";
 
@@ -44,6 +45,24 @@ onMounted(() => {
   avatarIdText.value = getCurrentAvatarId();
 });
 
+// function validateUsername(username) {
+//   /* 
+//     Usernames can only have: 
+//     - Lowercase Letters (a-z) 
+//     - Numbers (0-9)
+//     - Dots (.)
+//     - Underscores (_)
+//   */
+//   const res = /^[a-z0-9_\.]+$/.exec(username);
+//   const valid = !!res;
+//   if( valid) {
+//     return true;
+//   }
+//   message.value = "Invalid username";
+//   showErrorMessage.value = true;
+//   return false;
+// }
+
 function saveChanges() {
   let changesOK = true;
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -66,8 +85,14 @@ function saveChanges() {
     localStorage.setItem('avatarId', userUpdateDTO.avatarId);
     
     if(usernameText.value !== oldUsername && usernameText.value !== '') {
-      userUpdateDTO.username = usernameText.value;
-      localStorage.setItem('username', userUpdateDTO.username);      
+      if (validateUsername(usernameText.value)) {
+        userUpdateDTO.username = usernameText.value;
+        localStorage.setItem('username', userUpdateDTO.username);      
+      } else {
+        errorMessage.value = "Invalid username";
+        showErrorMessage.value = true;
+        changesOK = false;
+      }
     }
     if(emailText.value !== oldEmail && emailText.value !== '') {
       userUpdateDTO.email = emailText.value;
