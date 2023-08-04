@@ -14,7 +14,8 @@ import {
   updateIdea,
   deleteIdea,
   getAllImages,
-  createIdea
+  createIdea,
+  getImageById
 } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 
@@ -26,12 +27,15 @@ const categoriesSelected = ref([]);
 const titleError = ref(false);
 const statusError = ref(false);
 const textError = ref(false);
-const categoryError = ref(false);
+// const categoryError = ref(false);
 
 const currentUsername= getCurrentUsername();
 const slideImages = ref([]);
 
 const currentImageIndex = ref(null);
+const selectedImageBase64 = ref("");
+const selectedImageName = ref("");
+const selectedImageType = ref("");
 
 const updatedIdea = ref(null);
 updatedIdea.value = useRoute().query;
@@ -55,11 +59,13 @@ onMounted(async () => {
   slideImages.value = [];
   const dataImage = await getAllImages();
   const imageUrls = dataImage.map((item) => {
-    return `data:image/${item.fileType};base64,${item.base64Image}`;
+    const base64Pattern = /^data:image\/[^;]+;base64,/;
+    const base64Data = item.base64Image.replace(base64Pattern, '');
+
+    return `data:image/${item.fileType};name=${item.fileName};base64,${base64Data}`;
   });
   slideImages.value = imageUrls;
 
-  console.log(currentUsername)
 });
 
 //If the component is handling the update, we update the fields only once, we dont wanna update them multiple times
@@ -85,7 +91,6 @@ async function updateIdeaFunction() {
   const newCategoryList = categoriesSelected.value.map((category) => {
     return { text: category };
   });
-  console.log(newCategoryList);
   await updateIdea(
     updatedIdeaId,
     newTitle,
@@ -129,6 +134,12 @@ const getCurrentIndex = (currentIndex) => {
   currentImageIndex.value = currentIndex;
 };
 
+const getSelectedImageValues = (selectedImageBase64Param, selectedImageNameParam, selectedImageTypeParam) => {
+  selectedImageBase64.value = selectedImageBase64Param;
+  selectedImageName.value = selectedImageNameParam;
+  selectedImageType.value = selectedImageTypeParam;
+}
+
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
 
@@ -167,21 +178,44 @@ async function createIdeaFunction() {
     const categoryTexts = rawCategoriesValue.map((category) => ({
       text: category,
     }));
+
+    // const formData = new FormData();
+    // formData.append("file",uploadedImage.value);
+    // const imageData = await fetch('http://localhost:8080/aims/api/v1/images/addImage', {
+    //     method: 'POST',
+    //     body: formData
+    // });
+    // const content = await imageData.json();
+    // console.log(uploadedImage.value)
+
+    // const blob = await uploadedImage.value.arrayBuffer();
+
+    // const byteArray = new Uint8Array(await blob);
+
+    // const base64String = btoa(String.fromCharCode(...byteArray));
+
+    const imageDTO = {
+      fileName: selectedImageName.value,
+      fileType: selectedImageType.value,
+      image: selectedImageBase64.value
+    }
+
+    console.log(imageDTO)
+
     const data = await createIdea(
       inputValue.value,
       textValue.value,
       statusValue.value.toUpperCase(),
       categoryTexts,
+      imageDTO,
       currentUsername
     );
     router.push({ name: 'my'})
-    console.log(data);
     return data;
   }
 }
 const disableFields = useRoute().query.disableFields === "true";
 const fieldsDisabled = ref(disableFields);
-
 const showDeletePopup = useRoute().query.showDeletePopup === "true";
 const deletePopup = ref(showDeletePopup);
 const ideaId = useRoute().query.id;
@@ -217,15 +251,7 @@ async function handleConfirm() {
 
 const uploadedImage = ref(null);
 async function uploadImage (event){
-
   uploadedImage.value = event.target.files[0];
-  const blob = await ImageRenderFromBlob();
-  const formData = new FormData();
-  formData.append("file",uploadedImage.value);
-    fetch('http://localhost:8080/aims/api/v1/images/addImage', {
-        method: 'POST',
-        body: formData,
-      });
   slideImages.value.push(URL.createObjectURL(uploadedImage.value));
 }
 
@@ -310,7 +336,7 @@ function onMouseEnter() {}
             :class="{textarea:textError}"></textarea>
         </div>
         <div class="idea">
-          <CarouselImage :images="slideImages" @current-index="getCurrentIndex" />
+          <CarouselImage :images="slideImages" @current-index="getCurrentIndex" @selected-image-values="getSelectedImageValues" />
         </div>
         <div class="add-image" >
             <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="uploadedImage" v-on:change="uploadImage($event)"/>

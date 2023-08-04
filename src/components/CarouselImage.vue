@@ -1,22 +1,70 @@
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref,defineProps,watchEffect, onMounted } from 'vue';
 
-const slides = defineProps(["images"]);
-const emit = defineEmits(["current-index"]);
-const avatarId = parseInt(localStorage.getItem("avatarId"));
-const currentIndex = ref(avatarId);
 
-console.log("index>>", currentIndex.value);
+const slides = defineProps(['images', 'selectedImage']);
+const emit = defineEmits(['current-index', 'selected-image-values']);
+const avatarId = parseInt(localStorage.getItem('avatarId'));
+const currentIndex = ref(0);
+const selectedImageBase64 = ref(slides.images[0]);
+const selectedImageType = ref(slides.images[0])
+const selectedImageName = ref(slides.images[0]);
+
+onMounted(async() => {
+  currentIndex.value = 0;
+  const base64Index = slides.images[currentIndex.value].indexOf(',') + 1;
+  const base64Data = slides.images[currentIndex.value].slice(base64Index);
+  selectedImageBase64.value = base64Data;
+
+  const indexOfBase64 = slides.images[currentIndex.value].indexOf(";base64");
+  const everythingBeforeBase64 = slides.images[currentIndex.value].substring(0, indexOfBase64);
+
+  const indexOfEqual = everythingBeforeBase64.indexOf("=");
+  selectedImageName.value = everythingBeforeBase64.substring(indexOfEqual+1, everythingBeforeBase64.length);
+
+  selectedImageType.value = everythingBeforeBase64.substring(everythingBeforeBase64.indexOf(":")+1, everythingBeforeBase64.indexOf(";")) ;
+
+  emit('current-index', currentIndex.value);
+  emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
+
+  console.log(selectedImageName.value)
+})
+
 
 const prevSlide = () => {
-  currentIndex.value =
-    (currentIndex.value - 1 + slides.images.length) % slides.images.length;
-  emit("current-index", currentIndex.value);
+  currentIndex.value = (currentIndex.value - 1 + slides.images.length) % slides.images.length;
+  const base64Index = slides.images[currentIndex.value].indexOf(',') + 1;
+  const base64Data = slides.images[currentIndex.value].slice(base64Index);
+  selectedImageBase64.value = base64Data;
+
+  const indexOfBase64 = slides.images[currentIndex.value].indexOf(";base64");
+  const everythingBeforeBase64 = slides.images[currentIndex.value].substring(0, indexOfBase64);
+
+  const indexOfEqual = everythingBeforeBase64.indexOf("=");
+  selectedImageName.value = everythingBeforeBase64.substring(indexOfEqual+1, everythingBeforeBase64.length);
+
+  selectedImageType.value = everythingBeforeBase64.substring(everythingBeforeBase64.indexOf(":")+1, everythingBeforeBase64.indexOf(";")) ;
+
+  emit('current-index', currentIndex.value);
+  emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
 };
 
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % slides.images.length;
-  emit("current-index", currentIndex.value);
+  const base64Index = slides.images[currentIndex.value].indexOf(',') + 1;
+  const base64Data = slides.images[currentIndex.value].slice(base64Index);
+  selectedImageBase64.value = base64Data;
+
+  const indexOfBase64 = slides.images[currentIndex.value].indexOf(";base64");
+  const everythingBeforeBase64 = slides.images[currentIndex.value].substring(0, indexOfBase64);
+
+  const indexOfEqual = everythingBeforeBase64.indexOf("=");
+  selectedImageName.value = everythingBeforeBase64.substring(indexOfEqual+1, everythingBeforeBase64.length);
+
+  selectedImageType.value = everythingBeforeBase64.substring(everythingBeforeBase64.indexOf(":")+1, everythingBeforeBase64.indexOf(";")) ;
+
+  emit('current-index', currentIndex.value);
+  emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
 };
 </script>
 

@@ -172,16 +172,15 @@ async function updateIdea(id, title, text, status, categoryList, image) {
   return data;
 }
 
-async function createIdea(title, text, status, categoryList, username) {
-  // const imageBlob = await fetch(image).then((response) => response.blob());
+async function createIdea(title, text, status, categoryList, image, username) {
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
-    mode: "no-cors",
+    mode: "cors",
     body: JSON.stringify({
       title: title,
       text: text,
       status: status.toUpperCase(),
-      // image: image,
+      image: image,
       categoryList: categoryList,
     }),
     headers: {
@@ -252,6 +251,12 @@ async function getPagedIdeasFromUser(
   return json;
 }
 
+async function getImageById() {
+  const response = await fetch("http://localhost:8080/aims/api/v1/images/");
+  const data = await response.json();
+  return data;
+}
+
 async function getStats() {
   const response = await fetch(API_URL + "/stats");
   const data = await response.json();
@@ -274,4 +279,5 @@ export {
   getStats,
   updateIdea,
   deleteIdea,
+  getImageById
 };
