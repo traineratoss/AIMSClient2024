@@ -179,7 +179,7 @@ function clearSelection() {
       <div class="date-chooser">
         <div><button @click="clearSelection()">Clear all</button></div>
 
-        <fieldset style="border: 0.1px black solid">
+        <fieldset style="border: 1px solid slategray;">
           <legend style="margin-left: 1em; padding: 0.2em 0.8em">
             Creation Date
           </legend>
@@ -313,6 +313,8 @@ function clearSelection() {
   align-self: stretch;
   background-color: orange;
   font-weight: bold;
+  border: 1px solid slategray;
+  cursor: pointer;
 }
 .empty-user {
   grid-column: 2/3;
