@@ -2,9 +2,7 @@
 import SideBar from "../components/SideBar.vue";
 import UserDisplay from "../components/UserDisplay.vue";
 import Pagination from "../components/Pagination.vue";
-import UserApproveDeclineModal from "../components/UserApproveDeclineModal.vue";
 import {
-  getAllUsersForAdmin,
   getAllUserByUsername,
   getCurrentUsername,
 } from "../services/user_service.js";
@@ -15,6 +13,7 @@ const currentPage = ref(1);
 const totalPages = ref(0);
 const users = ref([]);
 const showImage = ref(false);
+const showPagination = ref(true);
 const usernameSearch = ref("");
 const sortCategory = ref("hasPassword");
 const currentUsername = getCurrentUsername();
@@ -40,20 +39,26 @@ function search(username) {
     currentUsername
   )
     .then((res) => {
-      users.value = res.pagedUsers.content;
-      totalPages.value = Math.ceil(res.total / pageSize);
-      if (totalPages.value != 0) {
-        currentPage.value = 1;
+      if (res.total) {
+        showImage.value = false;
+        users.value = res.pagedUsers.content;
+        totalPages.value = Math.ceil(res.total / pageSize);
+        if (totalPages.value != 0) {
+          currentPage.value = 1;
+        }
+      } else {
+        showImage.value = true;
+        totalPages.value = 1;
       }
     })
     .catch((error) => {
       console.log(error);
+      showImage.value = true;
     });
 }
 
 function changePage(pageNumber) {
   currentPage.value = pageNumber;
-  console.log(pageNumber);
   getAllUserByUsername(
     pageSize,
     currentPage.value - 1,
@@ -124,6 +129,7 @@ function updateUsersList() {
           :totalPages="totalPages"
           :currentPage="currentPage"
           @changePage="changePage"
+          v-if="!showImage"
           class="pagination-container"
         />
       </div>
