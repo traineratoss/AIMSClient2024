@@ -1,5 +1,6 @@
 <script setup>
   import { defineProps, defineEmits, ref, watch} from 'vue';
+  import searchValue from "../utils/search-title";
   
   const { modelValue, placeholder, error, type, inputRef } = defineProps([
     'modelValue',
@@ -7,6 +8,7 @@
     'error',
     'type'
   ]);
+
   
   const emit = defineEmits(['update:modelValue']);
   
@@ -26,9 +28,10 @@
   }
 
   const handleInputKeyPress = (event) => {
-    if (event.key === "Enter" && event.target.value !== "" && focused.value == true) {
-        this.emitter.emit("filter-ideas-by-title", true)
+    if (event.key === "Enter" && focused.value == true) {
+      searchValue.value = event.target.value;
     }
+    return false;
   }
 
 </script>

@@ -6,6 +6,10 @@ import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, getPagedIdeasFromUser } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
+import CustomLoader from "../components/CustomLoader.vue";
+import searchValue from "../utils/search-title";
+import { useRoute } from 'vue-router';
+import router from "../router";
 
 const currentUsername = getCurrentUsername();
 
@@ -38,6 +42,9 @@ let currentSelectedDateTo = "";
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);
 
+const route = useRoute();
+const loadingPage = ref(true);
+
 onMounted(async () => {
   const data = await getPagedIdeasFromUser(
     currentUsername,
@@ -48,7 +55,27 @@ onMounted(async () => {
   sortOrder.value = 0;
   totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
   ideas.value = data.content;
+  loadingPage.value = false;
 });
+
+watch(searchValue, async(newValue) => {
+    //  
+    const data = await filterIdeas(
+      newValue,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideasPerPage,
+      currentUsername,
+      sortOrder.value
+    );
+    ideas.value = data.content;
+    totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+})
 
 async function changePage(pageNumber) {
   // every time i change the page, i should filter the pages to check from the server every page, same aplies for every method which implies changing the ideas.value
@@ -127,7 +154,6 @@ async function updateSortOrder() {
 // here, the filtering happens
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
-  console.log(currentUsername);
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
@@ -244,10 +270,13 @@ const onPassInputVariables = (
                 @comment-counter-sub="idea.commentsNumber--"
             />
           </div>
-          <div v-if="ideas.length === 0" class="no-ideas-message">
+          <div v-if="ideas.length === 0 && loadingPage === false" class="no-ideas-message">
             <img src="../assets/img/curiosity-search.svg" />
             <br />
             <span class="black-font">Your search returned no results</span>
+          </div>
+          <div v-if="ideas.length === 0 && loadingPage === true" class="loading-placeholder">
+            <CustomLoader :size="100" />
           </div>
         </div>
       </div>
@@ -264,12 +293,22 @@ const onPassInputVariables = (
 </template>
 
 <style scoped>
+
+.loading-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 91vh;
+}
+
 .idea-transition-item {
   margin-bottom: 10px;
 }
 
 .ideas-transition-container {
-  margin-top: 10%;
+  margin-top: 2px;
   transition: opacity 0.5s;
   display: flex;
   justify-content: center;
