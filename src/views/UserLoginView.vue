@@ -12,7 +12,7 @@ import PasswordInput from "../components/PasswordInput.vue";
 const usernameOrEmailText = ref("");
 const passwordText = ref("");
 const showErrorMessage = ref(false);
-const errorMessage = ref('');
+const errorMessage = ref("");
 
 function redirectToRegister() {
   router.push("/register/false");
@@ -36,7 +36,7 @@ async function login() {
       });
   } else {
     showErrorMessage.value = true;
-    errorMessage.value = 'The fields must not be empty'
+    errorMessage.value = "The fields must not be empty";
     passwordText.value = "";
   }
 }
@@ -66,7 +66,7 @@ function handlePasswordTextChanged(password) {
       />
     </div>
     <div id="password-input">
-      <PasswordInput 
+      <PasswordInput
         :label="'Password'"
         :value="passwordText"
         @password-changed="handlePasswordTextChanged"
@@ -74,12 +74,7 @@ function handlePasswordTextChanged(password) {
       />
     </div>
     <div>
-      <button 
-        id="sign-in" 
-        @click="login"
-      >
-        Sign in
-      </button>
+      <button id="sign-in" @click="login">Sign in</button>
     </div>
     <div id="forgot-password">
       <router-link to="/recovery"> Forgot password? </router-link>
@@ -96,7 +91,8 @@ function handlePasswordTextChanged(password) {
   align-items: center;
   gap: 20px;
   position: relative;
-  top: 80px;
+  /* top: 80px; */
+  margin-top: 10vh;
 }
 
 .material-symbols-outlined {
@@ -154,5 +150,9 @@ h1 span {
 
 #user-icon {
   font-size: 70px;
+}
+
+a {
+  color: black;
 }
 </style>
