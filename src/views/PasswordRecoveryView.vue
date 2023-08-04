@@ -11,7 +11,7 @@ const showErrorMessage = ref(false);
 const errorMessage = ref('');
 
 function requestNewPassword() {
-  if(usernameOrEmailText.value) {
+  if(usernameOrEmailText.value.toLowerCase()) {
     sendNewPassword(usernameOrEmailText.value)
       .then(res => {
         router.push('/login');

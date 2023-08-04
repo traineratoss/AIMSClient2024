@@ -5,12 +5,13 @@ import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
 import { ref, onMounted } from "vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
-import {
-  getCurrentUsername,
-  updateUser,
-  getCurrentEmail,
-  getCurrentFullName,
+import { 
+  getCurrentUsername, 
+  updateUser, 
+  getCurrentEmail, 
+  getCurrentFullName, 
   getCurrentAvatarId,
+  validateUsername
 } from "../services/user_service";
 import router from "../router";
 
@@ -44,6 +45,24 @@ onMounted(() => {
   avatarIdText.value = getCurrentAvatarId();
 });
 
+// function validateUsername(username) {
+//   /* 
+//     Usernames can only have: 
+//     - Lowercase Letters (a-z) 
+//     - Numbers (0-9)
+//     - Dots (.)
+//     - Underscores (_)
+//   */
+//   const res = /^[a-z0-9_\.]+$/.exec(username);
+//   const valid = !!res;
+//   if( valid) {
+//     return true;
+//   }
+//   message.value = "Invalid username";
+//   showErrorMessage.value = true;
+//   return false;
+// }
+
 function saveChanges() {
   let changesOK = true;
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -63,11 +82,17 @@ function saveChanges() {
     let userUpdateDTO = {};
 
     userUpdateDTO.avatarId = carouselImageIndex.value;
-    localStorage.setItem("avatarId", userUpdateDTO.avatarId);
-
-    if (usernameText.value !== oldUsername && usernameText.value !== "") {
-      userUpdateDTO.username = usernameText.value;
-      localStorage.setItem("username", userUpdateDTO.username);
+    localStorage.setItem('avatarId', userUpdateDTO.avatarId);
+    
+    if(usernameText.value !== oldUsername && usernameText.value !== '') {
+      if (validateUsername(usernameText.value)) {
+        userUpdateDTO.username = usernameText.value;
+        localStorage.setItem('username', userUpdateDTO.username);        
+      } else {
+        errorMessage.value = "Invalid username format!";
+        showErrorMessage.value = true;
+        changesOK = false;
+      }
     }
     if (emailText.value !== oldEmail && emailText.value !== "") {
       userUpdateDTO.email = emailText.value;
