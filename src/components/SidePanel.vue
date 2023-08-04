@@ -168,7 +168,6 @@ function clearSelection() {
 
       <CustomDropDown
         :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
-        v-if="currentUser == null"
         class="user-select"
         :variants="userOptions"
         @update:selectedCategories="handleSelectedUsers"
@@ -176,8 +175,6 @@ function clearSelection() {
         :input-placeholder="`Select your users...`"
         @keydown.enter="filterData"
       ></CustomDropDown>
-      <span v-else class="empty-span"></span>
-      <div v-else class="empty-user"></div>
 
       <div class="date-chooser">
         <div><button @click="clearSelection()">Clear all</button></div>
