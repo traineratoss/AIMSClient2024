@@ -1,15 +1,42 @@
 <script setup>
-import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
 import { ref, onMounted } from "vue";
-import { getCurrentAvatarId, getCurrentRole, getCurrentUsername } from "../services/user_service";
+import {
+  getCurrentAvatarId,
+  getCurrentRole,
+  getCurrentUsername,
+} from "../services/user_service";
 
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
 const disabledUser = ref(true);
+const currentUsername = ref("");
+const currentAvatarId = ref(-1);
+
+const slideImages = [
+  "src/assets/img/avatars/avatar1.svg",
+  "src/assets/img/avatars/avatar2.svg",
+  "src/assets/img/avatars/avatar3.svg",
+  "src/assets/img/avatars/avatar4.svg",
+  "src/assets/img/avatars/avatar5.svg",
+  "src/assets/img/avatars/avatar6.svg",
+  "src/assets/img/avatars/avatar7.svg",
+];
+
+router.beforeEach((to, from) => {
+  if (to.name === "my" && from.name === "my-profile") {
+    currentUsername.value = getCurrentUsername();
+    currentAvatarId.value = getCurrentAvatarId();
+  }
+});
+
+onMounted(() => {
+  currentUsername.value = getCurrentUsername();
+  currentAvatarId.value = getCurrentAvatarId();
+});
 
 function redirectToAllIdeas() {
   indexOfActivePage.value = 1;
@@ -54,16 +81,6 @@ function onMouseEnterUser() {
 function onMouseLeaveUser() {
   disabledUser.value = true;
 }
-
-const slideImages = [
-  "src/assets/img/avatars/avatar1.svg",
-  "src/assets/img/avatars/avatar2.svg",
-  "src/assets/img/avatars/avatar3.svg",
-  "src/assets/img/avatars/avatar4.svg",
-  "src/assets/img/avatars/avatar5.svg",
-  "src/assets/img/avatars/avatar6.svg",
-  "src/assets/img/avatars/avatar7.svg",
-];
 
 function dropDownClicked(elementId) {
   if (elementId === "my-ideas") {
@@ -116,7 +133,7 @@ router.beforeEach(() => {
     icon: "lightbulb",
   });
 
-  if(getCurrentRole() === 'ADMIN') {
+  if (getCurrentRole() === "ADMIN") {
     userDashboardElements.push({
       id: "dashboard",
       name: "Dashboard",
@@ -124,7 +141,7 @@ router.beforeEach(() => {
       icon: "dashboard",
     });
   }
-  
+
   userDashboardElements.push({
     id: "logout",
     name: "Log out",
@@ -134,19 +151,17 @@ router.beforeEach(() => {
 });
 
 const searchAnIdeaByTitle = () => {
-  console.log("d")
-}
+  console.log("d");
+};
 
 const handleSelected = () => {
-  console.log("d")
-}
+  console.log("d");
+};
 </script>
 
 
 <template>
   <nav id="navbar">
-    <!-- <CompanyLogo
-        /> -->
     <img src="../assets/img/AIMS.svg" class="aims-logo" />
     <div class="options">
       <div class="buttons">
@@ -176,9 +191,7 @@ const handleSelected = () => {
             :style="{ display: !(getCurrentRole() === 'ADMIN') ? 'none' : '' }"
           >
             Dashboard
-            <span class="material-symbols-outlined">
-              arrow_drop_down
-            </span>
+            <span class="material-symbols-outlined"> arrow_drop_down </span>
             <div class="invisible-hover"></div>
           </CustomButton>
           <div class="dropdown-content">
@@ -211,12 +224,8 @@ const handleSelected = () => {
     </div>
     <div class="user">
       <div class="user-details">
-        <h3 
-          style="font-size: 16px; 
-          font-weight: 550; 
-          height: 1vh"
-        >
-          {{ getCurrentUsername() }}
+        <h3 style="font-size: 16px; font-weight: 550; height: 1vh">
+          {{ currentUsername }}
         </h3>
         <router-link
           to="/my-profile"
@@ -230,16 +239,14 @@ const handleSelected = () => {
         id="user-details-button"
         @mouseenter="onMouseEnterUser"
         @mouseleave="onMouseLeaveUser"
-        style="padding: 20px 5px;"
+        style="padding: 20px 5px"
       >
-        <img 
-          :src="slideImages[getCurrentAvatarId()]" 
+        <img
+          :src="slideImages[currentAvatarId]"
           alt="avatar not found"
-          style="height: auto; width: 2vw;"
-        >
-        <span class="material-symbols-outlined">
-          keyboard_arrow_down
-        </span>
+          style="height: auto; width: 2vw"
+        />
+        <span class="material-symbols-outlined"> keyboard_arrow_down </span>
         <div class="dropdown-content-user">
           <CustomNavigationDropDown
             :element="userDashboardElements"

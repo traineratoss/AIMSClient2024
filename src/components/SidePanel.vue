@@ -168,7 +168,6 @@ function clearSelection() {
 
       <CustomDropDown
         :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
-        v-if="currentUser == null"
         class="user-select"
         :variants="userOptions"
         @update:selectedCategories="handleSelectedUsers"
@@ -176,13 +175,11 @@ function clearSelection() {
         :input-placeholder="`Select your users...`"
         @keydown.enter="filterData"
       ></CustomDropDown>
-      <span v-else class="empty-span"></span>
-      <div v-else class="empty-user"></div>
 
       <div class="date-chooser">
         <div><button @click="clearSelection()">Clear all</button></div>
 
-        <fieldset style="border: 0.1px black solid">
+        <fieldset style="border: 1px solid slategray;">
           <legend style="margin-left: 1em; padding: 0.2em 0.8em">
             Creation Date
           </legend>
@@ -316,6 +313,8 @@ function clearSelection() {
   align-self: stretch;
   background-color: orange;
   font-weight: bold;
+  border: 1px solid slategray;
+  cursor: pointer;
 }
 .empty-user {
   grid-column: 2/3;

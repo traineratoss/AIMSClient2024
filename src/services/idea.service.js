@@ -172,15 +172,16 @@ async function updateIdea(id, title, text, status, categoryList, image) {
   return data;
 }
 
-async function createIdea(title, text, status, categoryList, image, username) {
-  const imageBlob = await fetch(image).then((response) => response.blob());
+async function createIdea(title, text, status, categoryList, username) {
+  // const imageBlob = await fetch(image).then((response) => response.blob());
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
+    mode: "no-cors",
     body: JSON.stringify({
       title: title,
       text: text,
       status: status.toUpperCase(),
-      image: image,
+      // image: image,
       categoryList: categoryList,
     }),
     headers: {
@@ -205,9 +206,10 @@ async function createIdea(title, text, status, categoryList, image, username) {
 //   return data;
 // }
 
-async function getImage() {
+async function getAllImages() {
   const response = await fetch(`http://localhost:8080/aims/api/v1/images`);
   const data = await response.json();
+  console.log(data);
   return data;
 }
 
@@ -265,7 +267,7 @@ export {
   createIdea,
   getCategory,
   getUser,
-  getImage,
+  getAllImages,
   filterIdeas,
   getPagedIdeasFromUser,
   getIdea,

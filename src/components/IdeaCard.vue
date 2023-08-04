@@ -1,6 +1,6 @@
 <script setup>
-import CustomComment from "../components/CustomComment.vue";
 import { ref, onMounted } from "vue";
+import CustomComment from "../components/CustomComment.vue";
 import router from "../router";
 import {
   loadComments,
@@ -193,7 +193,6 @@ function deleteReplyDynamic(replyId) {
         replyIndexToDelete,
         1
       );
-      console.log("Reply Delete Successful");
       if (arrayOfCommentIdAndReplyPair.value[entryIndex][1].length === 0) {
         loadIdeaComments();
       }
@@ -677,6 +676,11 @@ const isAdmin = getCurrentRole() === "ADMIN";
   overflow-y: scroll;
   scrollbar-width: none;
   box-sizing: border-box;
+  transition: all 1s;
+}
+
+.replies-wrapper :hover {
+  max-height: 600px;
 }
 
 .replies-wrapper::-webkit-scrollbar {

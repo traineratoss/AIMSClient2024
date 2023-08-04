@@ -21,7 +21,7 @@ const emailText = ref("");
 const avatarIdText = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
-const index = parseInt(localStorage.getItem('avatarId'));
+const index = parseInt(localStorage.getItem("avatarId"));
 const carouselImageIndex = ref(index);
 
 const slideImages = [
@@ -72,56 +72,53 @@ function saveChanges() {
   let oldAvatarId = getCurrentAvatarId(); //this needs to be loaded from cookies
   let oldFullname = getCurrentFullName(); //this needs to be loaded from cookies
 
-  if(!emailRegex.test(emailText.value)) {
-    errorMessage.value = 'Invalid email format';
+  if (!emailRegex.test(emailText.value)) {
+    errorMessage.value = "Invalid email format";
     showErrorMessage.value = true;
     changesOK = false;
   }
 
-  if(changesOK) {
+  if (changesOK) {
     let userUpdateDTO = {};
 
     userUpdateDTO.avatarId = carouselImageIndex.value;
     localStorage.setItem('avatarId', userUpdateDTO.avatarId);
     
     if(usernameText.value !== oldUsername && usernameText.value !== '') {
-      if (validateUsername(usernameText.value)) {
-        userUpdateDTO.username = usernameText.value;
-        localStorage.setItem('username', userUpdateDTO.username);      
-      } else {
-        errorMessage.value = "Invalid username";
-        showErrorMessage.value = true;
-        changesOK = false;
-      }
+      userUpdateDTO.username = usernameText.value;
+      localStorage.setItem('username', userUpdateDTO.username);      
     }
-    if(emailText.value !== oldEmail && emailText.value !== '') {
+    if (emailText.value !== oldEmail && emailText.value !== "") {
       userUpdateDTO.email = emailText.value;
-      localStorage.setItem('email', userUpdateDTO.email);
+      localStorage.setItem("email", userUpdateDTO.email);
     }
-    if(oldFullname === '') {
+    if (oldFullname === "") {
       userUpdateDTO.fullName = fullNameText.value;
-      localStorage.setItem('fullName', userUpdateDTO.fullName);
-    } else if(fullNameText.value !== oldFullname && fullNameText.value !== '') {
+      localStorage.setItem("fullName", userUpdateDTO.fullName);
+    } else if (
+      fullNameText.value !== oldFullname &&
+      fullNameText.value !== ""
+    ) {
       userUpdateDTO.fullName = fullNameText.value;
-      localStorage.setItem('fullName', userUpdateDTO.fullName);
-    } else if(fullNameText.value === '') {
+      localStorage.setItem("fullName", userUpdateDTO.fullName);
+    } else if (fullNameText.value === "") {
       changesOK = false;
-      errorMessage.value = 'Fullname must not be empty';
+      errorMessage.value = "Fullname must not be empty";
       showErrorMessage.value = true;
     }
 
-    if(changesOK) {
+    if (changesOK) {
       updateUser(oldUsername, userUpdateDTO)
-      .then(res => {
-        router.push('/my');
+        .then((res) => {
+          router.push("/my");
         })
-        .catch(error => {
+        .catch((error) => {
           errorMessage.value = error.message;
-          if(error.message == "Username already exists!") {
-            localStorage.setItem('username', oldUsername);
+          if (error.message == "Username already exists!") {
+            localStorage.setItem("username", oldUsername);
           }
-          if(error.message == "Email already exists!") {
-            localStorage.setItem('email', oldEmail);
+          if (error.message == "Email already exists!") {
+            localStorage.setItem("email", oldEmail);
           }
           showErrorMessage.value = true;
         });
@@ -155,7 +152,6 @@ function saveChanges() {
     </form>
     <CarouselImage
       :images="slideImages"
-      :selectedImage="carouselImageIndex"
       class="avatar-carousel"
       @current-index="onImageChange"
     />
