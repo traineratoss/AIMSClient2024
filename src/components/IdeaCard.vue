@@ -117,6 +117,7 @@ function showDeletePopup() {
 }
 
 function toggleComments() {
+  loadIdeaComments();
   showCommentsToggle.value = !showCommentsToggle.value;
 }
 
@@ -298,30 +299,29 @@ const isAdmin = getCurrentRole() === "ADMIN";
                 </div>
               </div>
               <div class="left-container-buttons">
-                <Transition>
-                  <div class="left-container-buttons-grouped" v-if="isSelected">
-                    <button
-                      v-if="props.loggedUser === props.username || isAdmin"
-                      @click.stop="editIdea()"
-                      class="idea-button"
-                    >
-                      EDIT
-                    </button>
-                    <button
-                      @click.stop="redirectToCreateIdeaView()"
-                      class="idea-button"
-                    >
-                      VIEW
-                    </button>
-                    <button
-                      @click.stop="showDeletePopup()"
-                      v-if="props.loggedUser === props.username || isAdmin"
-                      class="idea-button"
-                    >
-                      DELETE
-                    </button>
-                  </div>
-                </Transition>
+                <div class="left-container-buttons-grouped" v-if="isSelected">
+                  <button
+                    v-if="props.loggedUser === props.username || isAdmin"
+                    @click.stop="editIdea()"
+                    class="idea-button"
+                  >
+                    EDIT
+                  </button>
+                  <button
+                    @click.stop="redirectToCreateIdeaView()"
+                    class="idea-button"
+                  >
+                    VIEW
+                  </button>
+                  <button
+                    @click.stop="showDeletePopup()"
+                    v-if="props.loggedUser === props.username || isAdmin"
+                    class="idea-button"
+                  >
+                    DELETE
+                  </button>
+                </div>
+
                 <div class="left-container-buttons-post"></div>
               </div>
             </div>
@@ -348,29 +348,27 @@ const isAdmin = getCurrentRole() === "ADMIN";
           <div class="bottom-container">
             <div class="bottom-container-left"></div>
             <div class="bottom-container-center">
-              <Transition>
-                <div v-if="isSelected">
-                  <button
-                    v-if="props.commentsNumber > 0"
-                    @click.stop="toggleComments()"
-                    id="view-replies-button"
+              <div v-if="isSelected">
+                <button
+                  v-if="props.commentsNumber > 0"
+                  @click.stop="toggleComments()"
+                  id="view-replies-button"
+                >
+                  <span
+                    v-if="!showCommentsToggle"
+                    class="material-symbols-outlined"
                   >
-                    <span
-                      v-if="!showCommentsToggle"
-                      class="material-symbols-outlined"
-                    >
-                      expand_more
-                    </span>
-                    <span
-                      v-else
-                      class="material-symbols-outlined"
-                      :style="{ color: 'orange' }"
-                    >
-                      expand_less
-                    </span>
-                  </button>
-                </div>
-              </Transition>
+                    expand_more
+                  </span>
+                  <span
+                    v-else
+                    class="material-symbols-outlined"
+                    :style="{ color: 'orange' }"
+                  >
+                    expand_less
+                  </span>
+                </button>
+              </div>
             </div>
 
             <div class="bottom-container-right">
@@ -430,50 +428,111 @@ const isAdmin = getCurrentRole() === "ADMIN";
         </div>
       </div>
     </div>
-    <div
-      class="comment-container"
-      v-if="showCommentsToggle"
-      v-for="comment in allLoadedComments"
-      :key="comment.id"
-    >
-      <CustomComment
-        :elapsedTime="comment.elapsedTime"
-        :isReply="false"
-        :commentId="comment.id"
-        :text="comment.commentText"
-        :username="comment.username"
-        :hasReplies="comment.hasReplies"
-        :parentId="comment.id"
-        :ideaId="comment.ideaId"
-        :loggedUser="props.loggedUser"
-        @toggleReplies="toggleCommentReplies(comment)"
-        @showReplies="showCommentReplies(comment)"
-        @loadReplies="loadCommentReplies(comment)"
-        @postReply="postReplyDynamic"
-        @deleteComment="deleteCommentDynamic"
-      />
-      <div class="replies-wrapper" v-if="comment.replyToggle">
-        <div
-          v-if="!toggleReplyAnimation"
-          v-for="reply in getRepliesForComment(comment.id)"
-          class="reply-container"
-        >
+    <transition-group duration="550" name="nested">
+      <div
+        class="comment-container"
+        v-if="showCommentsToggle"
+        v-for="comment in allLoadedComments"
+        :key="comment.id"
+      >
+        <div class="custom-comment">
           <CustomComment
-            :elapsedTime="reply.elapsedTime"
-            :isReply="true"
-            :replyId="reply.id"
-            :text="reply.commentText"
-            :username="reply.username"
+            :elapsedTime="comment.elapsedTime"
+            :isReply="false"
+            :commentId="comment.id"
+            :text="comment.commentText"
+            :username="comment.username"
+            :hasReplies="comment.hasReplies"
+            :parentId="comment.id"
+            :ideaId="comment.ideaId"
             :loggedUser="props.loggedUser"
-            @deleteReply="deleteReplyDynamic"
+            @toggleReplies="toggleCommentReplies(comment)"
+            @showReplies="showCommentReplies(comment)"
+            @loadReplies="loadCommentReplies(comment)"
+            @postReply="postReplyDynamic"
+            @deleteComment="deleteCommentDynamic"
           />
         </div>
+        <div class="replies-wrapper" v-if="comment.replyToggle">
+          <div
+            v-if="!toggleReplyAnimation"
+            v-for="reply in getRepliesForComment(comment.id)"
+            class="reply-container"
+          >
+            <div class="custom-reply">
+              <CustomComment
+                :elapsedTime="reply.elapsedTime"
+                :isReply="true"
+                :replyId="reply.id"
+                :text="reply.commentText"
+                :username="reply.username"
+                :loggedUser="props.loggedUser"
+                @deleteReply="deleteReplyDynamic"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </transition-group>
   </div>
 </template>
 
 <style scoped>
+/************************************************************************* */
+/* Elements coming from upwards when activated */
+.nested-enter-from {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+
+/* Deleted element going to the left */
+.nested-leave-active {
+  transition: all 0.2s ease-in-out;
+  transition-delay: 0.1s;
+}
+
+.nested-leave-to {
+  transform: translateY(-60px);
+  opacity: 0.001;
+}
+
+/* New element coming from the right */
+.nested-enter-active .custom-comment {
+  transition: all 0.2s ease-in-out;
+  transition-delay: 0.15s;
+}
+
+.nested-enter-from .custom-comment {
+  transform: translateY(-20px);
+  opacity: 0.001;
+}
+
+/* Element going down when closed */
+.nested-leave-active {
+  transition: all 0.15s ease-in-out;
+  transition-delay: 0.15s;
+}
+
+.nested-leave-to {
+  transform: translateY(30px);
+  opacity: 0.001;
+}
+
+/* Replies Transitions */
+.nested-enter-active .custom-reply,
+.nested-leave-active .custom-reply {
+  transition: all 0.2s ease-in-out;
+  transition-delay: 0.1s;
+}
+
+.nested-enter-from .custom-reply,
+.nested-leave-to .custom-reply {
+  transform: translateY(-20px);
+  opacity: 0.001;
+}
+
+/************************************************************************************ */
+
 .container {
   width: 30vw;
   display: flex;
@@ -677,10 +736,6 @@ const isAdmin = getCurrentRole() === "ADMIN";
   scrollbar-width: none;
   box-sizing: border-box;
   transition: all 1s;
-}
-
-.replies-wrapper :hover {
-  max-height: 600px;
 }
 
 .replies-wrapper::-webkit-scrollbar {
