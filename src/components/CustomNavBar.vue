@@ -10,6 +10,30 @@ import { getCurrentAvatarId, getCurrentRole, getCurrentUsername } from "../servi
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
 const disabledUser = ref(true);
+const currentUsername = ref('');
+const currentAvatarId = ref(-1);
+
+const slideImages = [
+  "src/assets/img/avatars/avatar1.svg",
+  "src/assets/img/avatars/avatar2.svg",
+  "src/assets/img/avatars/avatar3.svg",
+  "src/assets/img/avatars/avatar4.svg",
+  "src/assets/img/avatars/avatar5.svg",
+  "src/assets/img/avatars/avatar6.svg",
+  "src/assets/img/avatars/avatar7.svg"
+];
+
+router.beforeEach((to, from) => {
+  if (to.name === 'my' && from.name === 'my-profile') {
+    currentUsername.value = getCurrentUsername();
+    currentAvatarId.value = getCurrentAvatarId();
+  }
+});
+
+onMounted(() => {
+  currentUsername.value = getCurrentUsername();
+  currentAvatarId.value = getCurrentAvatarId();
+});
 
 function redirectToAllIdeas() {
   indexOfActivePage.value = 1;
@@ -54,16 +78,6 @@ function onMouseEnterUser() {
 function onMouseLeaveUser() {
   disabledUser.value = true;
 }
-
-const slideImages = [
-  "src/assets/img/avatars/avatar1.svg",
-  "src/assets/img/avatars/avatar2.svg",
-  "src/assets/img/avatars/avatar3.svg",
-  "src/assets/img/avatars/avatar4.svg",
-  "src/assets/img/avatars/avatar5.svg",
-  "src/assets/img/avatars/avatar6.svg",
-  "src/assets/img/avatars/avatar7.svg",
-];
 
 function dropDownClicked(elementId) {
   if (elementId === "my-ideas") {
@@ -116,7 +130,7 @@ router.beforeEach(() => {
     icon: "lightbulb",
   });
 
-  if(getCurrentRole() === 'ADMIN') {
+  if (getCurrentRole() === 'ADMIN') {
     userDashboardElements.push({
       id: "dashboard",
       name: "Dashboard",
@@ -124,7 +138,7 @@ router.beforeEach(() => {
       icon: "dashboard",
     });
   }
-  
+
   userDashboardElements.push({
     id: "logout",
     name: "Log out",
@@ -150,31 +164,16 @@ const handleSelected = () => {
     <img src="../assets/img/AIMS.svg" class="aims-logo" />
     <div class="options">
       <div class="buttons">
-        <CustomButton
-          class="nav-button"
-          id="all-ideas"
-          @click="redirectToAllIdeas"
-          :is-active="isPageWithIndexActive(1)"
-        >
+        <CustomButton class="nav-button" id="all-ideas" @click="redirectToAllIdeas" :is-active="isPageWithIndexActive(1)">
           All ideas
         </CustomButton>
-        <CustomButton
-          class="nav-button"
-          id="my-ideas"
-          @click="redirectToMyIdeas"
-          :is-active="isPageWithIndexActive(2)"
-        >
+        <CustomButton class="nav-button" id="my-ideas" @click="redirectToMyIdeas" :is-active="isPageWithIndexActive(2)">
           My ideas
         </CustomButton>
         <div class="dashboard-dropdown">
-          <CustomButton
-            class="nav-button"
-            id="dashboard"
-            :is-active="isPageWithIndexActive(3)"
-            @mouseenter="onMouseEnterDashboard"
-            @mouseleave="onMouseLeaveDashboard"
-            :style="{ display: !(getCurrentRole() === 'ADMIN') ? 'none' : '' }"
-          >
+          <CustomButton class="nav-button" id="dashboard" :is-active="isPageWithIndexActive(3)"
+            @mouseenter="onMouseEnterDashboard" @mouseleave="onMouseLeaveDashboard"
+            :style="{ display: !(getCurrentRole() === 'ADMIN') ? 'none' : '' }">
             Dashboard
             <span class="material-symbols-outlined">
               arrow_drop_down
@@ -182,70 +181,46 @@ const handleSelected = () => {
             <div class="invisible-hover"></div>
           </CustomButton>
           <div class="dropdown-content">
-            <CustomNavigationDropDown
-              :element="dashboardElements"
-              :disabled="disabledDashboard"
-              @clicked-drop-down="dropDownClicked"
-            />
+            <CustomNavigationDropDown :element="dashboardElements" :disabled="disabledDashboard"
+              @clicked-drop-down="dropDownClicked" />
           </div>
         </div>
       </div>
       <div>
-        <CustomButton
-          class="nav-button"
-          id="create-idea"
-          @click="redirectToCreateIdea"
-          :is-active="isPageWithIndexActive(4)"
-        >
+        <CustomButton class="nav-button" id="create-idea" @click="redirectToCreateIdea"
+          :is-active="isPageWithIndexActive(4)">
           Create an Idea
         </CustomButton>
       </div>
       <div>
-        <CustomInput
-          id="search-an-idea"
-          placeholder="&#xF002; Search an Idea (Title)"
-          style="font-family: Segoe UI, FontAwesome"
-          :type="'text'"
-        />
+        <CustomInput id="search-an-idea" placeholder="&#xF002; Search an Idea (Title)"
+          style="font-family: Segoe UI, FontAwesome" :type="'text'" />
       </div>
     </div>
     <div class="user">
       <div class="user-details">
-        <h3 
-          style="font-size: 16px; 
+        <h3 style="font-size: 16px; 
           font-weight: 550; 
-          height: 1vh"
-        >
-          {{ getCurrentUsername() }}
+          height: 1vh">
+          {{ currentUsername }}
         </h3>
-        <router-link
-          to="/my-profile"
-          style="text-decoration: none; color: black"
-        >
+        <router-link to="/my-profile" style="text-decoration: none; color: black">
           User details
         </router-link>
       </div>
-      <CustomButton
-        class="nav-button"
-        id="user-details-button"
-        @mouseenter="onMouseEnterUser"
-        @mouseleave="onMouseLeaveUser"
-        style="padding: 20px 5px;"
-      >
+      <CustomButton class="nav-button" id="user-details-button" @mouseenter="onMouseEnterUser"
+        @mouseleave="onMouseLeaveUser" style="padding: 20px 5px;">
         <img 
-          :src="slideImages[getCurrentAvatarId()]" 
-          alt="avatar not found"
+          :src="slideImages[currentAvatarId]" 
+          alt="avatar not found" 
           style="height: auto; width: 2vw;"
         >
         <span class="material-symbols-outlined">
           keyboard_arrow_down
         </span>
         <div class="dropdown-content-user">
-          <CustomNavigationDropDown
-            :element="userDashboardElements"
-            :disabled="disabledUser"
-            @clicked-drop-down="dropDownClicked"
-          />
+          <CustomNavigationDropDown :element="userDashboardElements" :disabled="disabledUser"
+            @clicked-drop-down="dropDownClicked" />
         </div>
       </CustomButton>
     </div>
