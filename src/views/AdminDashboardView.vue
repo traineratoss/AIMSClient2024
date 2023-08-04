@@ -2,6 +2,7 @@
 import SideBar from "../components/SideBar.vue";
 import UserDisplay from "../components/UserDisplay.vue";
 import Pagination from "../components/Pagination.vue";
+import UserApproveDeclineModal from "../components/UserApproveDeclineModal.vue";
 import {
   getAllUsersForAdmin,
   getAllUserByUsername,
@@ -19,21 +20,7 @@ const sortCategory = ref("hasPassword");
 const currentUsername = getCurrentUsername();
 
 onMounted(() => {
-  const username = usernameSearch.value;
-  getAllUserByUsername(
-    pageSize,
-    currentPage.value - 1,
-    sortCategory.value,
-    username,
-    currentUsername
-  )
-    .then((res) => {
-      users.value = res.pagedUsers.content;
-      totalPages.value = Math.ceil(res.total / pageSize);
-    })
-    .catch((error) => {
-      console.log("Error");
-    });
+  updateUsersList();
 });
 
 function removeUser(user) {
@@ -82,6 +69,24 @@ function changePage(pageNumber) {
       console.log(error);
     });
 }
+
+function updateUsersList() {
+  const username = usernameSearch.value;
+  getAllUserByUsername(
+    pageSize,
+    currentPage.value - 1,
+    sortCategory.value,
+    username,
+    currentUsername
+  )
+    .then((res) => {
+      users.value = res.pagedUsers.content;
+      totalPages.value = Math.ceil(res.total / pageSize);
+    })
+    .catch((error) => {
+      console.log("Error");
+    });
+}
 </script>
 
 <template>
@@ -112,6 +117,7 @@ function changePage(pageNumber) {
                 ? (user.role = 'STANDARD')
                 : (user.role = 'ADMIN')
             "
+            @multiple-admin-action="updateUsersList"
           />
         </div>
         <Pagination

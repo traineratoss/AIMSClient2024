@@ -182,6 +182,15 @@ async function sendApproveEmail(usernameOrEmail) {
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
+
+  if(!response.ok) {
+    const json = await response.json();
+    if(json.message === 'Approve already granted exception') {
+      throw new Error('User already approved');
+    } else if(json.message === 'User not found exception') {
+      throw new Error('User not found');
+    }
+  }
 }
 
 async function sendDeclineEmail(usernameOrEmail) {
@@ -190,6 +199,15 @@ async function sendDeclineEmail(usernameOrEmail) {
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
+
+  if(!response.ok) {
+    const json = await response.json();
+    if(json.message === 'Approve already granted exception') {
+      throw new Error('User already approved');
+    } else if(json.message === 'User not found exception') {
+      throw new Error('User not found');
+    }
+  }
 }
 
 async function sendActivateEmail(usernameOrEmail) {
@@ -198,6 +216,13 @@ async function sendActivateEmail(usernameOrEmail) {
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
+
+  if(!response.ok) {
+    const json = await response.json();
+    if(json.message === 'User already activate exception') {
+      throw new Error('User already activated');
+    }
+  }
 }
 
 async function sendDeactivateEmail(usernameOrEmail) {
@@ -206,6 +231,13 @@ async function sendDeactivateEmail(usernameOrEmail) {
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
+
+  if(!response.ok) {
+    const json = await response.json();
+    if(json.message === 'User already deactivate exception') {
+      throw new Error('User already deactivated');
+    }
+  }
 }
 
 function getCurrentUsername() {
