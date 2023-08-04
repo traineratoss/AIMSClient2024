@@ -1,28 +1,28 @@
 <script setup>
 import CompanyLogo from "../components/CompanyLogo.vue";
-import CustomInput from '../components/CustomInput.vue';
-import { sendNewPassword } from '../services/user_service.js';
-import { ref } from 'vue';
+import CustomInput from "../components/CustomInput.vue";
+import { sendNewPassword } from "../services/user_service.js";
+import { ref } from "vue";
 import router from "../router";
-import InvalidInputMessage from '../components/InvalidInputMessage.vue';
+import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 
-const usernameOrEmailText = ref('');
+const usernameOrEmailText = ref("");
 const showErrorMessage = ref(false);
-const errorMessage = ref('');
+const errorMessage = ref("");
 
 function requestNewPassword() {
-  if(usernameOrEmailText.value.toLowerCase()) {
+  if (usernameOrEmailText.value.toLowerCase()) {
     sendNewPassword(usernameOrEmailText.value)
-      .then(res => {
-        router.push('/login');
+      .then((res) => {
+        router.push("/login");
       })
-      .catch(error => {
+      .catch((error) => {
         showErrorMessage.value = true;
         errorMessage.value = error.message;
       });
   } else {
     showErrorMessage.value = true;
-    errorMessage.value = 'The field must not be empty';
+    errorMessage.value = "The field must not be empty";
   }
 }
 </script>
@@ -34,12 +34,7 @@ function requestNewPassword() {
       <h1 id="name">AIMS</h1>
       <h1>Password Recovery</h1>
     </div>
-    <div id="profile-img">
-      <span class="material-symbols-outlined">
-        account_circle
-      </span>
-    </div>
-    <InvalidInputMessage 
+    <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
@@ -53,10 +48,7 @@ function requestNewPassword() {
       />
     </div>
     <div>
-      <button 
-        id="request-password"
-        @click="requestNewPassword"
-      >
+      <button id="request-password" @click="requestNewPassword">
         Request new Password
       </button>
     </div>
@@ -69,9 +61,9 @@ function requestNewPassword() {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
   position: relative;
-  top: 80px;
+  margin-top: 10vh;
 }
 
 .error-message-visible {
@@ -105,6 +97,7 @@ button {
   padding: 5px;
   padding-right: 30px;
   padding-left: 30px;
+
   cursor: pointer;
 }
 

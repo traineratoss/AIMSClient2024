@@ -50,9 +50,7 @@ function handlePasswordTextChanged(password) {
   <CompanyLogo />
   <div class="container">
     <FormTitle label="Log In" />
-    <div id="profile-img">
-      <span class="material-symbols-outlined"> account_circle </span>
-    </div>
+
     <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
@@ -74,7 +72,7 @@ function handlePasswordTextChanged(password) {
       />
     </div>
     <div>
-      <button id="sign-in" @click="login">Sign in</button>
+      <button id="sign-in" @click="login">Log in</button>
     </div>
     <div id="forgot-password">
       <router-link to="/recovery"> Forgot password? </router-link>
@@ -91,7 +89,6 @@ function handlePasswordTextChanged(password) {
   align-items: center;
   gap: 20px;
   position: relative;
-  /* top: 80px; */
   margin-top: 10vh;
 }
 
@@ -122,7 +119,7 @@ button {
 #register {
   border: none;
   position: relative;
-  bottom: -10vh;
+  bottom: -5vh;
 }
 
 #sign-in {
