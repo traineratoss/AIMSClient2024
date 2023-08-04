@@ -24,15 +24,10 @@ const slideImages = [
 ];
 
 router.beforeEach((to, from) => {
-  if (to.name === 'my' && from.name === 'my-profile') {
+  if (from.name === 'my-profile' || from.name === 'login') {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
   }
-});
-
-onMounted(() => {
-  currentUsername.value = getCurrentUsername();
-  currentAvatarId.value = getCurrentAvatarId();
 });
 
 function redirectToAllIdeas() {
