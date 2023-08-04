@@ -193,8 +193,13 @@ const handleSelected = () => {
         </CustomButton>
       </div>
       <div>
-        <CustomInput id="search-an-idea" placeholder="&#xF002; Search an Idea (Title)"
-          style="font-family: Segoe UI, FontAwesome" :type="'text'" />
+        <CustomInput
+          id="search-an-idea"
+          placeholder="&#xF002; Search an Idea (Title)"
+          style="font-family: Segoe UI, FontAwesome"
+          :type="'text'"
+          
+        />
       </div>
     </div>
     <div class="user">

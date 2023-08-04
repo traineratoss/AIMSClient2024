@@ -1,6 +1,6 @@
 <script setup>
 import SidePanel from "../components/SidePanel.vue";
-import { ref, onMounted, computed, watch, toRaw } from "vue";
+import { ref, onMounted, watch } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import {
   filterIdeas,
@@ -11,6 +11,8 @@ import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
+import searchValue from "../utils/search-title";
+import { useRoute } from 'vue-router';
 
 
 const currentUsername = getCurrentUsername();
@@ -19,7 +21,6 @@ const ideasPerPage = 4;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
-const pageNumber = ref(1);
 const sortOrder = ref(0);
 const totalPages = ref(0);
 const stats = ref("");
@@ -47,10 +48,13 @@ let currentSelectedDateTo = "";
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);
 
+const route = useRoute();
+const loadingPage = ref(true);
+
 onMounted(async () => {
   const data = await loadPagedIdeas(
     ideasPerPage,
-    pageNumber.value - 1,
+    currentPage.value - 1,
     "creationDate",
     "ASC"
   );
@@ -59,12 +63,26 @@ onMounted(async () => {
   totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
   ideas.value = data.content;
   stats.value = await getStats();
-
-  this.emitter.on("filter-ideas-by-title", condition => {
-      console.log("dd");
-    });
-
+  loadingPage.value = false;
 });
+
+watch(searchValue, async(newValue) => {
+    const data = await filterIdeas(
+      newValue,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideasPerPage,
+      null,
+      sortOrder.value
+    );
+    ideas.value = data.content;
+    totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+})
 
 async function changePage(pageNumber) {
   // every time i change the page, i should filter the pages to check from the server every page, same aplies for every method which implies changing the ideas.value
@@ -244,12 +262,17 @@ const onPassInputVariables = (
                 :commentsNumber="idea.commentsNumber"
                 :elapsedTime="idea.elapsedTime"
                 :image="idea.image"
-                :loggedUser="loggedUser"
+                :loggedUser="getCurrentUsername()"
                 @comment-counter-add="idea.commentsNumber++"
                 @comment-counter-sub="idea.commentsNumber--"
               />
             </div>
-            <div v-if="ideas.length === 0" class="loading-placeholder">
+            <div v-if="ideas.length === 0 && loadingPage === false" class="no-ideas-message">
+              <img src="../assets/img/curiosity-search.svg" />
+              <br />
+              <span class="black-font">Your search returned no results</span>
+            </div>
+            <div v-if="ideas.length === 0 && loadingPage === true" class="loading-placeholder">
               <CustomLoader :size="100" />
             </div>
           </div>
