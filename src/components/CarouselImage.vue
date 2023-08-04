@@ -1,10 +1,9 @@
 <script setup>
-import { ref,defineProps,watchEffect } from 'vue';
+import { ref, defineProps } from "vue";
 
-
-const slides = defineProps(['images', 'selectedImage']);
-const emit = defineEmits(['current-index']);
-const avatarId = parseInt(localStorage.getItem('avatarId'));
+const slides = defineProps(["images"]);
+const emit = defineEmits(["current-index"]);
+const avatarId = parseInt(localStorage.getItem("avatarId"));
 const currentIndex = ref(avatarId);
 
 console.log("index>>", currentIndex.value);
@@ -12,12 +11,12 @@ console.log("index>>", currentIndex.value);
 const prevSlide = () => {
   currentIndex.value =
     (currentIndex.value - 1 + slides.images.length) % slides.images.length;
-  emit('current-index', currentIndex.value);
+  emit("current-index", currentIndex.value);
 };
 
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % slides.images.length;
-  emit('current-index', currentIndex.value);
+  emit("current-index", currentIndex.value);
 };
 </script>
 
@@ -35,8 +34,7 @@ const nextSlide = () => {
           v-for="(slide, index) in images"
           :key="index"
           class="slide"
-          :class="{ active: currentIndex === index + selectedImage }"
-          
+          :class="{ active: currentIndex === index }"
         >
           <img :src="slide" />
         </div>
@@ -58,7 +56,6 @@ const nextSlide = () => {
   z-index: 10;
   margin-top: 10px;
   height: 20vh;
-  
 }
 
 .slide-container {

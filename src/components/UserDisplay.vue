@@ -71,9 +71,12 @@ function changeRole() {
 
 <template>
   <div class="user">
-    <span>
-      {{ name }}
-    </span>
+    <div class="username-container">
+      <div class="animation-container"></div>
+      <span>
+        {{ name }}
+      </span>
+    </div>
     <div class="user-options">
       <button v-if="!hasPassword && !isActive" @click="approveUser">
         Approve
@@ -132,5 +135,22 @@ button {
 
 select {
   width: 5vw;
+}
+.username-container {
+  width: 20vw;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.animation-container {
+  background-color: initial;
+  border-radius: 15px;
+  width: 0.2vw;
+  transition: background-color 0.3s;
+}
+
+.user:hover .animation-container {
+  background-color: var(--selected-color);
 }
 </style>
