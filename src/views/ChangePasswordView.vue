@@ -9,6 +9,7 @@ import {
 } from "../services/user_service";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
+import PasswordInput from "../components/PasswordInput.vue";
 
 const oldPasswordText = ref("");
 const newPasswordText = ref("");
@@ -75,6 +76,18 @@ function submit() {
     showErrorMessage.value = true;
   }
 }
+
+function handleOldPasswordTextChanged(password) {
+  oldPasswordText.value = password;
+}
+
+function handleNewPasswordTextChanged(password) {
+  newPasswordText.value = password;
+}
+
+function handleConfirmPasswordTextChanged(password) {
+  confirmNewPassword.value = password;
+}
 </script>
 
 <template>
@@ -93,28 +106,44 @@ function submit() {
       :class="{ 'error-message-visible': showErrorMessage }"
     />
     <div>
-      <CustomInput
+      <!-- <CustomInput
         type="password"
         id="current-password-input"
         placeholder="Current password"
         v-model:model-value="oldPasswordText"
+      /> -->
+      <PasswordInput
+        :label="'Current password'"
+        :value="oldPasswordText"
+        @password-changed="handleOldPasswordTextChanged"
       />
     </div>
     <div>
-      <CustomInput
+      <!-- <CustomInput
         type="password"
         id="current-password-input"
         placeholder="New password"
         v-model:model-value="newPasswordText"
+      /> -->
+      <PasswordInput
+        :label="'New password'"
+        :value="newPasswordText"
+        @password-changed="handleNewPasswordTextChanged"
       />
     </div>
     <div>
-      <CustomInput
+      <!-- <CustomInput
         type="password"
         id="current-password-input"
         placeholder="Confirm new password"
         v-model:model-value="confirmNewPassword"
         @keydown.enter="submit"
+      /> -->
+      <PasswordInput
+        :label="'Confirm new password'"
+        :value="confirmNewPassword"
+        @password-changed="handleConfirmPasswordTextChanged"
+        @enter-password="submit"
       />
     </div>
     <div id="controls-container">

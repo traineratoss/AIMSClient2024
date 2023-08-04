@@ -1,16 +1,19 @@
 <script setup>
-import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
 import { ref, onMounted } from "vue";
-import { getCurrentAvatarId, getCurrentRole, getCurrentUsername } from "../services/user_service";
+import {
+  getCurrentAvatarId,
+  getCurrentRole,
+  getCurrentUsername,
+} from "../services/user_service";
 
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
 const disabledUser = ref(true);
-const currentUsername = ref('');
+const currentUsername = ref("");
 const currentAvatarId = ref(-1);
 
 const slideImages = [
@@ -20,7 +23,7 @@ const slideImages = [
   "src/assets/img/avatars/avatar4.svg",
   "src/assets/img/avatars/avatar5.svg",
   "src/assets/img/avatars/avatar6.svg",
-  "src/assets/img/avatars/avatar7.svg"
+  "src/assets/img/avatars/avatar7.svg",
 ];
 
 router.beforeEach((to, from) => {
@@ -125,7 +128,7 @@ router.beforeEach(() => {
     icon: "lightbulb",
   });
 
-  if (getCurrentRole() === 'ADMIN') {
+  if (getCurrentRole() === "ADMIN") {
     userDashboardElements.push({
       id: "dashboard",
       name: "Dashboard",
@@ -143,47 +146,65 @@ router.beforeEach(() => {
 });
 
 const searchAnIdeaByTitle = () => {
-  console.log("d")
-}
+  console.log("d");
+};
 
 const handleSelected = () => {
-  console.log("d")
-}
+  console.log("d");
+};
 </script>
 
 
 <template>
   <nav id="navbar">
-    <!-- <CompanyLogo
-        /> -->
     <img src="../assets/img/AIMS.svg" class="aims-logo" />
     <div class="options">
       <div class="buttons">
-        <CustomButton class="nav-button" id="all-ideas" @click="redirectToAllIdeas" :is-active="isPageWithIndexActive(1)">
+        <CustomButton
+          class="nav-button"
+          id="all-ideas"
+          @click="redirectToAllIdeas"
+          :is-active="isPageWithIndexActive(1)"
+        >
           All ideas
         </CustomButton>
-        <CustomButton class="nav-button" id="my-ideas" @click="redirectToMyIdeas" :is-active="isPageWithIndexActive(2)">
+        <CustomButton
+          class="nav-button"
+          id="my-ideas"
+          @click="redirectToMyIdeas"
+          :is-active="isPageWithIndexActive(2)"
+        >
           My ideas
         </CustomButton>
         <div class="dashboard-dropdown">
-          <CustomButton class="nav-button" id="dashboard" :is-active="isPageWithIndexActive(3)"
-            @mouseenter="onMouseEnterDashboard" @mouseleave="onMouseLeaveDashboard"
-            :style="{ display: !(getCurrentRole() === 'ADMIN') ? 'none' : '' }">
+          <CustomButton
+            class="nav-button"
+            id="dashboard"
+            :is-active="isPageWithIndexActive(3)"
+            @mouseenter="onMouseEnterDashboard"
+            @mouseleave="onMouseLeaveDashboard"
+            :style="{ display: !(getCurrentRole() === 'ADMIN') ? 'none' : '' }"
+          >
             Dashboard
-            <span class="material-symbols-outlined">
-              arrow_drop_down
-            </span>
+            <span class="material-symbols-outlined"> arrow_drop_down </span>
             <div class="invisible-hover"></div>
           </CustomButton>
           <div class="dropdown-content">
-            <CustomNavigationDropDown :element="dashboardElements" :disabled="disabledDashboard"
-              @clicked-drop-down="dropDownClicked" />
+            <CustomNavigationDropDown
+              :element="dashboardElements"
+              :disabled="disabledDashboard"
+              @clicked-drop-down="dropDownClicked"
+            />
           </div>
         </div>
       </div>
       <div>
-        <CustomButton class="nav-button" id="create-idea" @click="redirectToCreateIdea"
-          :is-active="isPageWithIndexActive(4)">
+        <CustomButton
+          class="nav-button"
+          id="create-idea"
+          @click="redirectToCreateIdea"
+          :is-active="isPageWithIndexActive(4)"
+        >
           Create an Idea
         </CustomButton>
       </div>
@@ -193,34 +214,40 @@ const handleSelected = () => {
           placeholder="&#xF002; Search an Idea (Title)"
           style="font-family: Segoe UI, FontAwesome"
           :type="'text'"
-          
         />
       </div>
     </div>
     <div class="user">
       <div class="user-details">
-        <h3 style="font-size: 16px; 
-          font-weight: 550; 
-          height: 1vh">
+        <h3 style="font-size: 16px; font-weight: 550; height: 1vh">
           {{ currentUsername }}
         </h3>
-        <router-link to="/my-profile" style="text-decoration: none; color: black">
+        <router-link
+          to="/my-profile"
+          style="text-decoration: none; color: black"
+        >
           User details
         </router-link>
       </div>
-      <CustomButton class="nav-button" id="user-details-button" @mouseenter="onMouseEnterUser"
-        @mouseleave="onMouseLeaveUser" style="padding: 20px 5px;">
-        <img 
-          :src="slideImages[currentAvatarId]" 
-          alt="avatar not found" 
-          style="height: auto; width: 2vw;"
-        >
-        <span class="material-symbols-outlined">
-          keyboard_arrow_down
-        </span>
+      <CustomButton
+        class="nav-button"
+        id="user-details-button"
+        @mouseenter="onMouseEnterUser"
+        @mouseleave="onMouseLeaveUser"
+        style="padding: 20px 5px"
+      >
+        <img
+          :src="slideImages[currentAvatarId]"
+          alt="avatar not found"
+          style="height: auto; width: 2vw"
+        />
+        <span class="material-symbols-outlined"> keyboard_arrow_down </span>
         <div class="dropdown-content-user">
-          <CustomNavigationDropDown :element="userDashboardElements" :disabled="disabledUser"
-            @clicked-drop-down="dropDownClicked" />
+          <CustomNavigationDropDown
+            :element="userDashboardElements"
+            :disabled="disabledUser"
+            @clicked-drop-down="dropDownClicked"
+          />
         </div>
       </CustomButton>
     </div>
