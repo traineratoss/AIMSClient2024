@@ -12,6 +12,7 @@ import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 
+
 const currentUsername = getCurrentUsername();
 
 const ideasPerPage = 4;
@@ -55,9 +56,14 @@ onMounted(async () => {
   );
   loggedUser.value = getCurrentUsername();
   sortOrder.value = 0;
-  totalPages.value = Math.ceil(data.total / ideasPerPage);
-  ideas.value = data.pagedIdeas.content;
+  totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+  ideas.value = data.content;
   stats.value = await getStats();
+
+  this.emitter.on("filter-ideas-by-title", condition => {
+      console.log("dd");
+    });
+
 });
 
 async function changePage(pageNumber) {
@@ -78,7 +84,7 @@ async function changePage(pageNumber) {
     null,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  ideas.value = data.pagedIdeas.content;
+  ideas.value = data.content;
   currentPage.value = pageNumber;
 }
 
@@ -110,7 +116,7 @@ async function updateSortOrder() {
       null,
       "ASC"
     );
-    ideas.value = data.pagedIdeas.content;
+    ideas.value = data.content;
   } else if (sortOrder.value == 1) {
     sortOrder.value = 1;
     const data = await filterIdeas(
@@ -126,12 +132,12 @@ async function updateSortOrder() {
       null,
       "DESC"
     );
-    ideas.value = data.pagedIdeas.content;
+    ideas.value = data.content;
   }
 }
 
 async function updateIdeas(filteredIdeas) {
-  totalPages.value = Math.ceil(filteredIdeas.total / ideasPerPage); // the total nr of pages after filtering needs to be updated
+  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
 
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
@@ -154,7 +160,7 @@ async function updateIdeas(filteredIdeas) {
         sortOrder.value
       );
       setCurrentVariables();
-      ideas.value = data.pagedIdeas != null ? data.pagedIdeas.content : [];
+      ideas.value = data != null ? data.content : [];
     }
 
     // if there are no ideas
@@ -170,7 +176,7 @@ async function updateIdeas(filteredIdeas) {
     }
 
     setCurrentVariables();
-    ideas.value = filteredIdeas.pagedIdeas.content;
+    ideas.value = filteredIdeas.content;
   }
 }
 
@@ -244,8 +250,7 @@ const onPassInputVariables = (
               />
             </div>
             <div v-if="ideas.length === 0" class="loading-placeholder">
-              <CustomLoader
-              :size="100"/>
+              <CustomLoader :size="100" />
             </div>
           </div>
         </div>
@@ -263,7 +268,6 @@ const onPassInputVariables = (
 </template>
 
 <style scoped>
-
 .idea-transition-item {
   margin-bottom: 10px;
 }

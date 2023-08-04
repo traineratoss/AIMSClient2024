@@ -5,17 +5,16 @@
  -->
 
 <script setup>
-
 const props = defineProps({
-    size:""
-})
-
-
-
+  size: "",
+});
 </script>
 
 <template>
-    <div class="loader" :style="{height:props.size + 'px',width:props.size + 'px'}"></div>
+  <div
+    class="loader"
+    :style="{ height: props.size + 'px', width: props.size + 'px' }"
+  ></div>
 </template>
 
 <style scoped>

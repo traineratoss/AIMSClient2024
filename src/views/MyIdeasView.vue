@@ -12,7 +12,6 @@ const currentUsername = getCurrentUsername();
 const ideasPerPage = 15;
 const currentPage = ref(1);
 const ideas = ref([]);
-const loggedUser = ref("");
 const sortOrder = ref(0);
 const totalPages = ref(0);
 
@@ -47,8 +46,8 @@ onMounted(async () => {
     "ASC"
   );
   sortOrder.value = 0;
-  totalPages.value = Math.ceil(data.total / ideasPerPage);
-  ideas.value = data.pagedIdeas.content;
+  totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+  ideas.value = data.content;
 });
 
 async function changePage(pageNumber) {
@@ -69,7 +68,7 @@ async function changePage(pageNumber) {
     currentUsername,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  ideas.value = data.pagedIdeas.content;
+  ideas.value = data.content;
   currentPage.value = pageNumber;
 }
 
@@ -105,7 +104,7 @@ async function updateSortOrder() {
       currentUsername,
       "ASC"
     );
-    ideas.value = data.pagedIdeas.content;
+    ideas.value = data.content;
   } else if (sortOrder.value == 1) {
     sortOrder.value = 1;
     const data = await filterIdeas(
@@ -121,13 +120,13 @@ async function updateSortOrder() {
       currentUsername,
       "DESC"
     );
-    ideas.value = data.pagedIdeas.content;
+    ideas.value = data.content;
   }
 }
 
 // here, the filtering happens
 async function updateIdeas(filteredIdeas) {
-  totalPages.value = Math.ceil(filteredIdeas.total / ideasPerPage); // the total nr of pages after filtering needs to be updated
+  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
   console.log(currentUsername);
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
@@ -150,7 +149,7 @@ async function updateIdeas(filteredIdeas) {
         sortOrder.value
       );
       setCurrentVariables();
-      ideas.value = data.pagedIdeas != null ? data.pagedIdeas.content : [];
+      ideas.value = data != null ? data.content : [];
     }
 
     // if there are no ideas
@@ -166,7 +165,7 @@ async function updateIdeas(filteredIdeas) {
     }
 
     setCurrentVariables();
-    ideas.value = filteredIdeas.pagedIdeas.content;
+    ideas.value = filteredIdeas.content;
   }
 }
 

@@ -14,7 +14,7 @@ const props = defineProps({
   isReply: "",
   parentId: "",
   elapsedTime: "",
-  loggedUser:""
+  loggedUser: "",
 });
 
 const emits = defineEmits([
@@ -26,7 +26,7 @@ const emits = defineEmits([
   "deleteReply",
 ]);
 
-const replyToggled = ref(false)
+const replyToggled = ref(false);
 const postToggle = ref(false);
 const currentUser = props.loggedUser;
 const currentUserRole = ref("");
@@ -78,14 +78,15 @@ function showReplies() {
 }
 
 function toggleReplies() {
-  replyToggled.value =! replyToggled.value
-    emits("toggleReplies");
+  replyToggled.value = !replyToggled.value;
+  emits("toggleReplies");
 }
 
 function postReply(username, parentId, commentText) {
   emits("postReply", username, parentId, commentText);
   clearInput();
   showReplies();
+  replyToggled.value = true;
 }
 
 function clearInput() {
@@ -147,11 +148,8 @@ function clearInput() {
 
         <div class="footer-container-center">
           <div v-if="props.hasReplies">
-            <button @click="toggleReplies();" id="view-replies-button">
-              <span
-                v-if="!replyToggled"
-                class="material-symbols-outlined"
-              >
+            <button @click="toggleReplies()" id="view-replies-button">
+              <span v-if="!replyToggled" class="material-symbols-outlined">
                 expand_more
               </span>
               <span
