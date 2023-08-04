@@ -36,7 +36,6 @@ const nextSlide = () => {
           :key="index"
           class="slide"
           :class="{ active: currentIndex === index + selectedImage }"
-          
         >
           <img :src="slide" />
         </div>
