@@ -3,12 +3,15 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import {
   getCurrentAvatarId,
   getCurrentRole,
   getCurrentUsername,
 } from "../services/user_service";
+import searchValue from "../utils/search-title";
+
+const searchBarTitle = ref("");
 
 const indexOfActivePage = ref(1);
 const disabledDashboard = ref(true);
@@ -25,6 +28,12 @@ const slideImages = [
   "src/assets/img/avatars/avatar6.svg",
   "src/assets/img/avatars/avatar7.svg",
 ];
+
+watch(searchValue, (newValue) => {
+    if(newValue.text!==undefined) {
+      searchBarTitle.value = newValue.text;
+    }
+})
 
 router.beforeEach((to, from) => {
   if (from.name === "my-profile" || from.name === "login") {
@@ -214,6 +223,8 @@ const handleSelected = () => {
           placeholder="&#xF002; Search an Idea (Title)"
           style="font-family: Segoe UI, FontAwesome"
           :type="'text'"
+          :can-modify-search-value="true"
+          v-model="searchBarTitle" 
         />
       </div>
     </div>

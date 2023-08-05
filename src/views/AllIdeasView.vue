@@ -49,6 +49,8 @@ let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 let currentUserRole = "";
 
+const isFiltering = ref(false);
+
 
 const loadingPage = ref(true);
 
@@ -67,25 +69,28 @@ onMounted(async () => {
   totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
   ideas.value = data.content;
   stats.value = await getStats();
-
+  loadingPage.value = false;
 });
 
 watch(searchValue, async(newValue) => {
-    const data = await filterIdeas(
-      newValue,
-      currentText,
-      currentStatus,
-      currentCategory,
-      currentUser,
-      currentSelectedDateFrom,
-      currentSelectedDateTo,
-      currentPage.value - 1,
-      ideasPerPage,
-      null,
-      sortOrder.value
-    );
-    ideas.value = data.content;
-    totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+    if(newValue.key === "Enter" && newValue.text !== undefined) {
+      const data = await filterIdeas(
+        inputTitle.value,
+        currentText,
+        currentStatus,
+        currentCategory,
+        currentUser,
+        currentSelectedDateFrom,
+        currentSelectedDateTo,
+        currentPage.value - 1,
+        ideasPerPage,
+        null,
+        sortOrder.value
+      );
+      console.log(data)
+      ideas.value = data.content;
+      totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+    }
 })
 
 async function changePage(pageNumber) {
@@ -146,6 +151,7 @@ async function updateSortOrder() {
       "ASC"
     );
     ideas.value = data.content;
+    inputTitle.value = searchValue.value;
   } else if (sortOrder.value == 1) {
     sortOrder.value = 1;
     const data = await filterIdeas(

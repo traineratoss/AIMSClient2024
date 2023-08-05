@@ -35,7 +35,7 @@ const props = defineProps({
   }
 });
 
-const shouldClearAll = ref(false);
+const clearAllDropdownValues = ref(false);
 
 const comboInput = ref(null);
 const dropdown = ref(null);
@@ -78,9 +78,9 @@ watch(
   () => props.clearAll,
   (newValue) => {
     if (newValue === true) {
-      shouldClearAll.value = true;
+      clearAllDropdownValues.value = true;
       setTimeout(() => {
-        shouldClearAll.value = false;
+        clearAllDropdownValues.value = false;
       }, 10);
     }
   }
@@ -88,10 +88,10 @@ watch(
 
 // if the clear is true, we set every checkbox to unchecked
 const isVariantSelected = (variant) => {
-  if (!loading.value && !shouldClearAll.value) {
+  if (!loading.value && !clearAllDropdownValues.value) {
     return parsedSelectedCategories.value.includes(variant);
   }
-  if (shouldClearAll.value) {
+  if (clearAllDropdownValues.value) {
     return false;
   }
 };

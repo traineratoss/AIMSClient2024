@@ -6,6 +6,7 @@ import { getCategory, getUser, sendDataForCustomStats } from "../services/idea.s
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
+import searchValue from "../utils/search-title";
 
 const props = defineProps({
   sort: Number,
@@ -29,7 +30,7 @@ const filteredIdeasEmit = ref({});
 const enableStatistics = ref(false)
 const generatedStatistics = ref()
 
-const shouldClearAll = ref(false);
+const clearAllDropdownValues = ref(false);
 
 const statusOptions =
   props.currentUser === null
@@ -69,6 +70,12 @@ watch(
     );
   }
 );
+
+watch(searchValue, (newValue) => {
+  if(newValue.text!==undefined) {
+      inputTitle.value = newValue.text;
+    }
+})
 
 const filterData = async () => {
   await filter();
@@ -134,6 +141,7 @@ const filter = async () => {
     props.sort
   );
   filteredIdeasEmit.value = filteredIdeas;
+  searchValue.value = title;
 };
 
 // not 100% working
@@ -142,9 +150,9 @@ function clearSelection() {
   inputText.value = "";
   selectedDateFrom.value = "";
   selectedDateTo.value = "";
-  shouldClearAll.value = true;
+  clearAllDropdownValues.value = true;
   setTimeout(() => {
-    shouldClearAll.value = false;
+    clearAllDropdownValues.value = false;
   }, 10)
 }
 
@@ -155,12 +163,17 @@ function clearSelection() {
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
       <span class="title"> Title </span>
-      <CustomInput v-model="inputTitle" class="title-input" :placeholder="`Write a title...`"
-      @keydown.enter="filterData"/>
+      <CustomInput
+        v-model="inputTitle" 
+        class="title-input" 
+        :placeholder="`Write a title...`"
+        @keydown.enter="filterData" 
+        :can-modify-search-value="true"
+      />
 
       <span class="text">Text:</span>
       <CustomInput v-model="inputText" class="text-input" :placeholder="`Write a text...`" 
-      @keydown.enter="filterData"/>
+      @keydown.enter="filterData" :can-modify-search-value="false"/>
 
       <span class="status">Status:</span>
       <CustomDropDown
@@ -169,7 +182,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedStatus"
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
-        :clear-all="shouldClearAll"
+        :clear-all="clearAllDropdownValues"
         @keydown.enter="filterData"
       ></CustomDropDown>
 
@@ -180,7 +193,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedCategories"
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
-        :clear-all="shouldClearAll"
+        :clear-all="clearAllDropdownValues"
         @keydown.enter="filterData"
       ></CustomDropDown>
 
@@ -198,7 +211,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedUsers"
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
-        :clear-all="shouldClearAll"
+        :clear-all="clearAllDropdownValues"
         @keydown.enter="filterData"
       ></CustomDropDown>
 
