@@ -1,68 +1,94 @@
 <script setup>
-import { ref,defineProps,watchEffect, onMounted } from 'vue';
+import { ref,defineProps,watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
-
-const slides = defineProps(['images', 'selectedImage']);
+const slides = defineProps(['images', 'selectedImage', 'initialCurrentIndex','disabledArrow']);
 const emit = defineEmits(['current-index', 'selected-image-values']);
-const avatarId = parseInt(localStorage.getItem('avatarId'));
-const currentIndex = ref(0);
-const selectedImageBase64 = ref(slides.images[0]);
-const selectedImageType = ref(slides.images[0])
-const selectedImageName = ref(slides.images[0]);
 
-onMounted(async() => {
-  currentIndex.value = 0;
-  const base64Index = slides.images[currentIndex.value].indexOf(',') + 1;
-  const base64Data = slides.images[currentIndex.value].slice(base64Index);
+//IMPORTANT NOTE FOR THE USER TEAM: DON'T SET THE CURRENT INDEX BASED ON THE AVATAR ID, MODIFY IT VIA CODE FOR MULTIPLE USAGE
+//INITIALLY SET IT TO 0 AND THEN IF WE ARE ON YOUR PAGE, IGNORE THE WATCHERS DOWN BELOW
+//checked the condition with the route path and fixed it, works for both teams
+const route = useRoute();
+
+const avatarId = parseInt(localStorage.getItem('avatarId'));
+
+//Initially set it to yours and if im on create idea, it will update automatically
+const currentIndex = ref(avatarId);
+
+const selectedImageBase64 = ref(null);
+const selectedImageType = ref(null)
+const selectedImageName = ref(null);
+const imagesLoaded = ref(false);
+const shouldDisableArrowsRef = ref(false);
+
+//this function transforms my whole image string into 3 parts: type, name and base64
+//needed for the request dto
+function transformImageDataIntoValues(dataString) {
+  const base64Index = dataString.indexOf(',') + 1;
+  const base64Data = dataString.slice(base64Index);
   selectedImageBase64.value = base64Data;
 
-  const indexOfBase64 = slides.images[currentIndex.value].indexOf(";base64");
-  const everythingBeforeBase64 = slides.images[currentIndex.value].substring(0, indexOfBase64);
+  const indexOfBase64 = dataString.indexOf(";base64");
+  const stringBeforeBase64 = dataString.substring(0, indexOfBase64);
 
-  const indexOfEqual = everythingBeforeBase64.indexOf("=");
-  selectedImageName.value = everythingBeforeBase64.substring(indexOfEqual+1, everythingBeforeBase64.length);
+  const indexOfEqual = stringBeforeBase64.indexOf("=");
+  selectedImageName.value = stringBeforeBase64.substring(indexOfEqual+1, stringBeforeBase64.length);
 
-  selectedImageType.value = everythingBeforeBase64.substring(everythingBeforeBase64.indexOf(":")+1, everythingBeforeBase64.indexOf(";")) ;
+  selectedImageType.value = stringBeforeBase64.substring(stringBeforeBase64.indexOf(":")+1, stringBeforeBase64.indexOf(";")) ;
+}
 
-  emit('current-index', currentIndex.value);
-  emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
+//waiting for the images to load and then setting our index 0
+watch(
+  () => slides.images, 
+  (newValue) => {
+    if (newValue.length > 0 && imagesLoaded.value === false && route.path === "/create-idea") {
+      imagesLoaded.value = true;
+      currentIndex.value = 0;
+      transformImageDataIntoValues(slides.images[currentIndex.value])
+      emit('current-index', currentIndex.value);
+      emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
+    }
+  }
+);
 
-  console.log(selectedImageName.value)
-})
+//when updating, we set the index image to be the one the idea has
+watch(
+  () => slides.initialCurrentIndex, 
+  (newValue) => {
+    if (route.path === "/create-idea") {
+      currentIndex.value = newValue;
+      currentIndex.value.then((result) => {
+        currentIndex.value = result;
+        emit('current-index', currentIndex.value);
+      })
+    }
+}
+);
 
+watch(
+  () => slides.disabledArrow, 
+  (newValue) => {
+    if (route.path === "/create-idea") {
+      shouldDisableArrowsRef.value = newValue;
+      shouldDisableArrowsRef.value.then((result) => {
+        shouldDisableArrowsRef.value = result;
+      })
+      console.log("disabled" +shouldDisableArrowsRef.value)
+    }
+}
+);
 
 const prevSlide = () => {
+  console.log(currentIndex.value)
   currentIndex.value = (currentIndex.value - 1 + slides.images.length) % slides.images.length;
-  const base64Index = slides.images[currentIndex.value].indexOf(',') + 1;
-  const base64Data = slides.images[currentIndex.value].slice(base64Index);
-  selectedImageBase64.value = base64Data;
-
-  const indexOfBase64 = slides.images[currentIndex.value].indexOf(";base64");
-  const everythingBeforeBase64 = slides.images[currentIndex.value].substring(0, indexOfBase64);
-
-  const indexOfEqual = everythingBeforeBase64.indexOf("=");
-  selectedImageName.value = everythingBeforeBase64.substring(indexOfEqual+1, everythingBeforeBase64.length);
-
-  selectedImageType.value = everythingBeforeBase64.substring(everythingBeforeBase64.indexOf(":")+1, everythingBeforeBase64.indexOf(";")) ;
-
+  transformImageDataIntoValues(slides.images[currentIndex.value])
   emit('current-index', currentIndex.value);
   emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
 };
 
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % slides.images.length;
-  const base64Index = slides.images[currentIndex.value].indexOf(',') + 1;
-  const base64Data = slides.images[currentIndex.value].slice(base64Index);
-  selectedImageBase64.value = base64Data;
-
-  const indexOfBase64 = slides.images[currentIndex.value].indexOf(";base64");
-  const everythingBeforeBase64 = slides.images[currentIndex.value].substring(0, indexOfBase64);
-
-  const indexOfEqual = everythingBeforeBase64.indexOf("=");
-  selectedImageName.value = everythingBeforeBase64.substring(indexOfEqual+1, everythingBeforeBase64.length);
-
-  selectedImageType.value = everythingBeforeBase64.substring(everythingBeforeBase64.indexOf(":")+1, everythingBeforeBase64.indexOf(";")) ;
-
+  transformImageDataIntoValues(slides.images[currentIndex.value])
   emit('current-index', currentIndex.value);
   emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
 };
@@ -70,7 +96,7 @@ const nextSlide = () => {
 
 <template>
   <div class="carousel">
-    <button @click="prevSlide">
+    <button @click="prevSlide" :disabled="shouldDisableArrowsRef">
       <i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941"></i>
     </button>
     <div class="slide-container">
@@ -88,7 +114,7 @@ const nextSlide = () => {
         </div>
       </div>
     </div>
-    <button @click="nextSlide">
+    <button @click="nextSlide" :disabled="shouldDisableArrowsRef">
       <i class="fa-solid fa-arrow-right fa-2xl" style="color: #ffa941"></i>
     </button>
   </div>

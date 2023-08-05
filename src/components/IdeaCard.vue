@@ -21,6 +21,7 @@ const props = defineProps({
   elapsedTime: "",
   image: "",
   loggedUser: "",
+  image: ""
 });
 
 const emits = defineEmits(["commentCounterAdd", "commentCounterSub"]);
@@ -329,7 +330,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
               <div class="right-container-image">
                 <img
                   class="idea-image"
-                  src="https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw"
+                  :src="props.image"
                   alt="image"
                 />
               </div>

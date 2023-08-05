@@ -112,10 +112,6 @@ async function filterIdeas(
   if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
   if (username) url += `&username=${username}`;
 
-  console.log(url);
-
-  console.log(url);
-
   const response = await fetch(url, {
     method: "GET",
     mode: "cors",
@@ -149,7 +145,6 @@ async function getIdea(id) {
 }
 
 async function updateIdea(id, title, text, status, categoryList, image) {
-  console.log(categoryList)
   const response = await fetch(API_URL + "/update?id=" + id, {
     method: "PATCH",
     mode: "cors",
@@ -160,6 +155,7 @@ async function updateIdea(id, title, text, status, categoryList, image) {
       text: text,
       status: status.toUpperCase(),
       categoryList: categoryList,
+      image: image
     }),
     redirect: "follow",
     referrerPolicy: "no-referrer",
@@ -191,24 +187,9 @@ async function createIdea(title, text, status, categoryList, image, username) {
   const content = await data.content;
 }
 
-
-// async function addImage(imageData){
-//   const response = await fetch('http://localhost:8080/aims/api/v1/images/addImage',{
-//     method: 'POST',
-//     body: imageData,
-//     headers: {
-//       'accept': 'application/json',
-//       'content-type': 'multipart/form-data'
-//     }
-//   });
-//   const data = await response.json();
-//   return data;
-// }
-
 async function getAllImages() {
   const response = await fetch(`http://localhost:8080/aims/api/v1/images`);
   const data = await response.json();
-  console.log(data);
   return data;
 }
 
@@ -233,8 +214,6 @@ async function getPagedIdeasFromUser(
 
   let url = `${API_URL}/allByUser?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}&username=${username}&sortCategory=creationDate`;
 
-  console.log(url);
-
   const response = await fetch(url, {
     method: "GET",
     mode: "cors",
@@ -253,6 +232,12 @@ async function getPagedIdeasFromUser(
 
 async function getImageById() {
   const response = await fetch("http://localhost:8080/aims/api/v1/images/");
+  const data = await response.json();
+  return data;
+}
+
+async function getImageByIdeaId(ideaId) {
+  const response = await fetch("http://localhost:8080/aims/api/v1/images/getByIdea?id=" + ideaId);
   const data = await response.json();
   return data;
 }
@@ -279,5 +264,6 @@ export {
   getStats,
   updateIdea,
   deleteIdea,
-  getImageById
+  getImageById,
+  getImageByIdeaId
 };
