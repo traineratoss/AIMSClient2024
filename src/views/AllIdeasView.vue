@@ -50,10 +50,6 @@ let currentSelectedDateTo = "";
 let currentUserRole = "";
 
 
-const implementedIdeasCount = ref(0);
-const implementationPercentage = ref(0);
-
-const route = useRoute();
 const loadingPage = ref(true);
 
 onMounted(async () => {
@@ -231,6 +227,15 @@ const onPassInputVariables = (
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
 };
+
+//if the item has an image in the db, we return it. if not, we return a default one
+const getImageUrl = (item) => {
+  if (item && item.image) {
+    return `data:image/${item.image.fileType};name=${item.image.fileName};base64,${item.image.base64Image}`
+  } else {
+    return 'https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw';
+  }
+}
 </script>
 
 <template>
@@ -282,7 +287,7 @@ const onPassInputVariables = (
                 :ideaId="idea.id"
                 :commentsNumber="idea.commentsNumber"
                 :elapsedTime="idea.elapsedTime"
-                :image="idea.image"
+                :image="getImageUrl(idea)"
                 :loggedUser="getCurrentUsername()"
                 @comment-counter-add="idea.commentsNumber++"
                 @comment-counter-sub="idea.commentsNumber--"

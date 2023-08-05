@@ -27,7 +27,7 @@ const slideImages = [
 ];
 
 router.beforeEach((to, from) => {
-  if (from.name === 'my-profile' || from.name === 'login') {
+  if (from.name === "my-profile" || from.name === "login") {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
   }

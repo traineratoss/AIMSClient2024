@@ -4,6 +4,7 @@ import CustomInput from "../components/CustomInput.vue";
 import { ref } from "vue";
 import {
   changePassword,
+  getCurrentAvatarId,
   getCurrentUsername,
   logout,
 } from "../services/user_service";
@@ -16,6 +17,19 @@ const newPasswordText = ref("");
 const confirmNewPassword = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
+const currentAvatarId = ref(-1);
+
+currentAvatarId.value = getCurrentAvatarId();
+
+const slideImages = [
+  "src/assets/img/avatars/avatar1.svg",
+  "src/assets/img/avatars/avatar2.svg",
+  "src/assets/img/avatars/avatar3.svg",
+  "src/assets/img/avatars/avatar4.svg",
+  "src/assets/img/avatars/avatar5.svg",
+  "src/assets/img/avatars/avatar6.svg",
+  "src/assets/img/avatars/avatar7.svg",
+];
 
 function submit() {
   if (
@@ -98,20 +112,17 @@ function handleConfirmPasswordTextChanged(password) {
       <div class="big-text">Change Password</div>
     </h1>
     <div id="profile-img">
-      <!-- TODO: Show current logged user avatar here -->
-      <span class="material-symbols-outlined"> account_circle </span>
+      <img
+        :src="slideImages[currentAvatarId]"
+        alt="avatar not found"
+        style="height: auto; width: 10vw"
+      />
     </div>
     <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
     <div>
-      <!-- <CustomInput
-        type="password"
-        id="current-password-input"
-        placeholder="Current password"
-        v-model:model-value="oldPasswordText"
-      /> -->
       <PasswordInput
         :label="'Current password'"
         :value="oldPasswordText"
@@ -119,12 +130,6 @@ function handleConfirmPasswordTextChanged(password) {
       />
     </div>
     <div>
-      <!-- <CustomInput
-        type="password"
-        id="current-password-input"
-        placeholder="New password"
-        v-model:model-value="newPasswordText"
-      /> -->
       <PasswordInput
         :label="'New password'"
         :value="newPasswordText"
@@ -132,15 +137,8 @@ function handleConfirmPasswordTextChanged(password) {
       />
     </div>
     <div>
-      <!-- <CustomInput
-        type="password"
-        id="current-password-input"
-        placeholder="Confirm new password"
-        v-model:model-value="confirmNewPassword"
-        @keydown.enter="submit"
-      /> -->
       <PasswordInput
-        :label="'Confirm new password'"
+        :label="'Confirm password'"
         :value="confirmNewPassword"
         @password-changed="handleConfirmPasswordTextChanged"
         @enter-password="submit"
@@ -161,7 +159,7 @@ function handleConfirmPasswordTextChanged(password) {
   align-items: center;
   gap: 20px;
   position: relative;
-  top: 80px;
+  margin-top: 10vh;
 }
 
 .error-message-visible {
@@ -222,5 +220,9 @@ button {
 
 #user-icon {
   font-size: 70px;
+}
+
+a {
+  color: black;
 }
 </style>

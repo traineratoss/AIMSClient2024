@@ -29,13 +29,14 @@ function removeUser(user) {
   }
 }
 
-function search(username) {
+async function search(username) {
   usernameSearch.value = username;
-  getAllUserByUsername(
+  usernameSearch.value = usernameSearch.value.toLowerCase();
+  await getAllUserByUsername(
     pageSize,
     currentPage.value - 1,
     sortCategory.value,
-    username,
+    usernameSearch.value,
     currentUsername
   )
     .then((res) => {
@@ -57,9 +58,9 @@ function search(username) {
     });
 }
 
-function changePage(pageNumber) {
+async function changePage(pageNumber) {
   currentPage.value = pageNumber;
-  getAllUserByUsername(
+  await getAllUserByUsername(
     pageSize,
     currentPage.value - 1,
     sortCategory.value,

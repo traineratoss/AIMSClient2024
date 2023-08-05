@@ -41,7 +41,7 @@ async function loginUser(username, hashPassword) {
     localStorage.setItem("role", json.role);
     localStorage.setItem("email", json.email);
     localStorage.setItem("fullName", json.fullName);
-    localStorage.setItem("avatarId", json.avatarId);
+    localStorage.setItem("avatarId", json.avatarId - 1);
   }
   return json;
 }
