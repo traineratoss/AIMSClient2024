@@ -2,6 +2,8 @@
 import { ref, onMounted, watch } from "vue";
 import { getStats } from "../services/idea.service";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
+import PieChart from "./PieChart.vue";
+
 
 const stats = ref(null);
 const implementationPercentage = ref(0);
@@ -45,7 +47,7 @@ const calculateImplementationPercentage = () => {
   <transition name="stats-fade">
     <div class="stats-wrapper" v-if="!isLoading">
 
-      <div class="general-statistics" v-if="recievedStats">
+      <div class="general-statistics" v-if="!recievedStats">
         <div class="stats-container">
           <div class="title">
             <b>AIMS </b>Statistics
@@ -66,6 +68,19 @@ const calculateImplementationPercentage = () => {
           <div class="stat-item">
             <p class="stat-label"><b>Ideas/User:</b></p>
             <b>{{ stats.ideasPerUser }}</b>
+          </div>
+          <div class="piechart">
+            <pie-chart
+            :sizeInVW="10"
+            :speedInMS="25"
+            :firstValue="40"
+            :secondValue="30"
+            :thirdValue="30"
+            :color1="'slategray'"
+            :color2="orange"
+            :color3="red"
+            :backgroundColor="blue"
+            />
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas:</b></p>
@@ -107,6 +122,9 @@ const calculateImplementationPercentage = () => {
           <div class="stat-item">
             <p class="stat-label"><b>Number of Users:</b></p>
             <b>{{ stats.nrOfUsers }}</b>
+          </div>
+          <div class="piechart">
+            <pie-chart/>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>

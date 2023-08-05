@@ -318,7 +318,7 @@ export {
   getStats,
   updateIdea,
   deleteIdea,
-  sendDataForCustomStats
+  sendDataForCustomStats,
   getImageById,
   getImageByIdeaId
 };
