@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch,computed } from "vue";
 import { getStats } from "../services/idea.service";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import PieChart from "./PieChart.vue";
@@ -13,13 +13,12 @@ const isLoading = ref(true);
 
 onMounted(async () => {
   stats.value = await getStats();
-  
-  console.log('shared obj ',generatedStatisticsToBeSend.value);
-  console.log('recieved stats ',recievedStats.value);
+  console.log("statisticile sunt ", stats.value)
+  // console.log('shared obj ',generatedStatisticsToBeSend.value);
+  // console.log('recieved stats ',recievedStats.value);
   calculateImplementationPercentage();
   isLoading.value = false;
 });
-
 
 watch(generatedStatisticsToBeSend, (newX) => {
   console.log('the new recievedStats are ',newX)
@@ -54,9 +53,54 @@ const calculateImplementationPercentage = () => {
             <span class="material-symbols-outlined"> query_stats </span>
           </div>
           <div class="stat-item">
+            <p class="stat-label"><b>Total Ideas:</b></p>
+            <b>{{ stats.nrOfIdeas }}</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Public Ideas:</b></p>
+            <b>{{ stats.openIdeas + stats.implementedIdeas}}</b>
+          </div>
+          <div class="stat-item">
             <p class="stat-label"><b>Number of Users:</b></p>
             <b>{{ stats.nrOfUsers }}</b>
           </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Ideas/User:</b></p>
+            <b>{{ stats.ideasPerUser }}</b>
+          </div>
+          <!-- <div class="stat-item">
+            <p class="stat-label"><b>Implemented Ideas:</b></p>
+            <b>{{ stats.implementedIdeas }}</b>
+            <b>{{ stats.implP }}%</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Open Ideas:</b></p>
+            <b>{{ stats.openIdeas }}</b>
+            <b>{{ stats.openP }}%</b>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label"><b>Drafted Ideas:</b></p>
+            <b>{{ stats.draftIdeas }}</b>
+            <b>{{ stats.draftP }}%</b> 
+          </div>-->
+          <div class="piechart">
+            <pie-chart
+            :sizeInVW="10"
+            :speedInMS="25"
+            :firstValue="stats.implP"
+            :secondValue="stats.draftP"
+            :thirdValue="stats.openP"
+            :color1="'#b3b3b3'"
+            :color2="'#ffa941'"
+            :color3="'#fadebc'"
+            :backgroundColor="'white'"
+            :firstNumber="stats.implementedIdeas"
+            :secondNumber="stats.openIdeas"
+            :thirdNumber="stats.draftIdeas"
+            :test="red"
+            />
+          </div>
+          
           <div class="stat-item">
             <p class="stat-label"><b>Total Comments:</b></p>
             <b>{{ stats.totalNrOfComments }}</b>
@@ -65,39 +109,8 @@ const calculateImplementationPercentage = () => {
             <p class="stat-label"><b>Total Replies:</b></p>
             <b>{{ stats.totalNrOfReplies }}</b>
           </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Ideas/User:</b></p>
-            <b>{{ stats.ideasPerUser }}</b>
-          </div>
-          <div class="piechart">
-            <pie-chart
-            :sizeInVW="10"
-            :speedInMS="25"
-            :firstValue="40"
-            :secondValue="30"
-            :thirdValue="30"
-            :color1="'slategray'"
-            :color2="orange"
-            :color3="red"
-            :backgroundColor="blue"
-            />
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Public Ideas:</b></p>
-            <b>{{ stats.nrOfIdeas }}</b>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Implemented Ideas:</b></p>
-            <b>{{ stats.implementedIdeas }}</b>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Drafted Ideas:</b></p>
-            <b>{{ stats.draftIdeas }}</b>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Open Ideas:</b></p>
-            <b>{{ stats.openIdeas }}</b>
-          </div>
+        
+          
           <div class="stat-item">
             <br />
             <div class="implementation-bar">
@@ -107,9 +120,6 @@ const calculateImplementationPercentage = () => {
               ></div>
             </div>
           </div>
-          <button @click="console.log(generatedStatistics.value)">
-            apasa ma puternic
-          </button>
         </div>
       </div>
 
@@ -268,5 +278,13 @@ const calculateImplementationPercentage = () => {
 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+}
+
+.stat-item{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 10px;
 }
 </style>

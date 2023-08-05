@@ -169,15 +169,15 @@ const styleObject = ref({
 <template>
   <div class="container">
     <div class="x-box" :style="styleObject"></div>
-    <div class="x-box-cont">
+    <!-- <div class="x-box-cont">
       <strong style="color: #ff264a">P1 {{ recievedP1 }}%</strong>
       <strong style="color: #feec1e">P2 {{ recievedP2 }}%</strong>
       <strong style="color: #12cbc4">P3 {{ recievedP3 }}%</strong>
-    </div>
+    </div> -->
   </div>
 </template>
 
-<style>
+<style scoped>
 .container {
   height: 100vh;
   width: 100vw;
