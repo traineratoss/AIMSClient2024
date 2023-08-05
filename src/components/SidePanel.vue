@@ -29,6 +29,8 @@ const filteredIdeasEmit = ref({});
 const enableStatistics = ref(false)
 const generatedStatistics = ref()
 
+const shouldClearAll = ref(false);
+
 const statusOptions =
   props.currentUser === null
     ? ["OPEN", "IMPLEMENTED"]
@@ -138,12 +140,14 @@ const filter = async () => {
 function clearSelection() {
   inputTitle.value = "";
   inputText.value = "";
-  categoriesSelected.value = "";
   selectedDateFrom.value = "";
   selectedDateTo.value = "";
-  userSelected.value = "";
-  statusSelected.value = "";
+  shouldClearAll.value = true;
+  setTimeout(() => {
+    shouldClearAll.value = false;
+  }, 10)
 }
+
 </script>
 
 <template>
@@ -165,6 +169,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedStatus"
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
+        :clear-all="shouldClearAll"
         @keydown.enter="filterData"
       ></CustomDropDown>
 
@@ -175,6 +180,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedCategories"
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
+        :clear-all="shouldClearAll"
         @keydown.enter="filterData"
       ></CustomDropDown>
 
@@ -192,6 +198,7 @@ function clearSelection() {
         @update:selectedCategories="handleSelectedUsers"
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
+        :clear-all="shouldClearAll"
         @keydown.enter="filterData"
       ></CustomDropDown>
 

@@ -18,7 +18,7 @@ import { useRoute } from 'vue-router';
 
 const currentUsername = getCurrentUsername();
 
-const ideasPerPage = 50;
+const ideasPerPage = 5;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");

@@ -28,8 +28,15 @@ const props = defineProps({
   inputPlaceholder: {
     type: String,
     default: null,
+  },
+  clearAll: {
+    type: Boolean,
+    default: false
   }
 });
+
+const shouldClearAll = ref(false);
+
 const comboInput = ref(null);
 const dropdown = ref(null);
 const isDropdownVisible = ref(false);
@@ -66,9 +73,26 @@ watch(
   { immediate: true }
 );
 
+// this watcher is for checking if the clear all button from the side panel is pressed
+watch(
+  () => props.clearAll,
+  (newValue) => {
+    if (newValue === true) {
+      shouldClearAll.value = true;
+      setTimeout(() => {
+        shouldClearAll.value = false;
+      }, 10);
+    }
+  }
+);
+
+// if the clear is true, we set every checkbox to unchecked
 const isVariantSelected = (variant) => {
-  if (!loading.value) {
+  if (!loading.value && !shouldClearAll.value) {
     return parsedSelectedCategories.value.includes(variant);
+  }
+  if (shouldClearAll.value) {
+    return false;
   }
 };
 
