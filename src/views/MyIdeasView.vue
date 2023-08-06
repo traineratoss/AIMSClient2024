@@ -73,8 +73,8 @@ watch(searchValue, async(newValue) => {
       currentUsername,
       sortOrder.value
     );
-    ideas.value = data.content;
-    totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+    
+    updateIdeas(data) // we need to update the for multiple use cases 
 })
 
 async function changePage(pageNumber) {

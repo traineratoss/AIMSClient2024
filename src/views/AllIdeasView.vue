@@ -87,9 +87,8 @@ watch(searchValue, async(newValue) => {
         null,
         sortOrder.value
       );
-      console.log(data)
-      ideas.value = data.content;
-      totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+
+      updateIdeas(data) // we need to update the for multiple use cases 
     }
 })
 
@@ -173,7 +172,7 @@ async function updateSortOrder() {
 
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
-
+  
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
@@ -209,7 +208,6 @@ async function updateIdeas(filteredIdeas) {
     if (currentPage.value <= 0) {
       currentPage.value = 1;
     }
-
     setCurrentVariables();
     ideas.value = filteredIdeas.content;
   }

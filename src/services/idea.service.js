@@ -91,6 +91,7 @@ async function filterIdeas(
   username,
   sortDirection
 ) {
+
   switch (sortDirection) {
     case 0:
       sortDirection = "ASC";
@@ -102,9 +103,9 @@ async function filterIdeas(
   if (pageNumber < 0) {
     pageNumber = 0;
   }
-
+  
   let url = `${API_URL}/filter?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}`;
-
+  
   if (title) url += `&title=${title}`;
   if (text) url += `&text=${text}`;
   if (status.length != 0) url += `&status=${status}`;

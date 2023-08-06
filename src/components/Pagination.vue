@@ -25,7 +25,6 @@ watch(
   (newValue) => {
     localTotalPages.value = newValue;
     generatePageNumbers();
-    console.log("localTotalPages updated: " + localTotalPages.value);
   }
 );
 
@@ -39,11 +38,9 @@ function generatePageNumbers() {
     numbers.push(i);
   }
   pageNumbers.value = numbers;
-  console.log("Page numbers generated: " + pageNumbers.value);
 }
 
 function goToPage(pageNumber) {
-  console.log("goToPage called with pageNumber: " + pageNumber);
   emit("changePage", pageNumber);
 }
 </script>

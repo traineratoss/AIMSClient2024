@@ -167,13 +167,17 @@ function clearSelection() {
         v-model="inputTitle" 
         class="title-input" 
         :placeholder="`Write a title...`"
-        @keydown.enter="filterData" 
         :can-modify-search-value="true"
       />
 
       <span class="text">Text:</span>
-      <CustomInput v-model="inputText" class="text-input" :placeholder="`Write a text...`" 
-      @keydown.enter="filterData" :can-modify-search-value="false"/>
+      <CustomInput 
+        v-model="inputText" 
+        class="text-input" 
+        :placeholder="`Write a text...`" 
+        :can-modify-search-value="false"
+        @keydown.enter = "filterData"
+      />
 
       <span class="status">Status:</span>
       <CustomDropDown
@@ -183,7 +187,6 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
         :clear-all="clearAllDropdownValues"
-        @keydown.enter="filterData"
       ></CustomDropDown>
 
       <span class="category">Category:</span>
@@ -194,7 +197,6 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
         :clear-all="clearAllDropdownValues"
-        @keydown.enter="filterData"
       ></CustomDropDown>
 
       <span
@@ -212,7 +214,6 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
         :clear-all="clearAllDropdownValues"
-        @keydown.enter="filterData"
       ></CustomDropDown>
 
       <div class="date-chooser">
@@ -237,14 +238,12 @@ function clearSelection() {
               v-model="selectedDateFrom"
               type="date"
               class="form-input"
-              @keydown.enter="filterData"
             />
             <span class="to-date"> To: </span>
             <CustomInput
               v-model="selectedDateTo"
               type="date"
               class="to-input"
-              @keydown.enter="filterData"
             />
           </div>
         </fieldset>
