@@ -277,7 +277,7 @@ function dropDownClicked(elementId) {
     </div>
     <div class="user">
       <div class="user-details">
-        <h3 style="font-size: 16px; font-weight: 550; height: 1vh">
+        <h3 style="font-size: 16px; font-weight: 550; height: 1vh; margin: 1vh 0;">
           {{ currentUsername }}
         </h3>
         <router-link
