@@ -334,11 +334,14 @@ const getImageUrl = (item) => {
         </div>
 
         <div v-if="ideas.length > 0" class="pagination-container">
-          <Pagination
+          <div class="pagination-component">
+            <Pagination
             :totalPages="totalPages"
             :currentPage="currentPage"
             @changePage="changePage"
           />
+          </div>
+          
         </div>
       </div>
       <div v-if="isAdmin" class="custom-statistics">
@@ -394,7 +397,7 @@ const getImageUrl = (item) => {
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 91vh;
+  height: 94vh;
 }
 
 .material-symbols-outlined {
@@ -415,7 +418,7 @@ const getImageUrl = (item) => {
 .all-ideas-view-container {
   display: grid;
   grid-template-columns: 20vw 80vw;
-  height: 91vh;
+  height: 94vh;
 }
 
 .left-container {
@@ -455,7 +458,7 @@ const getImageUrl = (item) => {
 }
 
 .main-container {
-  height: 91vh;
+  height: 94vh;
   display: grid;
   grid-template-rows: 95% 5%;
 }
@@ -471,13 +474,18 @@ const getImageUrl = (item) => {
 .big-container {
   display: flex;
   justify-content: center;
-  height: 91vh;
+  height: 94vh;
 }
 
 .pagination-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
+}
+
+.pagination-component{
+  width: 30vw;
+  margin-bottom: 15px;
 }
 
 .page-number {
