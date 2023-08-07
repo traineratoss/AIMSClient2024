@@ -503,6 +503,9 @@ const getImageUrl = (item) => {
 .sort-container {
   margin: 10px;
   font-weight: bold;
+  position: sticky;
+  position: -webkit-sticky; 
+  top: 0;
 }
 .all-ideas-view-container {
   display: grid;
