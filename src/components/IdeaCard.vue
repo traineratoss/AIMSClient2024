@@ -21,7 +21,7 @@ const props = defineProps({
   elapsedTime: "",
   image: "",
   loggedUser: "",
-  image: "",
+  image: ""
 });
 
 const emits = defineEmits(["commentCounterAdd", "commentCounterSub"]);
