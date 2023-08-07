@@ -172,8 +172,8 @@ async function sendNewPassword(usernameOrEmail) {
     throw new Error("Server connection error");
   }
 
-  const json = await response.json();
-  return json;
+  // const json = await response.json();
+  // return json;
 }
 
 async function sendApproveEmail(usernameOrEmail) {
