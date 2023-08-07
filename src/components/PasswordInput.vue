@@ -27,7 +27,7 @@ function handleEnterPress() {
 </script>
 
 <template>
-  <div id="password-container">
+  <div id="password-container" :class="{ 'input-border': showBorder }">
     <CustomInput
       :type="showPassword ? 'text' : 'password'"
       :placeholder="label"
@@ -38,11 +38,7 @@ function handleEnterPress() {
       @blur="showBorder = false"
       id="password-input"
     />
-    <button
-      style="background-color: white"
-      @click="changeShowPassword"
-      :class="{ 'input-border': showBorder }"
-    >
+    <button style="background-color: white" @click="changeShowPassword">
       <span
         class="material-symbols-outlined"
         style="cursor: pointer; font-size: 20px"
@@ -61,13 +57,15 @@ input {
 
 #password-container {
   display: flex;
+  outline: none;
 }
 
 #password-input {
   width: 6vw;
+  outline: none;
 }
 .input-border {
-  border: 2px solid black;
+  border: 1px solid black;
 }
 
 button {
@@ -76,5 +74,11 @@ button {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+button,
+button:focus {
+  border: none;
+  outline: none;
 }
 </style>
