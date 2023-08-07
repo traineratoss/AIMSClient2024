@@ -16,10 +16,10 @@ function filterUsers() {
 
 <template>
   <div class="side-panel">
-    <div class="options">
+    <!-- <div class="options">
       <CustomButton class="btn">All users</CustomButton>
       <CustomButtonGray class="btn" label="Statistics" />
-    </div>
+    </div> -->
     <div class="filters">
       <h1>Filter by:</h1>
       <div class="input-filter">

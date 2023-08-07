@@ -2,13 +2,14 @@
 import SideBar from "../components/SideBar.vue";
 import UserDisplay from "../components/UserDisplay.vue";
 import Pagination from "../components/Pagination.vue";
+import FormTitle from "../components/FormTitle.vue";
 import {
   getAllUserByUsername,
   getCurrentUsername,
 } from "../services/user_service.js";
 import { ref, onMounted } from "vue";
 
-const pageSize = 5;
+const pageSize = 10;
 const currentPage = ref(1);
 const totalPages = ref(0);
 const users = ref([]);
@@ -97,12 +98,17 @@ function updateUsersList() {
 
 <template>
   <div class="container">
+   
     <SideBar @filter-users="search" />
     <div class="right-container">
+      <FormTitle
+        label="All users"
+        id="title"
+      />
       <div class="main-container">
         <div class="user-container">
           <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
-          <UserDisplay
+          <UserDisplay class="users"
             v-for="user in users"
             v-if="!showImage"
             :key="user.username"
@@ -149,15 +155,36 @@ function updateUsersList() {
 .user-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   gap: 2vh;
-  width: 80vw;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  height: 32.5vh;
+  width: 63vw;
+  overflow: auto;
+}
+
+.main-container::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+
+.main-container::-webkit-scrollbar-thumb {
+  background-color: var(--selected-color);
+  border-radius: 5px;
+  border: 1px solid slategray;
 }
 
 .right-container {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 80vw;
 }
 
 .pagination-container {
@@ -169,4 +196,9 @@ function updateUsersList() {
 img {
   height: 60vh;
 }
+
+.users {
+  height: 20vh;
+}
+
 </style>
