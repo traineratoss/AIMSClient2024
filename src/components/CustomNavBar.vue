@@ -36,7 +36,7 @@ watch(searchValue, (newValue) => {
 })
 
 router.beforeEach((to, from) => {
-  if (from.name === "my-profile" || from.name === "login") {
+  if (from.name === "my-profile" || from.name === "login" || to.name === 'default') {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
   }
