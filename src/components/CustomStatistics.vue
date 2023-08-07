@@ -3,7 +3,6 @@ import { ref, onMounted, watch, computed } from "vue";
 import { getStats } from "../services/idea.service";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import PieChart from "./PieChart.vue";
-import CustomInput from "./CustomInput.vue";
 
 const stats = ref(null);
 const implementationPercentage = ref(0);
@@ -74,56 +73,17 @@ async function refreshStats() {
 
   <transition name="stats-fade">
     <div class="stats-wrapper" v-if="!isLoading">
-      <div class="stats-header">
-        <div class="title">
-          <b>AIMS </b>Statistics
-          <span class="material-symbols-outlined"> query_stats </span>
-        </div>
-
-        <fieldset class="select-date" style="border: 1px solid slategray">
-          <legend style="margin-left: 1em; padding: 0.2em 0.8em">
-            Creation Date
-          </legend>
-          <div class="date-input">
-            <div>
-              <span class="from-date"> From: </span>
-              <CustomInput
-                v-model="selectedDateFrom"
-                type="date"
-                class="form-input"
-              />
-            </div>
-            <div>
-              <span class="to-date"> To: </span>
-              <CustomInput
-                v-model="selectedDateTo"
-                type="date"
-                class="to-input"
-              />
-            </div>
-            <button class="load-button" >Filter ! </button>
-          </div>
-          
-        </fieldset>
-      </div>
-
       <div class="general-statistics" v-if="!recievedStats">
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label"><b>Total Ideas:</b></p>
             <b>{{ stats.nrOfIdeas }}</b>
           </div>
-          <div class="stat-ite">
-            <p>[Public + Draft]</p>
-          </div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas:</b></p>
             <b>{{ stats.openIdeas + stats.implementedIdeas }}</b>
           </div>
-          <div class="stat-ite">
-            <p>[Public = Open + Implemented]</p>
-          </div>
-          <div class="stat-ite">
+          <div class="stat-item">
             <p>
               Our current implementation status is
               <strong>{{ implementationPercentage }}%</strong>
@@ -281,29 +241,6 @@ async function refreshStats() {
 </template>
 
 <style scoped>
-.select-date {
-  width: 15vw;
-}
-
-.date-input {
-  display: grid;
-  grid-template-rows: 50% 50%;
-}
-
-.date-input > div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-}
-
-.stats-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-bottom: 30px;
-}
 
 .swich-buttons {
   display: flex;
@@ -327,12 +264,6 @@ async function refreshStats() {
   /* color: #ffa941;
   border: 1px solid #ffa941; */
   background-color: #ffa941;
-}
-
-.title {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  font-size: x-large;
 }
 
 .most-commented-ideas {
@@ -384,7 +315,6 @@ strong {
   background-color: #b3b3b3;
   box-sizing: content-box;
   padding-top: 10px;
-  border: 1px solid slategray;
   width: 20vw;
 }
 
@@ -414,7 +344,6 @@ strong {
   background-color: rgb(255, 255, 255);
   box-sizing: content-box;
   padding-top: 10px;
-  border: 1px solid slategray;
   width: 20vw;
 }
 
