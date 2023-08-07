@@ -208,23 +208,6 @@ function dropDownClicked(elementId) {
   }
   localStorage.setItem('current page index', indexOfActivePage.value);
 }
-
-const dashboardElements = [
-  {
-    id: "all-users",
-    name: "All users",
-    route: "/admin-dashboard",
-    icon: "group",
-  },
-  {
-    id: "stats",
-    name: "Statistics",
-    route: "/all",
-    icon: "bar_chart",
-  },
-];
-
-
 </script>
 
 
