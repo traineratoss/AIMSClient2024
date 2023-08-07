@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue"
-import { watch, ref, onMounted, watchEffect, computed } from "vue";
+import { ref, onMounted, watchEffect, computed } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
 import {
@@ -269,7 +269,7 @@ async function handleCancel() {
 async function handleConfirm() {
   await deleteIdea(ideaId);
   customDialog.value.close();
-  await router.push({ path: "/all" });
+  await router.back();
 }
 
 const uploadedImage = ref(null);
@@ -316,7 +316,6 @@ function onMouseEnter() {}
         v-model="inputValue"
         :disabled="fieldsDisabled"
         placeholder="Write your title here..."
-        class="input-width"
       />
     </div>
     <div class="idea">
@@ -366,10 +365,12 @@ function onMouseEnter() {}
         <div class="idea-text">
             <label for="category-idea" class="label-text" >Idea text:</label>
             <textarea 
-            v-model="textValue" 
-            :disabled="fieldsDisabled" 
-            placeholder="Write your text here..." 
-            :class="{textarea:textError}"></textarea>
+              v-model="textValue" 
+              :disabled="fieldsDisabled" 
+              placeholder="Write your text here..." 
+              :class="{textarea:textError}"
+              class="idea-border-radius">
+            </textarea>
         </div>
         <div class="idea">
           <CarouselImage 
@@ -400,9 +401,6 @@ function onMouseEnter() {}
 
             </CustomButton>
         </div>
-        <!-- <div>
-            <CustomButton id="create-idea"  @click="clickImageButton"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Image</CustomButton>
-        </div> -->
     <CustomDialog
       ref="customDialog"
       :open="deletePopup"
@@ -461,7 +459,7 @@ function onMouseEnter() {}
 }
 textarea {
   width: 30vh;
-  height: 10vh;
+  height: 15vh;
   resize: none;
 }
 input {
@@ -497,5 +495,8 @@ select {
 .dialog-actions button:nth-child(2) {
   background-color: #ffa941;
   color: black;
+}
+.idea-border-radius{
+  border-radius: 10px;
 }
 </style>
