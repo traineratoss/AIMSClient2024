@@ -83,7 +83,6 @@ router.afterEach((to, from) => {
   if (
     to.name === "login" ||
     to.name === "register" ||
-    to.name === "terms" ||
     to.name === "change" ||
     to.name === "recovery" ||
     to.name === "registration-complete" ||
@@ -116,7 +115,6 @@ router.beforeEach((to, from) => {
 
   if(to.name !== 'login' && 
     to.name !== 'register' && 
-    to.name !== 'terms' && 
     to.name !== 'recovery' &&
     to.name !== 'registration-complete' &&
     to.name !== 'page-not-found' &&

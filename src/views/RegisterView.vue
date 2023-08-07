@@ -7,31 +7,15 @@ import { onMounted, ref } from "vue";
 import { postUser } from "../services/user_service.js";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
-import { useRoute } from "vue-router";
+import TermsAndConditionsModal from "../components/TermsAndConditionsModal.vue";
 
-const acceptedTermsAndConditions = ref(useRoute().params.accepted == "true");
+const acceptedTermsAndConditions = ref(false);
 const usernameText = ref("");
 const emailText = ref("");
 const showErrorMessage = ref(false);
 const message = ref("");
 const buttonDisabled = ref(false);
-
-router.beforeEach((to, from) => {
-  if (from.name === "register" && to.name === "terms") {
-    sessionStorage.setItem("username", usernameText.value);
-    sessionStorage.setItem("email", emailText.value);
-  }
-});
-
-onMounted(() => {
-  if (sessionStorage.getItem("username") && sessionStorage.getItem("email")) {
-    usernameText.value = sessionStorage.getItem("username");
-    emailText.value = sessionStorage.getItem("email");
-
-    sessionStorage.removeItem("username");
-    sessionStorage.removeItem("email");
-  }
-});
+const showTermsAndConditionsModal = ref(false);
 
 function signUp() {
   if (acceptedTermsAndConditions.value === true) {
@@ -78,6 +62,15 @@ function validateEmail(mail) {
   showErrorMessage.value = true;
   return false;
 }
+
+function acceptTermsAndConditions() {
+  acceptedTermsAndConditions.value = true;
+  showTermsAndConditionsModal.value = false;
+}
+
+function showTermsAndConditionsPopup() {
+  showTermsAndConditionsModal.value = true;
+}
 </script>
 
 
@@ -116,7 +109,12 @@ function validateEmail(mail) {
           v-model="acceptedTermsAndConditions"
           name="acceptedTermsAndConditions"
         />
-        <router-link to="/terms"> Agree Terms & Conditions </router-link>
+        <button
+          class="terms-and-conditions-button"
+          @click="showTermsAndConditionsPopup"
+        > 
+          Agree Terms & Conditions 
+        </button>
       </label>
       <CustomButton
         id="sign-up"
@@ -127,6 +125,12 @@ function validateEmail(mail) {
         Sign up
       </CustomButton>
     </div>
+    <Teleport to="body">
+      <TermsAndConditionsModal
+        :show="showTermsAndConditionsModal"
+        @accepted-terms-and-conditions="acceptTermsAndConditions"
+      />
+    </Teleport>
   </div>
 </template>
 
@@ -175,5 +179,15 @@ input[type="checkbox"] {
 
 .agree-terms {
   margin: 4vh;
+}
+
+.terms-and-conditions-button {
+  border: none;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.terms-and-conditions-button:hover {
+  cursor: pointer;
 }
 </style>

@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import AllIdeasView from "../views/AllIdeasView.vue";
 import UserLoginView from "../views/UserLoginView.vue";
 import MyIdeasView from "../views/MyIdeasView.vue";
@@ -7,13 +6,11 @@ import PasswordRecoveryView from "../views/PasswordRecoveryView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
-import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import TestView from "../views/TestView.vue";
-import { getCurrentRole, getCurrentUsername } from "../services/user_service";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,7 +46,7 @@ const router = createRouter({
       component: PasswordRecoveryView,
     },
     {
-      path: "/register/:accepted",
+      path: "/register",
       name: "register",
       component: RegisterView,
     },
@@ -67,11 +64,6 @@ const router = createRouter({
       path: "/change",
       name: "change",
       component: ChangePasswordView,
-    },
-    {
-      path: "/terms",
-      name: "terms",
-      component: TermsAndConditionsView,
     },
     {
       path: "/my-profile",

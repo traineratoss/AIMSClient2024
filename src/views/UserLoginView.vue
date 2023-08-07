@@ -15,7 +15,7 @@ const showErrorMessage = ref(false);
 const errorMessage = ref("");
 
 function redirectToRegister() {
-  router.push("/register/false");
+  router.push("/register");
 }
 
 async function login() {
