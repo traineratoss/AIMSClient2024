@@ -6,7 +6,6 @@ import {
   filterIdeas,
   loadPagedIdeas,
   getStats,
-  sendDataForCustomStats
 } from "../services/idea.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
@@ -18,14 +17,14 @@ import { useRoute } from 'vue-router';
 
 const currentUsername = getCurrentUsername();
 
-const ideasPerPage = 5;
+const ideasPerPage = 50;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
 const sortOrder = ref(0);
 const totalPages = ref(0);
 const stats = ref("");
-const transtStatistics = ref()
+const transtStatistics = ref();
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -35,7 +34,7 @@ const inputCategory = ref([]);
 const inputUser = ref([]);
 const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
-const isAdmin = ref("")
+const isAdmin = ref("");
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -64,12 +63,11 @@ onMounted(async () => {
   loggedUser.value = getCurrentUsername();
   currentUserRole = getCurrentRole();
   checkAdmin();
-  console.log(currentUserRole)
+  console.log(currentUserRole);
   sortOrder.value = 0;
   totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
   ideas.value = data.content;
   stats.value = await getStats();
-  loadingPage.value = false;
 });
 
 watch(searchValue, async(newValue) => {
@@ -115,8 +113,8 @@ async function changePage(pageNumber) {
 }
 
 // check if user is admin
-function checkAdmin(){
-  if(currentUserRole === 'ADMIN'){
+function checkAdmin() {
+  if (currentUserRole === "ADMIN") {
     isAdmin.value = true;
   }
 }
@@ -168,6 +166,26 @@ async function updateSortOrder() {
     );
     ideas.value = data.content;
   }
+}
+
+function loadRecievedIdeas(value) {
+  ideas.value = value;
+}
+
+async function loadData() {
+  loadingPage.value = true;
+
+  ideas.value = [];
+
+  const data = await loadPagedIdeas(
+    ideasPerPage,
+    currentPage.value - 1,
+    "creationDate",
+    "ASC"
+  );
+  ideas.value = data.content;
+
+  loadingPage.value = false;
 }
 
 async function updateIdeas(filteredIdeas) {
@@ -235,11 +253,11 @@ const onPassInputVariables = (
 //if the item has an image in the db, we return it. if not, we return a default one
 const getImageUrl = (item) => {
   if (item && item.image) {
-    return `data:image/${item.image.fileType};name=${item.image.fileName};base64,${item.image.base64Image}`
+    return `data:image/${item.image.fileType};name=${item.image.fileName};base64,${item.image.base64Image}`;
   } else {
-    return 'https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw';
+    return "https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw";
   }
-}
+};
 </script>
 
 <template>
@@ -255,13 +273,21 @@ const getImageUrl = (item) => {
         :ideasPerPage="ideasPerPage"
       />
     </div>
-    <div class="right-container" :style=" isAdmin ? {' grid-template-columns':'auto auto'} : {'grid-template-columns':'80vw'}">
+    <div
+      class="right-container"
+      :style="
+        isAdmin
+          ? { ' grid-template-columns': 'auto auto' }
+          : { 'grid-template-columns': '80vw' }
+      "
+    >
       <div v-if="isAdmin">
-        <CustomStatistics 
-      :generatedStatistics="transtStatistics"
-      />
+        <CustomStatistics
+          :generatedStatistics="transtStatistics"
+          @load-top5-ideas="loadRecievedIdeas"
+          @load-data="loadData"
+        />
       </div>
-      
 
       <div class="main-container">
         <div class="middle-container">
@@ -297,12 +323,18 @@ const getImageUrl = (item) => {
                 @comment-counter-sub="idea.commentsNumber--"
               />
             </div>
-            <div v-if="ideas.length === 0 && loadingPage === false" class="no-ideas-message">
+            <div
+              v-if="ideas.length === 0 && loadingPage === false"
+              class="no-ideas-message"
+            >
               <img src="../assets/img/curiosity-search.svg" />
               <br />
               <span class="black-font">Your search returned no results</span>
             </div>
-            <div v-if="ideas.length === 0 && loadingPage === true" class="loading-placeholder">
+            <div
+              v-if="ideas.length === 0 && loadingPage === true"
+              class="loading-placeholder"
+            >
               <CustomLoader :size="100" />
             </div>
           </div>
