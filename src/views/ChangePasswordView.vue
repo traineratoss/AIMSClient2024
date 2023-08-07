@@ -1,6 +1,5 @@
 <script setup>
 import CompanyLogo from "../components/CompanyLogo.vue";
-import CustomInput from "../components/CustomInput.vue";
 import { ref } from "vue";
 import {
   changePassword,
@@ -18,6 +17,13 @@ const confirmNewPassword = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
 const currentAvatarId = ref(-1);
+
+const passwordLength = ref(0);
+const containsEightCharacters = ref(false);
+const containsNumber = ref(false);
+const containsUppercase = ref(false);
+const containsSpecialCharacter = ref(false);
+const is_valid = ref(false);
 
 currentAvatarId.value = getCurrentAvatarId();
 
@@ -102,6 +108,16 @@ function handleNewPasswordTextChanged(password) {
 function handleConfirmPasswordTextChanged(password) {
   confirmNewPassword.value = password;
 }
+
+function checkPassword() {
+  passwordLength.value = newPasswordText.value.length;
+  const format = /[!@#$%^&*()_+\-=\[\]{};':"\\,.<>\/?]/;
+
+  containsEightCharacters.value = passwordLength.value > 7 ? true : false;
+  containsNumber.value = /\d/.test(newPasswordText.value);
+  containsUppercase.value = /[A-Z]/.test(newPasswordText.value);
+  containsSpecialCharacter.value = format.test(newPasswordText.value);
+}
 </script>
 
 <template>
@@ -115,18 +131,29 @@ function handleConfirmPasswordTextChanged(password) {
       <img
         :src="slideImages[currentAvatarId]"
         alt="avatar not found"
-        style="height: auto; width: 10vw"
+        style="height: auto; width: 8vw"
       />
     </div>
     <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
     />
+    <div class="verification-container">
+      <ul>
+        <li :class="{ is_valid: containsEightCharacters }">8 Characters</li>
+        <li :class="{ is_valid: containsNumber }">Contains numbers</li>
+        <li :class="{ is_valid: containsUppercase }">Contains Uppercase</li>
+        <li :class="{ is_valid: containsSpecialCharacter }">
+          Contains Special Character
+        </li>
+      </ul>
+    </div>
     <div>
       <PasswordInput
         :label="'Current password'"
         :value="oldPasswordText"
         @password-changed="handleOldPasswordTextChanged"
+        @keyup="checkPassword"
       />
     </div>
     <div>
@@ -134,6 +161,7 @@ function handleConfirmPasswordTextChanged(password) {
         :label="'New password'"
         :value="newPasswordText"
         @password-changed="handleNewPasswordTextChanged"
+        @input="checkPassword"
       />
     </div>
     <div>
@@ -224,5 +252,42 @@ button {
 
 a {
   color: black;
+}
+
+.verification-container {
+  height: 7vh;
+  width: 10vw;
+  margin-bottom: 10px;
+  background-color: var(--background-color);
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 2px 2px 5px 5px var(--sidebar-color);
+}
+
+ul {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: red;
+}
+
+li:before {
+  content: "X";
+  padding-right: 10px;
+}
+
+.is_valid {
+  color: green;
+  list-style: none;
+}
+
+ul .is_valid:before {
+  content: "✓";
+  padding-right: 10px;
 }
 </style>

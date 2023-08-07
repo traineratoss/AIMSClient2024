@@ -30,13 +30,17 @@ const slideImages = [
 ];
 
 watch(searchValue, (newValue) => {
-    if(newValue.text!==undefined) {
-      searchBarTitle.value = newValue.text;
-    }
-})
+  if (newValue.text !== undefined) {
+    searchBarTitle.value = newValue.text;
+  }
+});
 
 router.beforeEach((to, from) => {
-  if (from.name === "my-profile" || from.name === "login" || to.name === 'default') {
+  if (
+    from.name === "my-profile" ||
+    from.name === "login" ||
+    to.name === "default"
+  ) {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
   }
@@ -224,7 +228,7 @@ const handleSelected = () => {
           style="font-family: Segoe UI, FontAwesome"
           :type="'text'"
           :can-modify-search-value="true"
-          v-model="searchBarTitle" 
+          v-model="searchBarTitle"
         />
       </div>
     </div>
@@ -277,7 +281,7 @@ nav {
   gap: 1vw;
   width: 100vw;
   align-items: center;
-  height: 9vh;
+  height: 6vh;
 }
 
 .material-symbols-outlined {
