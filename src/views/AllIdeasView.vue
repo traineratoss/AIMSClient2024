@@ -273,21 +273,14 @@ const getImageUrl = (item) => {
         :ideasPerPage="ideasPerPage"
       />
     </div>
-    <div
-      class="right-container"
+    <div class="right-container"
       :style="
         isAdmin
           ? { ' grid-template-columns': 'auto auto' }
           : { 'grid-template-columns': '80vw' }
       "
     >
-      <div v-if="isAdmin">
-        <CustomStatistics
-          :generatedStatistics="transtStatistics"
-          @load-top5-ideas="loadRecievedIdeas"
-          @load-data="loadData"
-        />
-      </div>
+     
 
       <div class="main-container">
         <div class="middle-container">
@@ -348,6 +341,13 @@ const getImageUrl = (item) => {
           />
         </div>
       </div>
+      <div v-if="isAdmin" class="custom-statistics">
+        <CustomStatistics
+          :generatedStatistics="transtStatistics"
+          @load-top5-ideas="loadRecievedIdeas"
+          @load-data="loadData"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -356,6 +356,11 @@ const getImageUrl = (item) => {
 .idea-transition-item {
   margin-bottom: 10px;
 }
+
+.custom-statistics{
+  min-height: 100vh;
+}
+
 
 .ideas-transition-container {
   margin-top: 20px;
@@ -425,7 +430,7 @@ const getImageUrl = (item) => {
 .sidebar-container {
   border: 1px solid black;
   background-color: #b3b3b3;
-  height: 91vh;
+ 
 }
 
 .middle-container {
