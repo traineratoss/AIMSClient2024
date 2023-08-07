@@ -225,7 +225,7 @@ function getInputPlaceholder() {
   background-color: #fff;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  max-height: 8vh;
+  max-height: 12vh;
   /* max-height: 250px; */
   overflow-y: auto;
 }

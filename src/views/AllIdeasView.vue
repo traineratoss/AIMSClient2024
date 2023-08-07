@@ -17,7 +17,7 @@ import CustomInput from "../components/CustomInput.vue";
 
 const currentUsername = getCurrentUsername();
 
-const ideasPerPage = 50;
+const ideasPerPage = 5;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
@@ -59,6 +59,7 @@ onMounted(async () => {
     "creationDate",
     "ASC"
   );
+  loadingPage.value = true;
   loggedUser.value = getCurrentUsername();
   currentUserRole = getCurrentRole();
   checkAdmin();
@@ -67,6 +68,9 @@ onMounted(async () => {
   totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
   ideas.value = data.content;
   stats.value = await getStats();
+  setTimeout(() => {
+    loadingPage.value = false;
+  }, 500)
 });
 
 watch(searchValue, async (newValue) => {
