@@ -12,8 +12,8 @@ import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
-import { useRoute } from 'vue-router';
-
+import { useRoute } from "vue-router";
+import CustomInput from "../components/CustomInput.vue";
 
 const currentUsername = getCurrentUsername();
 
@@ -50,7 +50,6 @@ let currentUserRole = "";
 
 const isFiltering = ref(false);
 
-
 const loadingPage = ref(true);
 
 onMounted(async () => {
@@ -70,25 +69,25 @@ onMounted(async () => {
   stats.value = await getStats();
 });
 
-watch(searchValue, async(newValue) => {
-    if(newValue.key === "Enter" && newValue.text !== undefined) {
-      const data = await filterIdeas(
-        inputTitle.value,
-        currentText,
-        currentStatus,
-        currentCategory,
-        currentUser,
-        currentSelectedDateFrom,
-        currentSelectedDateTo,
-        currentPage.value - 1,
-        ideasPerPage,
-        null,
-        sortOrder.value
-      );
+watch(searchValue, async (newValue) => {
+  if (newValue.key === "Enter" && newValue.text !== undefined) {
+    const data = await filterIdeas(
+      inputTitle.value,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideasPerPage,
+      null,
+      sortOrder.value
+    );
 
-      updateIdeas(data) // we need to update the for multiple use cases 
-    }
-})
+    updateIdeas(data); // we need to update the for multiple use cases
+  }
+});
 
 async function changePage(pageNumber) {
   // every time i change the page, i should filter the pages to check from the server every page, same aplies for every method which implies changing the ideas.value
@@ -190,7 +189,7 @@ async function loadData() {
 
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
-  
+
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
@@ -281,14 +280,6 @@ const getImageUrl = (item) => {
           : { 'grid-template-columns': '80vw' }
       "
     >
-      <div v-if="isAdmin">
-        <CustomStatistics
-          :generatedStatistics="transtStatistics"
-          @load-top5-ideas="loadRecievedIdeas"
-          @load-data="loadData"
-        />
-      </div>
-
       <div class="main-container">
         <div class="middle-container">
           <div class="sort-container" style="text-align: right">
@@ -341,20 +332,126 @@ const getImageUrl = (item) => {
         </div>
 
         <div v-if="ideas.length > 0" class="pagination-container">
-          <Pagination
-            :totalPages="totalPages"
-            :currentPage="currentPage"
-            @changePage="changePage"
-          />
+          <div class="pagination-component">
+            <Pagination
+              :totalPages="totalPages"
+              :currentPage="currentPage"
+              @changePage="changePage"
+            />
+          </div>
         </div>
+      </div>
+      <div v-if="isAdmin" class="custom-statistics">
+        <div class="stats-header">
+          <div class="center-class">
+            <div class="title">
+              <b>AIMS </b>Statistics
+              <span class="material-symbols-outlined"> query_stats </span>
+            </div>
+          </div>
+
+          <div class="center-class">
+            <fieldset class="select-date" style="border: 1px solid slategray">
+              <legend style="margin-left: 1em; padding: 0.2em 0.8em">
+                Select Creation Date Interval
+              </legend>
+              <div class="date-input">
+                <div>
+                  <span class="from-date"> From: </span>
+                  <CustomInput
+                    v-model="selectedDateFrom"
+                    type="date"
+                    class="form-input"
+                  />
+                </div>
+                <div>
+                  <span class="to-date"> To: </span>
+                  <CustomInput
+                    v-model="selectedDateTo"
+                    type="date"
+                    class="to-input"
+                  />
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="center-class">
+            <button class="load-button">Filter !</button>
+          </div>
+        </div>
+
+        <CustomStatistics
+          :generatedStatistics="transtStatistics"
+          @load-top5-ideas="loadRecievedIdeas"
+          @load-data="loadData"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.center-class {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  margin-bottom: 15px;
+  margin-top: 15px;
+  font-size: x-large;
+}
+
+.stats-header {
+  top: 0;
+  display: grid;
+  grid-template-rows: 7vh 12vh 5vh;
+  background-color: rgb(255, 255, 255);
+}
+
+.select-date {
+  width: 15vw;
+  height: 9vh;
+}
+
+.date-input {
+  display: grid;
+  grid-template-rows: 50% 50%;
+  gap: 0.5vh;
+  text-align: center;
+}
+
+.date-input > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .idea-transition-item {
   margin-bottom: 10px;
+}
+
+.custom-statistics {
+  border: 1px solid slategray;
+  height: 94vh;
+  display: grid;
+  grid-template-rows: 24vh 70vh;
+}
+
+.load-button {
+  margin-top: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: white;
+  height: 30px;
+  text-align: center;
+  width: 5.5vw;
+}
+
+.load-button:hover {
+  background-color: #ffa941;
 }
 
 .ideas-transition-container {
@@ -389,7 +486,7 @@ const getImageUrl = (item) => {
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 91vh;
+  height: 94vh;
 }
 
 .material-symbols-outlined {
@@ -406,11 +503,14 @@ const getImageUrl = (item) => {
 .sort-container {
   margin: 10px;
   font-weight: bold;
+  position: sticky;
+  position: -webkit-sticky; 
+  top: 0;
 }
 .all-ideas-view-container {
   display: grid;
   grid-template-columns: 20vw 80vw;
-  height: 91vh;
+  height: 94vh;
 }
 
 .left-container {
@@ -425,7 +525,6 @@ const getImageUrl = (item) => {
 .sidebar-container {
   border: 1px solid black;
   background-color: #b3b3b3;
-  height: 91vh;
 }
 
 .middle-container {
@@ -450,7 +549,7 @@ const getImageUrl = (item) => {
 }
 
 .main-container {
-  height: 91vh;
+  height: 94vh;
   display: grid;
   grid-template-rows: 95% 5%;
 }
@@ -466,13 +565,18 @@ const getImageUrl = (item) => {
 .big-container {
   display: flex;
   justify-content: center;
-  height: 91vh;
+  height: 94vh;
 }
 
 .pagination-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
+}
+
+.pagination-component {
+  width: 30vw;
+  margin-bottom: 15px;
 }
 
 .page-number {

@@ -23,9 +23,7 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-const emits = defineEmits([
-  "loadTop5Ideas","loadData"
-])
+const emits = defineEmits(["loadTop5Ideas", "loadData"]);
 
 watch(progressBar, (newX) => {
   progressBar.value = newX;
@@ -53,33 +51,17 @@ async function calculateImplementationPercentage() {
   }
 }
 
-function loadTop5Ideas(){
-
-  // const list = []
-  // list.push(stats.value.mostCommentedIdeas[4])
-  // list.push(stats.value.mostCommentedIdeas[3])
-  // list.push(stats.value.mostCommentedIdeas[2])
-  // list.push(stats.value.mostCommentedIdeas[1])
-  // list.push(stats.value.mostCommentedIdeas[0])
-
-  emits("loadTop5Ideas",stats.value.mostCommentedIdeas)
+function loadTop5Ideas() {
+  emits("loadTop5Ideas", stats.value.mostCommentedIdeas);
 }
 
-function loadData(){
-  emits("loadData")
+function loadData() {
+  emits("loadData");
 }
 
-async function refreshStats(){
+async function refreshStats() {
   stats.value = await getStats();
 }
-
-// let isDisabledB1 = false
-// let isDisabledB2 = true
-
-// function disableButton(){
-//   isDisabledB1=!isDisabledB1
-//   isDisabledB2=!isDisabledB2
-// }
 </script>
 
 <template>
@@ -93,25 +75,15 @@ async function refreshStats(){
     <div class="stats-wrapper" v-if="!isLoading">
       <div class="general-statistics" v-if="!recievedStats">
         <div class="stats-container">
-          <div class="title">
-            <b>AIMS </b>Statistics
-            <span class="material-symbols-outlined"> query_stats </span>
-          </div>
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label"><b>Total Ideas:</b></p>
             <b>{{ stats.nrOfIdeas }}</b>
-          </div>
-          <div class="stat-ite">
-            <p>[Public + Draft]</p>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas:</b></p>
             <b>{{ stats.openIdeas + stats.implementedIdeas }}</b>
           </div>
-          <div class="stat-ite">
-            <p>[Public = Open + Implemented]</p>
-          </div>
-          <div class="stat-ite">
+          <div class="stat-item">
             <p>
               Our current implementation status is
               <strong>{{ implementationPercentage }}%</strong>
@@ -169,34 +141,38 @@ async function refreshStats(){
               </tr>
             </table>
             <div class="swich-buttons">
-              <button  class="load-button" @click="loadTop5Ideas()">Load top ideas </button> 
-              <button  class="load-button" @click="loadData()">Reload ideas </button> 
-              <button  class="load-button" @click="refreshStats()">Refresh stats </button> 
+              <button class="load-button" @click="loadTop5Ideas()">
+                Load top ideas
+              </button>
+              <button class="load-button" @click="loadData()">
+                Reload ideas
+              </button>
+              <button class="load-button" @click="refreshStats()">
+                Refresh stats
+              </button>
             </div>
-             
           </div>
-          <div class="most-commented-ideas" style="margin-bottom: 50px;">
-            <p> Overall info :</p>
-          <table id="idea-table">
-            <tr>
-              <td>Number of Users:</td>
-              <td>{{ stats.nrOfUsers }}</td>
-            </tr>
-            <tr>
-              <td>Ideas per User:</td>
-              <td>{{ stats.ideasPerUser }}</td>
-            </tr>
-            <tr>
-              <td>Total nr. of Comments:</td>
-              <td>{{ stats.totalNrOfComments }}</td>
-            </tr>
-            <tr>
-              <td>Total nr. of Replies:</td>
-              <td>{{ stats.totalNrOfReplies }}</td>
-            </tr>
-            
-          </table>
-        </div>
+          <div class="most-commented-ideas" style="margin-bottom: 50px">
+            <p>Overall info :</p>
+            <table id="idea-table">
+              <tr>
+                <td>Number of Users:</td>
+                <td>{{ stats.nrOfUsers }}</td>
+              </tr>
+              <tr>
+                <td>Ideas per User:</td>
+                <td>{{ stats.ideasPerUser }}</td>
+              </tr>
+              <tr>
+                <td>Total nr. of Comments:</td>
+                <td>{{ stats.totalNrOfComments }}</td>
+              </tr>
+              <tr>
+                <td>Total nr. of Replies:</td>
+                <td>{{ stats.totalNrOfReplies }}</td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -266,7 +242,7 @@ async function refreshStats(){
 
 <style scoped>
 
-.swich-buttons{
+.swich-buttons {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,7 +250,7 @@ async function refreshStats(){
   gap: 15px;
 }
 
-.load-button{
+.load-button {
   margin-top: 20px;
   border: 1px solid black;
   border-radius: 10px;
@@ -284,15 +260,10 @@ async function refreshStats(){
   width: 5.5vw;
 }
 
-.load-button:hover{
+.load-button:hover {
   /* color: #ffa941;
   border: 1px solid #ffa941; */
   background-color: #ffa941;
-}
-
-.title {
-  margin-top: 30px;
-  font-size: x-large;
 }
 
 .most-commented-ideas {
@@ -344,7 +315,6 @@ strong {
   background-color: #b3b3b3;
   box-sizing: content-box;
   padding-top: 10px;
-  border: 1px solid slategray;
   width: 20vw;
 }
 
@@ -374,15 +344,15 @@ strong {
   background-color: rgb(255, 255, 255);
   box-sizing: content-box;
   padding-top: 10px;
-  border: 1px solid slategray;
   width: 20vw;
 }
 
 .stats-container {
   text-align: center;
-  height: 91vh;
   border-radius: 5px;
+  height: 70vh;
   overflow: auto;
+  margin-bottom: 15vh;
 }
 
 .stats-container::-webkit-scrollbar {

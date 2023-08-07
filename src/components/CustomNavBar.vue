@@ -3,7 +3,7 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import {
   getCurrentAvatarId,
   getCurrentRole,
@@ -18,6 +18,8 @@ const disabledDashboard = ref(true);
 const disabledUser = ref(true);
 const currentUsername = ref("");
 const currentAvatarId = ref(-1);
+
+let userDashboardElements = [];
 
 const slideImages = [
   "src/assets/img/avatars/avatar1.svg",
@@ -44,6 +46,50 @@ router.beforeEach((to, from) => {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
   }
+
+  userDashboardElements = [];
+
+  userDashboardElements.push({
+    id: "profile",
+    name: "Profile",
+    route: "/my-profile",
+    icon: "person",
+  });
+
+  userDashboardElements.push({
+    id: "change-password",
+    name: "Change Password",
+    route: "/change",
+    icon: "settings",
+  });
+
+  userDashboardElements.push({
+    id: "my-ideas",
+    name: "My ideas",
+    route: "/my",
+    icon: "lightbulb",
+  });
+
+  if (getCurrentRole() === "ADMIN") {
+    userDashboardElements.push({
+      id: "dashboard",
+      name: "Dashboard",
+      route: "/admin-dashboard",
+      icon: "dashboard",
+    });
+  }
+
+  userDashboardElements.push({
+    id: "logout",
+    name: "Log out",
+    route: "/login",
+    icon: "logout",
+  });
+});
+
+onMounted(() => {
+  currentUsername.value = getCurrentUsername();
+  currentAvatarId.value = getCurrentAvatarId();
 });
 
 function redirectToAllIdeas() {
@@ -114,57 +160,6 @@ const dashboardElements = [
     icon: "bar_chart",
   },
 ];
-
-let userDashboardElements = [];
-
-router.beforeEach(() => {
-  userDashboardElements = [];
-
-  userDashboardElements.push({
-    id: "profile",
-    name: "Profile",
-    route: "/my-profile",
-    icon: "person",
-  });
-
-  userDashboardElements.push({
-    id: "change-password",
-    name: "Change Password",
-    route: "/change",
-    icon: "settings",
-  });
-
-  userDashboardElements.push({
-    id: "my-ideas",
-    name: "My ideas",
-    route: "/my",
-    icon: "lightbulb",
-  });
-
-  if (getCurrentRole() === "ADMIN") {
-    userDashboardElements.push({
-      id: "dashboard",
-      name: "Dashboard",
-      route: "/admin-dashboard",
-      icon: "dashboard",
-    });
-  }
-
-  userDashboardElements.push({
-    id: "logout",
-    name: "Log out",
-    route: "/login",
-    icon: "logout",
-  });
-});
-
-const searchAnIdeaByTitle = () => {
-  console.log("d");
-};
-
-const handleSelected = () => {
-  console.log("d");
-};
 </script>
 
 
