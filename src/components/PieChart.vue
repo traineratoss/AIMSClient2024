@@ -18,7 +18,6 @@ const props = defineProps({
   firstNumber:"",
   secondNumber:"",
   thirdNumber:"",
-  test:""
 });
 
 const top1 = ref("");
@@ -32,7 +31,6 @@ top3.value = props.thirdValue;
 const color1 = props.color1;
 const color2 = props.color2;
 const color3 = props.color3;
-const test = props.test
 const backgroundColor = props.backgroundColor;
 
 /*
