@@ -1,6 +1,7 @@
 <script setup>
 import CustomButton from "../components/CustomButton.vue";
 import CustomButtonGray from "../components/CustomButtonGray.vue";
+import router from "../router";
 import CustomInput from "./CustomInput.vue";
 import { ref } from "vue";
 
@@ -17,8 +18,18 @@ function filterUsers() {
 <template>
   <div class="side-panel">
     <div class="options">
-      <CustomButton class="btn">All users</CustomButton>
-      <CustomButtonGray class="btn" label="Statistics" />
+      <CustomButton 
+        class="btn"
+      >
+        All users
+      </CustomButton>
+      <CustomButtonGray 
+        class="btn" 
+        label="Statistics"
+        @click="() => {
+          router.push('/all');
+        }" 
+      />
     </div>
     <div class="filters">
       <h1>Filter by:</h1>
@@ -31,9 +42,13 @@ function filterUsers() {
           @keydown.enter="filterUsers"
         />
       </div>
-      <CustomButton class="btn" id="filter-btn" @click="filterUsers"
-        >Filter</CustomButton
+      <CustomButton 
+        class="btn" 
+        id="filter-btn" 
+        @click="filterUsers"
       >
+        Filter
+      </CustomButton>
     </div>
   </div>
 </template>

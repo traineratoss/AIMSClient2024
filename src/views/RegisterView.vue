@@ -39,7 +39,7 @@ function signUp() {
             if (error.message === "Server connection error") {
               message.value = error.message;
             } else {
-              message.value = "Userame or email already exists";
+              message.value = "Username or email already exists";
             }
             buttonDisabled.value = false;
             usernameText.value = "";

@@ -13,11 +13,14 @@ import searchValue from "../utils/search-title";
 
 const searchBarTitle = ref("");
 
-const indexOfActivePage = ref(1);
+const indexOfActivePage = ref(2);
 const disabledDashboard = ref(true);
 const disabledUser = ref(true);
 const currentUsername = ref("");
 const currentAvatarId = ref(-1);
+const allIdeasActive = ref(false);
+const myIdeasActive = ref(true);
+const createIdeaActive = ref(false);
 
 let userDashboardElements = [];
 
@@ -31,11 +34,26 @@ const slideImages = [
   "src/assets/img/avatars/avatar7.svg",
 ];
 
+const dashboardElements = [
+  {
+    id: "all-users",
+    name: "All users",
+    route: "/admin-dashboard",
+    icon: "group",
+  },
+  {
+    id: "stats",
+    name: "Statistics",
+    route: "/all",
+    icon: "bar_chart",
+  },
+];
+
 watch(searchValue, (newValue) => {
     if(newValue.text!==undefined) {
       searchBarTitle.value = newValue.text;
     }
-})
+});
 
 router.beforeEach((to, from) => {
   if (from.name === "my-profile" || 
@@ -44,6 +62,9 @@ router.beforeEach((to, from) => {
     ) {
       currentUsername.value = getCurrentUsername();
       currentAvatarId.value = getCurrentAvatarId();
+
+      indexOfActivePage.value = 2;
+      activateMyIdeas();
   }
 
   userDashboardElements = [];
@@ -89,34 +110,73 @@ router.beforeEach((to, from) => {
 onMounted(() => {
   currentUsername.value = getCurrentUsername();
   currentAvatarId.value = getCurrentAvatarId();
+
+  indexOfActivePage.value = parseInt(localStorage.getItem('current page index'));
+
+  if (indexOfActivePage.value === 1) {
+    activateAllIdeas();
+  } else if (indexOfActivePage.value === 2) {
+    activateMyIdeas();
+  } else if (indexOfActivePage.value === 4) {
+    activateCreateIdea();
+  } else {
+    deactivateAll();
+  }
 });
+
+function activateAllIdeas() {
+  allIdeasActive.value = true;
+  myIdeasActive.value = false;
+  createIdeaActive.value = false;
+}
+
+function activateMyIdeas() {
+  allIdeasActive.value = false;
+  myIdeasActive.value = true;
+  createIdeaActive.value = false;
+}
+
+function activateCreateIdea() {
+  allIdeasActive.value = false;
+  myIdeasActive.value = false;
+  createIdeaActive.value = true;
+}
+
+function deactivateAll() {
+  allIdeasActive.value = false;
+  myIdeasActive.value = false;
+  createIdeaActive.value = false;
+}
 
 function redirectToAllIdeas() {
   indexOfActivePage.value = 1;
+
+  activateAllIdeas();
+
+  localStorage.setItem('current page index', indexOfActivePage.value);
   router.push("/all");
 }
 
 function redirectToMyIdeas() {
   indexOfActivePage.value = 2;
-  router.push("/my");
-}
 
-function redirectToDashboard() {
-  indexOfActivePage.value = 3;
-  router.push("/admin-dashboard");
+  activateMyIdeas();
+
+  localStorage.setItem('current page index', indexOfActivePage.value);
+  router.push("/my");
 }
 
 function redirectToCreateIdea() {
   indexOfActivePage.value = 4;
+
+  activateCreateIdea();
+
+  localStorage.setItem('current page index', indexOfActivePage.value);
   router.push("/create-idea");
 }
 
-function redirectToMyProfile() {
-  router.push("/my-profile");
-}
-
 function isPageWithIndexActive(index) {
-  return indexOfActivePage.value == index ? true : false;
+  return parseInt(localStorage.getItem('current page index')) == index ? true : false;
 }
 
 function onMouseEnterDashboard() {
@@ -138,29 +198,19 @@ function onMouseLeaveUser() {
 function dropDownClicked(elementId) {
   if (elementId === "my-ideas") {
     indexOfActivePage.value = 2;
+    
+    activateMyIdeas();
   } else if (elementId === "stats") {
     indexOfActivePage.value = 1;
+    
+    activateAllIdeas();
   } else {
     indexOfActivePage.value = 0;
+
+    deactivateAll();
   }
+  localStorage.setItem('current page index', indexOfActivePage.value);
 }
-
-const dashboardElements = [
-  {
-    id: "all-users",
-    name: "All users",
-    route: "/admin-dashboard",
-    icon: "group",
-  },
-  {
-    id: "stats",
-    name: "Statistics",
-    route: "/all",
-    icon: "bar_chart",
-  },
-];
-
-
 </script>
 
 
@@ -173,7 +223,7 @@ const dashboardElements = [
           class="nav-button"
           id="all-ideas"
           @click="redirectToAllIdeas"
-          :is-active="isPageWithIndexActive(1)"
+          :is-active="allIdeasActive"
         >
           All ideas
         </CustomButton>
@@ -181,7 +231,7 @@ const dashboardElements = [
           class="nav-button"
           id="my-ideas"
           @click="redirectToMyIdeas"
-          :is-active="isPageWithIndexActive(2)"
+          :is-active="myIdeasActive"
         >
           My ideas
         </CustomButton>
@@ -212,7 +262,7 @@ const dashboardElements = [
           class="nav-button"
           id="create-idea"
           @click="redirectToCreateIdea"
-          :is-active="isPageWithIndexActive(4)"
+          :is-active="createIdeaActive"
         >
           Create an Idea
         </CustomButton>
