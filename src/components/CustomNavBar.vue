@@ -50,9 +50,9 @@ const dashboardElements = [
 ];
 
 watch(searchValue, (newValue) => {
-    if(newValue.text!==undefined) {
-      searchBarTitle.value = newValue.text;
-    }
+  if (newValue.text !== undefined) {
+    searchBarTitle.value = newValue.text;
+  }
 });
 
 router.beforeEach((to, from) => {
@@ -62,9 +62,6 @@ router.beforeEach((to, from) => {
     ) {
       currentUsername.value = getCurrentUsername();
       currentAvatarId.value = getCurrentAvatarId();
-
-      indexOfActivePage.value = 2;
-      activateMyIdeas();
   }
 
   userDashboardElements = [];
@@ -211,6 +208,23 @@ function dropDownClicked(elementId) {
   }
   localStorage.setItem('current page index', indexOfActivePage.value);
 }
+
+const dashboardElements = [
+  {
+    id: "all-users",
+    name: "All users",
+    route: "/admin-dashboard",
+    icon: "group",
+  },
+  {
+    id: "stats",
+    name: "Statistics",
+    route: "/all",
+    icon: "bar_chart",
+  },
+];
+
+
 </script>
 
 
@@ -274,7 +288,7 @@ function dropDownClicked(elementId) {
           style="font-family: Segoe UI, FontAwesome"
           :type="'text'"
           :can-modify-search-value="true"
-          v-model="searchBarTitle" 
+          v-model="searchBarTitle"
         />
       </div>
     </div>
@@ -327,7 +341,7 @@ nav {
   gap: 1vw;
   width: 100vw;
   align-items: center;
-  height: 9vh;
+  height: 6vh;
 }
 
 .material-symbols-outlined {

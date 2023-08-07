@@ -293,7 +293,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
               </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ props.text }}
+                  {{ getShortText(props.text, 5, 59) }}
                 </div>
                 <div class="text" v-else>
                   {{ getShortText(props.text, 3, 59) }}
@@ -328,11 +328,7 @@ const isAdmin = getCurrentRole() === "ADMIN";
             </div>
             <div class="right-container">
               <div class="right-container-image">
-                <img
-                  class="idea-image"
-                  :src="props.image"
-                  alt="image"
-                />
+                <img class="idea-image" :src="props.image" alt="image" />
               </div>
               <div class="right-container-info">
                 <div class="number-of-comments">

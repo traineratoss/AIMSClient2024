@@ -142,7 +142,7 @@ function updateUsersList() {
 
 <style scoped>
 .container {
-  height: calc(91vh - 4px);
+  height: calc(94vh - 2px);
   width: 100vw;
 
   display: flex;

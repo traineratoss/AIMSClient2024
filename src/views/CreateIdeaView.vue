@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue"
-import { watch, ref, onMounted, watchEffect, computed } from "vue";
+import { ref, onMounted, watchEffect, computed } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
 import {
@@ -75,6 +75,18 @@ watchEffect(() => {
 //This function is very important since it checks if the component is gonna update or create an idea
 const isUpdatedIdeaEmpty = computed(() => {
   return JSON.stringify(updatedIdea.value) === "{}";
+});
+//This function change the text when you are on create,update or delete
+const pageTitle = computed(() => {
+  if (showDeletePopup) {
+    return "Delete your Idea";
+  } else if (isUpdatedIdeaEmpty.value) {
+    return "Create an Idea";
+  }else if (disableFields) {
+    return "View your Idea";
+  } else {
+    return "Update an Idea";
+  }
 });
 
 //this function transforms my whole image string into 3 parts: type, name and base64
@@ -269,7 +281,7 @@ async function handleCancel() {
 async function handleConfirm() {
   await deleteIdea(ideaId);
   customDialog.value.close();
-  await router.push({ path: "/all" });
+  await router.back();
 }
 
 const uploadedImage = ref(null);
@@ -310,13 +322,17 @@ function onMouseEnter() {}
 
 <template>
   <div class="create-idea-container">
+    <div class="idea-title">
+      <h1>
+        {{ pageTitle }}
+      </h1>
+    </div>
     <div class="idea">
       <label for="title-idea" class="label">Title:</label>
       <CustomInput
         v-model="inputValue"
         :disabled="fieldsDisabled"
         placeholder="Write your title here..."
-        class="input-width"
       />
     </div>
     <div class="idea">
@@ -366,10 +382,12 @@ function onMouseEnter() {}
         <div class="idea-text">
             <label for="category-idea" class="label-text" >Idea text:</label>
             <textarea 
-            v-model="textValue" 
-            :disabled="fieldsDisabled" 
-            placeholder="Write your text here..." 
-            :class="{textarea:textError}"></textarea>
+              v-model="textValue" 
+              :disabled="fieldsDisabled" 
+              placeholder="Write your text here..." 
+              :class="{textarea:textError}"
+              class="idea-border-radius">
+            </textarea>
         </div>
         <div class="idea">
           <CarouselImage 
@@ -400,9 +418,6 @@ function onMouseEnter() {}
 
             </CustomButton>
         </div>
-        <!-- <div>
-            <CustomButton id="create-idea"  @click="clickImageButton"  :disabled="fieldsDisabled" v-if="!deletePopup"> Create Image</CustomButton>
-        </div> -->
     <CustomDialog
       ref="customDialog"
       :open="deletePopup"
@@ -446,6 +461,10 @@ function onMouseEnter() {}
   margin-bottom: 10px;
   width: 30vh;
 }
+.idea-title{
+  display: flex;
+  align-items: center;
+}
 .label {
   padding-right: 20px;
 }
@@ -461,7 +480,7 @@ function onMouseEnter() {}
 }
 textarea {
   width: 30vh;
-  height: 10vh;
+  height: 15vh;
   resize: none;
 }
 input {
@@ -497,5 +516,8 @@ select {
 .dialog-actions button:nth-child(2) {
   background-color: #ffa941;
   color: black;
+}
+.idea-border-radius{
+  border-radius: 10px;
 }
 </style>
