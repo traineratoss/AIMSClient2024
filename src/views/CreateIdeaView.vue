@@ -76,6 +76,18 @@ watchEffect(() => {
 const isUpdatedIdeaEmpty = computed(() => {
   return JSON.stringify(updatedIdea.value) === "{}";
 });
+//This function change the text when you are on create,update or delete
+const pageTitle = computed(() => {
+  if (showDeletePopup) {
+    return "Delete your Idea";
+  } else if (isUpdatedIdeaEmpty.value) {
+    return "Create an Idea";
+  }else if (disableFields) {
+    return "View your Idea";
+  } else {
+    return "Update an Idea";
+  }
+});
 
 //this function transforms my whole image string into 3 parts: type, name and base64
 //needed for the request dto
@@ -310,6 +322,11 @@ function onMouseEnter() {}
 
 <template>
   <div class="create-idea-container">
+    <div class="idea-title">
+      <h1>
+        {{ pageTitle }}
+      </h1>
+    </div>
     <div class="idea">
       <label for="title-idea" class="label">Title:</label>
       <CustomInput
@@ -443,6 +460,10 @@ function onMouseEnter() {}
   align-items: center;
   margin-bottom: 10px;
   width: 30vh;
+}
+.idea-title{
+  display: flex;
+  align-items: center;
 }
 .label {
   padding-right: 20px;

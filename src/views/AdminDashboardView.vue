@@ -28,6 +28,7 @@ function removeUser(user) {
   if (index !== -1) {
     users.value.splice(index, 1);
   }
+  updateUsersList();
 }
 
 async function search(username) {
@@ -121,6 +122,7 @@ function updateUsersList() {
               () => {
                 user.isActive = true;
                 user.hasPassword = true;
+                updateUsersList();
               }
             "
             @decline-user="removeUser(user)"

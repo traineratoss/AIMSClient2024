@@ -1,6 +1,7 @@
 <script setup>
 import CustomButton from "../components/CustomButton.vue";
 import CustomButtonGray from "../components/CustomButtonGray.vue";
+import router from "../router";
 import CustomInput from "./CustomInput.vue";
 import { ref } from "vue";
 
@@ -31,9 +32,13 @@ function filterUsers() {
           @keydown.enter="filterUsers"
         />
       </div>
-      <CustomButton class="btn" id="filter-btn" @click="filterUsers"
-        >Filter</CustomButton
+      <CustomButton 
+        class="btn" 
+        id="filter-btn" 
+        @click="filterUsers"
       >
+        Filter
+      </CustomButton>
     </div>
   </div>
 </template>
