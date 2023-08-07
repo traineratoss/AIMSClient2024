@@ -277,7 +277,7 @@ nav {
   gap: 1vw;
   width: 100vw;
   align-items: center;
-  height: 9vh;
+  height: 6vh;
 }
 
 .material-symbols-outlined {
