@@ -168,6 +168,7 @@ function updateUsersList() {
   height: 32.5vh;
   width: 63vw;
   overflow: auto;
+  align-items: flex-start;
 }
 
 .main-container::-webkit-scrollbar {
@@ -197,10 +198,6 @@ function updateUsersList() {
 
 img {
   height: 60vh;
-}
-
-.users {
-  height: 20vh;
 }
 
 </style>
