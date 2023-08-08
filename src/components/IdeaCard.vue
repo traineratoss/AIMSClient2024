@@ -21,7 +21,7 @@ const props = defineProps({
   elapsedTime: "",
   image: "",
   loggedUser: "",
-  image: ""
+  image: "",
 });
 
 const emits = defineEmits(["commentCounterAdd", "commentCounterSub"]);
@@ -425,49 +425,51 @@ const isAdmin = getCurrentRole() === "ADMIN";
         </div>
       </div>
     </div>
-    <transition-group duration="550" name="nested">
+    <transition-group duration="300" name="nested">
       <div
         class="comment-container"
         v-if="showCommentsToggle"
         v-for="comment in allLoadedComments"
         :key="comment.id"
       >
-        <div class="custom-comment">
-          <CustomComment
-            :elapsedTime="comment.elapsedTime"
-            :isReply="false"
-            :commentId="comment.id"
-            :text="comment.commentText"
-            :username="comment.username"
-            :hasReplies="comment.hasReplies"
-            :parentId="comment.id"
-            :ideaId="comment.ideaId"
-            :loggedUser="props.loggedUser"
-            @toggleReplies="toggleCommentReplies(comment)"
-            @showReplies="showCommentReplies(comment)"
-            @loadReplies="loadCommentReplies(comment)"
-            @postReply="postReplyDynamic"
-            @deleteComment="deleteCommentDynamic"
-          />
-        </div>
+        <CustomComment
+          :elapsedTime="comment.elapsedTime"
+          :isReply="false"
+          :commentId="comment.id"
+          :text="comment.commentText"
+          :username="comment.username"
+          :hasReplies="comment.hasReplies"
+          :parentId="comment.id"
+          :ideaId="comment.ideaId"
+          :loggedUser="props.loggedUser"
+          @toggleReplies="toggleCommentReplies(comment)"
+          @showReplies="showCommentReplies(comment)"
+          @loadReplies="loadCommentReplies(comment)"
+          @postReply="postReplyDynamic"
+          @deleteComment="deleteCommentDynamic"
+          @expandAnimation="expandReplyAnimation"
+          @collapseAnimation="collapseReplyAnimation"
+        />
         <div class="replies-wrapper" v-if="comment.replyToggle">
-          <div
-            v-if="!toggleReplyAnimation"
-            v-for="reply in getRepliesForComment(comment.id)"
-            class="reply-container"
-          >
-            <div class="custom-reply">
-              <CustomComment
-                :elapsedTime="reply.elapsedTime"
-                :isReply="true"
-                :replyId="reply.id"
-                :text="reply.commentText"
-                :username="reply.username"
-                :loggedUser="props.loggedUser"
-                @deleteReply="deleteReplyDynamic"
-              />
+          <transition-group duration="300" name="rnested">
+            <div
+              v-for="reply in getRepliesForComment(comment.id)"
+              :key="reply.id"
+              class="reply-container"
+            >
+              <div class="custom-reply">
+                <CustomComment
+                  :elapsedTime="reply.elapsedTime"
+                  :isReply="true"
+                  :replyId="reply.id"
+                  :text="reply.commentText"
+                  :username="reply.username"
+                  :loggedUser="props.loggedUser"
+                  @deleteReply="deleteReplyDynamic"
+                />
+              </div>
             </div>
-          </div>
+          </transition-group>
         </div>
       </div>
     </transition-group>
@@ -475,39 +477,19 @@ const isAdmin = getCurrentRole() === "ADMIN";
 </template>
 
 <style scoped>
-/************************************************************************* */
-/* Elements coming from upwards when activated */
+.nested-enter-active {
+  transition: all 0.1s ease-in-out;
+  transition-delay: 0.05s;
+}
+
 .nested-enter-from {
-  transform: translateY(-30px);
-  opacity: 0;
-}
-
-/* Deleted element going to the left */
-.nested-leave-active {
-  transition: all 0.2s ease-in-out;
-  transition-delay: 0.1s;
-}
-
-.nested-leave-to {
-  transform: translateY(-60px);
-  opacity: 0.001;
-}
-
-/* New element coming from the right */
-.nested-enter-active .custom-comment {
-  transition: all 0.2s ease-in-out;
-  transition-delay: 0.15s;
-}
-
-.nested-enter-from .custom-comment {
   transform: translateY(-20px);
   opacity: 0.001;
 }
 
-/* Element going down when closed */
 .nested-leave-active {
-  transition: all 0.15s ease-in-out;
-  transition-delay: 0.15s;
+  transition: all 0.1s ease-in-out;
+  transition-delay: 0.05s;
 }
 
 .nested-leave-to {
@@ -515,20 +497,25 @@ const isAdmin = getCurrentRole() === "ADMIN";
   opacity: 0.001;
 }
 
-/* Replies Transitions */
-.nested-enter-active .custom-reply,
-.nested-leave-active .custom-reply {
-  transition: all 0.2s ease-in-out;
-  transition-delay: 0.1s;
+.rnested-enter-active {
+  transition: all 0.1s ease-in-out;
+  transition-delay: 0.05s;
 }
 
-.nested-enter-from .custom-reply,
-.nested-leave-to .custom-reply {
+.rnested-enter-from {
   transform: translateY(-20px);
   opacity: 0.001;
 }
 
-/************************************************************************************ */
+.rnested-leave-active {
+  transition: all 0.1s ease-in-out;
+  transition-delay: 0.05s;
+}
+
+.rnested-leave-to {
+  transform: translateY(30px);
+  opacity: 0.001;
+}
 
 .container {
   width: 30vw;

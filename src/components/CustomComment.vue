@@ -255,7 +255,7 @@ function clearInput() {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  width: 29vw;
+  width: 28.5vw;
   min-height: 5vh;
   max-height: 40vh;
   box-sizing: border-box;

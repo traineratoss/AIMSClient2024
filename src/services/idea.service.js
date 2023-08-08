@@ -1,3 +1,5 @@
+import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
+
 const API_URL = "http://localhost:8080/aims/api/v1/ideas";
 /*
 FlorinCP:
@@ -281,6 +283,7 @@ async function getPagedIdeasFromUser(
     referrerPolicy: "no-referrer",
   });
 
+  console.log(response);
   const json = await response.json();
   return json;
 }

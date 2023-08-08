@@ -9,7 +9,8 @@ import Pagination from "../components/Pagination.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import { useRoute } from 'vue-router';
-import router from "../router";
+import CuriositySearch from "../views/CuriositySearch.vue";
+
 
 const currentUsername = getCurrentUsername();
 
@@ -270,11 +271,12 @@ const getImageUrl = (item) => {
           </div>
           <div v-if="ideas.length === 0 && loadingPage === false" class="no-ideas-message">
             <img src="../assets/img/curiosity-search.svg" />
+            <!-- <CuriositySearch/> -->
             <br />
             <span class="black-font">Your search returned no results</span>
           </div>
-          <div v-if="ideas.length === 0 && loadingPage === true" class="loading-placeholder">
-            <CustomLoader :size="100" />
+          <div v-if=" ideas.length === 0 && loadingPage === true" class="loading-placeholder">
+            <CustomLoader :size="100" /> 
           </div>
         </div>
       </div>
