@@ -374,7 +374,6 @@ function onMouseEnter() {}
       <input
         v-if="showDeletePopup || disableFields"
         v-model="onlyForDeleteCategories"
-        class="input-width"
         :disabled="disableFields"
       />
     </div>
