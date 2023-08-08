@@ -30,9 +30,10 @@ function signUp() {
     } else {
       if (validateEmail(emailText.value) === true) {
         buttonDisabled.value = true;
-        router.push("/registration-complete");
+        //router.push("/registration-complete");
         postUser(usernameText.value, emailText.value)
           .then((res) => {
+            router.push("/registration-complete");
             showErrorMessage.value = false;
           })
           .catch((error) => {

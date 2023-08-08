@@ -50,7 +50,7 @@ async function postUser(username, email) {
   let response;
   let connectionError = false;
   try {
-    response = await fetch(`${API_URL}?username=${username}&email=${email}`, {
+    response = await fetch(`${API_URL}?username=${username}&email=${email.toLowerCase()}`, {
       method: "POST",
     });
   } catch (error) {

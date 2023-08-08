@@ -406,6 +406,7 @@ nav {
   width: 200px;
   top: calc(100% + 1px);
   margin-right: -0.1vw;
+  z-index:100; 
 }
 
 .aims-logo {
