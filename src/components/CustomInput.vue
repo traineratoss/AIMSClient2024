@@ -2,13 +2,14 @@
 import { defineProps, defineEmits, ref, watch } from "vue";
 import searchValue from "../utils/search-title";
 
-const { canModifySearchValue, modelValue, placeholder, error, type, inputRef } = defineProps([
-  "canModifySearchValue",
-  "modelValue",
-  "placeholder",
-  "error",
-  "type",
-]);
+const { canModifySearchValue, modelValue, placeholder, error, type, inputRef } =
+  defineProps([
+    "canModifySearchValue",
+    "modelValue",
+    "placeholder",
+    "error",
+    "type",
+  ]);
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -31,10 +32,10 @@ const handleInputKeyPress = (event) => {
   if (event.key === "Enter" && focused.value == true && canModifySearchValue) {
     searchValue.value = {
       text: event.target.value,
-      key: "Enter"
-    }
+      key: "Enter",
+    };
     setTimeout(() => {
-      console.log(searchValue.value)
+      console.log(searchValue.value);
     }, 1000);
   }
   return false;
@@ -44,11 +45,10 @@ const handleInputKeyChange = (event) => {
   if (focused.value == true && canModifySearchValue) {
     searchValue.value = {
       text: event.target.value,
-      key: null
-    }
+      key: null,
+    };
   }
-}
-
+};
 </script>
 
 <template>
@@ -75,6 +75,8 @@ const handleInputKeyChange = (event) => {
 }
 input {
   width: 8vw;
+  padding: 5px;
+  border: none;
 }
 
 .input::placeholder {

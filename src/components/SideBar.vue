@@ -17,10 +17,6 @@ function filterUsers() {
 
 <template>
   <div class="side-panel">
-    <!-- <div class="options">
-      <CustomButton class="btn">All users</CustomButton>
-      <CustomButtonGray class="btn" label="Statistics" />
-    </div> -->
     <div class="filters">
       <h1>Filter by:</h1>
       <div class="input-filter">
@@ -32,11 +28,7 @@ function filterUsers() {
           @keydown.enter="filterUsers"
         />
       </div>
-      <CustomButton 
-        class="btn" 
-        id="filter-btn" 
-        @click="filterUsers"
-      >
+      <CustomButton class="btn" id="filter-btn" @click="filterUsers">
         Filter
       </CustomButton>
     </div>
@@ -49,7 +41,7 @@ function filterUsers() {
   width: 20vw;
 
   background-color: var(--sidebar-color);
-  border: 1px solid black;
+  box-shadow: 1px 1px 1px 1px slategray;
 }
 
 .btn {
@@ -59,7 +51,6 @@ function filterUsers() {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 0.5px solid black;
 }
 
 .options {

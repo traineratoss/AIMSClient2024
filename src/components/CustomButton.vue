@@ -22,13 +22,17 @@ const props = defineProps({
   height: 30px;
   padding: 3px;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   cursor: pointer;
 
   background-color: var(--selected-color);
-  border: 2px solid transparent;
+  border: 1px solid slategray;
 }
 
 .customButton:hover {
-  border: 2px solid black;
+  background-color: rgba(255, 169, 65, 0.8);
 }
 </style>

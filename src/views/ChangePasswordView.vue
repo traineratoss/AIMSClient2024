@@ -10,6 +10,7 @@ import {
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import PasswordInput from "../components/PasswordInput.vue";
+import CustomButton from "../components/CustomButton.vue";
 
 const oldPasswordText = ref("");
 const newPasswordText = ref("");
@@ -174,7 +175,7 @@ function checkPassword() {
     </div>
     <div id="controls-container">
       <router-link to="/my-profile" id="cancel"> Cancel </router-link>
-      <button id="submit" @click="submit">Submit</button>
+      <CustomButton id="submit" @click="submit">Submit</CustomButton>
     </div>
   </div>
 </template>
@@ -214,18 +215,6 @@ input {
   gap: 20px;
 }
 
-button {
-  padding: 5px;
-  padding-right: 30px;
-  padding-left: 30px;
-  cursor: pointer;
-}
-
-#submit {
-  border-width: 3px;
-  background-color: var(--selected-color);
-}
-
 #title {
   display: flex;
   flex-direction: column;
@@ -234,6 +223,11 @@ button {
 
 #name {
   color: var(--selected-color);
+}
+
+#submit {
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .big-text {

@@ -56,12 +56,13 @@ watch(searchValue, (newValue) => {
 });
 
 router.beforeEach((to, from) => {
-  if (from.name === "my-profile" || 
-    from.name === "login" || 
-    to.name === 'default'
-    ) {
-      currentUsername.value = getCurrentUsername();
-      currentAvatarId.value = getCurrentAvatarId();
+  if (
+    from.name === "my-profile" ||
+    from.name === "login" ||
+    to.name === "default"
+  ) {
+    currentUsername.value = getCurrentUsername();
+    currentAvatarId.value = getCurrentAvatarId();
   }
 
   userDashboardElements = [];
@@ -108,7 +109,9 @@ onMounted(() => {
   currentUsername.value = getCurrentUsername();
   currentAvatarId.value = getCurrentAvatarId();
 
-  indexOfActivePage.value = parseInt(localStorage.getItem('current page index'));
+  indexOfActivePage.value = parseInt(
+    localStorage.getItem("current page index")
+  );
 
   if (indexOfActivePage.value === 1) {
     activateAllIdeas();
@@ -150,7 +153,7 @@ function redirectToAllIdeas() {
 
   activateAllIdeas();
 
-  localStorage.setItem('current page index', indexOfActivePage.value);
+  localStorage.setItem("current page index", indexOfActivePage.value);
   router.push("/all");
 }
 
@@ -159,7 +162,7 @@ function redirectToMyIdeas() {
 
   activateMyIdeas();
 
-  localStorage.setItem('current page index', indexOfActivePage.value);
+  localStorage.setItem("current page index", indexOfActivePage.value);
   router.push("/my");
 }
 
@@ -168,12 +171,14 @@ function redirectToCreateIdea() {
 
   activateCreateIdea();
 
-  localStorage.setItem('current page index', indexOfActivePage.value);
+  localStorage.setItem("current page index", indexOfActivePage.value);
   router.push("/create-idea");
 }
 
 function isPageWithIndexActive(index) {
-  return parseInt(localStorage.getItem('current page index')) == index ? true : false;
+  return parseInt(localStorage.getItem("current page index")) == index
+    ? true
+    : false;
 }
 
 function onMouseEnterDashboard() {
@@ -195,18 +200,18 @@ function onMouseLeaveUser() {
 function dropDownClicked(elementId) {
   if (elementId === "my-ideas" || elementId === "logout") {
     indexOfActivePage.value = 2;
-    
+
     activateMyIdeas();
   } else if (elementId === "stats") {
     indexOfActivePage.value = 1;
-    
+
     activateAllIdeas();
   } else {
     indexOfActivePage.value = 0;
 
     deactivateAll();
   }
-  localStorage.setItem('current page index', indexOfActivePage.value);
+  localStorage.setItem("current page index", indexOfActivePage.value);
 }
 </script>
 
@@ -277,7 +282,9 @@ function dropDownClicked(elementId) {
     </div>
     <div class="user">
       <div class="user-details">
-        <h3 style="font-size: 16px; font-weight: 550; height: 1vh; margin: 1vh 0;">
+        <h3
+          style="font-size: 16px; font-weight: 550; height: 1vh; margin: 1vh 0"
+        >
           {{ currentUsername }}
         </h3>
         <router-link
@@ -355,6 +362,7 @@ nav {
   background-color: transparent;
   width: auto;
   height: auto;
+  border-color: transparent;
 }
 
 .nav-button:hover {
@@ -406,7 +414,7 @@ nav {
   width: 200px;
   top: calc(100% + 1px);
   margin-right: -0.1vw;
-  z-index:100; 
+  z-index: 100;
 }
 
 .aims-logo {

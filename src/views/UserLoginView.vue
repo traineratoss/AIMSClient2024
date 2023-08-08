@@ -8,6 +8,7 @@ import CustomInput from "../components/CustomInput.vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import bcrypt from "bcryptjs";
 import PasswordInput from "../components/PasswordInput.vue";
+import CustomButton from "../components/CustomButton.vue";
 
 const usernameOrEmailText = ref("");
 const passwordText = ref("");
@@ -72,7 +73,7 @@ function handlePasswordTextChanged(password) {
       />
     </div>
     <div>
-      <button id="sign-in" @click="login">Log in</button>
+      <CustomButton id="sign-in" @click="login">Log in</CustomButton>
     </div>
     <div id="forgot-password">
       <router-link to="/recovery"> Forgot password? </router-link>
@@ -112,10 +113,6 @@ button {
   cursor: pointer;
 }
 
-#sign-in {
-  border-width: 3px;
-}
-
 #register {
   border: none;
   position: relative;
@@ -123,7 +120,8 @@ button {
 }
 
 #sign-in {
-  background-color: var(--selected-color);
+  font-size: 15px;
+  font-weight: 500;
 }
 
 #forgot-password {
