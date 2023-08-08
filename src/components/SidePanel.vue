@@ -27,8 +27,6 @@ const selectedDateFrom = ref("");
 const selectedDateTo = ref("");
 const sortOrder = ref("ASC");
 const filteredIdeasEmit = ref({});
-const enableStatistics = ref(false)
-const generatedStatistics = ref()
 
 const clearAllDropdownValues = ref(false);
 
@@ -223,13 +221,6 @@ function clearSelection() {
       <div class="date-chooser">
         <div class="buttons-container">
         <div><button @click="clearSelection()">Clear all</button></div>
-
-        <div>
-          <button @click="enableStatistics =! enableStatistics"
-          :style=" enableStatistics ? {'background-color':'green'} : {}"
-          >Generate Statistics</button>
-        </div>
-
 
         </div>
         <fieldset style="border: 1px solid slategray;">

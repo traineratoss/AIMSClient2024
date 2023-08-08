@@ -185,7 +185,7 @@ function updateUsersList() {
 .right-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
   width: 80vw;
 }
@@ -200,4 +200,7 @@ img {
   height: 60vh;
 }
 
+#title {
+  margin: 10vh 0;
+}
 </style>

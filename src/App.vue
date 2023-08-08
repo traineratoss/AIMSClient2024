@@ -62,11 +62,14 @@ router.beforeEach((to, from) => {
 </script>
 
 <template>
-  <div class="app-container">
-    <!-- <TestNavbar /> -->
-    <CustomNavBar v-show="showNavbar" />
-    <router-view />
-  </div>
+  <Suspense>
+
+    <div class="app-container">
+      <!-- <TestNavbar /> -->
+      <CustomNavBar v-show="showNavbar" />
+      <router-view />
+    </div>
+  </Suspense>
   <!-- <div id="app">
 
     <Header >

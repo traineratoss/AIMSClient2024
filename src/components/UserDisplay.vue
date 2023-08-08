@@ -92,7 +92,7 @@ function handleOK() {
     @click="hasPassword ? showOptions=!showOptions : showOptions"
   >
     <div class="username-container" >
-      <div class="animation-container"></div>
+      <div class="animation-container" :class="{isSelected: showOptions}"></div>
       <span>
         {{ name }}
       </span>
@@ -183,5 +183,10 @@ select {
 
 .user:hover .animation-container {
   background-color: var(--selected-color);
+}
+
+.isSelected{
+  background-color: var(--selected-color);
+  
 }
 </style>

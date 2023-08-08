@@ -4,34 +4,36 @@ import { getStats } from "../services/idea.service";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import PieChart from "./PieChart.vue";
 
-const stats = ref(null);
-const implementationPercentage = ref(0);
-const progressBar = ref(0);
-const recievedStats = ref("");
-const isLoading = ref(true);
-const loadingSpeed = 25;
-
-const sleepNow = (delay) =>
-  new Promise((resolve) => setTimeout(resolve, delay));
-
-onMounted(async () => {
-  stats.value = await getStats();
-  console.log("statisticile sunt ", stats.value);
-  console.log("shared obj ", generatedStatisticsToBeSend.value);
-  console.log("recieved stats ", recievedStats.value);
-  calculateImplementationPercentage();
-  isLoading.value = false;
+const props = defineProps({
+  recievedFilteredStats: Object,
+  showGenerated: Boolean,
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
 
-watch(progressBar, (newX) => {
-  progressBar.value = newX;
+onMounted(async () => {
+  calculateImplementationPercentage();
+  isLoading.value = false;
+  console.log(" din stats ", stats.value);
 });
 
-watch(generatedStatisticsToBeSend, (newX) => {
-  console.log("the new recievedStats are ", newX);
-  recievedStats.value = generatedStatisticsToBeSend.value;
+// do not touch this , do not touch !!! do not touch , whatever happens , do not touch under any circumstances !!!!
+const stats = ref(props.recievedFilteredStats);
+
+watch(props.recievedFilteredStats, (newVal) => {
+  console.log(" am updatat stats", newVal)
+})
+
+const sleepNow = (delay) =>
+  new Promise((resolve) => setTimeout(resolve, delay));
+
+const implementationPercentage = ref(0);
+const progressBar = ref(0);
+const isLoading = ref(true);
+const loadingSpeed = 15;
+
+watch(progressBar, (newX) => {
+  progressBar.value = newX;
 });
 
 async function calculateImplementationPercentage() {
@@ -73,7 +75,7 @@ async function refreshStats() {
 
   <transition name="stats-fade">
     <div class="stats-wrapper" v-if="!isLoading">
-      <div class="general-statistics" v-if="!recievedStats">
+      <div class="general-statistics" v-if="props.showGenerated">
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label"><b>Total Ideas:</b></p>
@@ -100,16 +102,16 @@ async function refreshStats() {
             <pie-chart
               :sizeInVW="10"
               :speedInMS="loadingSpeed"
-              :firstValue="stats.implP"
-              :secondValue="stats.draftP"
-              :thirdValue="stats.openP"
-              :color1="'#b3b3b3'"
-              :color2="'#ffa941'"
-              :color3="'#fadebc'"
+              :openP="stats.openP"
+              :implP="stats.implP"
+              :draftP="stats.draftP"
+              :colorOpen="'#fadebc'"
+              :colorImpl="'#ffa941'"
+              :colorDraft="'#b3b3b3'"
               :backgroundColor="'white'"
-              :firstNumber="stats.implementedIdeas"
-              :secondNumber="stats.openIdeas"
-              :thirdNumber="stats.draftIdeas"
+              :openIdeasNumber="stats.openIdeas"
+              :implementedIdeasNumber="stats.implementedIdeas"
+              :draftIdeasNumber="stats.draftIdeas"
             />
           </div>
           <div class="most-commented-ideas">
@@ -176,64 +178,105 @@ async function refreshStats() {
         </div>
       </div>
 
-      <div class="generated-statistics" v-else>
+      <div class="general-statistics" v-if="!props.showGenerated">
         <div class="stats-container">
-          <div class="title">
-            <b>AIMS </b>Statistics
-            <span class="material-symbols-outlined"> query_stats </span>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Number of Users:</b></p>
-            <b>{{ stats.nrOfUsers }}</b>
-          </div>
-          <div class="piechart">
-            <pie-chart />
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Total Comments:</b></p>
-            <b>{{ stats.totalNrOfComments }}</b>
-          </div>
-          <div class="stat-item">
+          generated
+          <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label">
-              <b>Total Comments in provided selection:</b>
+              <b>Total Ideas in selected time interval:</b>
             </p>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Total Replies:</b></p>
-            <b>{{ stats.totalNrOfReplies }}</b>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Ideas/User:</b></p>
-            <b>{{ stats.ideasPerUser }}</b>
+            <b>{{ props.recievedFilteredStats.nrOfIdeas }}</b>
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas:</b></p>
-            <b>{{ stats.nrOfIdeas }}</b>
+            <b>{{ props.recievedFilteredStats.openIdeas + props.recievedFilteredStats.implementedIdeas }}</b>
           </div>
           <div class="stat-item">
-            <p class="stat-label"><b>Implemented Ideas:</b></p>
-            <b>{{ stats.implementedIdeas }}</b>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Drafted Ideas:</b></p>
-            <b>{{ stats.draftIdeas }}</b>
-          </div>
-          <div class="stat-item">
-            <p class="stat-label"><b>Open Ideas:</b></p>
-            <b>{{ stats.openIdeas }}</b>
+            <p>
+              Our current implementation status is
+              <strong>{{ implementationPercentage }}%</strong>
+            </p>
           </div>
           <div class="stat-item">
             <br />
             <div class="implementation-bar">
-              <div
-                class="fill"
-                :style="{ width: implementationPercentage + '%' }"
-              ></div>
+              <div class="fill" :style="{ width: progressBar + '%' }"></div>
             </div>
           </div>
-          <button @click="console.log(props.generatedStatistics)">
-            apasa ma puternic
-          </button>
+
+          <div class="piechart">
+            <pie-chart
+              :sizeInVW="10"
+              :speedInMS="loadingSpeed"
+              :openP="props.recievedFilteredStats.openP"
+              :implP="props.recievedFilteredStats.implP"
+              :draftP="props.recievedFilteredStats.draftP"
+              :colorOpen="'#fadebc'"
+              :colorImpl="'#ffa941'"
+              :colorDraft="'#b3b3b3'"
+              :backgroundColor="'white'"
+              :openIdeasNumber="props.recievedFilteredStats.openIdeas"
+              :implementedIdeasNumber="
+                props.recievedFilteredStats.implementedIdeas
+              "
+              :draftIdeasNumber="props.recievedFilteredStats.draftIdeas"
+            />
+          </div>
+          <div class="most-commented-ideas">
+            <p>Top Most commented ideas :</p>
+            <table id="idea-table">
+              <tr>
+                <th>Idea title</th>
+                <th>Nr. of comments</th>
+              </tr>
+              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[0]">
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[0].title }}</td>
+                <td>
+                  {{ props.recievedFilteredStats.mostCommentedIdeas[0].commentsNumber }}
+                </td>
+              </tr>
+              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[1]">
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[1].title }}</td>
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[1].commentsNumber }}</td>
+              </tr>
+              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[2]">
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[2].title }}</td>
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[2].commentsNumber }}</td>
+              </tr>
+              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[3]">
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[3].title }}</td>
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[3].commentsNumber }}</td>
+              </tr>
+              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[4]">
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[4].title }}</td>
+                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[4].commentsNumber }}</td>
+              </tr>
+            </table>
+            <div class="swich-buttons">
+              <button class="load-button" @click="loadTop5Ideas()">
+                Load top ideas
+              </button>
+              <button class="load-button" @click="loadData()">
+                Reload ideas
+              </button>
+              <button class="load-button" @click="refreshStats()">
+                Refresh stats
+              </button>
+            </div>
+          </div>
+          <div class="most-commented-ideas" style="margin-bottom: 50px">
+            <p>Overall info :</p>
+            <table id="idea-table">
+              <tr>
+                <td>Total nr. of Comments:</td>
+                <td>{{ props.recievedFilteredStats.totalNrOfComments }}</td>
+              </tr>
+              <tr>
+                <td>Total nr. of Replies:</td>
+                <td>{{ props.recievedFilteredStats.totalNrOfReplies }}</td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -241,7 +284,6 @@ async function refreshStats() {
 </template>
 
 <style scoped>
-
 .swich-buttons {
   display: flex;
   align-items: center;
@@ -253,7 +295,6 @@ async function refreshStats() {
 .load-button {
   margin-top: 20px;
   border: 1px solid black;
-  border-radius: 10px;
   background-color: white;
   height: 30px;
   text-align: center;
@@ -264,6 +305,7 @@ async function refreshStats() {
   /* color: #ffa941;
   border: 1px solid #ffa941; */
   background-color: #ffa941;
+  font-weight: bold;
 }
 
 .most-commented-ideas {
