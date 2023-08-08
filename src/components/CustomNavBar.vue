@@ -193,7 +193,7 @@ function onMouseLeaveUser() {
 }
 
 function dropDownClicked(elementId) {
-  if (elementId === "my-ideas") {
+  if (elementId === "my-ideas" || elementId === "logout") {
     indexOfActivePage.value = 2;
     
     activateMyIdeas();
