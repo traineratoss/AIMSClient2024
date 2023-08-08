@@ -282,10 +282,10 @@ const isAdmin = getCurrentRole() === "ADMIN";
             <div class="left-container">
               <div class="left-container-title">
                 <div class="text" v-if="isSelected">
-                  {{ props.title }}
+                  {{ getShortenedTitle(title, 40) }}
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedTitle(title, 50) }}
+                  {{ getShortenedTitle(title, 32) }}
                 </div>
               </div>
               <div class="status">
