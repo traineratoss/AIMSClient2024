@@ -7,6 +7,7 @@ import {
   sendDeclineEmail,
   updateUser,
   updateUserRole,
+  getCurrentUsername
 } from "../services/user_service";
 import UserApproveDeclineModal from "./UserApproveDeclineModal.vue";
 
@@ -106,7 +107,13 @@ function handleOK() {
       <button v-if="!hasPassword && !isActive" @click="declineUser">
         Decline
       </button>
-      <select v-model="role" @change="changeRole" @click.stop v-if="hasPassword">
+      <select 
+        v-model="role" 
+        @change="changeRole" 
+        @click.stop 
+        v-if="hasPassword"
+        :disabled="(getCurrentUsername() === name)"
+        >
         <option selected>{{ userRole == "" ? "STANDARD" : userRole }}</option>
         <option value="STANDARD" v-if="userRole != 'STANDARD'">STANDARD</option>
         <option value="ADMIN" v-if="userRole != 'ADMIN'">ADMIN</option>
@@ -122,6 +129,7 @@ function handleOK() {
         id="activate-or-deactivate"
         @click.stop="changeStatus"
         v-if="hasPassword"
+        :disabled="(getCurrentUsername() === name)"
       >
         {{ isActive ? "Deactivate" : "Activate" }}
       </button>

@@ -50,10 +50,12 @@ const dashboardElements = [
 ];
 
 watch(searchValue, (newValue) => {
-  if (newValue.text !== undefined) {
+  if (newValue.text !== undefined && newValue.key === "Enter") {
     searchBarTitle.value = newValue.text;
+    router.push({ path: '/all'});
   }
 });
+
 
 router.beforeEach((to, from) => {
   if (
@@ -122,6 +124,7 @@ onMounted(() => {
   } else {
     deactivateAll();
   }
+
 });
 
 function activateAllIdeas() {
