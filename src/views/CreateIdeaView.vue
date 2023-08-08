@@ -85,7 +85,7 @@ const pageTitle = computed(() => {
   }else if (disableFields) {
     return "View your Idea";
   } else {
-    return "Update an Idea";
+    return "Update your Idea";
   }
 });
 
@@ -130,7 +130,7 @@ async function updateIdeaFunction() {
     newCategoryList.value,
     imageDTO
   );
-  router.push({ name: 'my'})
+  router.back()
 }
 
 //Checking what we want to do (update or create) since we use the same component
@@ -275,7 +275,7 @@ const customDialog = ref(null);
 
 async function handleCancel() {
   customDialog.value.close();
-  await router.push({ path: "/all" });
+  await router.back();
 }
 
 async function handleConfirm() {
@@ -325,7 +325,7 @@ function onMouseEnter() {}
     <div class="idea-title">
       <h1>
         {{ pageTitle }}
-      </h1>
+      </h1> 
     </div>
     <div class="idea">
       <label for="title-idea" class="label">Title:</label>
@@ -482,6 +482,7 @@ textarea {
   width: 30vh;
   height: 15vh;
   resize: none;
+  padding-top: 5px;
 }
 input {
   width: 10vw;
