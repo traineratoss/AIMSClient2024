@@ -113,7 +113,7 @@ function clearInput() {
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
           <button
-            v-if="currentUser === props.username"
+            v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
             @click="showModal = true"
           >
@@ -255,7 +255,7 @@ function clearInput() {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  width: 29vw;
+  width: 28.5vw;
   min-height: 5vh;
   max-height: 40vh;
   box-sizing: border-box;

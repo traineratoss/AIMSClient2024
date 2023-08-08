@@ -146,6 +146,10 @@ const filter = async () => {
 
 // not 100% working
 function clearSelection() {
+  searchValue.value = {
+    text: "",
+    key: ""
+  }
   inputTitle.value = "";
   inputText.value = "";
   selectedDateFrom.value = "";

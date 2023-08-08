@@ -21,6 +21,7 @@ const showPopup = ref(false);
 const popupMessage = ref('');
 const role = ref(props.userRole);
 const emit = defineEmits(["activation-successful", "deactivation-successful", 'multiple-admin-action']);
+const showOptions = ref(false);
 
 async function changeStatus() {
   if (!props.isActive) {
@@ -86,21 +87,26 @@ function handleOK() {
 </script>
 
 <template>
-  <div class="user">
-    <div class="username-container">
+  <div 
+    class="user"
+    @click="hasPassword ? showOptions=!showOptions : showOptions"
+  >
+    <div class="username-container" >
       <div class="animation-container"></div>
       <span>
         {{ name }}
       </span>
     </div>
-    <div class="user-options">
+    <div class="user-options"
+      v-if="!hasPassword || showOptions"
+    >
       <button v-if="!hasPassword && !isActive" @click="approveUser">
         Approve
       </button>
       <button v-if="!hasPassword && !isActive" @click="declineUser">
         Decline
       </button>
-      <select v-model="role" @change="changeRole" v-if="hasPassword">
+      <select v-model="role" @change="changeRole" @click.stop v-if="hasPassword">
         <option selected>{{ userRole == "" ? "STANDARD" : userRole }}</option>
         <option value="STANDARD" v-if="userRole != 'STANDARD'">STANDARD</option>
         <option value="ADMIN" v-if="userRole != 'ADMIN'">ADMIN</option>
@@ -114,7 +120,7 @@ function handleOK() {
       </Teleport>
       <button
         id="activate-or-deactivate"
-        @click="changeStatus"
+        @click.stop="changeStatus"
         v-if="hasPassword"
       >
         {{ isActive ? "Deactivate" : "Activate" }}
@@ -129,7 +135,8 @@ function handleOK() {
   width: 60vw;
   display: flex;
   justify-content: space-between;
-  padding: 5px;
+  padding: 8px;
+  cursor: pointer;
 }
 
 .user-options {
@@ -159,8 +166,9 @@ button {
 select {
   width: 5vw;
 }
+
 .username-container {
-  width: 20vw;
+  width: 50vw;
   display: flex;
   flex-direction: row;
   gap: 5px;

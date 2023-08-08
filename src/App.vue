@@ -2,11 +2,15 @@
 
 <script setup>
 import CustomNavBar from "./components/CustomNavBar.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import router from "./router";
 import { getCurrentRole, getCurrentUsername, logout } from "./services/user_service";
 
 const showNavbar = ref(true);
+
+onMounted(() => {
+  localStorage.setItem('current page index', 2);
+});
 
 router.afterEach((to, from) => {
   if (

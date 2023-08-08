@@ -30,16 +30,16 @@ function signUp() {
     } else {
       if (validateEmail(emailText.value) === true) {
         buttonDisabled.value = true;
+        router.push("/registration-complete");
         postUser(usernameText.value, emailText.value)
           .then((res) => {
-            router.push("/registration-complete");
             showErrorMessage.value = false;
           })
           .catch((error) => {
             if (error.message === "Server connection error") {
               message.value = error.message;
             } else {
-              message.value = "Userame or email already exists";
+              message.value = "Username or email already exists";
             }
             buttonDisabled.value = false;
             usernameText.value = "";
