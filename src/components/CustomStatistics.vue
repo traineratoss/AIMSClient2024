@@ -30,17 +30,17 @@ const sleepNow = (delay) =>
 const implementationPercentage = ref(0);
 const progressBar = ref(0);
 const isLoading = ref(true);
-const loadingSpeed = 15;
+const loadingSpeed = 10;
 
 watch(progressBar, (newX) => {
   progressBar.value = newX;
 });
 
 async function calculateImplementationPercentage() {
-  if (stats.value && stats.value.nrOfIdeas > 0) {
+  if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(
-      (stats.value.implementedIdeas /
-        (stats.value.openIdeas + stats.value.implementedIdeas)) *
+      (props.recievedFilteredStats.implementedIdeas /
+        (props.recievedFilteredStats.openIdeas + props.recievedFilteredStats.implementedIdeas)) *
         100
     );
   } else {
@@ -64,6 +64,7 @@ function loadData() {
 async function refreshStats() {
   stats.value = await getStats();
 }
+
 </script>
 
 <template>
@@ -180,7 +181,6 @@ async function refreshStats() {
 
       <div class="general-statistics" v-if="!props.showGenerated">
         <div class="stats-container">
-          generated
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label">
               <b>Total Ideas in selected time interval:</b>
@@ -191,19 +191,6 @@ async function refreshStats() {
             <p class="stat-label"><b>Public Ideas:</b></p>
             <b>{{ props.recievedFilteredStats.openIdeas + props.recievedFilteredStats.implementedIdeas }}</b>
           </div>
-          <div class="stat-item">
-            <p>
-              Our current implementation status is
-              <strong>{{ implementationPercentage }}%</strong>
-            </p>
-          </div>
-          <div class="stat-item">
-            <br />
-            <div class="implementation-bar">
-              <div class="fill" :style="{ width: progressBar + '%' }"></div>
-            </div>
-          </div>
-
           <div class="piechart">
             <pie-chart
               :sizeInVW="10"

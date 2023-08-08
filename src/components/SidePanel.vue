@@ -110,21 +110,7 @@ const filter = async () => {
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
   const status = statusSelected.value;
-
-  if(enableStatistics){
-    generatedStatisticsToBeSend.value = await sendDataForCustomStats(
-    title,
-    text,
-    status,
-    category,
-    user,
-    dateFrom,
-    dateTo
-    )
-
-    console.log('generatedStatisticsToBeSend      ',generatedStatisticsToBeSend.value)
-  }
-
+  
   const filteredIdeas = await filterIdeas(
     title,
     text,

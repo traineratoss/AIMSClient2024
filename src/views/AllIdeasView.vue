@@ -402,7 +402,7 @@ function changeShowGeneral() {
                 changeShowGeneral();
               "
             >
-              Filter !
+              Filter 
             </button>
           </div>
         </div>
@@ -523,7 +523,6 @@ function changeShowGeneral() {
 
 .material-symbols-outlined:hover {
   transform: scale(1.1);
-  color: red;
 }
 
 .sort-container {
