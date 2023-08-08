@@ -113,7 +113,7 @@ function clearInput() {
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
           <button
-            v-if="currentUser === props.username"
+            v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
             @click="showModal = true"
           >
