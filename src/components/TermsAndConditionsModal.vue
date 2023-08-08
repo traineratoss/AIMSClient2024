@@ -35,7 +35,7 @@ function acceptTermsAndConditions() {
                 <button
                     @click="acceptTermsAndConditions"
                 >
-                    I,ve read and accepted the Terms & Conditions
+                    I've read and accepted the Terms & Conditions
                 </button>
             </div>
         </div>

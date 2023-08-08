@@ -15,16 +15,17 @@ const props = defineProps({
 <style scoped>
 span {
   width: 15vw;
-
+  align-items: center;
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
-
-  gap: 1vh;
+  gap: 0vh;
 }
 
 h1 {
   font-size: 30px;
+  margin: 0;
 }
 
 #name {

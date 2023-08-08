@@ -5,6 +5,7 @@ import { sendNewPassword } from "../services/user_service.js";
 import { ref } from "vue";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
+import FormTitle from "../components/FormTitle.vue";
 
 const usernameOrEmailText = ref("");
 const showErrorMessage = ref(false);
@@ -30,10 +31,13 @@ function requestNewPassword() {
 <template>
   <CompanyLogo />
   <div class="container">
-    <div>
+    <FormTitle 
+      :label="'Password Recovery'"
+    />
+    <!-- <div>
       <h1 id="name">AIMS</h1>
       <h1>Password Recovery</h1>
-    </div>
+    </div> -->
     <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
