@@ -134,41 +134,13 @@ async function filterIdeas(
 }
 
 async function sendDataForCustomStats(
-  title,
-  text,
-  status,
-  category,
-  user,
   selectedDateFrom,
-  selectedDateTo,
-  pageNumber,
-  pageSize,
-  username,
-  sortDirection
+  selectedDateTo
 ) {
-  switch (sortDirection) {
-    case 0:
-      sortDirection = "ASC";
-      break;
-    case 1:
-      sortDirection = "DESC";
-      break;
-  }
-  if (pageNumber < 0) {
-    pageNumber = 0;
-  }
+ 
 
-  let url = `${API_URL}/filtered-stats?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}`;
-
-  if (title) url += `&title=${title}`;
-  if (text) url += `&text=${text}`;
-  if (status.length != 0) url += `&status=${status}`;
-  if (category.length != 0) url += `&category=${category}`;
-  if (user.length != 0) url += `&user=${user}`;
-  if (selectedDateFrom) url += `&selectedDateFrom=${selectedDateFrom}`;
-  if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
-  if (username) url += `&username=${username}`;
-
+  let url = `${API_URL}/new-stats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`;
+  
   const response = await fetch(url, {
     method: "GET",
     mode: "cors",

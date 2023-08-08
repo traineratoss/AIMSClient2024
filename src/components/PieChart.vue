@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch, computed, onMounted } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 
 onMounted(async () => {
   animation();
@@ -8,35 +8,39 @@ onMounted(async () => {
 const props = defineProps({
   sizeInVW: "",
   speedInMS: "",
-  firstValue: "",
-  secondValue: "",
-  thirdValue: "",
-  color1: "",
-  color2: "",
-  color3: "",
+  openP: "",
+  implP: "",
+  draftP: "",
+  colorOpen: "",
+  colorImpl: "",
+  colorDraft: "",
   backgroundColor: "",
-  firstNumber:"",
-  secondNumber:"",
-  thirdNumber:"",
+  openIdeasNumber:"",
+  implementedIdeasNumber:"",
+  draftIdeasNumber:"",
 });
+/*
+
+DISCLAIMER !!! 
+some refs and props are not easy to understand , to be refactored if time allows it 
+
+*/
 
 const top1 = ref("");
 const top2 = ref("");
 const top3 = ref("");
 
-top1.value = props.firstValue;
-top2.value = props.secondValue;
-top3.value = props.thirdValue;
+top1.value = props.openP;
+top2.value = props.implP;
+top3.value = props.draftP;
 
-const color1 = props.color1;
-const color2 = props.color2;
-const color3 = props.color3;
+const colorOpen = props.colorOpen;
+const colorImpl = props.colorImpl;
+const colorDraft = props.colorDraft;
 const backgroundColor = props.backgroundColor;
 
 /*
-    More detailed comments will come in the future
-    and a better impl. as well , most of the variabiles can be replaced with
-    props.recieved value but at the moment i dont't have enough time for it
+  recievedP* refs are used for animation 
 */
 
 const recievedP1 = ref(0);
@@ -60,17 +64,17 @@ watch(recievedP1, (newValue) => {
 
   style.value =
     "repeating-conic-gradient(from 0deg," +
-    color1 +
+    colorOpen +
     " 0deg calc(3.6deg *" +
     p1.value +
     ")," +
-    color2 +
+    colorImpl +
     " calc(3.6deg *" +
     p1.value +
     ") calc(3.6deg * " +
     p2.value +
     ")," +
-    color3 +
+    colorDraft +
     " calc(3.6deg * " +
     p2.value +
     ") calc(3.6deg * " +
@@ -89,17 +93,17 @@ watch(recievedP2, (newValue) => {
 
   style.value =
     "repeating-conic-gradient(from 0deg," +
-    color1 +
+    colorOpen +
     " 0deg calc(3.6deg *" +
     p1.value +
     ")," +
-    color2 +
+    colorImpl +
     " calc(3.6deg *" +
     p1.value +
     ") calc(3.6deg * " +
     p2.value +
     ")," +
-    color3 +
+    colorDraft +
     " calc(3.6deg * " +
     p2.value +
     ") calc(3.6deg * " +
@@ -118,17 +122,17 @@ watch(recievedP3, (newValue) => {
 
   style.value =
     "repeating-conic-gradient(from 0deg," +
-    color1 +
+    colorOpen +
     " 0deg calc(3.6deg *" +
     p1.value +
     ")," +
-    color2 +
+    colorImpl +
     " calc(3.6deg *" +
     p1.value +
     ") calc(3.6deg * " +
     p2.value +
     ")," +
-    color3 +
+    colorDraft +
     " calc(3.6deg * " +
     p2.value +
     ") calc(3.6deg * " +
@@ -144,17 +148,17 @@ watch(recievedP3, (newValue) => {
 
 const style = ref(
   "repeating-conic-gradient(from 0deg," +
-    color1 +
+    colorOpen +
     " 0deg calc(3.6deg *" +
     p1.value +
     ")," +
-    color2 +
+    colorImpl +
     " calc(3.6deg *" +
     p1.value +
     ") calc(3.6deg * " +
     p2.value +
     ")," +
-    color3 +
+    colorDraft +
     " calc(3.6deg * " +
     p2.value +
     ") calc(3.6deg * " +
@@ -205,19 +209,19 @@ const styleObject = ref({
   </tr>
   <tr>
     <td>Open</td>
-    <td>{{props.firstNumber}}</td>
-    <td :style="{backgroundColor:color1}"><strong>{{ recievedP1 }}%</strong></td>
+    <td>{{props.openIdeasNumber}}</td>
+    <td :style="{backgroundColor:colorOpen}"><strong>{{ recievedP1 }}%</strong></td>
   </tr>
   <tr>
     <td>Implemented</td>
-    <td>{{props.secondNumber}}</td>
-    <td :style="{backgroundColor:color2}"> <strong>{{ recievedP2 }}%</strong>
+    <td>{{props.implementedIdeasNumber}}</td>
+    <td :style="{backgroundColor:colorImpl}"> <strong>{{ recievedP2 }}%</strong>
 </td>
   </tr>
   <tr>
     <td>Draft</td>
-    <td>{{props.thirdNumber}}</td>
-    <td :style="{backgroundColor:color3}"><strong>{{ recievedP3 }}%</strong>
+    <td>{{props.draftIdeasNumber}}</td>
+    <td :style="{backgroundColor:colorDraft}"><strong>{{ recievedP3 }}%</strong>
 </td>
   </tr>
 </table>

@@ -374,7 +374,6 @@ function onMouseEnter() {}
       <input
         v-if="showDeletePopup || disableFields"
         v-model="onlyForDeleteCategories"
-        class="input-width"
         :disabled="disableFields"
       />
     </div>
@@ -386,7 +385,7 @@ function onMouseEnter() {}
               :disabled="fieldsDisabled" 
               placeholder="Write your text here..." 
               :class="{textarea:textError}"
-              class="idea-border-radius">
+            >
             </textarea>
         </div>
         <div class="idea">
@@ -459,7 +458,7 @@ function onMouseEnter() {}
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  width: 30vh;
+  width: 300px;
 }
 .idea-title{
   display: flex;
@@ -518,7 +517,5 @@ select {
   background-color: #ffa941;
   color: black;
 }
-.idea-border-radius{
-  border-radius: 10px;
-}
+
 </style>

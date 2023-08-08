@@ -1,21 +1,24 @@
 <script setup>
 import SidePanel from "../components/SidePanel.vue";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import {
   filterIdeas,
   loadPagedIdeas,
   getStats,
+  sendDataForCustomStats,
 } from "../services/idea.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
-import { useRoute } from "vue-router";
 import CustomInput from "../components/CustomInput.vue";
 
-const currentUsername = getCurrentUsername();
+const selectedDateFrom = ref();
+const selectedDateTo = ref();
+const filteredStatistics = ref([]);
+const showGenerated = ref(true);
 
 const ideasPerPage = 5;
 const currentPage = ref(1);
@@ -23,8 +26,7 @@ const ideas = ref([]);
 const loggedUser = ref("");
 const sortOrder = ref(0);
 const totalPages = ref(0);
-const stats = ref("");
-const transtStatistics = ref();
+const stats = ref({});
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -72,6 +74,7 @@ onMounted(async () => {
     loadingPage.value = false;
   }, 500)
 });
+stats.value = await getStats();
 
 watch(searchValue, async (newValue) => {
   if (newValue.key === "Enter" && newValue.text !== undefined) {
@@ -261,6 +264,18 @@ const getImageUrl = (item) => {
     return "https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw";
   }
 };
+
+async function filterIdeaForStatistics() {
+  stats.value = await sendDataForCustomStats(
+    selectedDateFrom.value,
+    selectedDateTo.value
+  );
+  console.log("filtered ideas ",stats.value)
+}
+
+function changeShowGeneral() {
+  showGenerated.value = !showGenerated.value;
+}
 </script>
 
 <template>
@@ -272,7 +287,6 @@ const getImageUrl = (item) => {
         :currentUser="null"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
-        @generatedStatistics="transtStatistics = generatedStatistics"
         :ideasPerPage="ideasPerPage"
       />
     </div>
@@ -381,12 +395,21 @@ const getImageUrl = (item) => {
           </div>
 
           <div class="center-class">
-            <button class="load-button">Filter !</button>
+            <button
+              class="load-button"
+              @click="
+                filterIdeaForStatistics();
+                changeShowGeneral();
+              "
+            >
+              Filter !
+            </button>
           </div>
         </div>
 
         <CustomStatistics
-          :generatedStatistics="transtStatistics"
+          :recievedFilteredStats="stats"
+          :showGenerated="showGenerated"
           @load-top5-ideas="loadRecievedIdeas"
           @load-data="loadData"
         />
@@ -447,15 +470,14 @@ const getImageUrl = (item) => {
 .load-button {
   margin-top: 10px;
   border: 1px solid black;
-  border-radius: 10px;
-  background-color: white;
+  background-color: #ffa941;
   height: 30px;
   text-align: center;
   width: 5.5vw;
 }
 
 .load-button:hover {
-  background-color: #ffa941;
+  font-weight: bold;
 }
 
 .ideas-transition-container {
