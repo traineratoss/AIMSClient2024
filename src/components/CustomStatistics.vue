@@ -7,13 +7,14 @@ import PieChart from "./PieChart.vue";
 const props = defineProps({
   recievedFilteredStats: Object,
   showGenerated: Boolean,
+  showSkeleton: Boolean,
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
 
 onMounted(async () => {
   calculateImplementationPercentage();
-  isLoading.value = false;
+  showSkeleton.value = false;
   console.log(" din stats ", stats.value);
 });
 
@@ -21,15 +22,15 @@ onMounted(async () => {
 const stats = ref(props.recievedFilteredStats);
 
 watch(props.recievedFilteredStats, (newVal) => {
-  console.log(" am updatat stats", newVal)
-})
+  console.log(" am updatat stats", newVal);
+});
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
 
+const showSkeleton = ref(props.showSkeleton)
 const implementationPercentage = ref(0);
 const progressBar = ref(0);
-const isLoading = ref(true);
 const loadingSpeed = 10;
 
 watch(progressBar, (newX) => {
@@ -40,7 +41,8 @@ async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(
       (props.recievedFilteredStats.implementedIdeas /
-        (props.recievedFilteredStats.openIdeas + props.recievedFilteredStats.implementedIdeas)) *
+        (props.recievedFilteredStats.openIdeas +
+          props.recievedFilteredStats.implementedIdeas)) *
         100
     );
   } else {
@@ -64,18 +66,18 @@ function loadData() {
 async function refreshStats() {
   stats.value = await getStats();
 }
-
 </script>
 
 <template>
   <transition name="skeleton-fade">
-    <div v-if="isLoading" class="skeleton-loader">
+    <div v-if="showSkeleton" class="skeleton-loader">
       <div class="loader"></div>
     </div>
   </transition>
 
   <transition name="stats-fade">
-    <div class="stats-wrapper" v-if="!isLoading">
+    <div class="stats-wrapper" v-if="!showSkeleton">
+
       <div class="general-statistics" v-if="props.showGenerated">
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
@@ -107,7 +109,7 @@ async function refreshStats() {
               :implP="stats.implP"
               :draftP="stats.draftP"
               :colorOpen="'#fadebc'"
-              :colorImpl="'#ffa941'"
+              :colorImpl="'#ffb55a'"
               :colorDraft="'#b3b3b3'"
               :backgroundColor="'white'"
               :openIdeasNumber="stats.openIdeas"
@@ -189,9 +191,13 @@ async function refreshStats() {
           </div>
           <div class="stat-item">
             <p class="stat-label"><b>Public Ideas:</b></p>
-            <b>{{ props.recievedFilteredStats.openIdeas + props.recievedFilteredStats.implementedIdeas }}</b>
+            <b>{{
+              props.recievedFilteredStats.openIdeas +
+              props.recievedFilteredStats.implementedIdeas
+            }}</b>
           </div>
           <div class="piechart">
+            <Suspense>
             <pie-chart
               :sizeInVW="10"
               :speedInMS="loadingSpeed"
@@ -199,7 +205,7 @@ async function refreshStats() {
               :implP="props.recievedFilteredStats.implP"
               :draftP="props.recievedFilteredStats.draftP"
               :colorOpen="'#fadebc'"
-              :colorImpl="'#ffa941'"
+              :colorImpl="'#ffb55a'"
               :colorDraft="'#b3b3b3'"
               :backgroundColor="'white'"
               :openIdeasNumber="props.recievedFilteredStats.openIdeas"
@@ -208,6 +214,10 @@ async function refreshStats() {
               "
               :draftIdeasNumber="props.recievedFilteredStats.draftIdeas"
             />
+            <template #fallback>
+            Loading...
+          </template>
+          </Suspense>
           </div>
           <div class="most-commented-ideas">
             <p>Top Most commented ideas :</p>
@@ -217,26 +227,59 @@ async function refreshStats() {
                 <th>Nr. of comments</th>
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[0]">
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[0].title }}</td>
                 <td>
-                  {{ props.recievedFilteredStats.mostCommentedIdeas[0].commentsNumber }}
+                  {{ props.recievedFilteredStats.mostCommentedIdeas[0].title }}
+                </td>
+                <td>
+                  {{
+                    props.recievedFilteredStats.mostCommentedIdeas[0]
+                      .commentsNumber
+                  }}
                 </td>
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[1]">
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[1].title }}</td>
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[1].commentsNumber }}</td>
+                <td>
+                  {{ props.recievedFilteredStats.mostCommentedIdeas[1].title }}
+                </td>
+                <td>
+                  {{
+                    props.recievedFilteredStats.mostCommentedIdeas[1]
+                      .commentsNumber
+                  }}
+                </td>
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[2]">
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[2].title }}</td>
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[2].commentsNumber }}</td>
+                <td>
+                  {{ props.recievedFilteredStats.mostCommentedIdeas[2].title }}
+                </td>
+                <td>
+                  {{
+                    props.recievedFilteredStats.mostCommentedIdeas[2]
+                      .commentsNumber
+                  }}
+                </td>
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[3]">
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[3].title }}</td>
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[3].commentsNumber }}</td>
+                <td>
+                  {{ props.recievedFilteredStats.mostCommentedIdeas[3].title }}
+                </td>
+                <td>
+                  {{
+                    props.recievedFilteredStats.mostCommentedIdeas[3]
+                      .commentsNumber
+                  }}
+                </td>
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[4]">
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[4].title }}</td>
-                <td>{{ props.recievedFilteredStats.mostCommentedIdeas[4].commentsNumber }}</td>
+                <td>
+                  {{ props.recievedFilteredStats.mostCommentedIdeas[4].title }}
+                </td>
+                <td>
+                  {{
+                    props.recievedFilteredStats.mostCommentedIdeas[4]
+                      .commentsNumber
+                  }}
+                </td>
               </tr>
             </table>
             <div class="swich-buttons">
@@ -353,9 +396,9 @@ strong {
   background-color: #f2f2f2;
   background-image: linear-gradient(
     90deg,
-    #f2f2f2 25%,
+    #f5f5f5 25%,
     #e6e6e6 37%,
-    #f2f2f2 63%
+    #f6f4f4 63%
   );
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s infinite linear;

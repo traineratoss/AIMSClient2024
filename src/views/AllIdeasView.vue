@@ -54,6 +54,9 @@ const isFiltering = ref(false);
 
 const loadingPage = ref(true);
 
+const sleepNow = (delay) =>
+  new Promise((resolve) => setTimeout(resolve, delay));
+
 onMounted(async () => {
   const data = await loadPagedIdeas(
     ideasPerPage,
@@ -72,7 +75,7 @@ onMounted(async () => {
   stats.value = await getStats();
   setTimeout(() => {
     loadingPage.value = false;
-  }, 500)
+  }, 500);
 });
 stats.value = await getStats();
 
@@ -264,16 +267,18 @@ const getImageUrl = (item) => {
   }
 };
 
-async function filterIdeaForStatistics() {
+const showSkeleton = ref(true)
+
+async function changeShowGeneral() {
+  showSkeleton.value =! showSkeleton.value
   stats.value = await sendDataForCustomStats(
     selectedDateFrom.value,
     selectedDateTo.value
   );
-  console.log("filtered ideas ",stats.value)
-}
-
-function changeShowGeneral() {
+  console.log("filtered ideas ", stats.value);
   showGenerated.value = !showGenerated.value;
+  showSkeleton.value =! showSkeleton.value 
+
 }
 
 </script>
@@ -398,21 +403,22 @@ function changeShowGeneral() {
             <button
               class="load-button"
               @click="
-                filterIdeaForStatistics();
                 changeShowGeneral();
               "
             >
-              Filter 
+              Filter
             </button>
           </div>
         </div>
-
+        <Suspense>
         <CustomStatistics
           :recievedFilteredStats="stats"
           :showGenerated="showGenerated"
+          :showSkeleton = "showSkeleton"
           @load-top5-ideas="loadRecievedIdeas"
           @load-data="loadData"
         />
+      </Suspense>
       </div>
     </div>
   </div>
@@ -537,7 +543,7 @@ function changeShowGeneral() {
   margin: 10px;
   font-weight: bold;
   position: sticky;
-  position: -webkit-sticky; 
+  position: -webkit-sticky;
   top: 0;
 }
 .all-ideas-view-container {
