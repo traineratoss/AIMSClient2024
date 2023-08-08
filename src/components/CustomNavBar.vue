@@ -10,6 +10,9 @@ import {
   getCurrentUsername,
 } from "../services/user_service";
 import searchValue from "../utils/search-title";
+import {useRoute} from 'vue-router';
+
+const route = useRoute();
 
 const searchBarTitle = ref("");
 
@@ -49,10 +52,16 @@ const dashboardElements = [
   },
 ];
 
+// dont change this watch, it updates the search bar with the input title i give
 watch(searchValue, (newValue) => {
-  if (newValue.text !== undefined && newValue.key === "Enter") {
+  if (newValue.text !== undefined && newValue) {
     searchBarTitle.value = newValue.text;
-    router.push({ path: '/all'});
+  }
+  if (newValue.key === "Enter" && newValue) {
+    if(route.path !== "/my" && route.path !== "/all") {
+      router.push({ path: '/all'});
+    }
+    searchBarTitle.value = newValue.text;
   }
 });
 

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, defineProps, watch, watchEffect } from "vue";
 
-const emit = defineEmits(["update:selectedCategories"]);
+const emit = defineEmits(["update:selectedCategories", "filter-data"]);
 
 const props = defineProps({
   variants: {
@@ -32,6 +32,10 @@ const props = defineProps({
   clearAll: {
     type: Boolean,
     default: false
+  },
+  updatePageByClick: {
+    type: Object,
+    default: null
   }
 });
 
@@ -139,10 +143,11 @@ const handleInputKeyPress = (event) => {
         }, 10); // we use a small timeout since the reactive vars arent updating instanlty so we have to check the variant after we create it
       
       }, 0)
-      
-      
-      
+    
     }
+    //here, we are checking if we press enter on those on the filter side
+  } else {
+    emit("filter-data")
   }
 };
 
@@ -194,7 +199,8 @@ function getInputPlaceholder() {
         type="checkbox" 
         :value="variant" 
         :checked="isVariantSelected(variant)"
-         @change="handleCheckboxChange" />
+         @change="handleCheckboxChange"
+         />
         {{ variant }}
       </label>
     </div>

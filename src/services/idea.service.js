@@ -37,8 +37,14 @@ async function loadPagedIdeas(
       referrerPolicy: "no-referrer",
     }
   );
-  const data = await response.json();
-  return data;
+  
+  if (!response.ok) {
+    const responseText = await response.text();
+    return responseText;
+  } else {
+    const json = await response.json();
+    return json;
+  }
 }
 
 async function getCategory() {
@@ -129,8 +135,13 @@ async function filterIdeas(
     referrerPolicy: "no-referrer",
   });
 
-  const data = await response.json();
-  return data;
+  if (!response.ok) {
+    const responseText = await response.text();
+    return responseText;
+  } else {
+    const json = await response.json();
+    return json;
+  }
 }
 
 async function sendDataForCustomStats(
@@ -255,9 +266,13 @@ async function getPagedIdeasFromUser(
     referrerPolicy: "no-referrer",
   });
 
-  console.log(response);
-  const json = await response.json();
-  return json;
+  if (!response.ok) {
+      const responseText = await response.text();
+      return responseText;
+  } else {
+    const json = await response.json();
+    return json;
+  }
 }
 
 async function getImageById() {

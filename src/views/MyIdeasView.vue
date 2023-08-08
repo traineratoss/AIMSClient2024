@@ -45,36 +45,75 @@ const implementationPercentage = ref(0);
 const route = useRoute();
 const loadingPage = ref(true);
 
+const noIdeasFoundCondition = ref(false);
+
 onMounted(async () => {
-  const data = await getPagedIdeasFromUser(
-    currentUsername,
-    ideasPerPage,
-    currentPage.value - 1,
-    "ASC"
-  );
-  sortOrder.value = 0;
-  totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
-  ideas.value = data.content;
-  loadingPage.value = false;
+    // const data = await getPagedIdeasFromUser(
+    //   currentUsername,
+    //   ideasPerPage,
+    //   currentPage.value - 1,
+    //   "ASC"
+    // );
+
+    if (searchValue.value.text !== undefined) {
+      inputTitle.value = searchValue.value.text;
+    } else {
+      inputTitle.value = "";
+    }
+    const data = await filterIdeas(
+        inputTitle.value,
+        currentText,
+        currentStatus,
+        currentCategory,
+        currentUser,
+        currentSelectedDateFrom,
+        currentSelectedDateTo,
+        currentPage.value - 1,
+        ideasPerPage,
+        currentUsername,
+        "ASC"
+    );
+
+    //checking if i get some errors in the backend
+    if (data === 'No ideas found.') {
+      noIdeasFoundCondition.value = true;
+      sortOrder.value = 0;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      sortOrder.value = 0;
+      totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+      ideas.value = data.content;
+    }
 });
 
 watch(searchValue, async (newValue) => {
-  //
-  const data = await filterIdeas(
-    newValue,
-    currentText,
-    currentStatus,
-    currentCategory,
-    currentUser,
-    currentSelectedDateFrom,
-    currentSelectedDateTo,
-    currentPage.value - 1,
-    ideasPerPage,
-    currentUsername,
-    sortOrder.value
-  );
+  if (newValue.key === "Enter" && newValue.text !== undefined) {
+    setCurrentVariables();
+    const data = await filterIdeas(
+      inputTitle.value,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideasPerPage,
+      currentUsername,
+      sortOrder.value
+    );
 
-  updateIdeas(data); // we need to update the for multiple use cases
+    if (data === 'No ideas found.') {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      updateIdeas(data); // we need to update the for multiple use cases
+    }
+  }
 });
 
 async function changePage(pageNumber) {
@@ -95,12 +134,16 @@ async function changePage(pageNumber) {
     currentUsername,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  ideas.value = data.content;
-  currentPage.value = pageNumber;
-}
 
-function goToPage(pageNumber) {
-  currentPage.value = pageNumber;
+  if (data === 'No ideas found.') {
+    noIdeasFoundCondition.value = true;
+    totalPages.value = 0;
+    ideas.value = [];
+  } else {
+    ideas.value = data.content;
+    noIdeasFoundCondition.value = false;
+    currentPage.value = pageNumber;
+  }
 }
 
 // to update the current values, not the reactive ones
@@ -130,8 +173,16 @@ async function updateSortOrder() {
       ideasPerPage,
       currentUsername,
       "ASC"
-    );
-    ideas.value = data.content;
+    );  
+
+    if (data === 'No ideas found.') {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      ideas.value = data.content;
+    }
   } else if (sortOrder.value == 1) {
     sortOrder.value = 1;
     const data = await filterIdeas(
@@ -147,7 +198,15 @@ async function updateSortOrder() {
       currentUsername,
       "DESC"
     );
-    ideas.value = data.content;
+
+    if (data === 'No ideas found.') {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      ideas.value = data.content;
+    }   
   }
 }
 
@@ -174,8 +233,16 @@ async function updateIdeas(filteredIdeas) {
         currentUsername,
         sortOrder.value
       );
-      setCurrentVariables();
-      ideas.value = data != null ? data.content : [];
+
+      if (data === 'No ideas found.') {
+        noIdeasFoundCondition.value = true;
+        totalPages.value = 0;
+        ideas.value = [];
+      } else {
+        noIdeasFoundCondition.value = false;
+        setCurrentVariables();
+        ideas.value = data != null ? data.content : [];
+      }
     }
 
     // if there are no ideas
@@ -185,13 +252,19 @@ async function updateIdeas(filteredIdeas) {
       ideas.value = [];
     }
   } else {
-    // being sure the current page doesnt go below 0
-    if (currentPage.value <= 0) {
-      currentPage.value = 1;
+    if (filteredIdeas === 'No ideas found.') {
+        noIdeasFoundCondition.value = true;
+        totalPages.value = 0;
+        ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      // being sure the current page doesnt go below 0
+      if (currentPage.value <= 0) {
+        currentPage.value = 1;
+      }
+      setCurrentVariables();
+      ideas.value = filteredIdeas.content;
     }
-
-    setCurrentVariables();
-    ideas.value = filteredIdeas.content;
   }
 }
 
@@ -268,19 +341,13 @@ const getImageUrl = (item) => {
               @comment-counter-sub="idea.commentsNumber--"
             />
           </div>
-          <div
-            v-if="ideas.length === 0 && loadingPage === false"
-            class="no-ideas-message"
-          >
+          <div v-if="ideas.length === 0 && noIdeasFoundCondition" class="no-ideas-message">
             <img src="../assets/img/curiosity-search.svg" />
             <!-- <CuriositySearch/> -->
             <br />
             <span class="black-font">Your search returned no results</span>
           </div>
-          <div
-            v-if="ideas.length === 0 && loadingPage === true"
-            class="loading-placeholder"
-          >
+          <div v-if="ideas.length === 0 && !noIdeasFoundCondition" class="loading-placeholder">
             <CustomLoader :size="100" />
           </div>
         </div>

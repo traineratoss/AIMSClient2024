@@ -92,6 +92,10 @@ async function handleSelectedStatus(selectedStatus) {
 }
 
 onMounted(async () => {
+
+  inputTitle.value = searchValue.value.text; // each time we mount a view, we set the title to be the one from the search bar
+  // so they wont be different
+
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
@@ -110,7 +114,7 @@ const filter = async () => {
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
   const status = statusSelected.value;
-
+  
   const filteredIdeas = await filterIdeas(
     title,
     text,
@@ -124,11 +128,12 @@ const filter = async () => {
     props.currentUser,
     props.sort
   );
+  
   filteredIdeasEmit.value = filteredIdeas;
   searchValue.value = title;
 };
 
-// not 100% working
+// clearing all when pressing the clear button
 function clearSelection() {
   searchValue.value = {
     text: "",
@@ -138,6 +143,9 @@ function clearSelection() {
   inputText.value = "";
   selectedDateFrom.value = "";
   selectedDateTo.value = "";
+  categoriesSelected.value = [];
+  userSelected.value = [];
+  statusSelected.value = [];
   clearAllDropdownValues.value = true;
   setTimeout(() => {
     clearAllDropdownValues.value = false;
@@ -175,6 +183,7 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
         :clear-all="clearAllDropdownValues"
+        @filter-data="filterData"
       ></CustomDropDown>
 
       <span class="category">Category:</span>
@@ -185,6 +194,7 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
         :clear-all="clearAllDropdownValues"
+        @filter-data="filterData"
       ></CustomDropDown>
 
       <span
@@ -202,6 +212,7 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
         :clear-all="clearAllDropdownValues"
+        @filter-data="filterData"
       ></CustomDropDown>
 
       <div class="date-chooser">

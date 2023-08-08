@@ -50,28 +50,59 @@ let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 let currentUserRole = "";
 
-const isFiltering = ref(false);
-
 const loadingPage = ref(true);
+
+
+const noIdeasFoundCondition = ref(false);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
 
 onMounted(async () => {
-  const data = await loadPagedIdeas(
-    ideasPerPage,
-    currentPage.value - 1,
-    "creationDate",
-    "ASC"
+
+  // const data = await loadPagedIdeas(
+  //   ideasPerPage,
+  //   currentPage.value - 1,
+  //   "creationDate",
+  //   "ASC"
+  // );
+  if (searchValue.value.text !== undefined) {
+    inputTitle.value = searchValue.value.text;
+  } else {
+    inputTitle.value = "";
+  }
+  const data = await filterIdeas(
+      inputTitle.value,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideasPerPage,
+      null,
+      "ASC"
   );
+
   loadingPage.value = true;
   loggedUser.value = getCurrentUsername();
   currentUserRole = getCurrentRole();
   checkAdmin();
   console.log(currentUserRole);
-  sortOrder.value = 0;
-  totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
-  ideas.value = data.content;
+
+  if (data === 'No ideas found.') {
+    noIdeasFoundCondition.value = true;
+    sortOrder.value = 0;
+    totalPages.value = 0;
+    ideas.value = [];
+  } else {
+    noIdeasFoundCondition.value = false;
+    sortOrder.value = 0;
+    totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+    ideas.value = data.content;
+  }
+
   stats.value = await getStats();
   setTimeout(() => {
     loadingPage.value = false;
@@ -81,6 +112,7 @@ stats.value = await getStats();
 
 watch(searchValue, async (newValue) => {
   if (newValue.key === "Enter" && newValue.text !== undefined) {
+    setCurrentVariables();
     const data = await filterIdeas(
       inputTitle.value,
       currentText,
@@ -94,7 +126,15 @@ watch(searchValue, async (newValue) => {
       null,
       sortOrder.value
     );
-    updateIdeas(data); // we need to update the for multiple use cases
+
+    if (data === 'No ideas found.') {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      updateIdeas(data); // we need to update the for multiple use cases
+    }
   }
 });
 
@@ -116,8 +156,17 @@ async function changePage(pageNumber) {
     null,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
-  ideas.value = data.content;
-  currentPage.value = pageNumber;
+
+  if (data === 'No ideas found.') {
+    noIdeasFoundCondition.value = true;
+    totalPages.value = 0;
+    ideas.value = [];
+  } else {
+    noIdeasFoundCondition.value = false;
+    ideas.value = data.content;
+    currentPage.value = pageNumber;
+    setCurrentVariables();
+  }
 }
 
 // check if user is admin
@@ -152,11 +201,19 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value - 1,
       ideasPerPage,
-      null,
+      getCurrentUsername(),
       "ASC"
-    );
-    ideas.value = data.content;
-    inputTitle.value = searchValue.value;
+    );  
+
+    if (data === 'No ideas found.') {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      ideas.value = data.content;
+      setCurrentVariables();
+    }
   } else if (sortOrder.value == 1) {
     sortOrder.value = 1;
     const data = await filterIdeas(
@@ -169,10 +226,19 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value - 1,
       ideasPerPage,
-      null,
+      getCurrentUsername(),
       "DESC"
     );
-    ideas.value = data.content;
+
+    if (data === 'No ideas found.') {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      ideas.value = data.content;
+      setCurrentVariables();
+    }   
   }
 }
 
@@ -198,12 +264,12 @@ async function loadData() {
 
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
-
+  
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
     // we have to filter each time with each page to get our good ideas
-
+    
     while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
       const data = await filterIdeas(
@@ -219,10 +285,18 @@ async function updateIdeas(filteredIdeas) {
         null,
         sortOrder.value
       );
-      setCurrentVariables();
-      ideas.value = data != null ? data.content : [];
-    }
 
+      if (data === 'No ideas found.') {
+        noIdeasFoundCondition.value = true;
+        totalPages.value = 0;
+        ideas.value = [];
+      } else {
+        noIdeasFoundCondition.value = false;
+        setCurrentVariables();
+        ideas.value = data != null ? data.content : [];
+      }
+    }
+    
     // if there are no ideas
     if (totalPages.value === 0) {
       setCurrentVariables();
@@ -230,12 +304,19 @@ async function updateIdeas(filteredIdeas) {
       ideas.value = [];
     }
   } else {
-    // being sure the current page doesnt go below 0
-    if (currentPage.value <= 0) {
-      currentPage.value = 1;
+    if (filteredIdeas === 'No ideas found.') {
+        noIdeasFoundCondition.value = true;
+        totalPages.value = 0;
+        ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      // being sure the current page doesnt go below 0
+      if (currentPage.value <= 0) {
+        currentPage.value = 1;
+      }
+      setCurrentVariables();
+      ideas.value = filteredIdeas.content;
     }
-    setCurrentVariables();
-    ideas.value = filteredIdeas.content;
   }
 }
 
@@ -284,7 +365,7 @@ async function changeShowGeneral() {
 </script>
 
 <template>
-  <div class="all-ideas-view-container">
+  <div class="all-ideas-view-container" @keyup.enter="updatePageByClick">
     <div class="left-container">
       <SidePanel
         @filter-listening="updateIdeas"
@@ -338,7 +419,7 @@ async function changeShowGeneral() {
               />
             </div>
             <div
-              v-if="ideas.length === 0 && loadingPage === false"
+              v-if="ideas.length === 0 && noIdeasFoundCondition"
               class="no-ideas-message"
             >
               <img src="../assets/img/curiosity-search.svg" />
@@ -346,7 +427,7 @@ async function changeShowGeneral() {
               <span class="black-font">Your search returned no results</span>
             </div>
             <div
-              v-if="ideas.length === 0 && loadingPage === true"
+              v-if="ideas.length === 0 && !noIdeasFoundCondition"
               class="loading-placeholder"
             >
               <CustomLoader :size="100" />
