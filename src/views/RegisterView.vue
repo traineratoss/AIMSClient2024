@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import FormTitle from "../components/FormTitle.vue";
 import CustomInput from "../components/CustomInput.vue";
 import { onMounted, ref } from "vue";
-import { postUser } from "../services/user_service.js";
+import { postUser, validateUsername } from "../services/user_service.js";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import TermsAndConditionsModal from "../components/TermsAndConditionsModal.vue";
@@ -16,6 +16,7 @@ const showErrorMessage = ref(false);
 const message = ref("");
 const buttonDisabled = ref(false);
 const showTermsAndConditionsModal = ref(false);
+const showUsernameDetails = ref(false);
 
 function signUp() {
   if (acceptedTermsAndConditions.value === true) {
@@ -29,23 +30,27 @@ function signUp() {
       showErrorMessage.value = true;
     } else {
       if (validateEmail(emailText.value) === true) {
-        buttonDisabled.value = true;
-        router.push("/registration-complete");
-        postUser(usernameText.value, emailText.value)
-          .then((res) => {
-            showErrorMessage.value = false;
-          })
-          .catch((error) => {
-            if (error.message === "Server connection error") {
-              message.value = error.message;
-            } else {
-              message.value = "Username or email already exists";
-            }
-            buttonDisabled.value = false;
-            usernameText.value = "";
-            emailText.value = "";
-            showErrorMessage.value = true;
-          });
+        if (validateUsername(usernameText.value) === true) {
+          buttonDisabled.value = true;
+          router.push("/registration-complete");
+          postUser(usernameText.value, emailText.value)
+            .then((res) => {
+              showErrorMessage.value = false;
+            })
+            .catch((error) => {
+              if (error.message === "Server connection error") {
+                message.value = error.message;
+              } else {
+                message.value = "Username or email already exists";
+              }
+              buttonDisabled.value = false;
+              usernameText.value = "";
+              emailText.value = "";
+              showErrorMessage.value = true;
+            });
+        } else {
+          message.value = "Username format invalid";
+        }
       }
     }
   } else {
@@ -91,8 +96,13 @@ function showTermsAndConditionsPopup() {
             id="username"
             placeholder="Username"
             v-model:model-value="usernameText"
+            @focus="showUsernameDetails = true"
           />
         </label>
+        <span v-show="showUsernameDetails" id="usernameConstraints"
+          >*Username should only contain: lowercase letters (a-z), numbers
+          (0-9), dots (.) and underscores (_)</span
+        >
         <label for="email">
           <CustomInput
             type="email"
@@ -100,6 +110,7 @@ function showTermsAndConditionsPopup() {
             placeholder="E-mail"
             @keydown.enter="signUp"
             v-model:model-value="emailText"
+            @focus="showUsernameDetails = false"
           />
         </label>
       </form>
@@ -112,8 +123,8 @@ function showTermsAndConditionsPopup() {
         <button
           class="terms-and-conditions-button"
           @click="showTermsAndConditionsPopup"
-        > 
-          Agree Terms & Conditions 
+        >
+          Agree Terms & Conditions
         </button>
       </label>
       <CustomButton
@@ -189,5 +200,11 @@ input[type="checkbox"] {
 
 .terms-and-conditions-button:hover {
   cursor: pointer;
+}
+
+#usernameConstraints {
+  width: 8.5vw;
+  font-size: 12px;
+  color: var(--color);
 }
 </style>
