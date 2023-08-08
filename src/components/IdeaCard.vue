@@ -62,7 +62,7 @@ async function loadIdeaComments() {
   const loadedComments = await loadComments(
     numberOfDisplayedComments.value,
     0,
-    "id",
+    "creationDate",
     props.ideaId
   );
 
@@ -77,7 +77,7 @@ async function loadCommentReplies(comment) {
   const response = await loadReplies(
     numberOfDisplayedComments.value,
     0,
-    "id",
+    "creationDate",
     comment.id
   );
 
