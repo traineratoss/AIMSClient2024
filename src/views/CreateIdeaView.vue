@@ -437,7 +437,7 @@ function onMouseEnter() {}
   justify-content: center;
   display: flex;
   flex-direction: column;
-  height: 80vh;
+  height: 800px;
   margin-top: 10px;
 }
 
@@ -478,16 +478,16 @@ function onMouseEnter() {}
   padding-bottom: 20px;
 }
 textarea {
-  width: 30vh;
-  height: 15vh;
+  width: 300px;
+  height: 150px;
   resize: none;
   padding-top: 5px;
 }
 input {
-  width: 10vw;
+  width: 192px;
 }
 select {
-  width: 10vw;
+  width: 192px;
 }
 .add-image {
   padding-bottom: 10px;

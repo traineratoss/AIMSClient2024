@@ -91,7 +91,6 @@ watch(searchValue, async (newValue) => {
       null,
       sortOrder.value
     );
-
     updateIdeas(data); // we need to update the for multiple use cases
   }
 });
@@ -276,6 +275,7 @@ async function filterIdeaForStatistics() {
 function changeShowGeneral() {
   showGenerated.value = !showGenerated.value;
 }
+
 </script>
 
 <template>
@@ -423,6 +423,14 @@ function changeShowGeneral() {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.no-ideas-message{
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  flex-direction: column;
+  height: 500px;
+  width: 500px;
 }
 
 .title {

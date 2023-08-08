@@ -110,7 +110,7 @@ const filter = async () => {
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
   const status = statusSelected.value;
-  
+
   const filteredIdeas = await filterIdeas(
     title,
     text,
