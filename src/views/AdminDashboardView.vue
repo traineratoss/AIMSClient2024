@@ -105,10 +105,12 @@ function updateUsersList() {
       <FormTitle
         label="All users"
         id="title"
+        v-if="!showImage"
       />
+      <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
       <div class="main-container">
         <div class="user-container">
-          <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
+          
           <UserDisplay class="users"
             v-for="user in users"
             v-if="!showImage"
@@ -198,6 +200,7 @@ function updateUsersList() {
 
 img {
   height: 60vh;
+  margin-top: 17vh;
 }
 
 #title {
