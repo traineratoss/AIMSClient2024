@@ -32,10 +32,10 @@ function signUp() {
       if (validateEmail(emailText.value) === true) {
         if (validateUsername(usernameText.value) === true) {
           buttonDisabled.value = true;
-          //router.push("/registration-complete");
           postUser(usernameText.value, emailText.value)
             .then((res) => {
               showErrorMessage.value = false;
+              router.push("/registration-complete");
             })
             .catch((error) => {
               if (error.message === "Server connection error") {
@@ -50,6 +50,7 @@ function signUp() {
             });
         } else {
           message.value = "Username format invalid";
+          showErrorMessage.value = true;
         }
       }
     }
