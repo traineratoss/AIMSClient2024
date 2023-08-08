@@ -30,9 +30,9 @@ function signUp() {
       showErrorMessage.value = true;
     } else {
       if (validateEmail(emailText.value) === true) {
-        if (validateUsername(usernameText.value) === true) {
+        if (validateUsername(usernameText.value.toLowerCase()) === true) {
           buttonDisabled.value = true;
-          postUser(usernameText.value, emailText.value)
+          postUser(usernameText.value.toLowerCase(), emailText.value)
             .then((res) => {
               showErrorMessage.value = false;
               router.push("/registration-complete");
