@@ -8,9 +8,8 @@ import { getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 import CuriositySearch from "../views/CuriositySearch.vue";
-
 
 const currentUsername = getCurrentUsername();
 
@@ -59,24 +58,24 @@ onMounted(async () => {
   loadingPage.value = false;
 });
 
-watch(searchValue, async(newValue) => {
-    //  
-    const data = await filterIdeas(
-      newValue,
-      currentText,
-      currentStatus,
-      currentCategory,
-      currentUser,
-      currentSelectedDateFrom,
-      currentSelectedDateTo,
-      currentPage.value - 1,
-      ideasPerPage,
-      currentUsername,
-      sortOrder.value
-    );
-    
-    updateIdeas(data) // we need to update the for multiple use cases 
-})
+watch(searchValue, async (newValue) => {
+  //
+  const data = await filterIdeas(
+    newValue,
+    currentText,
+    currentStatus,
+    currentCategory,
+    currentUser,
+    currentSelectedDateFrom,
+    currentSelectedDateTo,
+    currentPage.value - 1,
+    ideasPerPage,
+    currentUsername,
+    sortOrder.value
+  );
+
+  updateIdeas(data); // we need to update the for multiple use cases
+});
 
 async function changePage(pageNumber) {
   // every time i change the page, i should filter the pages to check from the server every page, same aplies for every method which implies changing the ideas.value
@@ -218,11 +217,11 @@ const onPassInputVariables = (
 //if the item has an image in the db, we return it. if not, we return a default one
 const getImageUrl = (item) => {
   if (item && item.image) {
-    return `data:image/${item.image.fileType};name=${item.image.fileName};base64,${item.image.base64Image}`
+    return `data:image/${item.image.fileType};name=${item.image.fileName};base64,${item.image.base64Image}`;
   } else {
-    return 'https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw';
+    return "https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw";
   }
-}
+};
 </script>
 
 <template>
@@ -255,7 +254,7 @@ const getImageUrl = (item) => {
             :key="idea.id"
             class="idea-transition-item"
           >
-          <IdeaCard
+            <IdeaCard
               :title="idea.title"
               :text="idea.text"
               :status="idea.status"
@@ -269,14 +268,20 @@ const getImageUrl = (item) => {
               @comment-counter-sub="idea.commentsNumber--"
             />
           </div>
-          <div v-if="ideas.length === 0 && loadingPage === false" class="no-ideas-message">
+          <div
+            v-if="ideas.length === 0 && loadingPage === false"
+            class="no-ideas-message"
+          >
             <img src="../assets/img/curiosity-search.svg" />
             <!-- <CuriositySearch/> -->
             <br />
             <span class="black-font">Your search returned no results</span>
           </div>
-          <div v-if=" ideas.length === 0 && loadingPage === true" class="loading-placeholder">
-            <CustomLoader :size="100" /> 
+          <div
+            v-if="ideas.length === 0 && loadingPage === true"
+            class="loading-placeholder"
+          >
+            <CustomLoader :size="100" />
           </div>
         </div>
       </div>
@@ -293,7 +298,6 @@ const getImageUrl = (item) => {
 </template>
 
 <style scoped>
-
 .loading-placeholder {
   display: flex;
   flex-direction: column;
@@ -438,12 +442,11 @@ const getImageUrl = (item) => {
 }
 .pagination-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   width: 80vw;
   position: fixed;
-  bottom: 5vh;
-  right: 1vw;
+  bottom: 0.5vh;
 }
 
 .page-number {

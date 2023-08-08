@@ -99,19 +99,14 @@ function updateUsersList() {
 
 <template>
   <div class="container">
-   
     <SideBar @filter-users="search" />
     <div class="right-container">
-      <FormTitle
-        label="All users"
-        id="title"
-        v-if="!showImage"
-      />
+      <FormTitle label="All users" id="title" v-if="!showImage" />
       <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
       <div class="main-container">
         <div class="user-container">
-          
-          <UserDisplay class="users"
+          <UserDisplay
+            class="users"
             v-for="user in users"
             v-if="!showImage"
             :key="user.username"
@@ -194,8 +189,10 @@ function updateUsersList() {
 
 .pagination-container {
   position: absolute;
-  bottom: 1vh;
-  right: 3vh;
+  bottom: 0.5vh;
+
+  display: flex;
+  justify-content: center;
 }
 
 img {
