@@ -20,7 +20,7 @@ const selectedDateTo = ref();
 const filteredStatistics = ref([]);
 const showGenerated = ref(true);
 
-const ideasPerPage = 5;
+const ideasPerPage = 4;
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
@@ -201,7 +201,7 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value - 1,
       ideasPerPage,
-      getCurrentUsername(),
+      null,
       "ASC"
     );  
 
@@ -226,7 +226,7 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value - 1,
       ideasPerPage,
-      getCurrentUsername(),
+      null,
       "DESC"
     );
 
@@ -272,28 +272,31 @@ async function updateIdeas(filteredIdeas) {
     
     while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
-      const data = await filterIdeas(
-        inputTitle.value,
-        inputText.value,
-        inputStatus.value,
-        inputCategory.value,
-        inputUser.value,
-        inputSelectedDateFrom.value,
-        inputSelectedDateTo.value,
-        currentPage.value - 1,
-        ideasPerPage,
-        null,
-        sortOrder.value
-      );
+      //OPTIMIZED A BIT SO IT WILL FILTER ONLY WHEN IT GETS TO THE RIGHT PAGE NUMBER
+      if(currentPage.value == totalPages.value) {
+        const data = await filterIdeas(
+          inputTitle.value,
+          inputText.value,
+          inputStatus.value,
+          inputCategory.value,
+          inputUser.value,
+          inputSelectedDateFrom.value,
+          inputSelectedDateTo.value,
+          currentPage.value - 1,
+          ideasPerPage,
+          null,
+          sortOrder.value
+        );
 
-      if (data === 'No ideas found.') {
-        noIdeasFoundCondition.value = true;
-        totalPages.value = 0;
-        ideas.value = [];
-      } else {
-        noIdeasFoundCondition.value = false;
-        setCurrentVariables();
-        ideas.value = data != null ? data.content : [];
+        if (data === 'No ideas found.') {
+          noIdeasFoundCondition.value = true;
+          totalPages.value = 0;
+          ideas.value = [];
+        } else {
+          noIdeasFoundCondition.value = false;
+          setCurrentVariables();
+          ideas.value = data != null ? data.content : [];
+        }
       }
     }
     

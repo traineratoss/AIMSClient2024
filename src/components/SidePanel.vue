@@ -7,6 +7,9 @@ import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import searchValue from "../utils/search-title";
+import { onBeforeUnmount } from "vue";
+
+window.addEventListener("keydown", handleGlobalKeyDown);
 
 const props = defineProps({
   sort: Number,
@@ -74,6 +77,18 @@ watch(searchValue, (newValue) => {
       inputTitle.value = newValue.text;
     }
 })
+
+//when unmounting, we will remove the event listener
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleGlobalKeyDown);
+});
+
+//when pressing anywhere on the page the Enter key, we will filter
+function handleGlobalKeyDown(event) {
+  if (event.key === "Enter") {
+    filterData();
+  }
+}
 
 const filterData = async () => {
   await filter();
@@ -172,7 +187,6 @@ function clearSelection() {
         class="text-input" 
         :placeholder="`Write a text...`" 
         :can-modify-search-value="false"
-        @keydown.enter = "filterData"
       />
 
       <span class="status">Status:</span>
@@ -183,7 +197,6 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
         :clear-all="clearAllDropdownValues"
-        @filter-data="filterData"
       ></CustomDropDown>
 
       <span class="category">Category:</span>
@@ -194,7 +207,6 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
         :clear-all="clearAllDropdownValues"
-        @filter-data="filterData"
       ></CustomDropDown>
 
       <span
@@ -212,7 +224,6 @@ function clearSelection() {
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
         :clear-all="clearAllDropdownValues"
-        @filter-data="filterData"
       ></CustomDropDown>
 
       <div class="date-chooser">

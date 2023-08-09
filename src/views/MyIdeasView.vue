@@ -220,28 +220,30 @@ async function updateIdeas(filteredIdeas) {
 
     while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
-      const data = await filterIdeas(
-        inputTitle.value,
-        inputText.value,
-        inputStatus.value,
-        inputCategory.value,
-        inputUser.value,
-        inputSelectedDateFrom.value,
-        inputSelectedDateTo.value,
-        currentPage.value - 1,
-        ideasPerPage,
-        currentUsername,
-        sortOrder.value
-      );
+      if(currentPage.value == totalPages.value) {
+        const data = await filterIdeas(
+          inputTitle.value,
+          inputText.value,
+          inputStatus.value,
+          inputCategory.value,
+          inputUser.value,
+          inputSelectedDateFrom.value,
+          inputSelectedDateTo.value,
+          currentPage.value - 1,
+          ideasPerPage,
+          currentUsername,
+          sortOrder.value
+        );
 
-      if (data === 'No ideas found.') {
-        noIdeasFoundCondition.value = true;
-        totalPages.value = 0;
-        ideas.value = [];
-      } else {
-        noIdeasFoundCondition.value = false;
-        setCurrentVariables();
-        ideas.value = data != null ? data.content : [];
+        if (data === 'No ideas found.') {
+          noIdeasFoundCondition.value = true;
+          totalPages.value = 0;
+          ideas.value = [];
+        } else {
+          noIdeasFoundCondition.value = false;
+          setCurrentVariables();
+          ideas.value = data != null ? data.content : [];
+        }
       }
     }
 
