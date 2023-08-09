@@ -30,12 +30,11 @@ function declineTermsAndConditions() {
     <div 
       v-if="show" 
       class="popup-mask"
-      @click="declineTermsAndConditions"
+      @click.self="declineTermsAndConditions"
     >
       <div 
         class="popup-container"
         @keydown.enter="acceptTermsAndConditions"
-        tabindex="0"
       >
         <div id="container" class="text-color">
           <h1 id="title">Terms & Conditions</h1>
