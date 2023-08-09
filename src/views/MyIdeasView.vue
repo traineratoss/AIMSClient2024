@@ -55,7 +55,7 @@ onMounted(async () => {
     //   "ASC"
     // );
 
-    if (searchValue.value.text !== undefined) {
+    if (searchValue && searchValue.value && searchValue.value.text !== undefined) {
       inputTitle.value = searchValue.value.text;
     } else {
       inputTitle.value = "";
@@ -89,7 +89,7 @@ onMounted(async () => {
 });
 
 watch(searchValue, async (newValue) => {
-  if (newValue.key === "Enter" && newValue.text !== undefined) {
+  if (newValue && newValue.key === "Enter" && newValue.text !== undefined) {
     setCurrentVariables();
     const data = await filterIdeas(
       inputTitle.value,

@@ -66,7 +66,7 @@ onMounted(async () => {
   //   "creationDate",
   //   "ASC"
   // );
-  if (searchValue.value.text !== undefined) {
+  if ( searchValue && searchValue.value && searchValue.value.text !== undefined) {
     inputTitle.value = searchValue.value.text;
   } else {
     inputTitle.value = "";
@@ -111,11 +111,11 @@ onMounted(async () => {
 stats.value = await getStats();
 
 watch(searchValue, async (newValue) => {
-  if (newValue.key === "Enter" && newValue.text !== undefined) {
+  if ( newValue && newValue.key === "Enter"  && newValue.text !== undefined) {
     setCurrentVariables();
     const data = await filterIdeas(
       inputTitle.value,
-      currentText,
+      currentText, 
       currentStatus,
       currentCategory,
       currentUser,
