@@ -285,6 +285,12 @@ function validateUsername(username) {
   return false;
 }
 
+async function isFirstLogin(usernameOrEmail) {
+  const response = await fetch(`${API_URL}/is-first-login?usernameOrEmail=${usernameOrEmail}`);
+  const json = response.json();
+  return json;
+}
+
 export {
   getUserByEmail,
   getUserByUsername,
@@ -307,5 +313,6 @@ export {
   getCurrentEmail,
   getCurrentFullName,
   getCurrentAvatarId,
-  validateUsername
+  validateUsername,
+  isFirstLogin
 };

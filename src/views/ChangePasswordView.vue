@@ -1,11 +1,12 @@
 <script setup>
 import CompanyLogo from "../components/CompanyLogo.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import {
   changePassword,
   getCurrentAvatarId,
   getCurrentUsername,
   logout,
+  isFirstLogin
 } from "../services/user_service";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
@@ -24,7 +25,7 @@ const containsEightCharacters = ref(false);
 const containsNumber = ref(false);
 const containsUppercase = ref(false);
 const containsSpecialCharacter = ref(false);
-const is_valid = ref(false);
+const firstLogin = ref(false);
 
 currentAvatarId.value = getCurrentAvatarId();
 
@@ -37,6 +38,12 @@ const slideImages = [
   "src/assets/img/avatars/avatar6.svg",
   "src/assets/img/avatars/avatar7.svg",
 ];
+
+onMounted(() => {
+  isFirstLogin(getCurrentUsername()).then(res => {
+    firstLogin.value = res;
+  });
+})
 
 function submit() {
   if (
@@ -174,7 +181,11 @@ function checkPassword() {
       />
     </div>
     <div id="controls-container">
-      <router-link to="/my-profile" id="cancel"> Cancel </router-link>
+      <button
+        id="cancel" 
+        :disabled="firstLogin" 
+        @click="router.push('my-profile')"
+      > Cancel </button>
       <CustomButton id="submit" @click="submit">Submit</CustomButton>
     </div>
   </div>
@@ -202,6 +213,13 @@ function checkPassword() {
 #cancel {
   display: flex;
   align-items: center;
+  text-decoration: underline;
+  background-color: transparent;
+  border: none;
+}
+
+#cancel:hover {
+  cursor: pointer;
 }
 
 input {

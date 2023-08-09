@@ -4,13 +4,17 @@
 import CustomNavBar from "./components/CustomNavBar.vue";
 import { ref, onMounted } from "vue";
 import router from "./router";
-import { getCurrentRole, getCurrentUsername, logout } from "./services/user_service";
+import { getCurrentRole, getCurrentUsername, isFirstLogin, logout } from "./services/user_service";
 
 const showNavbar = ref(true);
 
 onMounted(() => {
   localStorage.setItem('current page index', 2);
 });
+
+function getIsFirstLoginResponse() {
+  isFirstLogin(getCurrentUsername()).then(res => res)
+}
 
 router.afterEach((to, from) => {
   if (
@@ -34,6 +38,8 @@ router.afterEach((to, from) => {
 });
 
 router.beforeEach((to, from) => {
+
+
   if(to.name === 'default') {
     if(getCurrentRole() && getCurrentUsername()) {
       router.push('/my');
@@ -43,22 +49,39 @@ router.beforeEach((to, from) => {
   if(to.name === 'admin-dashboard' && getCurrentRole() !== 'ADMIN') {
     router.push('/page-not-found');
     showNavbar.value = false;
-    logout();
+    // logout();
   }
 
-  if(to.name !== 'login' && 
-    to.name !== 'register' && 
-    to.name !== 'recovery' &&
-    to.name !== 'registration-complete' &&
-    to.name !== 'page-not-found' &&
-    to.name !== 'password-changed' &&
-    to.name !== 'default') {
+  if (to.name !== 'login' && 
+      to.name !== 'register' && 
+      to.name !== 'recovery' &&
+      to.name !== 'registration-complete' &&
+      to.name !== 'page-not-found' &&
+      to.name !== 'password-changed' &&
+      to.name !== 'default') {
       if(!(getCurrentRole() && getCurrentUsername())) {
         showNavbar.value = false;
         router.push('/page-not-found');
       }
+      if(to.name!=='change' && getIsFirstLoginResponse()){
+        router.push('/change');
+      }
+    } else {
+      if(getCurrentRole() && getCurrentUsername()){
+        router.push('/my');
+      }
+
     }
+    
+    
+
 });
+
+// router.beforeEach((to, from) => {
+//   if (to.name !== 'change' && firstLogin) {
+
+//   }
+// })
 </script>
 
 <template>
