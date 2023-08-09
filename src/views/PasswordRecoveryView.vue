@@ -1,6 +1,7 @@
 <script setup>
 import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from "../components/CustomInput.vue";
+import CustomButton from "../components/CustomButton.vue";
 import { sendNewPassword } from "../services/user_service.js";
 import { ref } from "vue";
 import router from "../router";
@@ -34,10 +35,6 @@ function requestNewPassword() {
     <FormTitle 
       :label="'Password Recovery'"
     />
-    <!-- <div>
-      <h1 id="name">AIMS</h1>
-      <h1>Password Recovery</h1>
-    </div> -->
     <InvalidInputMessage
       :message="errorMessage"
       :class="{ 'error-message-visible': showErrorMessage }"
@@ -52,9 +49,13 @@ function requestNewPassword() {
       />
     </div>
     <div>
-      <button id="request-password" @click="requestNewPassword">
+      <CustomButton 
+        id="request-password" 
+        @click="requestNewPassword"
+        style="width: auto;"
+      >
         Request new Password
-      </button>
+      </CustomButton>
     </div>
   </div>
 </template>
@@ -103,11 +104,6 @@ button {
   padding-left: 30px;
 
   cursor: pointer;
-}
-
-#request-password {
-  border-width: 3px;
-  background-color: var(--selected-color);
 }
 
 #title {

@@ -1,5 +1,6 @@
 <script setup>
 import sampleText from "../assets/termsAndConditions/termsAndConditions.js";
+import CustomButton from "../components/CustomButton.vue";
 
 const props = defineProps({
   show: Boolean,
@@ -40,12 +41,13 @@ function declineTermsAndConditions() {
           <h1 id="title">Terms & Conditions</h1>
           <div id="text-container" v-html="fileContent"></div>
         </div>
-        <button 
+        <CustomButton 
           @click="acceptTermsAndConditions"
           v-focus
+          style="width: auto;"
         >
           I've read and accepted the Terms & Conditions
-        </button>
+        </CustomButton>
       </div>
     </div>
   </Transition>

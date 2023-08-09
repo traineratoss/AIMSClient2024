@@ -1,4 +1,6 @@
 <script setup>
+import CustomButton from "../components/CustomButton.vue";
+
 const props = defineProps({
   show: Boolean,
   message: String
@@ -22,11 +24,11 @@ function okClick() {
                     problem
                 </span>
                 {{ message }}
-                <button
+                <CustomButton
                     @click="okClick"
                 >
                     OK
-                </button>
+                </CustomButton>
             </div>
         </div>
     </Transition>

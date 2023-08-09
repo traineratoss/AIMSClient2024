@@ -3,7 +3,7 @@ import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomButton from "../components/CustomButton.vue";
 import FormTitle from "../components/FormTitle.vue";
 import CustomInput from "../components/CustomInput.vue";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { postUser, validateUsername } from "../services/user_service.js";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
