@@ -21,14 +21,10 @@ onMounted(async () => {
 // do not touch this , do not touch !!! do not touch , whatever happens , do not touch under any circumstances !!!!
 const stats = ref(props.recievedFilteredStats);
 
-watch(props.recievedFilteredStats, (newVal) => {
-  console.log(" am updatat stats", newVal);
-});
-
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
 
-const showSkeleton = ref(props.showSkeleton)
+const showSkeleton = ref(props.showSkeleton);
 const implementationPercentage = ref(0);
 const progressBar = ref(0);
 const loadingSpeed = 10;
@@ -56,7 +52,7 @@ async function calculateImplementationPercentage() {
 }
 
 function loadTop5Ideas() {
-  emits("loadTop5Ideas", stats.value.mostCommentedIdeas);
+  emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
 
 function loadData() {
@@ -65,6 +61,10 @@ function loadData() {
 
 async function refreshStats() {
   stats.value = await getStats();
+}
+
+function getShortenedTitle(title, maxLength) {
+  return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
 }
 </script>
 
@@ -77,7 +77,6 @@ async function refreshStats() {
 
   <transition name="stats-fade">
     <div class="stats-wrapper" v-if="!showSkeleton">
-
       <div class="general-statistics" v-if="props.showGenerated">
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
@@ -125,23 +124,33 @@ async function refreshStats() {
                 <th>Nr. of comments</th>
               </tr>
               <tr>
-                <td>{{ stats.mostCommentedIdeas[0].title }}</td>
+                <td>
+                  {{ getShortenedTitle(stats.mostCommentedIdeas[0].title, 20) }}
+                </td>
                 <td>{{ stats.mostCommentedIdeas[0].commentsNumber }}</td>
               </tr>
               <tr>
-                <td>{{ stats.mostCommentedIdeas[1].title }}</td>
+                <td>
+                  {{ getShortenedTitle(stats.mostCommentedIdeas[1].title, 20) }}
+                </td>
                 <td>{{ stats.mostCommentedIdeas[1].commentsNumber }}</td>
               </tr>
               <tr>
-                <td>{{ stats.mostCommentedIdeas[2].title }}</td>
+                <td>
+                  {{ getShortenedTitle(stats.mostCommentedIdeas[2].title, 20) }}
+                </td>
                 <td>{{ stats.mostCommentedIdeas[2].commentsNumber }}</td>
               </tr>
               <tr>
-                <td>{{ stats.mostCommentedIdeas[3].title }}</td>
+                <td>
+                  {{ getShortenedTitle(stats.mostCommentedIdeas[3].title, 20) }}
+                </td>
                 <td>{{ stats.mostCommentedIdeas[3].commentsNumber }}</td>
               </tr>
               <tr>
-                <td>{{ stats.mostCommentedIdeas[4].title }}</td>
+                <td>
+                  {{ getShortenedTitle(stats.mostCommentedIdeas[4].title, 20) }}
+                </td>
                 <td>{{ stats.mostCommentedIdeas[4].commentsNumber }}</td>
               </tr>
             </table>
@@ -198,26 +207,24 @@ async function refreshStats() {
           </div>
           <div class="piechart">
             <Suspense>
-            <pie-chart
-              :sizeInVW="10"
-              :speedInMS="loadingSpeed"
-              :openP="props.recievedFilteredStats.openP"
-              :implP="props.recievedFilteredStats.implP"
-              :draftP="props.recievedFilteredStats.draftP"
-              :colorOpen="'#fadebc'"
-              :colorImpl="'#ffb55a'"
-              :colorDraft="'#b3b3b3'"
-              :backgroundColor="'white'"
-              :openIdeasNumber="props.recievedFilteredStats.openIdeas"
-              :implementedIdeasNumber="
-                props.recievedFilteredStats.implementedIdeas
-              "
-              :draftIdeasNumber="props.recievedFilteredStats.draftIdeas"
-            />
-            <template #fallback>
-            Loading...
-          </template>
-          </Suspense>
+              <pie-chart
+                :sizeInVW="10"
+                :speedInMS="loadingSpeed"
+                :openP="props.recievedFilteredStats.openP"
+                :implP="props.recievedFilteredStats.implP"
+                :draftP="props.recievedFilteredStats.draftP"
+                :colorOpen="'#fadebc'"
+                :colorImpl="'#ffb55a'"
+                :colorDraft="'#b3b3b3'"
+                :backgroundColor="'white'"
+                :openIdeasNumber="props.recievedFilteredStats.openIdeas"
+                :implementedIdeasNumber="
+                  props.recievedFilteredStats.implementedIdeas
+                "
+                :draftIdeasNumber="props.recievedFilteredStats.draftIdeas"
+              />
+              <template #fallback> Loading... </template>
+            </Suspense>
           </div>
           <div class="most-commented-ideas">
             <p>Top Most commented ideas :</p>
@@ -228,7 +235,12 @@ async function refreshStats() {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[0]">
                 <td>
-                  {{ props.recievedFilteredStats.mostCommentedIdeas[0].title }}
+                  {{
+                    getShortenedTitle(
+                      props.recievedFilteredStats.mostCommentedIdeas[0].title,
+                      20
+                    )
+                  }}
                 </td>
                 <td>
                   {{
@@ -239,7 +251,12 @@ async function refreshStats() {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[1]">
                 <td>
-                  {{ props.recievedFilteredStats.mostCommentedIdeas[1].title }}
+                  {{
+                    getShortenedTitle(
+                      props.recievedFilteredStats.mostCommentedIdeas[1].title,
+                      20
+                    )
+                  }}
                 </td>
                 <td>
                   {{
@@ -250,7 +267,12 @@ async function refreshStats() {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[2]">
                 <td>
-                  {{ props.recievedFilteredStats.mostCommentedIdeas[2].title }}
+                  {{
+                    getShortenedTitle(
+                      props.recievedFilteredStats.mostCommentedIdeas[2].title,
+                      20
+                    )
+                  }}
                 </td>
                 <td>
                   {{
@@ -261,7 +283,12 @@ async function refreshStats() {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[3]">
                 <td>
-                  {{ props.recievedFilteredStats.mostCommentedIdeas[3].title }}
+                  {{
+                    getShortenedTitle(
+                      props.recievedFilteredStats.mostCommentedIdeas[3].title,
+                      20
+                    )
+                  }}
                 </td>
                 <td>
                   {{
@@ -272,7 +299,12 @@ async function refreshStats() {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[4]">
                 <td>
-                  {{ props.recievedFilteredStats.mostCommentedIdeas[4].title }}
+                  {{
+                    getShortenedTitle(
+                      props.recievedFilteredStats.mostCommentedIdeas[4].title,
+                      20
+                    )
+                  }}
                 </td>
                 <td>
                   {{

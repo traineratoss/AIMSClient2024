@@ -459,7 +459,7 @@ async function changeShowGeneral() {
 
           <div class="center-class">
             <fieldset class="select-date" style="border: 1px solid slategray">
-              <legend style="margin-left: 1em; padding: 0.2em 0.8em">
+              <legend style="margin-left: 1em; padding:0.2em  3em">
                 Select Creation Date Interval
               </legend>
               <div class="date-input">
@@ -468,7 +468,7 @@ async function changeShowGeneral() {
                   <CustomInput
                     v-model="selectedDateFrom"
                     type="date"
-                    class="form-input"
+                    class="date-picker"
                   />
                 </div>
                 <div>
@@ -476,7 +476,7 @@ async function changeShowGeneral() {
                   <CustomInput
                     v-model="selectedDateTo"
                     type="date"
-                    class="to-input"
+                    class="date-picker"
                   />
                 </div>
               </div>
@@ -509,6 +509,11 @@ async function changeShowGeneral() {
 </template>
 
 <style scoped>
+.date-picker{
+  border:1px solid slategray;
+  border-radius: 5px;
+}
+
 .center-class {
   display: flex;
   align-items: center;
@@ -617,10 +622,6 @@ async function changeShowGeneral() {
   transition: transform 0.1s ease;
   margin-top: 1vh;
   font-size: 40px;
-}
-
-.material-symbols-outlined:hover {
-  transform: scale(1.1);
 }
 
 .sort-container {
