@@ -134,6 +134,7 @@ function clearInput() {
       </div>
     </div>
   </div>
+
   <div v-if="!props.isReply" class="comment-container">
     <div class="comment-grid-main-container">
       <div class="header-container">
