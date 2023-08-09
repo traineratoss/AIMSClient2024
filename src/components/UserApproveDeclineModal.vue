@@ -24,7 +24,7 @@ function okClick() {
         <div 
             v-if="show" 
             class="popup-mask"
-            @click="okClick"
+            @click.self="okClick"
         >
             <div class="popup-container">
                 <span class="material-symbols-outlined">
