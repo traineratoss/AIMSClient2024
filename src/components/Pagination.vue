@@ -9,9 +9,11 @@
         <span class="material-symbols-outlined arrow-down">arrow_drop_down</span>
       </div>
       <div class="page-dropdown">
-        <select v-model="selectedPage" @change="goToSelectedPage">
-          <option v-for="pageNumber in totalPages" :key="pageNumber" :value="pageNumber">{{ pageNumber }}</option>
-        </select>
+        <div class="dropdown-container">
+          <select v-model="selectedPage" @change="goToSelectedPage">
+            <option v-for="pageNumber in totalPages" :key="pageNumber" :value="pageNumber">{{ pageNumber }}</option>
+          </select>
+        </div>
       </div>
     </span>
     
