@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomInput from "./CustomInput.vue";
-import { getCategory } from "../services/idea.service";
+import { getCategory,getUser } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
@@ -181,7 +181,7 @@ function clearSelection() {
       <div class="buttons-container">
         <div><button @click="clearSelection()">Clear all</button></div>
       </div>
-      <span class="title"> Title </span>
+      <span class="title"> Title: </span>
       <CustomInput
         v-model="inputTitle"
         class="title-input"

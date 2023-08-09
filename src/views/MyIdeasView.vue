@@ -10,10 +10,11 @@ import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import { useRoute } from "vue-router";
 import CuriositySearch from "../views/CuriositySearch.vue";
+import PageSizeSelect from "../components/PageSizeSelect.vue";
 
 const currentUsername = getCurrentUsername();
 
-const ideasPerPage = 15;
+const ideaPerPage = ref(5);
 const currentPage = ref(1);
 const ideas = ref([]);
 const sortOrder = ref(0);
@@ -48,44 +49,48 @@ const loadingPage = ref(true);
 const noIdeasFoundCondition = ref(false);
 
 onMounted(async () => {
-    // const data = await getPagedIdeasFromUser(
-    //   currentUsername,
-    //   ideasPerPage,
-    //   currentPage.value - 1,
-    //   "ASC"
-    // );
+  // const data = await getPagedIdeasFromUser(
+  //   currentUsername,
+  //   ideasPerPage,
+  //   currentPage.value - 1,
+  //   "ASC"
+  // );
 
-    if (searchValue && searchValue.value && searchValue.value.text !== undefined) {
-      inputTitle.value = searchValue.value.text;
-    } else {
-      inputTitle.value = "";
-    }
-    const data = await filterIdeas(
-        inputTitle.value,
-        currentText,
-        currentStatus,
-        currentCategory,
-        currentUser,
-        currentSelectedDateFrom,
-        currentSelectedDateTo,
-        currentPage.value - 1,
-        ideasPerPage,
-        currentUsername,
-        "ASC"
-    );
+  if (
+    searchValue &&
+    searchValue.value &&
+    searchValue.value.text !== undefined
+  ) {
+    inputTitle.value = searchValue.value.text;
+  } else {
+    inputTitle.value = "";
+  }
+  const data = await filterIdeas(
+    inputTitle.value,
+    currentText,
+    currentStatus,
+    currentCategory,
+    currentUser,
+    currentSelectedDateFrom,
+    currentSelectedDateTo,
+    currentPage.value - 1,
+    ideaPerPage.value,
+    currentUsername,
+    "ASC"
+  );
 
-    //checking if i get some errors in the backend
-    if (data === 'No ideas found.') {
-      noIdeasFoundCondition.value = true;
-      sortOrder.value = 0;
-      totalPages.value = 0;
-      ideas.value = [];
-    } else {
-      noIdeasFoundCondition.value = false;
-      sortOrder.value = 0;
-      totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
-      ideas.value = data.content;
-    }
+  //checking if i get some errors in the backend
+  if (data === "No ideas found.") {
+    noIdeasFoundCondition.value = true;
+    sortOrder.value = 0;
+    totalPages.value = 0;
+    ideas.value = [];
+  } else {
+    noIdeasFoundCondition.value = false;
+    sortOrder.value = 0;
+    totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+    ideas.value = data.content;
+  }
 });
 
 watch(searchValue, async (newValue) => {
@@ -100,12 +105,12 @@ watch(searchValue, async (newValue) => {
       currentSelectedDateFrom,
       currentSelectedDateTo,
       currentPage.value - 1,
-      ideasPerPage,
+      ideaPerPage.value,
       currentUsername,
       sortOrder.value
     );
 
-    if (data === 'No ideas found.') {
+    if (data === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
@@ -130,12 +135,12 @@ async function changePage(pageNumber) {
     currentSelectedDateFrom,
     currentSelectedDateTo,
     pageNumber - 1,
-    ideasPerPage,
+    ideaPerPage.value,
     currentUsername,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
 
-  if (data === 'No ideas found.') {
+  if (data === "No ideas found.") {
     noIdeasFoundCondition.value = true;
     totalPages.value = 0;
     ideas.value = [];
@@ -170,12 +175,12 @@ async function updateSortOrder() {
       currentSelectedDateFrom,
       currentSelectedDateTo,
       currentPage.value - 1,
-      ideasPerPage,
+      ideaPerPage.value,
       currentUsername,
       "ASC"
-    );  
+    );
 
-    if (data === 'No ideas found.') {
+    if (data === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
@@ -194,25 +199,25 @@ async function updateSortOrder() {
       currentSelectedDateFrom,
       currentSelectedDateTo,
       currentPage.value - 1,
-      ideasPerPage,
+      ideaPerPage.value,
       currentUsername,
       "DESC"
     );
 
-    if (data === 'No ideas found.') {
+    if (data === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
     } else {
       noIdeasFoundCondition.value = false;
       ideas.value = data.content;
-    }   
+    }
   }
 }
 
 // here, the filtering happens
 async function updateIdeas(filteredIdeas) {
-  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
+  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value); // the total nr of pages after filtering needs to be updated
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
@@ -220,7 +225,7 @@ async function updateIdeas(filteredIdeas) {
 
     while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
-      if(currentPage.value == totalPages.value) {
+      if (currentPage.value == totalPages.value) {
         const data = await filterIdeas(
           inputTitle.value,
           inputText.value,
@@ -230,12 +235,12 @@ async function updateIdeas(filteredIdeas) {
           inputSelectedDateFrom.value,
           inputSelectedDateTo.value,
           currentPage.value - 1,
-          ideasPerPage,
+          ideaPerPage.value,
           currentUsername,
           sortOrder.value
         );
 
-        if (data === 'No ideas found.') {
+        if (data === "No ideas found.") {
           noIdeasFoundCondition.value = true;
           totalPages.value = 0;
           ideas.value = [];
@@ -254,10 +259,10 @@ async function updateIdeas(filteredIdeas) {
       ideas.value = [];
     }
   } else {
-    if (filteredIdeas === 'No ideas found.') {
-        noIdeasFoundCondition.value = true;
-        totalPages.value = 0;
-        ideas.value = [];
+    if (filteredIdeas === "No ideas found.") {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
     } else {
       noIdeasFoundCondition.value = false;
       // being sure the current page doesnt go below 0
@@ -297,6 +302,26 @@ const getImageUrl = (item) => {
     return "https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw";
   }
 };
+async function changeDisplay(pageSize1) {
+  ideaPerPage.value = pageSize1;
+  currentPage.value = 1;
+  const data = await filterIdeas(
+    inputTitle.value,
+    currentText,
+    currentStatus,
+    currentCategory,
+    currentUser,
+    currentSelectedDateFrom,
+    currentSelectedDateTo,
+    currentPage.value - 1,
+    ideaPerPage.value,
+    getCurrentUsername(),
+    "ASC"
+  );
+
+  ideas.value = data.content;
+  totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+}
 </script>
 
 <template>
@@ -308,7 +333,7 @@ const getImageUrl = (item) => {
         :currentUser="getCurrentUsername()"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
-        :ideasPerPage="ideasPerPage"
+        :ideasPerPage="ideaPerPage"
         :hideUser="true"
       />
       />
@@ -320,6 +345,14 @@ const getImageUrl = (item) => {
           <option :value="0">Date ascending</option>
           <option :value="1">Date descending</option>
         </select>
+        
+        <div class="pageSize">
+          <PageSizeSelect
+            id="pageSizeSelect"
+            label="Ideas:"
+            @change-display="changeDisplay"
+          />
+        </div>
       </div>
 
       <div class="middle-container">
@@ -343,13 +376,19 @@ const getImageUrl = (item) => {
               @comment-counter-sub="idea.commentsNumber--"
             />
           </div>
-          <div v-if="ideas.length === 0 && noIdeasFoundCondition" class="no-ideas-message">
+          <div
+            v-if="ideas.length === 0 && noIdeasFoundCondition"
+            class="no-ideas-message"
+          >
             <img src="../assets/img/curiosity-search.svg" />
             <!-- <CuriositySearch/> -->
             <br />
             <span class="black-font">Your search returned no results</span>
           </div>
-          <div v-if="ideas.length === 0 && !noIdeasFoundCondition" class="loading-placeholder">
+          <div
+            v-if="ideas.length === 0 && !noIdeasFoundCondition"
+            class="loading-placeholder"
+          >
             <CustomLoader :size="100" />
           </div>
         </div>
@@ -553,5 +592,11 @@ const getImageUrl = (item) => {
 
 .current-page:hover {
   text-decoration: underline;
+}
+.pageSize {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2vh;
+  margin-top: 5px;
 }
 </style>

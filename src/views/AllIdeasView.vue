@@ -13,13 +13,12 @@ import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import CustomInput from "../components/CustomInput.vue";
-
+import PageSizeSelect from "../components/PageSizeSelect.vue";
 const selectedDateFrom = ref();
 const selectedDateTo = ref();
 const filteredStatistics = ref([]);
 const showGenerated = ref(true);
-
-const ideasPerPage = 4;
+const ideaPerPage = ref(5);
 const currentPage = ref(1);
 const ideas = ref([]);
 const loggedUser = ref("");
@@ -57,13 +56,17 @@ const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
 
 onMounted(async () => {
-  // const data = await loadPagedIdeas(
+  // const data2 = await loadPagedIdeas(
   //   ideasPerPage,
   //   currentPage.value - 1,
   //   "creationDate",
   //   "ASC"
   // );
-  if ( searchValue && searchValue.value && searchValue.value.text !== undefined) {
+  if (
+    searchValue &&
+    searchValue.value &&
+    searchValue.value.text !== undefined
+  ) {
     inputTitle.value = searchValue.value.text;
   } else {
     inputTitle.value = "";
@@ -77,7 +80,7 @@ onMounted(async () => {
     currentSelectedDateFrom,
     currentSelectedDateTo,
     currentPage.value - 1,
-    ideasPerPage,
+    ideaPerPage.value,
     null,
     "ASC"
   );
@@ -96,7 +99,7 @@ onMounted(async () => {
   } else {
     noIdeasFoundCondition.value = false;
     sortOrder.value = 0;
-    totalPages.value = Math.ceil(data.totalElements / ideasPerPage);
+    totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
     ideas.value = data.content;
   }
 
@@ -108,18 +111,18 @@ onMounted(async () => {
 stats.value = await getStats();
 
 watch(searchValue, async (newValue) => {
-  if ( newValue && newValue.key === "Enter"  && newValue.text !== undefined) {
+  if (newValue && newValue.key === "Enter" && newValue.text !== undefined) {
     setCurrentVariables();
     const data = await filterIdeas(
       inputTitle.value,
-      currentText, 
+      currentText,
       currentStatus,
       currentCategory,
       currentUser,
       currentSelectedDateFrom,
       currentSelectedDateTo,
       currentPage.value - 1,
-      ideasPerPage,
+      ideaPerPage.value,
       null,
       sortOrder.value
     );
@@ -149,7 +152,7 @@ async function changePage(pageNumber) {
     currentSelectedDateFrom,
     currentSelectedDateTo,
     pageNumber - 1,
-    ideasPerPage,
+    ideaPerPage.value,
     null,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
@@ -197,7 +200,7 @@ async function updateSortOrder() {
       currentSelectedDateFrom,
       currentSelectedDateTo,
       currentPage.value - 1,
-      ideasPerPage,
+      ideaPerPage.value,
       null,
       "ASC"
     );
@@ -222,7 +225,7 @@ async function updateSortOrder() {
       currentSelectedDateFrom,
       currentSelectedDateTo,
       currentPage.value - 1,
-      ideasPerPage,
+      ideaPerPage.value,
       null,
       "DESC"
     );
@@ -249,7 +252,7 @@ async function loadData() {
   ideas.value = [];
 
   const data = await loadPagedIdeas(
-    ideasPerPage,
+    ideaPerPage.value,
     currentPage.value - 1,
     "creationDate",
     "ASC"
@@ -260,8 +263,7 @@ async function loadData() {
 }
 
 async function updateIdeas(filteredIdeas) {
-  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
-
+  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value); // the total nr of pages after filtering needs to be updated
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
@@ -280,7 +282,7 @@ async function updateIdeas(filteredIdeas) {
           inputSelectedDateFrom.value,
           inputSelectedDateTo.value,
           currentPage.value - 1,
-          ideasPerPage,
+          ideaPerPage.value,
           null,
           sortOrder.value
         );
@@ -318,6 +320,26 @@ async function updateIdeas(filteredIdeas) {
       ideas.value = filteredIdeas.content;
     }
   }
+}
+async function changeDisplay(pageSize1) {
+  ideaPerPage.value = pageSize1;
+  currentPage.value = 1;
+  const data = await filterIdeas(
+    inputTitle.value,
+    currentText,
+    currentStatus,
+    currentCategory,
+    currentUser,
+    currentSelectedDateFrom,
+    currentSelectedDateTo,
+    currentPage.value - 1,
+    ideaPerPage.value,
+    null,
+    "ASC"
+  );
+
+  ideas.value = data.content;
+  totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
 }
 
 // Here I pass the vars from the side panel
@@ -371,7 +393,7 @@ async function changeShowGeneral() {
         :currentUser="null"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
-        :ideasPerPage="ideasPerPage"
+        :ideasPerPage="ideaPerPage"
       />
     </div>
     <div
@@ -394,6 +416,13 @@ async function changeShowGeneral() {
               <option :value="0">Date ascending</option>
               <option :value="1">Date descending</option>
             </select>
+            <div class="pageSize">
+              <PageSizeSelect
+                id="pageSizeSelect"
+                label="Ideas:"
+                @change-display="changeDisplay"
+              />
+            </div>
           </div>
 
           <div class="ideas-transition-container">
@@ -728,5 +757,11 @@ async function changeShowGeneral() {
 
 .current-page:hover {
   text-decoration: underline;
+}
+.pageSize {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2vh;
+  margin-top: 5px;
 }
 </style>
