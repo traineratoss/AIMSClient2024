@@ -58,7 +58,7 @@ watch(searchValue, (newValue) => {
     searchBarTitle.value = newValue.text;
   }
   if (newValue.key === "Enter" && newValue) {
-    if(route.path !== "/my" && route.path !== "/all") {
+    if(route.path !== "/all") {
       router.push({ path: '/all'});
     }
     searchBarTitle.value = newValue.text;
