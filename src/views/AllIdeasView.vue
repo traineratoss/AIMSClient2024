@@ -2,12 +2,11 @@
 import SidePanel from "../components/SidePanel.vue";
 import { ref, onMounted, watch, computed } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
+import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
 import {
-  filterIdeas,
-  loadPagedIdeas,
   getStats,
   sendDataForCustomStats,
-} from "../services/idea.service";
+} from "../services/statistics.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
@@ -52,14 +51,12 @@ let currentUserRole = "";
 
 const loadingPage = ref(true);
 
-
 const noIdeasFoundCondition = ref(false);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
 
 onMounted(async () => {
-
   // const data = await loadPagedIdeas(
   //   ideasPerPage,
   //   currentPage.value - 1,
@@ -72,17 +69,17 @@ onMounted(async () => {
     inputTitle.value = "";
   }
   const data = await filterIdeas(
-      inputTitle.value,
-      currentText,
-      currentStatus,
-      currentCategory,
-      currentUser,
-      currentSelectedDateFrom,
-      currentSelectedDateTo,
-      currentPage.value - 1,
-      ideasPerPage,
-      null,
-      "ASC"
+    inputTitle.value,
+    currentText,
+    currentStatus,
+    currentCategory,
+    currentUser,
+    currentSelectedDateFrom,
+    currentSelectedDateTo,
+    currentPage.value - 1,
+    ideasPerPage,
+    null,
+    "ASC"
   );
 
   loadingPage.value = true;
@@ -91,7 +88,7 @@ onMounted(async () => {
   checkAdmin();
   console.log(currentUserRole);
 
-  if (data === 'No ideas found.') {
+  if (data === "No ideas found.") {
     noIdeasFoundCondition.value = true;
     sortOrder.value = 0;
     totalPages.value = 0;
@@ -127,7 +124,7 @@ watch(searchValue, async (newValue) => {
       sortOrder.value
     );
 
-    if (data === 'No ideas found.') {
+    if (data === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
@@ -157,7 +154,7 @@ async function changePage(pageNumber) {
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
 
-  if (data === 'No ideas found.') {
+  if (data === "No ideas found.") {
     noIdeasFoundCondition.value = true;
     totalPages.value = 0;
     ideas.value = [];
@@ -203,9 +200,9 @@ async function updateSortOrder() {
       ideasPerPage,
       null,
       "ASC"
-    );  
+    );
 
-    if (data === 'No ideas found.') {
+    if (data === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
@@ -230,7 +227,7 @@ async function updateSortOrder() {
       "DESC"
     );
 
-    if (data === 'No ideas found.') {
+    if (data === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
@@ -238,7 +235,7 @@ async function updateSortOrder() {
       noIdeasFoundCondition.value = false;
       ideas.value = data.content;
       setCurrentVariables();
-    }   
+    }
   }
 }
 
@@ -264,16 +261,16 @@ async function loadData() {
 
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideasPerPage); // the total nr of pages after filtering needs to be updated
-  
+
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
     // we have to filter each time with each page to get our good ideas
-    
+
     while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
       //OPTIMIZED A BIT SO IT WILL FILTER ONLY WHEN IT GETS TO THE RIGHT PAGE NUMBER
-      if(currentPage.value == totalPages.value) {
+      if (currentPage.value == totalPages.value) {
         const data = await filterIdeas(
           inputTitle.value,
           inputText.value,
@@ -288,7 +285,7 @@ async function updateIdeas(filteredIdeas) {
           sortOrder.value
         );
 
-        if (data === 'No ideas found.') {
+        if (data === "No ideas found.") {
           noIdeasFoundCondition.value = true;
           totalPages.value = 0;
           ideas.value = [];
@@ -299,7 +296,7 @@ async function updateIdeas(filteredIdeas) {
         }
       }
     }
-    
+
     // if there are no ideas
     if (totalPages.value === 0) {
       setCurrentVariables();
@@ -307,10 +304,10 @@ async function updateIdeas(filteredIdeas) {
       ideas.value = [];
     }
   } else {
-    if (filteredIdeas === 'No ideas found.') {
-        noIdeasFoundCondition.value = true;
-        totalPages.value = 0;
-        ideas.value = [];
+    if (filteredIdeas === "No ideas found.") {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
     } else {
       noIdeasFoundCondition.value = false;
       // being sure the current page doesnt go below 0
@@ -351,20 +348,18 @@ const getImageUrl = (item) => {
   }
 };
 
-const showSkeleton = ref(true)
+const showSkeleton = ref(true);
 
 async function changeShowGeneral() {
-  showSkeleton.value =! showSkeleton.value
+  showSkeleton.value = !showSkeleton.value;
   stats.value = await sendDataForCustomStats(
     selectedDateFrom.value,
     selectedDateTo.value
   );
   console.log("filtered ideas ", stats.value);
   showGenerated.value = !showGenerated.value;
-  showSkeleton.value =! showSkeleton.value 
-
+  showSkeleton.value = !showSkeleton.value;
 }
-
 </script>
 
 <template>
@@ -459,7 +454,7 @@ async function changeShowGeneral() {
 
           <div class="center-class">
             <fieldset class="select-date" style="border: 1px solid slategray">
-              <legend style="margin-left: 1em; padding:0.2em  3em">
+              <legend style="margin-left: 1em; padding: 0.2em 3em">
                 Select Creation Date Interval
               </legend>
               <div class="date-input">
@@ -484,33 +479,28 @@ async function changeShowGeneral() {
           </div>
 
           <div class="center-class">
-            <button
-              class="load-button"
-              @click="
-                changeShowGeneral();
-              "
-            >
+            <button class="load-button" @click="changeShowGeneral()">
               Filter
             </button>
           </div>
         </div>
         <Suspense>
-        <CustomStatistics
-          :recievedFilteredStats="stats"
-          :showGenerated="showGenerated"
-          :showSkeleton = "showSkeleton"
-          @load-top5-ideas="loadRecievedIdeas"
-          @load-data="loadData"
-        />
-      </Suspense>
+          <CustomStatistics
+            :recievedFilteredStats="stats"
+            :showGenerated="showGenerated"
+            :showSkeleton="showSkeleton"
+            @load-top5-ideas="loadRecievedIdeas"
+            @load-data="loadData"
+          />
+        </Suspense>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.date-picker{
-  border:1px solid slategray;
+.date-picker {
+  border: 1px solid slategray;
   border-radius: 5px;
 }
 
@@ -519,9 +509,9 @@ async function changeShowGeneral() {
   align-items: center;
   justify-content: center;
 }
-.no-ideas-message{
+.no-ideas-message {
   display: flex;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
   flex-direction: column;
   height: 500px;

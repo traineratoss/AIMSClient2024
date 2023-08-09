@@ -2,11 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomInput from "./CustomInput.vue";
-import {
-  getCategory,
-  getUser,
-  sendDataForCustomStats,
-} from "../services/idea.service";
+import { getCategory } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";

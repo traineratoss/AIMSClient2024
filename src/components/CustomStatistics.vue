@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
-import { getStats } from "../services/idea.service";
+import { getStats } from "../services/statistics.service";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import PieChart from "./PieChart.vue";
 
