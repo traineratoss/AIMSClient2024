@@ -72,7 +72,7 @@ button {
   border: none;
   width: 2vw;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 }
 
