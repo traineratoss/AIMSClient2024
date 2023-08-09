@@ -47,6 +47,11 @@ function closeModal(){
   display: flex;
   justify-content: center;
   align-items: center;
+
+  
+}
+.dialog dialog {
+  border: 1px solid slategray;
 }
 
 </style>
