@@ -110,7 +110,7 @@ function getShortenedTitle(title, maxLength) {
               :colorOpen="'#fadebc'"
               :colorImpl="'#ffb55a'"
               :colorDraft="'#b3b3b3'"
-              :backgroundColor="'white'"
+              :backgroundColor="'#b3b3b3'"
               :openIdeasNumber="stats.openIdeas"
               :implementedIdeasNumber="stats.implementedIdeas"
               :draftIdeasNumber="stats.draftIdeas"
@@ -216,7 +216,7 @@ function getShortenedTitle(title, maxLength) {
                 :colorOpen="'#fadebc'"
                 :colorImpl="'#ffb55a'"
                 :colorDraft="'#b3b3b3'"
-                :backgroundColor="'white'"
+                :backgroundColor="'#b3b3b3'"
                 :openIdeasNumber="props.recievedFilteredStats.openIdeas"
                 :implementedIdeasNumber="
                   props.recievedFilteredStats.implementedIdeas

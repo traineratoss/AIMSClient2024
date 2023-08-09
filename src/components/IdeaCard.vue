@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import CustomComment from "../components/CustomComment.vue";
 import router from "../router";
 import {
@@ -254,6 +254,75 @@ function selectIdea() {
 }
 
 const isAdmin = getCurrentRole() === "ADMIN";
+
+watch(
+  () => allLoadedComments.value,
+  (comments) => {
+    comments.forEach((comment) => {
+      watch(
+        () => comment.replyToggle,
+        () => {
+          if (comment.replyToggle === true) triggerExpandAnimation();
+          else triggerCollapseAnimation();
+        }
+      );
+    });
+  }
+);
+
+// function triggerExpandAnimation() {
+//   const reply = document.getElementById("customReply");
+//   if (reply !== null) {
+//     reply.classList.add("expand-animation");
+
+//     setTimeout(() => {
+//       reply.classList.remove("expand-animation");
+//     }, 150);
+//   }
+// }
+function triggerExpandAnimation() {
+  const reply = document.getElementById("customReply");
+  if (reply !== null) {
+    const animation = reply.animate(
+      [
+        { transform: "translateY(-20px)", opacity: 0.001 },
+        { transform: "translateY(0px)", opacity: 1 },
+      ],
+      {
+        duration: 300,
+        easing: "ease-in-out",
+        delay: 5,
+      }
+    );
+
+    animation.onfinish = () => {
+      reply.style.transform = "";
+      reply.style.opacity = "";
+    };
+  }
+}
+
+function triggerCollapseAnimation() {
+  const reply = document.getElementById("customReply");
+  if (reply !== null) {
+    const animation = reply.animate(
+      [
+        { transform: "translateY(0px)", opacity1: 1 },
+        { transform: "translateY(20px)", opacity: 0.001 },
+      ],
+      {
+        duration: 300,
+        easing: "ease-in-out",
+        delay: 5,
+      }
+    );
+
+    animation.onfinish = () => {
+      reply.style.transform = "";
+      reply.style.opacity = "";
+    };
+  }
+}
 </script>
 
 <template>
@@ -447,10 +516,12 @@ const isAdmin = getCurrentRole() === "ADMIN";
           @loadReplies="loadCommentReplies(comment)"
           @postReply="postReplyDynamic"
           @deleteComment="deleteCommentDynamic"
-          @expandAnimation="expandReplyAnimation"
-          @collapseAnimation="collapseReplyAnimation"
         />
-        <div class="replies-wrapper" v-if="comment.replyToggle">
+        <div
+          class="replies-wrapper"
+          v-if="comment.replyToggle"
+          id="customReply"
+        >
           <transition-group duration="300" name="rnested">
             <div
               v-for="reply in getRepliesForComment(comment.id)"
@@ -477,6 +548,12 @@ const isAdmin = getCurrentRole() === "ADMIN";
 </template>
 
 <style scoped>
+.expand-animation {
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  transition-delay: 0.05s;
+  transform: translateY(-20px);
+  opacity: 0.001;
+}
 .nested-enter-active {
   transition: all 0.1s ease-in-out;
   transition-delay: 0.05s;

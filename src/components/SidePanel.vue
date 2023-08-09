@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomInput from "./CustomInput.vue";
-import { getCategory,getUser } from "../services/idea.service";
+import { getCategory, getUser } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
@@ -77,12 +77,10 @@ watch(
 );
 
 watch(searchValue, (newValue) => {
-  if ( newValue && newValue.text !== undefined) {
+  if (newValue && newValue.text !== undefined) {
     inputTitle.value = newValue.text;
   }
 });
-
-
 
 //when pressing anywhere on the page the Enter key, we will filter
 function handleGlobalKeyDown(event) {
@@ -108,13 +106,11 @@ async function handleSelectedStatus(selectedStatus) {
 }
 
 onMounted(async () => {
-  if(searchValue && searchValue.value && searchValue.value.text){
-  inputTitle.value = searchValue.value.text; // each time we mount a view, we set the title to be the one from the search bar
-  // so they wont be different
-  } 
-  else 
-  {
-    inputTitle.value="";
+  if (searchValue && searchValue.value && searchValue.value.text) {
+    inputTitle.value = searchValue.value.text; // each time we mount a view, we set the title to be the one from the search bar
+    // so they wont be different
+  } else {
+    inputTitle.value = "";
   }
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
@@ -172,6 +168,103 @@ function clearSelection() {
     clearAllDropdownValues.value = false;
   }, 10);
 }
+
+function displaySelection(categoriesList) {
+  let finalList = "";
+
+  if (categoriesList.length === 1) {
+    finalList += categoriesList;
+
+    return finalList;
+  }
+
+  for (let category of categoriesList) {
+    if (categoriesList.indexOf(category) === categoriesList.length - 1)
+      finalList += category;
+    else finalList += category + ", ";
+  }
+
+  return finalList;
+}
+
+function setPosition(componentId, overlayId) {
+  const component = document.getElementById(componentId);
+  const overlay = document.getElementById(overlayId);
+
+  if (component && overlay) {
+    const componentCoords = component.getBoundingClientRect();
+    const x = componentCoords.left;
+    const y = componentCoords.top;
+
+    overlay.style.marginTop = y + 25 + "px";
+    overlay.style.marginLeft = x + "px";
+  }
+}
+
+watch(categoriesSelected, () => {
+  if (categoriesSelected.value.length === 1 && userSelected.value.length === 0)
+    setPosition("categorySelect", "displayCategories");
+  else if (
+    categoriesSelected.value.length === 1 &&
+    userSelected.value.length > 0
+  ) {
+    setPosition("categorySelect", "displayCategories");
+    setTimeout(() => {
+      setPosition("userSelect", "displayUsers");
+    }, "10");
+  } else if (
+    categoriesSelected.value.length === 0 &&
+    userSelected.value.length > 0
+  ) {
+    setTimeout(() => {
+      setPosition("userSelect", "displayUsers");
+    }, "10");
+  }
+});
+
+watch(statusSelected, () => {
+  if (
+    statusSelected.value.length === 1 &&
+    categoriesSelected.value.length === 0
+  )
+    setPosition("statusSelect", "displayStatuses");
+  else if (
+    statusSelected.value.length === 1 &&
+    categoriesSelected.value.length > 0
+  ) {
+    setPosition("statusSelect", "displayStatuses");
+    setTimeout(() => {
+      setPosition("categorySelect", "displayCategories");
+    }, "10");
+  } else if (
+    statusSelected.value.length === 0 &&
+    categoriesSelected.value.length > 0
+  ) {
+    setTimeout(() => {
+      setPosition("categorySelect", "displayCategories");
+    }, "10");
+  }
+
+  if (statusSelected.value.length === 1 && userSelected.value.length > 0) {
+    setPosition("statusSelect", "displayStatuses");
+    setTimeout(() => {
+      setPosition("userSelect", "displayUsers");
+    }, "10");
+  } else if (
+    statusSelected.value.length === 0 &&
+    userSelected.value.length > 0
+  ) {
+    setTimeout(() => {
+      setPosition("userSelect", "displayUsers");
+    }, "10");
+  }
+});
+
+watch(userSelected, () => {
+  if (userSelected.value.length === 1) {
+    setPosition("userSelect", "displayUsers");
+  }
+});
 </script>
 
 <template>
@@ -197,42 +290,66 @@ function clearSelection() {
         :can-modify-search-value="false"
       />
 
-      <span class="status">Status:</span>
+      <span :class="statusSelected.length > 0 ? 'status2' : 'status'"
+        >Status:</span
+      >
       <CustomDropDown
         class="status-select"
+        id="statusSelect"
         :variants="statusOptions"
-        @update:selectedCategories="handleSelectedStatus"
+        @update:selectedOptions="handleSelectedStatus"
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
         :clear-all="clearAllDropdownValues"
       ></CustomDropDown>
 
-      <span class="category">Category:</span>
+      <div class="display-statuses-container" id="displayStatuses">
+        <div class="display-statuses">
+          {{ displaySelection(statusSelected) }}
+        </div>
+      </div>
+
+      <span :class="categoriesSelected.length > 0 ? 'category2' : 'category'"
+        >Category:</span
+      >
       <CustomDropDown
         class="category-select"
+        id="categorySelect"
         :variants="categoryOptions"
-        @update:selectedCategories="handleSelectedCategories"
+        @update:selectedOptions="handleSelectedCategories"
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
         :clear-all="clearAllDropdownValues"
       ></CustomDropDown>
 
+      <div class="display-categories-container" id="displayCategories">
+        <div class="display-categories">
+          {{ displaySelection(categoriesSelected) }}
+        </div>
+      </div>
+
       <span
         :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         v-if="currentUser == null"
-        class="user"
+        :class="userSelected.length > 0 ? 'user2' : 'user'"
         >User:</span
       >
 
       <CustomDropDown
-        :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         class="user-select"
+        id="userSelect"
         :variants="userOptions"
-        @update:selectedCategories="handleSelectedUsers"
+        @update:selectedOptions="handleSelectedUsers"
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
         :clear-all="clearAllDropdownValues"
       ></CustomDropDown>
+
+      <div class="display-users-container" id="displayUsers">
+        <div class="display-users">
+          {{ displaySelection(userSelected) }}
+        </div>
+      </div>
 
       <div class="date-chooser">
         <fieldset style="border: 1px solid slategray">
@@ -304,6 +421,7 @@ function clearSelection() {
   margin-left: 1vw;
   margin-right: 1vw;
   width: 20vw;
+  min-width: 0;
 }
 .filterby {
   grid-column: 1/2;
@@ -322,13 +440,91 @@ function clearSelection() {
   grid-column: 1/2;
   grid-row: 4/5;
 }
+
+.status2 {
+  grid-column: 1/2;
+  grid-row: 4/5;
+  margin-bottom: 25px;
+}
+
+.display-statuses-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 25px;
+  z-index: 1;
+}
+
+.display-statuses {
+  white-space: nowrap;
+  max-width: 200px;
+  font-weight: 500;
+  overflow-x: auto;
+}
 .category {
   grid-column: 1/2;
   grid-row: 5/6;
 }
+
+.category2 {
+  grid-column: 1/2;
+  grid-row: 5/6;
+  margin-bottom: 30px;
+}
+
+.display-categories-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 25px;
+  z-index: 1;
+}
+
+.display-categories {
+  white-space: nowrap;
+  max-width: 200px;
+  font-weight: 500;
+  overflow-x: auto;
+}
+
+/* .display-categories::-webkit-scrollbar {
+  display: block;
+  width: 5px;
+}
+
+.display-categories::-webkit-scrollbar-thumb {
+  background-color: #eb9224;
+  border-radius: 5px;
+  border: 1px solid slategray; 
+}*/
+
 .user {
   grid-column: 1/2;
   grid-row: 6/7;
+}
+
+.user2 {
+  grid-column: 1/2;
+  grid-row: 6/7;
+  /* margin-bottom: 25px; */
+}
+
+.display-users-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 25px;
+  z-index: 1;
+}
+
+.display-users {
+  white-space: nowrap;
+  max-width: 200px;
+  font-weight: 500;
+  overflow-x: auto;
 }
 .title-input {
   grid-column: 2/4;
