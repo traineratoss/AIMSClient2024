@@ -86,7 +86,11 @@ function showTermsAndConditionsPopup() {
 
 
 <template>
-  <div class="custom-register">
+  <div
+    class="custom-register"
+    tabindex="-1"
+    @focus="showUsernameDetails = false"
+  >
     <CompanyLogo />
     <div class="register">
       <FormTitle label="Register" />
@@ -141,9 +145,7 @@ function showTermsAndConditionsPopup() {
       >
         Sign up
       </CustomButton>
-      <CustomLoader 
-        :size="'50'"
-      />
+      <CustomLoader :size="'50'" />
     </div>
     <Teleport to="body">
       <TermsAndConditionsModal
