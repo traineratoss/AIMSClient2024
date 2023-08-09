@@ -7,22 +7,43 @@ const props = defineProps({
 
 const fileContent = sampleText;
 
-const emits = defineEmits(["accepted-terms-and-conditions"]);
+const vFocus = {
+  mounted: (el) => {
+    el.focus();
+  }
+}
+
+const emits = defineEmits(["accepted-terms-and-conditions", "declined-terms-and-conditions"]);
 
 function acceptTermsAndConditions() {
   emits("accepted-terms-and-conditions");
+}
+
+function declineTermsAndConditions() {
+  emits("declined-terms-and-conditions");
 }
 </script>
 
 <template>
   <Transition name="popup">
-    <div v-if="show" class="popup-mask">
-      <div class="popup-container">
+    <div 
+      v-if="show" 
+      class="popup-mask"
+      @click="declineTermsAndConditions"
+    >
+      <div 
+        class="popup-container"
+        @keydown.enter="acceptTermsAndConditions"
+        tabindex="0"
+      >
         <div id="container" class="text-color">
           <h1 id="title">Terms & Conditions</h1>
           <div id="text-container" v-html="fileContent"></div>
         </div>
-        <button @click="acceptTermsAndConditions">
+        <button 
+          @click="acceptTermsAndConditions"
+          v-focus
+        >
           I've read and accepted the Terms & Conditions
         </button>
       </div>

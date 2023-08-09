@@ -74,6 +74,10 @@ function acceptTermsAndConditions() {
   showTermsAndConditionsModal.value = false;
 }
 
+function declineTermsAndConditions() {
+  showTermsAndConditionsModal.value = false;
+}
+
 function showTermsAndConditionsPopup() {
   showTermsAndConditionsModal.value = true;
 }
@@ -141,6 +145,7 @@ function showTermsAndConditionsPopup() {
       <TermsAndConditionsModal
         :show="showTermsAndConditionsModal"
         @accepted-terms-and-conditions="acceptTermsAndConditions"
+        @declined-terms-and-conditions="declineTermsAndConditions"
       />
     </Teleport>
   </div>
