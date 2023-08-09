@@ -157,10 +157,9 @@ async function changePassword(changePasswordDTO) {
 }
 
 async function sendNewPassword(usernameOrEmail) {
-  let response;
   let connectionError = false;
   try {
-    response = await fetch(`${API_URL}/send-forgot-password`, {
+    const response = await fetch(`${API_URL}/send-forgot-password`, {
       method: "POST",
       body: usernameOrEmail,
     });

@@ -6,8 +6,6 @@ import { logout } from "../services/user_service";
 
 const dashboardIsHovered = ref(false);
 
-const emits = defineEmits(['clickedDropDown']);
-
 const props = defineProps({
   element: {
     type: Object,
@@ -38,7 +36,7 @@ const onClickHandler = (element) => {
   if(element.id === 'logout') {
     logout();
   }
-  emits('clickedDropDown', element.id);
+  
   router.push(element.route);
 };
 

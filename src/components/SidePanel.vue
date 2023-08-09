@@ -81,15 +81,12 @@ watch(
 );
 
 watch(searchValue, (newValue) => {
-  if (newValue.text !== undefined) {
+  if ( newValue && newValue.text !== undefined) {
     inputTitle.value = newValue.text;
   }
 });
 
-//when unmounting, we will remove the event listener
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleGlobalKeyDown);
-});
+
 
 //when pressing anywhere on the page the Enter key, we will filter
 function handleGlobalKeyDown(event) {
@@ -115,9 +112,14 @@ async function handleSelectedStatus(selectedStatus) {
 }
 
 onMounted(async () => {
+  if(searchValue && searchValue.value && searchValue.value.text){
   inputTitle.value = searchValue.value.text; // each time we mount a view, we set the title to be the one from the search bar
   // so they wont be different
-
+  } 
+  else 
+  {
+    inputTitle.value="";
+  }
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
@@ -126,6 +128,7 @@ onMounted(async () => {
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
   sortOrder.value = "ASC";
+  console.log(userOptions);
 });
 
 const filter = async () => {
