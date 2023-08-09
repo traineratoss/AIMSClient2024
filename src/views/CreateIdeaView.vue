@@ -469,6 +469,7 @@ function onMouseEnter() {}
   margin-top: 10px;
 }
 
+
 .add-image-idea {
   background-color: gray;
   color: white;
