@@ -234,6 +234,8 @@ function getInputPlaceholder() {
   max-height: 12vh;
   /* max-height: 250px; */
   overflow-y: auto;
+  padding: 5px;
+  max-width: 10vw;
 }
 
 .dropdown.visible {
@@ -254,5 +256,7 @@ function getInputPlaceholder() {
 
 .input-dropdown {
   width: 10vw;
+  padding: 5px;
+  border: none;
 }
 </style>

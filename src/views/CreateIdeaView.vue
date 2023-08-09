@@ -363,7 +363,7 @@ function onMouseEnter() {}
         @mouseleave="onMouseLeave"
         name="status-idea"
         id="status-idea"
-        class="input-width"
+        class="input-width custom-select"
         :disabled="fieldsDisabled"
       >
         <option value="open">Open</option>
@@ -476,7 +476,12 @@ function onMouseEnter() {}
   margin-top: 1rem;
 }
 .input-width {
-  width: 200px;
+  width: 202px;
+}
+.custom-select{
+  padding: 5px;
+  border: none;
+  height: 27px;
 }
 
 .idea {
