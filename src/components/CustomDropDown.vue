@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, defineProps, watch, watchEffect } from "vue";
 
-const emit = defineEmits(["update:selectedCategories", "filter-data"]);
+const emit = defineEmits(["update:selectedOptions", "filter-data"]);
 
 const props = defineProps({
   variants: {
@@ -31,12 +31,12 @@ const props = defineProps({
   },
   clearAll: {
     type: Boolean,
-    default: false
+    default: false,
   },
   updatePageByClick: {
     type: Object,
-    default: null
-  }
+    default: null,
+  },
 });
 
 const clearAllDropdownValues = ref(false);
@@ -47,9 +47,9 @@ const isDropdownVisible = ref(false);
 // loading is used for checking when the props are updated and fully loaded, since i cant use it in the onMount (async function)
 const loading = ref(true);
 // this is the reactive value with the initial value of the objects selected
-const selectedObjectsReactive = ref(props.selectedObjects); 
+const selectedObjectsReactive = ref(props.selectedObjects);
 // the ref is stringified so i parse it to receive the full array
-const parsedSelectedCategories = ref(JSON.parse(selectedObjectsReactive.value));
+const parsedSelectedOptions = ref(JSON.parse(selectedObjectsReactive.value));
 
 const initialSelectedObjects = ref(null);
 
@@ -62,9 +62,13 @@ onMounted(async () => {
 watchEffect(() => {
   //while its still loading, i check if the initialselectedcategories received the prop corectly from the parent
   // and only then i set it
-  if (props.selectedObjects && props.selectedObjects.length > 0 && loading.value) {
-    initialSelectedObjects.value = parsedSelectedCategories.value.join(", ");
-    loading.value = false; 
+  if (
+    props.selectedObjects &&
+    props.selectedObjects.length > 0 &&
+    loading.value
+  ) {
+    initialSelectedObjects.value = parsedSelectedOptions.value.join(", ");
+    loading.value = false;
   }
 });
 
@@ -93,7 +97,7 @@ watch(
 // if the clear is true, we set every checkbox to unchecked
 const isVariantSelected = (variant) => {
   if (!loading.value && !clearAllDropdownValues.value) {
-    return parsedSelectedCategories.value.includes(variant);
+    return parsedSelectedOptions.value.includes(variant);
   }
   if (clearAllDropdownValues.value) {
     return false;
@@ -111,43 +115,47 @@ const handleCheckboxChange = () => {
     .map((checkbox) => checkbox.value);
 
   //comboInput.value.value = selectedVariants.join(", ");
-  emit("update:selectedCategories", selectedVariants);
+  emit("update:selectedOptions", selectedVariants);
 };
 
 const handleInputKeyPress = (event) => {
-  if (props.canAddInDropdown) { // this is used for checking if the variants can pe modified by pressing Enter or not
+  if (props.canAddInDropdown) {
+    // this is used for checking if the variants can pe modified by pressing Enter or not
     let checkDuplicate = false; // this var is used for preventing creation of an existant category
-    props.variants.forEach(variant => {
-      if(variant == event.target.value) {
+    props.variants.forEach((variant) => {
+      if (variant == event.target.value) {
         checkDuplicate = true;
       }
     });
     if (event.key === "Enter" && event.target.value !== "" && !checkDuplicate) {
       const newCategory = event.target.value.trim();
       props.variants.push(event.target.value);
-      selectedObjectsReactive.value = props.variants
+      selectedObjectsReactive.value = props.variants;
       comboInput.value.value = "";
       isDropdownVisible.value = true;
-      setTimeout(() => { // we set a small timeout because
-        const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
-        console.log(checkboxes)
-        const checkbox = dropdown.value.querySelector(`input[value="${newCategory}"]`);
-        if(checkbox) {
+      setTimeout(() => {
+        // we set a small timeout because
+        const checkboxes = dropdown.value.querySelectorAll(
+          'input[type="checkbox"]'
+        );
+        console.log(checkboxes);
+        const checkbox = dropdown.value.querySelector(
+          `input[value="${newCategory}"]`
+        );
+        if (checkbox) {
           checkbox.checked = true;
         }
         const updatedSelectedVariants = Array.from(checkboxes)
-        .filter((checkbox) => checkbox.checked)
-        .map((checkbox) => checkbox.value);
+          .filter((checkbox) => checkbox.checked)
+          .map((checkbox) => checkbox.value);
         setTimeout(() => {
-          emit("update:selectedCategories", updatedSelectedVariants)
+          emit("update:selectedOptions", updatedSelectedVariants);
         }, 10); // we use a small timeout since the reactive vars arent updating instanlty so we have to check the variant after we create it
-      
-      }, 0)
-    
+      }, 0);
     }
     //here, we are checking if we press enter on those on the filter side
   } else {
-    emit("filter-data")
+    emit("filter-data");
   }
 };
 
@@ -170,8 +178,6 @@ function onMouseLeave() {
 function getInputPlaceholder() {
   return props.inputPlaceholder;
 }
-
-
 </script>
 
 <template>
@@ -195,12 +201,12 @@ function getInputPlaceholder() {
       @mouseleave="onMouseLeave"
     >
       <label v-for="variant in selectedObjectsReactive" :key="variant">
-        <input 
-        type="checkbox" 
-        :value="variant" 
-        :checked="isVariantSelected(variant)"
-         @change="handleCheckboxChange"
-         />
+        <input
+          type="checkbox"
+          :value="variant"
+          :checked="isVariantSelected(variant)"
+          @change="handleCheckboxChange"
+        />
         {{ variant }}
       </label>
     </div>
@@ -225,7 +231,7 @@ function getInputPlaceholder() {
 
 .dropdown {
   position: absolute;
-  top: 100%;
+  top: 10;
   left: 0;
   width: 100%;
   background-color: #fff;
@@ -236,6 +242,7 @@ function getInputPlaceholder() {
   overflow-y: auto;
   padding: 5px;
   max-width: 10vw;
+  z-index: 5;
 }
 
 .dropdown.visible {
