@@ -12,7 +12,7 @@ const vFocus = {
   mounted: (el) => {
     el.focus();
   }
-}
+};
 
 const emits = defineEmits(["accepted-terms-and-conditions", "declined-terms-and-conditions"]);
 
