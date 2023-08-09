@@ -16,14 +16,11 @@ const route = useRoute();
 
 const searchBarTitle = ref("");
 
-const indexOfActivePage = ref(2);
 const disabledDashboard = ref(true);
 const disabledUser = ref(true);
 const currentUsername = ref("");
 const currentAvatarId = ref(-1);
-const allIdeasActive = ref(false);
-const myIdeasActive = ref(true);
-const createIdeaActive = ref(false);
+const activePage = ref('my');
 
 let userDashboardElements = [];
 
@@ -67,6 +64,8 @@ watch(searchValue, (newValue) => {
 
 
 router.beforeEach((to, from) => {
+  activePage.value = to.name;
+  
   if (
     from.name === "my-profile" ||
     from.name === "login" ||
@@ -119,78 +118,18 @@ router.beforeEach((to, from) => {
 onMounted(() => {
   currentUsername.value = getCurrentUsername();
   currentAvatarId.value = getCurrentAvatarId();
-
-  indexOfActivePage.value = parseInt(
-    localStorage.getItem("current page index")
-  );
-
-  if (indexOfActivePage.value === 1) {
-    activateAllIdeas();
-  } else if (indexOfActivePage.value === 2) {
-    activateMyIdeas();
-  } else if (indexOfActivePage.value === 4) {
-    activateCreateIdea();
-  } else {
-    deactivateAll();
-  }
-
 });
 
-function activateAllIdeas() {
-  allIdeasActive.value = true;
-  myIdeasActive.value = false;
-  createIdeaActive.value = false;
-}
-
-function activateMyIdeas() {
-  allIdeasActive.value = false;
-  myIdeasActive.value = true;
-  createIdeaActive.value = false;
-}
-
-function activateCreateIdea() {
-  allIdeasActive.value = false;
-  myIdeasActive.value = false;
-  createIdeaActive.value = true;
-}
-
-function deactivateAll() {
-  allIdeasActive.value = false;
-  myIdeasActive.value = false;
-  createIdeaActive.value = false;
-}
-
 function redirectToAllIdeas() {
-  indexOfActivePage.value = 1;
-
-  activateAllIdeas();
-
-  localStorage.setItem("current page index", indexOfActivePage.value);
   router.push("/all");
 }
 
 function redirectToMyIdeas() {
-  indexOfActivePage.value = 2;
-
-  activateMyIdeas();
-
-  localStorage.setItem("current page index", indexOfActivePage.value);
   router.push("/my");
 }
 
 function redirectToCreateIdea() {
-  indexOfActivePage.value = 4;
-
-  activateCreateIdea();
-
-  localStorage.setItem("current page index", indexOfActivePage.value);
   router.push("/create-idea");
-}
-
-function isPageWithIndexActive(index) {
-  return parseInt(localStorage.getItem("current page index")) == index
-    ? true
-    : false;
 }
 
 function onMouseEnterDashboard() {
@@ -208,23 +147,6 @@ function onMouseEnterUser() {
 function onMouseLeaveUser() {
   disabledUser.value = true;
 }
-
-function dropDownClicked(elementId) {
-  if (elementId === "my-ideas" || elementId === "logout") {
-    indexOfActivePage.value = 2;
-
-    activateMyIdeas();
-  } else if (elementId === "stats") {
-    indexOfActivePage.value = 1;
-
-    activateAllIdeas();
-  } else {
-    indexOfActivePage.value = 0;
-
-    deactivateAll();
-  }
-  localStorage.setItem("current page index", indexOfActivePage.value);
-}
 </script>
 
 
@@ -237,7 +159,7 @@ function dropDownClicked(elementId) {
           class="nav-button"
           id="all-ideas"
           @click="redirectToAllIdeas"
-          :is-active="allIdeasActive"
+          :is-active="activePage === 'all'"
         >
           All ideas
         </CustomButton>
@@ -245,7 +167,7 @@ function dropDownClicked(elementId) {
           class="nav-button"
           id="my-ideas"
           @click="redirectToMyIdeas"
-          :is-active="myIdeasActive"
+          :is-active="activePage === 'my'"
         >
           My ideas
         </CustomButton>
@@ -253,7 +175,7 @@ function dropDownClicked(elementId) {
           <CustomButton
             class="nav-button"
             id="dashboard"
-            :is-active="isPageWithIndexActive(3)"
+            :is-active="activePage === 'admin-dashboard'"
             @mouseenter="onMouseEnterDashboard"
             @mouseleave="onMouseLeaveDashboard"
             :style="{ display: !(getCurrentRole() === 'ADMIN') ? 'none' : '' }"
@@ -266,7 +188,6 @@ function dropDownClicked(elementId) {
             <CustomNavigationDropDown
               :element="dashboardElements"
               :disabled="disabledDashboard"
-              @clicked-drop-down="dropDownClicked"
             />
           </div>
         </div>
@@ -276,7 +197,7 @@ function dropDownClicked(elementId) {
           class="nav-button"
           id="create-idea"
           @click="redirectToCreateIdea"
-          :is-active="createIdeaActive"
+          :is-active="activePage === 'create-idea'"
         >
           Create an Idea
         </CustomButton>
@@ -323,7 +244,6 @@ function dropDownClicked(elementId) {
           <CustomNavigationDropDown
             :element="userDashboardElements"
             :disabled="disabledUser"
-            @clicked-drop-down="dropDownClicked"
           />
         </div>
       </CustomButton>
