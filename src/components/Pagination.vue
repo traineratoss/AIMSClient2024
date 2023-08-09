@@ -4,10 +4,15 @@
     <span class="arrow single-left" @click="goToPage(currentPage - 1)" :class="{ 'hidden': currentPage <= 2 }">&lt;</span>
     
     <span class="current-page">
-      {{ currentPage }}
-      <select v-model="selectedPage" @change="goToSelectedPage">
-        <option v-for="pageNumber in totalPages" :key="pageNumber" :value="pageNumber">{{ pageNumber }}</option>
-      </select>
+      <div class="current-page-container" @click="toggleDropdown">
+        <span class="page-number">{{ currentPage }}</span>
+        <span class="material-symbols-outlined arrow-down">arrow_drop_down</span>
+      </div>
+      <div class="page-dropdown">
+        <select v-model="selectedPage" @change="goToSelectedPage">
+          <option v-for="pageNumber in totalPages" :key="pageNumber" :value="pageNumber">{{ pageNumber }}</option>
+        </select>
+      </div>
     </span>
     
     <span class="arrow single-right" @click="goToPage(currentPage + 1)" :class="{ 'hidden': currentPage >= totalPages - 1 }">&gt;</span>
@@ -36,6 +41,11 @@ function goToSelectedPage() {
 </script>
 
 <style>
+.current-page-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
 .pagination-container {
   display: flex;
   justify-content: center;
