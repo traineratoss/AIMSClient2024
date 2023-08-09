@@ -10,7 +10,7 @@ import {
 import { ref, onMounted } from "vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 
-const pageSize = 5;
+const pageSize = ref(5);
 const currentPage = ref(1);
 const totalPages = ref(0);
 const users = ref([]);
@@ -36,7 +36,7 @@ async function search(username) {
   usernameSearch.value = username;
   usernameSearch.value = usernameSearch.value.toLowerCase();
   await getAllUserByUsername(
-    pageSize,
+    pageSize.value,
     currentPage.value - 1,
     sortCategory.value,
     usernameSearch.value,
@@ -46,7 +46,7 @@ async function search(username) {
       if (res.total) {
         showImage.value = false;
         users.value = res.pagedUsers.content;
-        totalPages.value = Math.ceil(res.total / pageSize);
+        totalPages.value = Math.ceil(res.total / pageSize.value);
         if (totalPages.value != 0) {
           currentPage.value = 1;
         }
@@ -64,7 +64,7 @@ async function search(username) {
 async function changePage(pageNumber) {
   currentPage.value = pageNumber;
   await getAllUserByUsername(
-    pageSize,
+    pageSize.value,
     currentPage.value - 1,
     sortCategory.value,
     usernameSearch.value,
@@ -72,7 +72,7 @@ async function changePage(pageNumber) {
   )
     .then((res) => {
       users.value = res.pagedUsers.content;
-      totalPages.value = Math.ceil(res.total / pageSize);
+      totalPages.value = Math.ceil(res.total / pageSize.value);
     })
     .catch((error) => {
       console.log(error);
@@ -82,7 +82,7 @@ async function changePage(pageNumber) {
 function updateUsersList() {
   const username = usernameSearch.value;
   getAllUserByUsername(
-    pageSize,
+    pageSize.value,
     currentPage.value - 1,
     sortCategory.value,
     username,
@@ -90,7 +90,7 @@ function updateUsersList() {
   )
     .then((res) => {
       users.value = res.pagedUsers.content;
-      totalPages.value = Math.ceil(res.total / pageSize);
+      totalPages.value = Math.ceil(res.total / pageSize.value);
     })
     .catch((error) => {
       console.log("Error");
@@ -98,8 +98,10 @@ function updateUsersList() {
 }
 
 async function changeDisplay(pageSize1) {
+  pageSize.value = pageSize1;
+  currentPage.value = 1;
   await getAllUserByUsername(
-    pageSize1,
+    pageSize.value,
     currentPage.value - 1,
     sortCategory.value,
     usernameSearch.value,
@@ -107,7 +109,7 @@ async function changeDisplay(pageSize1) {
   )
     .then((res) => {
       users.value = res.pagedUsers.content;
-      totalPages.value = Math.ceil(res.total / pageSize);
+      totalPages.value = Math.ceil(res.total / pageSize.value);
     })
     .catch((error) => {
       console.log("Error");
