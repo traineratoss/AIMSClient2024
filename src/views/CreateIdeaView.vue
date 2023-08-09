@@ -202,7 +202,7 @@ async function initialCurrentIndex() {
       return index - 1;
     }
   } else {
-    //if we are creating
+    // if we are creating
     return 0;
   }
 }
@@ -272,8 +272,10 @@ const ideaId = useRoute().query.id;
 if (showDeletePopup) loadIdeaForDelete();
 if (disableFields) loadIdeaForDelete();
 
+const currentIdeaTitle = ref("");
 async function loadIdeaForDelete() {
   const response = await getIdea(ideaId);
+  currentIdeaTitle.value = response.title;
   inputValue.value = response.title;
   statusValue.value = response.status.toLowerCase();
 
@@ -446,7 +448,7 @@ function onMouseEnter() {}
     <CustomDialog
       ref="customDialog"
       :open="deletePopup"
-      title="Are you sure you want to delete?"
+      :title="`Are you sure you want to delete '${currentIdeaTitle}'?`"
       message="This item will be deleted immediatly. You can't undo this action!"
     >
       <div class="dialog-actions">

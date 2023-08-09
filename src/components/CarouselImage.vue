@@ -79,7 +79,6 @@ watch(
 );
 
 const prevSlide = () => {
-  console.log(currentIndex.value)
   currentIndex.value = (currentIndex.value - 1 + slides.images.length) % slides.images.length;
   transformImageDataIntoValues(slides.images[currentIndex.value])
   emit('current-index', currentIndex.value);
