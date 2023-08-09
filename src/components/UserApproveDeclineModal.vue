@@ -8,6 +8,12 @@ const props = defineProps({
 
 const emits = defineEmits(['ok']);
 
+const vFocus = {
+  mounted: (el) => {
+    el.focus();
+  }
+};
+
 function okClick() {
     emits('ok');
 }
@@ -18,6 +24,7 @@ function okClick() {
         <div 
             v-if="show" 
             class="popup-mask"
+            @click.self="okClick"
         >
             <div class="popup-container">
                 <span class="material-symbols-outlined">
@@ -26,6 +33,8 @@ function okClick() {
                 {{ message }}
                 <CustomButton
                     @click="okClick"
+                    @keydown.enter="okClick"
+                    v-focus
                 >
                     OK
                 </CustomButton>

@@ -144,29 +144,6 @@ async function filterIdeas(
   }
 }
 
-async function sendDataForCustomStats(
-  selectedDateFrom,
-  selectedDateTo
-) {
- 
-
-  let url = `${API_URL}/new-stats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`;
-  
-  const response = await fetch(url, {
-    method: "GET",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  });
-
-  const data = await response.json();
-  return data;
-}
 
 async function getIdea(id) {
   const response = await fetch(API_URL + "/get?id=" + id, {
@@ -287,11 +264,6 @@ async function getImageByIdeaId(ideaId) {
   return data;
 }
 
-async function getStats() {
-  const response = await fetch(API_URL + "/stats");
-  const data = await response.json();
-  return data;
-}
 async function deleteIdea(ideaId) {
   return fetch("http://localhost:8080/aims/api/v1/ideas/delete?id=" + ideaId, {
     method: "DELETE",
@@ -306,10 +278,8 @@ export {
   filterIdeas,
   getPagedIdeasFromUser,
   getIdea,
-  getStats,
   updateIdea,
   deleteIdea,
-  sendDataForCustomStats,
   getImageById,
   getImageByIdeaId
 };

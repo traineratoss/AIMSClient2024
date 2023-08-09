@@ -20,7 +20,7 @@ const props = defineProps({
 <style scoped>
 .loader {
   margin: auto;
-  border: 20px solid #dedede;
+  border: 10px solid #dedede;
   border-radius: 50%;
   animation: spinner 1s linear infinite;
 }
@@ -28,14 +28,14 @@ const props = defineProps({
 @keyframes spinner {
   0% {
     transform: rotate(0deg);
-    border-top: 20px solid #ffa941;
+    border-top: 10px solid #ffa941;
   }
   50% {
-    border-top: 20px solid #dedede;
+    border-top: 10px solid #dedede;
   }
   100% {
     transform: rotate(360deg);
-    border-top: 20px solid #ffa941;
+    border-top: 10px solid #ffa941;
   }
 }
 </style>

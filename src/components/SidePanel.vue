@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomInput from "./CustomInput.vue";
-import { getCategory, getUser, sendDataForCustomStats } from "../services/idea.service";
+import { getCategory,getUser } from "../services/idea.service";
 import { filterIdeas } from "../services/idea.service";
 import { defineEmits } from "vue";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
@@ -38,7 +38,11 @@ const statusOptions =
     ? ["OPEN", "IMPLEMENTED"]
     : ["OPEN", "DRAFT", "IMPLEMENTED"];
 
-const emits = defineEmits(["filter-listening", "pass-input-variables", "generatedStatistics"]);
+const emits = defineEmits([
+  "filter-listening",
+  "pass-input-variables",
+  "generatedStatistics",
+]);
 
 watch(
   [
@@ -73,15 +77,12 @@ watch(
 );
 
 watch(searchValue, (newValue) => {
-  if(newValue.text!==undefined) {
-      inputTitle.value = newValue.text;
-    }
-})
-
-//when unmounting, we will remove the event listener
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleGlobalKeyDown);
+  if ( newValue && newValue.text !== undefined) {
+    inputTitle.value = newValue.text;
+  }
 });
+
+
 
 //when pressing anywhere on the page the Enter key, we will filter
 function handleGlobalKeyDown(event) {
@@ -107,10 +108,14 @@ async function handleSelectedStatus(selectedStatus) {
 }
 
 onMounted(async () => {
-
+  if(searchValue && searchValue.value && searchValue.value.text){
   inputTitle.value = searchValue.value.text; // each time we mount a view, we set the title to be the one from the search bar
   // so they wont be different
-
+  } 
+  else 
+  {
+    inputTitle.value="";
+  }
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
@@ -119,6 +124,7 @@ onMounted(async () => {
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
   sortOrder.value = "ASC";
+  console.log(userOptions);
 });
 
 const filter = async () => {
@@ -129,7 +135,7 @@ const filter = async () => {
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
   const status = statusSelected.value;
-  
+
   const filteredIdeas = await filterIdeas(
     title,
     text,
@@ -143,7 +149,7 @@ const filter = async () => {
     props.currentUser,
     props.sort
   );
-  
+
   filteredIdeasEmit.value = filteredIdeas;
   searchValue.value = title;
 };
@@ -152,8 +158,8 @@ const filter = async () => {
 function clearSelection() {
   searchValue.value = {
     text: "",
-    key: ""
-  }
+    key: "",
+  };
   inputTitle.value = "";
   inputText.value = "";
   selectedDateFrom.value = "";
@@ -164,28 +170,30 @@ function clearSelection() {
   clearAllDropdownValues.value = true;
   setTimeout(() => {
     clearAllDropdownValues.value = false;
-  }, 10)
+  }, 10);
 }
-
 </script>
 
 <template>
   <div class="side-panel-container">
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
-      <span class="title"> Title </span>
+      <div class="buttons-container">
+        <div><button @click="clearSelection()">Clear all</button></div>
+      </div>
+      <span class="title"> Title: </span>
       <CustomInput
-        v-model="inputTitle" 
-        class="title-input" 
+        v-model="inputTitle"
+        class="title-input"
         :placeholder="`Write a title...`"
         :can-modify-search-value="true"
       />
 
       <span class="text">Text:</span>
-      <CustomInput 
-        v-model="inputText" 
-        class="text-input" 
-        :placeholder="`Write a text...`" 
+      <CustomInput
+        v-model="inputText"
+        class="text-input"
+        :placeholder="`Write a text...`"
         :can-modify-search-value="false"
       />
 
@@ -227,11 +235,7 @@ function clearSelection() {
       ></CustomDropDown>
 
       <div class="date-chooser">
-        <div class="buttons-container">
-        <div><button @click="clearSelection()">Clear all</button></div>
-
-        </div>
-        <fieldset style="border: 1px solid slategray;">
+        <fieldset style="border: 1px solid slategray">
           <legend style="margin-left: 1em; padding: 0.2em 0.8em">
             Creation Date
           </legend>
@@ -366,13 +370,10 @@ function clearSelection() {
   border: 1px solid slategray;
   cursor: pointer;
 }
-.empty-user {
+
+.buttons-container {
   grid-column: 2/3;
-  grid-row: 6/7;
-  width: 10px;
-}
-.empty-span {
-  grid-column: 1/2;
-  grid-row: 6/7;
+  grid-row: 1/2;
+  justify-self: end;
 }
 </style>

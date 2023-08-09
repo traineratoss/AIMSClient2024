@@ -8,6 +8,7 @@ import { postUser, validateUsername } from "../services/user_service.js";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import TermsAndConditionsModal from "../components/TermsAndConditionsModal.vue";
+import CustomLoader from "../components/CustomLoader.vue";
 
 const acceptedTermsAndConditions = ref(false);
 const usernameText = ref("");
@@ -85,7 +86,11 @@ function showTermsAndConditionsPopup() {
 
 
 <template>
-  <div class="custom-register">
+  <div
+    class="custom-register"
+    tabindex="-1"
+    @focus="showUsernameDetails = false"
+  >
     <CompanyLogo />
     <div class="register">
       <FormTitle label="Register" />
@@ -140,6 +145,7 @@ function showTermsAndConditionsPopup() {
       >
         Sign up
       </CustomButton>
+      <CustomLoader :size="'50'" />
     </div>
     <Teleport to="body">
       <TermsAndConditionsModal

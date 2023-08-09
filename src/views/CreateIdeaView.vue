@@ -3,7 +3,7 @@ import CarouselImage from "../components/CarouselImage.vue";
 import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
-import CustomDialog from "../components/CustomDialog.vue"
+import CustomDialog from "../components/CustomDialog.vue";
 import { ref, onMounted, watchEffect, computed } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
@@ -14,7 +14,7 @@ import {
   deleteIdea,
   getAllImages,
   createIdea,
-  getImageByIdeaId
+  getImageByIdeaId,
 } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
 
@@ -28,7 +28,7 @@ const statusError = ref(false);
 const textError = ref(false);
 // const categoryError = ref(false);
 
-const currentUsername= getCurrentUsername();
+const currentUsername = getCurrentUsername();
 const slideImages = ref([]);
 
 const currentImageIndex = ref(null);
@@ -82,7 +82,7 @@ const pageTitle = computed(() => {
     return "Delete your Idea";
   } else if (isUpdatedIdeaEmpty.value) {
     return "Create an Idea";
-  }else if (disableFields) {
+  } else if (disableFields) {
     return "View your Idea";
   } else {
     return "Update your Idea";
@@ -92,7 +92,7 @@ const pageTitle = computed(() => {
 //this function transforms my whole image string into 3 parts: type, name and base64
 //needed for the request dto
 function transformImageDataIntoValues(dataString) {
-  const base64Index = dataString.indexOf(',') + 1;
+  const base64Index = dataString.indexOf(",") + 1;
   const base64Data = dataString.slice(base64Index);
   selectedImageBase64.value = base64Data;
 
@@ -100,9 +100,15 @@ function transformImageDataIntoValues(dataString) {
   const everythingBeforeBase64 = dataString.substring(0, indexOfBase64);
 
   const indexOfEqual = everythingBeforeBase64.indexOf("=");
-  selectedImageName.value = everythingBeforeBase64.substring(indexOfEqual+1, everythingBeforeBase64.length);
+  selectedImageName.value = everythingBeforeBase64.substring(
+    indexOfEqual + 1,
+    everythingBeforeBase64.length
+  );
 
-  selectedImageType.value = everythingBeforeBase64.substring(everythingBeforeBase64.indexOf(":")+1, everythingBeforeBase64.indexOf(";")) ;
+  selectedImageType.value = everythingBeforeBase64.substring(
+    everythingBeforeBase64.indexOf(":") + 1,
+    everythingBeforeBase64.indexOf(";")
+  );
 }
 
 //This is the function that is handling the updating in the db
@@ -114,13 +120,13 @@ async function updateIdeaFunction() {
   const newCategoryList = categoriesSelected.value.map((category) => {
     return { text: category };
   });
-  transformImageDataIntoValues(slideImages.value[currentImageIndex.value])
+  transformImageDataIntoValues(slideImages.value[currentImageIndex.value]);
 
   const imageDTO = {
-      fileName: selectedImageName.value,
-      fileType: selectedImageType.value,
-      image: selectedImageBase64.value
-  }
+    fileName: selectedImageName.value,
+    fileType: selectedImageType.value,
+    image: selectedImageBase64.value,
+  };
 
   await updateIdea(
     updatedIdeaId,
@@ -130,7 +136,7 @@ async function updateIdeaFunction() {
     newCategoryList.value,
     imageDTO
   );
-  router.back()
+  router.back();
 }
 
 //Checking what we want to do (update or create) since we use the same component
@@ -165,30 +171,38 @@ const getCurrentIndex = (currentIndex) => {
 };
 
 //updating the values we get from the carousel emit
-const getSelectedImageValues = (selectedImageBase64Param, selectedImageNameParam, selectedImageTypeParam) => {
+const getSelectedImageValues = (
+  selectedImageBase64Param,
+  selectedImageNameParam,
+  selectedImageTypeParam
+) => {
   selectedImageBase64.value = selectedImageBase64Param;
   selectedImageName.value = selectedImageNameParam;
   selectedImageType.value = selectedImageTypeParam;
-}
+};
 
 //set the inital current index in the carousel, depending on the idea id
 async function initialCurrentIndex() {
   if (JSON.stringify(updatedIdea.value) !== "{}") {
-    if(showDeletePopup) { //if we delete
+    if (showDeletePopup) {
+      //if we delete
       const data = await getImageByIdeaId(updatedIdea.value.id);
       const index = await data.id;
-      return index-1;
+      return index - 1;
     }
-    if(updatedIdea.value.disableFields) { //if we are viewing
+    if (updatedIdea.value.disableFields) {
+      //if we are viewing
       const data = await getImageByIdeaId(updatedIdea.value.id);
       const index = await data.id;
-      return index-1;
-    } else { //if we are updating
+      return index - 1;
+    } else {
+      //if we are updating
       const data = await getImageByIdeaId(updatedIdea.value.updateId);
       const index = await data.id;
-      return index-1;
+      return index - 1;
     }
-  } else { //if we are creating
+  } else {
+    // if we are creating
     return 0;
   }
 }
@@ -203,7 +217,6 @@ async function createIdeaFunction() {
   const statusErrorCheck =
     statusValue.value === null || statusValue.value === "";
   const textErrorCheck = textValue.value === null || textValue.value === "";
-
 
   // WE MIGHT USE THESE IF WE WANNA SHOW A KIND OF ERROR WHEN NOT INTRODUCING IN THE FIELD
 
@@ -235,8 +248,8 @@ async function createIdeaFunction() {
     const imageDTO = {
       fileName: selectedImageName.value,
       fileType: selectedImageType.value,
-      image: selectedImageBase64.value
-    }
+      image: selectedImageBase64.value,
+    };
 
     const data = await createIdea(
       inputValue.value,
@@ -246,7 +259,7 @@ async function createIdeaFunction() {
       imageDTO,
       currentUsername
     );
-    router.push({ name: 'my'})
+    router.push({ name: "my" });
     return data;
   }
 }
@@ -259,8 +272,10 @@ const ideaId = useRoute().query.id;
 if (showDeletePopup) loadIdeaForDelete();
 if (disableFields) loadIdeaForDelete();
 
+const currentIdeaTitle = ref("");
 async function loadIdeaForDelete() {
   const response = await getIdea(ideaId);
+  currentIdeaTitle.value = response.title;
   inputValue.value = response.title;
   statusValue.value = response.status.toLowerCase();
 
@@ -285,16 +300,16 @@ async function handleConfirm() {
 }
 
 const uploadedImage = ref(null);
-async function uploadImage (event){
+async function uploadImage(event) {
   uploadedImage.value = event.target.files[0]; //we get the file from the computer
 
   //then we create or custom url containg all the 3 values: base64, type, name
   const newUploadedImageUrl = ref("");
-  newUploadedImageUrl.value += `data:image/${uploadedImage.value.type};name=${uploadedImage.value.name};base64,`
+  newUploadedImageUrl.value += `data:image/${uploadedImage.value.type};name=${uploadedImage.value.name};base64,`;
   const blob = await uploadedImage.value.arrayBuffer();
   const byteArray = new Uint8Array(await blob);
 
-  let binaryString = '';
+  let binaryString = "";
 
   for (let i = 0; i < byteArray.length; i++) {
     binaryString += String.fromCharCode(byteArray[i]);
@@ -302,13 +317,13 @@ async function uploadImage (event){
 
   const base64String = btoa(binaryString);
 
-  newUploadedImageUrl.value += `${base64String}`
+  newUploadedImageUrl.value += `${base64String}`;
 
   slideImages.value.push(newUploadedImageUrl.value);
 }
 
 async function shouldDisableArrows() {
-  if(updatedIdea.value.disableFields === "true") {
+  if (updatedIdea.value.disableFields === "true") {
     return true;
   } else {
     return false;
@@ -325,7 +340,7 @@ function onMouseEnter() {}
     <div class="idea-title">
       <h1>
         {{ pageTitle }}
-      </h1> 
+      </h1>
     </div>
     <div class="idea">
       <label for="title-idea" class="label">Title:</label>
@@ -350,12 +365,14 @@ function onMouseEnter() {}
         @mouseleave="onMouseLeave"
         name="status-idea"
         id="status-idea"
-        class="input-width"
+        class="input-width custom-select"
         :disabled="fieldsDisabled"
       >
         <option value="open">Open</option>
         <option value="draft">Draft</option>
-        <option v-if="!isUpdatedIdeaEmpty" value="implemented">Implemented</option>
+        <option v-if="!isUpdatedIdeaEmpty" value="implemented">
+          Implemented
+        </option>
       </select>
     </div>
     <div class="idea">
@@ -378,49 +395,60 @@ function onMouseEnter() {}
       />
     </div>
 
-        <div class="idea-text">
-            <label for="category-idea" class="label-text" >Idea text:</label>
-            <textarea 
-              v-model="textValue" 
-              :disabled="fieldsDisabled" 
-              placeholder="Write your text here..." 
-              :class="{textarea:textError}"
-            >
-            </textarea>
-        </div>
-        <div class="idea">
-          <CarouselImage 
-            :images="slideImages" 
-            @current-index="getCurrentIndex" 
-            @selected-image-values="getSelectedImageValues" 
-            :initialCurrentIndex="initialCurrentIndex()" 
-            :disabledArrow="shouldDisableArrows()"
-          />
-        </div>
-        <div class="add-image" >
-            <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="uploadedImage" v-on:change="uploadImage($event)"/>
-            <label for="upload" class="add-image-idea" v-if="!deletePopup" style="display: flex; align-items: center;">
-              Upload Image
-              <span class="material-symbols-outlined" style="margin-left: 5px;">
-                attach_file
-              </span>
-            </label>
-        </div>
-        <div>
-            <CustomButton 
-              id="create-idea" 
-              @click="shouldCreateOrUpdate" 
-              :disabled="fieldsDisabled" 
-              v-if="!deletePopup"
-            >
-            {{ isUpdatedIdeaEmpty ? 'Create Idea' : 'Update Idea' }}
-
-            </CustomButton>
-        </div>
+    <div class="idea-text">
+      <label for="category-idea" class="label-text">Idea text:</label>
+      <textarea
+        v-model="textValue"
+        :disabled="fieldsDisabled"
+        placeholder="Write your text here..."
+        :class="{ textarea: textError }"
+      >
+      </textarea>
+    </div>
+    <div class="idea">
+      <CarouselImage
+        :images="slideImages"
+        @current-index="getCurrentIndex"
+        @selected-image-values="getSelectedImageValues"
+        :initialCurrentIndex="initialCurrentIndex()"
+        :disabledArrow="shouldDisableArrows()"
+      />
+    </div>
+    <div class="add-image">
+      <input
+        type="file"
+        id="upload"
+        hidden
+        :disabled="fieldsDisabled"
+        ref="uploadedImage"
+        v-on:change="uploadImage($event)"
+      />
+      <label
+        for="upload"
+        class="add-image-idea"
+        v-if="!deletePopup"
+        style="display: flex; align-items: center"
+      >
+        Upload Image
+        <span class="material-symbols-outlined" style="margin-left: 5px">
+          attach_file
+        </span>
+      </label>
+    </div>
+    <div>
+      <CustomButton
+        id="create-idea"
+        @click="shouldCreateOrUpdate"
+        :disabled="fieldsDisabled"
+        v-if="!deletePopup"
+      >
+        {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
+      </CustomButton>
+    </div>
     <CustomDialog
       ref="customDialog"
       :open="deletePopup"
-      title="Are you sure you want to delete?"
+      :title="`Are you sure you want to delete '${currentIdeaTitle}'?`"
       message="This item will be deleted immediatly. You can't undo this action!"
     >
       <div class="dialog-actions">
@@ -441,6 +469,7 @@ function onMouseEnter() {}
   margin-top: 10px;
 }
 
+
 .add-image-idea {
   background-color: gray;
   color: white;
@@ -450,7 +479,12 @@ function onMouseEnter() {}
   margin-top: 1rem;
 }
 .input-width {
-  width: 200px;
+  width: 202px;
+}
+.custom-select{
+  padding: 5px;
+  border: none;
+  height: 27px;
 }
 
 .idea {
@@ -460,7 +494,7 @@ function onMouseEnter() {}
   margin-bottom: 10px;
   width: 300px;
 }
-.idea-title{
+.idea-title {
   display: flex;
   align-items: center;
 }
@@ -509,13 +543,27 @@ select {
 }
 
 .dialog-actions button:nth-child(1) {
-  background-color: #f44336;
-  color: white;
+  height: 40px;
+  width: 80px;
+  background-color: #fff;
+  border: 1px solid slategray;
+  border-radius: 5px;
+  margin-right: 10px;
 }
 
 .dialog-actions button:nth-child(2) {
-  background-color: #ffa941;
-  color: black;
+  height: 40px;
+  width: 80px;
+  background-color: #fff;
+  border: 1px solid slategray;
+  border-radius: 5px;
+  margin-right: 10px;
 }
-
+.dialog-actions button:nth-child(1):hover {
+  box-shadow: 0 2px 2px slategray;
+}
+.dialog-actions button:nth-child(2):hover {
+  box-shadow: 0 2px 2px slategray;
+  background-color: orange;
+}
 </style>

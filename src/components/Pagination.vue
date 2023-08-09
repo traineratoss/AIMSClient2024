@@ -1,58 +1,87 @@
 <template>
   <div class="pagination-container">
-    <span
-      v-for="pageNumber in pageNumbers"
-      :key="pageNumber"
-      :class="{ 'page-number': true, active: pageNumber === currentPage }"
-      @click="goToPage(pageNumber)"
-    >
-      {{ pageNumber }}
+    <span class="arrow double-left" @click="goToPage(1)" :class="{ 'hidden': currentPage === 1 }">&lt;&lt;</span>
+    <span class="arrow single-left" @click="goToPage(currentPage - 1)" :class="{ 'hidden': currentPage <= 2 }">&lt;</span>
+    
+    <span class="current-page">
+      <div class="current-page-container" @click="toggleDropdown">
+        <span class="page-number">{{ currentPage }}</span>
+        <span class="material-symbols-outlined arrow-down">arrow_drop_down</span>
+      </div>
+      <div class="page-dropdown">
+        <div class="dropdown-container">
+          <select v-model="selectedPage" @change="goToSelectedPage">
+            <option v-for="pageNumber in totalPages" :key="pageNumber" :value="pageNumber">{{ pageNumber }}</option>
+          </select>
+        </div>
+      </div>
     </span>
+    
+    <span class="arrow single-right" @click="goToPage(currentPage + 1)" :class="{ 'hidden': currentPage >= totalPages - 1 }">&gt;</span>
+    <span class="arrow double-right" @click="goToPage(totalPages)" :class="{ 'hidden': currentPage === totalPages }">&gt;&gt;</span>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, onMounted } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 
 const props = defineProps(["currentPage", "totalPages"]);
 const emit = defineEmits(["changePage"]);
 
-const localTotalPages = ref(props.totalPages);
-const pageNumbers = ref([]);
-
-watch(
-  () => props.totalPages,
-  (newValue) => {
-    localTotalPages.value = newValue;
-    generatePageNumbers();
-  }
-);
-
-onMounted(() => {
-  generatePageNumbers();
-});
-
-function generatePageNumbers() {
-  const numbers = [];
-  for (let i = 1; i <= localTotalPages.value; i++) {
-    numbers.push(i);
-  }
-  pageNumbers.value = numbers;
-}
+const selectedPage = ref(props.currentPage);
 
 function goToPage(pageNumber) {
-  emit("changePage", pageNumber);
+  if (pageNumber >= 1 && pageNumber <= props.totalPages) {
+    selectedPage.value = pageNumber;
+    emit("changePage", pageNumber);
+  }
+}
+
+function goToSelectedPage() {
+  goToPage(selectedPage.value);
 }
 </script>
 
 <style>
+.current-page-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
 .pagination-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   margin-top: 10px;
+  font-size: 14px;
 }
 
-.page-number {
+.current-page {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  background-color: #000;
+  color: #fff;
+  position: relative;
+  cursor: pointer;
+}
+
+.current-page select {
+  border: none;
+  background-color: transparent;
+  color: #000;
+  cursor: pointer;
+  appearance: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.arrow {
   display: inline-block;
   margin: 0 5px;
   padding: 5px 10px;
@@ -62,26 +91,12 @@ function goToPage(pageNumber) {
   cursor: pointer;
 }
 
-.page-number.active {
-  background-color: #000;
-  color: #fff;
+.arrow.hidden {
+  display: none;
 }
 
-.page-number:hover {
+.arrow:hover {
   background-color: #000;
   color: #fff;
-}
-
-.current-page {
-  background-color: #000;
-  color: #fff;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.current-page:hover {
-  text-decoration: underline;
 }
 </style>

@@ -82,6 +82,7 @@ const router = createRouter({
     },
     {
       path: "/:pathMatch(.*)*",
+      alias: '/page-not-found',
       name: "page-not-found",
       component: PageNotFound,
     },
