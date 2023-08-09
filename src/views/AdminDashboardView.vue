@@ -8,8 +8,9 @@ import {
   getCurrentUsername,
 } from "../services/user_service.js";
 import { ref, onMounted } from "vue";
+import PageSizeSelect from "../components/PageSizeSelect.vue";
 
-const pageSize = 10;
+const pageSize = 5;
 const currentPage = ref(1);
 const totalPages = ref(0);
 const users = ref([]);
@@ -95,6 +96,23 @@ function updateUsersList() {
       console.log("Error");
     });
 }
+
+async function changeDisplay(pageSize1) {
+  await getAllUserByUsername(
+    pageSize1,
+    currentPage.value - 1,
+    sortCategory.value,
+    usernameSearch.value,
+    currentUsername
+  )
+    .then((res) => {
+      users.value = res.pagedUsers.content;
+      totalPages.value = Math.ceil(res.total / pageSize);
+    })
+    .catch((error) => {
+      console.log("Error");
+    });
+}
 </script>
 
 <template>
@@ -103,6 +121,13 @@ function updateUsersList() {
     <div class="right-container">
       <FormTitle label="All users" id="title" v-if="!showImage" />
       <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
+      <div class="pageSize">
+        <PageSizeSelect
+          id="pageSizeSelect"
+          label="Users:"
+          @change-display="changeDisplay"
+        />
+      </div>
       <div class="main-container">
         <div class="user-container">
           <UserDisplay
@@ -202,5 +227,12 @@ img {
 
 #title {
   margin: 10vh 0;
+}
+
+.pageSize {
+  width: 60.8vw;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2vh;
 }
 </style>
