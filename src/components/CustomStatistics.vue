@@ -161,7 +161,7 @@ function getShortenedTitle(title, maxLength) {
             </div>
           </div>
           <div class="most-commented-ideas" style="margin-bottom: 50px">
-            <p>Overall info :</p>
+            <p>Overall information :</p>
             <table id="idea-table">
               <tr>
                 <td>Number of Users:</td>
@@ -172,11 +172,11 @@ function getShortenedTitle(title, maxLength) {
                 <td>{{ stats.ideasPerUser }}</td>
               </tr>
               <tr>
-                <td>Total nr. of Comments:</td>
+                <td>Total no. of Comments:</td>
                 <td>{{ stats.totalNrOfComments }}</td>
               </tr>
               <tr>
-                <td>Total nr. of Replies:</td>
+                <td>Total no. of Replies:</td>
                 <td>{{ stats.totalNrOfReplies }}</td>
               </tr>
             </table>
@@ -324,11 +324,11 @@ function getShortenedTitle(title, maxLength) {
             <p>Overall info :</p>
             <table id="idea-table">
               <tr>
-                <td>Total nr. of Comments:</td>
+                <td>Total no. of Comments:</td>
                 <td>{{ props.recievedFilteredStats.totalNrOfComments }}</td>
               </tr>
               <tr>
-                <td>Total nr. of Replies:</td>
+                <td>Total no. of Replies:</td>
                 <td>{{ props.recievedFilteredStats.totalNrOfReplies }}</td>
               </tr>
             </table>
