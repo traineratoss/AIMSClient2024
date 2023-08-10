@@ -26,7 +26,6 @@ const containsNumber = ref(false);
 const containsUppercase = ref(false);
 const containsSpecialCharacter = ref(false);
 const firstLogin = ref(false);
-
 currentAvatarId.value = getCurrentAvatarId();
 
 const slideImages = [
@@ -40,9 +39,7 @@ const slideImages = [
 ];
 
 onMounted(() => {
-  isFirstLogin(getCurrentUsername()).then(res => {
-    firstLogin.value = res;
-  });
+  firstLogin.value = localStorage.getItem("isFirstLogin");
 })
 
 function submit() {
@@ -182,9 +179,9 @@ function checkPassword() {
     </div>
     <div id="controls-container">
       <button
-        id="cancel" 
-        :disabled="firstLogin" 
-        @click="router.push('my-profile')"
+        id="cancel"
+        :disabled="!firstLogin"
+        @click="router.push('/my')"
       > Cancel </button>
       <CustomButton id="submit" @click="submit">Submit</CustomButton>
     </div>

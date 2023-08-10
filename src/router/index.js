@@ -11,6 +11,7 @@ import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import TestView from "../views/TestView.vue";
+import { getCurrentRole, getCurrentUsername, isFirstLogin, logout } from "../services/user_service";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -87,6 +88,42 @@ const router = createRouter({
       component: PageNotFound,
     },
   ],
+});
+
+router.beforeEach((to, from) => {
+  if (getCurrentUsername() !== null) {
+    if (to.name === 'change') {
+      return;
+    }
+    
+    if (to.name === 'login' || 
+        to.name === 'register' || 
+        to.name === 'recovery' ||
+        to.name === 'registration-complete' ||
+        to.name === 'default') {
+          router.push('/my');
+      }
+    
+    if (getCurrentRole() === 'STANDARD' && to.name === 'admin-dashboard') {
+      router.push('/page-not-found');
+      showNavbar.value = false;
+      return;
+    }
+
+    const firstLogin = localStorage.getItem("isFirstLogin");
+    if (firstLogin === 'true') {
+      router.push('/change');
+    } 
+  } else {
+    if (to.name !== 'login' && 
+        to.name !== 'register' && 
+        to.name !== 'recovery' &&
+        to.name !== 'registration-complete' &&
+        to.name !== 'page-not-found' &&
+        to.name !== 'default') {
+          router.push('/login');
+      }
+  }
 });
 
 /*

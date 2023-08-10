@@ -42,6 +42,7 @@ async function loginUser(username, hashPassword) {
     localStorage.setItem("email", json.email);
     localStorage.setItem("fullName", json.fullName);
     localStorage.setItem("avatarId", json.avatarId - 1);
+    localStorage.setItem("isFirstLogin", json.isFirstLogin);
   }
   return json;
 }
@@ -284,7 +285,12 @@ function validateUsername(username) {
   return false;
 }
 
+const sleepNow = (delay) =>
+  new Promise((resolve) => setTimeout(resolve, delay));
+
+
 async function isFirstLogin(usernameOrEmail) {
+  await sleepNow(500);
   const response = await fetch(`${API_URL}/is-first-login?usernameOrEmail=${usernameOrEmail}`);
   const json = response.json();
   return json;
