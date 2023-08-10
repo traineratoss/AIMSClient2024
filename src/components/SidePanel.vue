@@ -327,7 +327,7 @@ watch(userSelected, () => {
           {{ displaySelection(categoriesSelected) }}
         </div>
       </div>
-
+        <!--Empty comment-->
       <span
         :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         v-if="currentUser == null"
