@@ -356,6 +356,7 @@ function getShortenedTitle(title, maxLength) {
   text-align: center;
   width: 5.5vw;
   border-radius: 3px;
+  cursor: pointer;
 }
 
 .load-button:hover {
