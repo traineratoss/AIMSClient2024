@@ -133,7 +133,7 @@ async function updateIdeaFunction() {
     newTitle,
     newText,
     newStatus,
-    newCategoryList.value,
+    newCategoryList,
     imageDTO
   );
   router.back();
@@ -209,7 +209,7 @@ async function initialCurrentIndex() {
 
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
-
+  console.log(categoriesSelected.value)
   //CHECKING IF ALL THE FIELDS ARE CORRECTLY INTRODUCED
   const categoryErrorCheck =
     !Array.isArray(rawCategoriesValue) || rawCategoriesValue.length === 0;
@@ -218,6 +218,11 @@ async function createIdeaFunction() {
     statusValue.value === null || statusValue.value === "";
   const textErrorCheck = textValue.value === null || textValue.value === "";
 
+  console.log("categoryErrorCheck:", categoryErrorCheck);
+console.log("titleErrorCheck:", titleErrorCheck);
+console.log("statusErrorCheck:", statusErrorCheck);
+console.log("textErrorCheck:", textErrorCheck);
+  
   // WE MIGHT USE THESE IF WE WANNA SHOW A KIND OF ERROR WHEN NOT INTRODUCING IN THE FIELD
 
   //const setError = (errorFlag, errorMessage) => {
@@ -234,7 +239,7 @@ async function createIdeaFunction() {
   // titleError.value = setError(titleErrorFlag, "Please select a title");
   // statusError.value = setError(statusErrorFlag, "Please select a status");
   // textError.value = setError(textErrorFlag, "Please select a text");
-
+    
   if (
     !titleErrorCheck &&
     !textErrorCheck &&
@@ -379,7 +384,7 @@ function onMouseEnter() {}
       <label for="category-idea" class="label">Category:</label>
       <CustomDropDown
         v-if="!showDeletePopup && !disableFields"
-        @update:selectedCategories="handleSelectedCategories"
+        @update:selectedOptions="handleSelectedCategories"
         :disabled="fieldsDisabled"
         :variants="categoryOptions"
         :canAddInDropdown="true"

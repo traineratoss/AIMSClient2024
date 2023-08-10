@@ -336,6 +336,7 @@ watch(userSelected, () => {
       >
 
       <CustomDropDown
+        v-if="currentUser == null"
         class="user-select"
         id="userSelect"
         :variants="userOptions"

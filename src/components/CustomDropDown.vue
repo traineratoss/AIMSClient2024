@@ -53,6 +53,8 @@ const parsedSelectedOptions = ref(JSON.parse(selectedObjectsReactive.value));
 
 const initialSelectedObjects = ref(null);
 
+const loaded = ref(false);
+
 onMounted(async () => {
   comboInput.value.addEventListener("click", showDropdown);
   // i set the input to be equal to the initially selected values (from the props)
@@ -113,7 +115,6 @@ const handleCheckboxChange = () => {
   const selectedVariants = Array.from(checkboxes)
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
-
   //comboInput.value.value = selectedVariants.join(", ");
   emit("update:selectedOptions", selectedVariants);
 };
