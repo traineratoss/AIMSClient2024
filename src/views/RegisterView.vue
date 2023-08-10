@@ -18,6 +18,7 @@ const message = ref("");
 const buttonDisabled = ref(false);
 const showTermsAndConditionsModal = ref(false);
 const showUsernameDetails = ref(false);
+const showLoadingCircle = ref(false);
 
 function signUp() {
   if (acceptedTermsAndConditions.value === true) {
@@ -33,12 +34,18 @@ function signUp() {
       if (validateEmail(emailText.value) === true) {
         if (validateUsername(usernameText.value.toLowerCase()) === true) {
           buttonDisabled.value = true;
+          setTimeout(() => {
+            if (!showErrorMessage.value) {
+              showLoadingCircle.value = true;
+            }
+          }, 250);
+          showErrorMessage.value = false;
           postUser(usernameText.value.toLowerCase(), emailText.value)
             .then((res) => {
-              showErrorMessage.value = false;
               router.push("/registration-complete");
             })
             .catch((error) => {
+              showLoadingCircle.value = false;
               if (error.message === "Server connection error") {
                 message.value = error.message;
               } else {
@@ -145,7 +152,12 @@ function showTermsAndConditionsPopup() {
       >
         Sign up
       </CustomButton>
-      <CustomLoader :size="'50'" />
+      <div
+        v-if="showLoadingCircle"
+        class="loading-circle"
+      >
+        <CustomLoader :size="'50'" />
+      </div>
     </div>
     <Teleport to="body">
       <TermsAndConditionsModal
@@ -167,6 +179,18 @@ function showTermsAndConditionsPopup() {
   margin-top: 10vh;
   align-items: center;
   gap: 20px;
+}
+
+.loading-circle {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .material-symbols-outlined {
