@@ -144,9 +144,7 @@ function checkPassword() {
         <li :class="{ is_valid: containsEightCharacters }">8 Characters</li>
         <li :class="{ is_valid: containsNumber }">Contains numbers</li>
         <li :class="{ is_valid: containsUppercase }">Contains Uppercase</li>
-        <li :class="{ is_valid: containsSpecialCharacter }">
-          Contains Special Character
-        </li>
+        <li :class="{ is_valid: containsSpecialCharacter }">Contains Special Character</li>
       </ul>
     </div>
     <div>
