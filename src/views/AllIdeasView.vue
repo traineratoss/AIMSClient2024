@@ -396,6 +396,7 @@ async function changeShowGeneral() {
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideaPerPage"
         @reload-data="loadData"
+        :hideUser="false"
       />
     </div>
     <div
