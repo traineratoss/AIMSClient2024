@@ -475,6 +475,7 @@ async function changeDisplay(pageSize1) {
 .all-ideas-view-container {
   display: grid;
   grid-template-columns: 20vw 80vw;
+
 }
 
 .sidebar-container {

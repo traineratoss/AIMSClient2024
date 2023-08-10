@@ -336,14 +336,15 @@ watch(userSelected, () => {
       </div>
         <!--Empty comment-->
       <span
-        :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
-        v-if="currentUser == null"
+        v-if="currentUser !== null"
         :class="userSelected.length > 0 ? 'user2' : 'user'"
+        :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         >User:</span
       >
 
       <CustomDropDown
-        v-if="currentUser == null"
+        v-if="currentUser !== null"
+        :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         class="user-select"
         id="userSelect"
         :variants="userOptions"
