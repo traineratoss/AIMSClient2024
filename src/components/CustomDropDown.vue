@@ -244,6 +244,7 @@ function getInputPlaceholder() {
   padding: 5px;
   max-width: 10vw;
   z-index: 5;
+  border-radius: 3px;
 }
 
 .dropdown.visible {
@@ -266,5 +267,6 @@ function getInputPlaceholder() {
   width: 10vw;
   padding: 5px;
   border: none;
+  border-radius: 3px;
 }
 </style>

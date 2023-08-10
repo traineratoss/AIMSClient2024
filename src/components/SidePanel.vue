@@ -42,6 +42,7 @@ const emits = defineEmits([
   "filter-listening",
   "pass-input-variables",
   "generatedStatistics",
+  "reloadData",
 ]);
 
 watch(
@@ -87,6 +88,10 @@ function handleGlobalKeyDown(event) {
   if (event.key === "Enter") {
     filterData();
   }
+}
+
+function loadData() {
+  emits("reloadData");
 }
 
 const filterData = async () => {
@@ -271,9 +276,11 @@ watch(userSelected, () => {
   <div class="side-panel-container">
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
-      <div class="buttons-container">
-        <div><button @click="clearSelection()">Clear all</button></div>
-      </div>
+
+      <button class="buttons-container" @click="clearSelection()">
+        Clear all
+      </button>
+
       <span class="title"> Title: </span>
       <CustomInput
         v-model="inputTitle"
@@ -362,7 +369,7 @@ watch(userSelected, () => {
             <CustomInput
               v-model="selectedDateFrom"
               type="date"
-              class="form-input"
+              class="from-input"
             />
             <span class="to-date"> To: </span>
             <CustomInput
@@ -375,11 +382,26 @@ watch(userSelected, () => {
       </div>
 
       <button class="filter-button" @click="filterData">Filter</button>
+      <button class="load-button" @click="loadData()">Reload Ideas</button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.load-button {
+  grid-column: 1/3;
+  grid-row: 9/9;
+  align-self: stretch;
+  background-color: rgba(255, 255, 255, 0.801);
+  font-weight: bold;
+  border: 1px solid slategray;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.load-button:hover {
+  background-color: rgb(198, 198, 198);
+}
 .side-panel-container {
   width: 20vw;
   padding-top: 2vw;
@@ -392,15 +414,18 @@ watch(userSelected, () => {
   grid-gap: 20px;
   font-size: 20;
   font-weight: bold;
+  border-radius: 3px;
 }
 .to-input {
   grid-column: 2/3;
   grid-row: 2/3;
+  border-radius: 3px;
 }
 
 .from-input {
   grid-column: 2/3;
   grid-row: 1/2;
+  border-radius: 3px;
 }
 .to-date {
   grid-column: 1/2;
@@ -531,12 +556,14 @@ watch(userSelected, () => {
   grid-column: 2/4;
   grid-row: 2/3;
   width: 10vw;
+  border-radius: 3px;
 }
 .text-input {
   grid-column: 2/4;
   grid-row: 3/4;
   z-index: 5;
   width: 10vw;
+  border-radius: 3px;
 }
 .status-select {
   grid-column: 2/4;
@@ -562,15 +589,30 @@ watch(userSelected, () => {
   grid-column: 1/3;
   grid-row: 8/9;
   align-self: stretch;
-  background-color: orange;
+  background-color: #ffa941;
   font-weight: bold;
   border: 1px solid slategray;
   cursor: pointer;
+  border-radius: 3px;
+}
+
+.filter-button:hover {
+  background-color: #ff8f00;
 }
 
 .buttons-container {
   grid-column: 2/3;
   grid-row: 1/2;
   justify-self: end;
+  width: 100px;
+  background-color: rgba(255, 255, 255, 0.801);
+  font-weight: 600;
+  border: 1px solid slategray;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.buttons-container:hover {
+  background-color: rgb(198, 198, 198);
 }
 </style>

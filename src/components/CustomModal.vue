@@ -14,11 +14,11 @@ const emits = defineEmits(["close", "delete"]);
           <slot name="header"></slot>
         </div>
         <div class="modal-footer">
-          <button class="modal-default-button" @click="$emit('close')">
+          <button class="modal-default-button1" @click="$emit('close')">
             Cancel
           </button>
-          <button class="modal-default-button" @click="$emit('delete')">
-            Yes 
+          <button class="modal-default-button2" @click="$emit('delete')">
+            Yes
           </button>
         </div>
       </div>
@@ -68,7 +68,8 @@ const emits = defineEmits(["close", "delete"]);
   margin: 20px 0;
 }
 
-.modal-default-button {
+.modal-default-button1,
+.modal-default-button2 {
   height: 30px;
   width: 60px;
   background-color: #fff;
@@ -77,9 +78,17 @@ const emits = defineEmits(["close", "delete"]);
   margin-right: 10px;
 }
 
-.modal-default-button:hover{
-    box-shadow: 0 2px 2px slategray;
+.modal-default-button1:hover {
+  box-shadow: 0 2px 2px slategray;
+  background-color: rgba(163, 161, 161, 0.565);
+}
+.modal-default-button2:hover {
+  box-shadow: 0 2px 2px slategray;
+  background-color: orange;
+}
 
+.modal-default-button:hover {
+  box-shadow: 0 2px 2px slategray;
 }
 
 .modal-enter-from {

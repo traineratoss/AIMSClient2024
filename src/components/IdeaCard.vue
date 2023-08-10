@@ -285,11 +285,11 @@ function triggerExpandAnimation() {
   if (reply !== null) {
     const animation = reply.animate(
       [
-        { transform: "translateY(-20px)", opacity: 0.001 },
+        { transform: "translateY(-40px)", opacity: 0.001 },
         { transform: "translateY(0px)", opacity: 1 },
       ],
       {
-        duration: 300,
+        duration: 250,
         easing: "ease-in-out",
         delay: 5,
       }
@@ -802,6 +802,7 @@ function triggerCollapseAnimation() {
 .replies-wrapper::-webkit-scrollbar {
   display: block;
   width: 5px;
+  background-color: rgba(128, 128, 128, 0.259);
 }
 
 .replies-wrapper::-webkit-scrollbar-thumb {

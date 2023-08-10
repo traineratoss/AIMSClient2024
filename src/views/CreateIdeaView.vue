@@ -474,7 +474,6 @@ function onMouseEnter() {}
   margin-top: 10px;
 }
 
-
 .add-image-idea {
   background-color: gray;
   color: white;
@@ -486,7 +485,7 @@ function onMouseEnter() {}
 .input-width {
   width: 202px;
 }
-.custom-select{
+.custom-select {
   padding: 5px;
   border: none;
   height: 27px;
@@ -566,6 +565,7 @@ select {
 }
 .dialog-actions button:nth-child(1):hover {
   box-shadow: 0 2px 2px slategray;
+  background-color: rgba(163, 161, 161, 0.565);
 }
 .dialog-actions button:nth-child(2):hover {
   box-shadow: 0 2px 2px slategray;
