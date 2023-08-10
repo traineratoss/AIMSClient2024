@@ -10,7 +10,7 @@ const props = defineProps({
   showSkeleton: Boolean,
 });
 
-const emits = defineEmits(["loadTop5Ideas", "loadData"]);
+const emits = defineEmits(["loadTop5Ideas"]);
 
 onMounted(async () => {
   calculateImplementationPercentage();
@@ -53,10 +53,6 @@ async function calculateImplementationPercentage() {
 
 function loadTop5Ideas() {
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
-}
-
-function loadData() {
-  emits("loadData");
 }
 
 async function refreshStats() {
@@ -121,7 +117,7 @@ function getShortenedTitle(title, maxLength) {
             <table id="idea-table">
               <tr>
                 <th>Idea title</th>
-                <th>Nr. of comments</th>
+                <th>No. of comments</th>
               </tr>
               <tr>
                 <td>
@@ -158,11 +154,9 @@ function getShortenedTitle(title, maxLength) {
               <button class="load-button" @click="loadTop5Ideas()">
                 Load top ideas
               </button>
-              <button class="load-button" @click="loadData()">
-                Reload ideas
-              </button>
+
               <button class="load-button" @click="refreshStats()">
-                Refresh stats
+                Refresh
               </button>
             </div>
           </div>
@@ -231,7 +225,7 @@ function getShortenedTitle(title, maxLength) {
             <table id="idea-table">
               <tr>
                 <th>Idea title</th>
-                <th>Nr. of comments</th>
+                <th>No. of comments</th>
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[0]">
                 <td>
@@ -361,6 +355,8 @@ function getShortenedTitle(title, maxLength) {
   height: 30px;
   text-align: center;
   width: 5.5vw;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 .load-button:hover {

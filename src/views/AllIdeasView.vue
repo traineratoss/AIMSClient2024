@@ -247,6 +247,7 @@ function loadRecievedIdeas(value) {
 }
 
 async function loadData() {
+  console.log("MERGE MEREG");
   loadingPage.value = true;
 
   ideas.value = [];
@@ -394,6 +395,8 @@ async function changeShowGeneral() {
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideaPerPage"
+        @reload-data="loadData"
+        :hideUser="false"
       />
     </div>
     <div
@@ -519,7 +522,6 @@ async function changeShowGeneral() {
             :showGenerated="showGenerated"
             :showSkeleton="showSkeleton"
             @load-top5-ideas="loadRecievedIdeas"
-            @load-data="loadData"
           />
         </Suspense>
       </div>
@@ -596,6 +598,8 @@ async function changeShowGeneral() {
   height: 30px;
   text-align: center;
   width: 5.5vw;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 .load-button:hover {

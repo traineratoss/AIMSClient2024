@@ -16,7 +16,7 @@ import {
   createIdea,
   getImageByIdeaId,
 } from "../services/idea.service";
-import { getCurrentUsername } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 
 const inputValue = ref("");
 const statusValue = ref("");
@@ -30,6 +30,7 @@ const textError = ref(false);
 
 const currentUsername = getCurrentUsername();
 const slideImages = ref([]);
+const currentRole = getCurrentRole();
 
 const currentImageIndex = ref(null);
 const selectedImageBase64 = ref("");
@@ -133,7 +134,7 @@ async function updateIdeaFunction() {
     newTitle,
     newText,
     newStatus,
-    newCategoryList.value,
+    newCategoryList,
     imageDTO
   );
   router.back();
@@ -209,7 +210,7 @@ async function initialCurrentIndex() {
 
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
-
+  console.log(categoriesSelected.value)
   //CHECKING IF ALL THE FIELDS ARE CORRECTLY INTRODUCED
   const categoryErrorCheck =
     !Array.isArray(rawCategoriesValue) || rawCategoriesValue.length === 0;
@@ -218,6 +219,11 @@ async function createIdeaFunction() {
     statusValue.value === null || statusValue.value === "";
   const textErrorCheck = textValue.value === null || textValue.value === "";
 
+  console.log("categoryErrorCheck:", categoryErrorCheck);
+console.log("titleErrorCheck:", titleErrorCheck);
+console.log("statusErrorCheck:", statusErrorCheck);
+console.log("textErrorCheck:", textErrorCheck);
+  
   // WE MIGHT USE THESE IF WE WANNA SHOW A KIND OF ERROR WHEN NOT INTRODUCING IN THE FIELD
 
   //const setError = (errorFlag, errorMessage) => {
@@ -234,7 +240,7 @@ async function createIdeaFunction() {
   // titleError.value = setError(titleErrorFlag, "Please select a title");
   // statusError.value = setError(statusErrorFlag, "Please select a status");
   // textError.value = setError(textErrorFlag, "Please select a text");
-
+    
   if (
     !titleErrorCheck &&
     !textErrorCheck &&
@@ -370,7 +376,7 @@ function onMouseEnter() {}
       >
         <option value="open">Open</option>
         <option value="draft">Draft</option>
-        <option v-if="!isUpdatedIdeaEmpty" value="implemented">
+        <option v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'" value="implemented">
           Implemented
         </option>
       </select>
@@ -379,7 +385,7 @@ function onMouseEnter() {}
       <label for="category-idea" class="label">Category:</label>
       <CustomDropDown
         v-if="!showDeletePopup && !disableFields"
-        @update:selectedCategories="handleSelectedCategories"
+        @update:selectedOptions="handleSelectedCategories"
         :disabled="fieldsDisabled"
         :variants="categoryOptions"
         :canAddInDropdown="true"
@@ -469,7 +475,6 @@ function onMouseEnter() {}
   margin-top: 10px;
 }
 
-
 .add-image-idea {
   background-color: gray;
   color: white;
@@ -481,7 +486,7 @@ function onMouseEnter() {}
 .input-width {
   width: 202px;
 }
-.custom-select{
+.custom-select {
   padding: 5px;
   border: none;
   height: 27px;
@@ -561,6 +566,7 @@ select {
 }
 .dialog-actions button:nth-child(1):hover {
   box-shadow: 0 2px 2px slategray;
+  background-color: rgba(163, 161, 161, 0.565);
 }
 .dialog-actions button:nth-child(2):hover {
   box-shadow: 0 2px 2px slategray;

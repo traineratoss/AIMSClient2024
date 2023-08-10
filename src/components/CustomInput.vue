@@ -66,7 +66,7 @@ const handleInputKeyChange = (event) => {
     @keyup="handleInputKeyChange"
   />
 </template>
-  
+
 <style scoped>
 .input {
   border-color: red;

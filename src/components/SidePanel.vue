@@ -42,6 +42,7 @@ const emits = defineEmits([
   "filter-listening",
   "pass-input-variables",
   "generatedStatistics",
+  "reloadData",
 ]);
 
 watch(
@@ -89,6 +90,10 @@ function handleGlobalKeyDown(event) {
   }
 }
 
+function loadData() {
+  emits("reloadData");
+}
+
 const filterData = async () => {
   await filter();
   emits("filter-listening", filteredIdeasEmit.value);
@@ -116,7 +121,7 @@ onMounted(async () => {
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
 
-  const dataUser = await getUser(10, 0, "username");
+  const dataUser = await getUser(100, 0, "username");
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
   sortOrder.value = "ASC";
@@ -271,9 +276,11 @@ watch(userSelected, () => {
   <div class="side-panel-container">
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
-      <div class="buttons-container">
-        <div><button @click="clearSelection()">Clear all</button></div>
-      </div>
+
+      <button class="buttons-container" @click="clearSelection()">
+        Clear all
+      </button>
+
       <span class="title"> Title: </span>
       <CustomInput
         v-model="inputTitle"
@@ -327,15 +334,15 @@ watch(userSelected, () => {
           {{ displaySelection(categoriesSelected) }}
         </div>
       </div>
-
+      <!--Empty comment-->
       <span
         :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
-        v-if="currentUser == null"
         :class="userSelected.length > 0 ? 'user2' : 'user'"
         >User:</span
       >
 
       <CustomDropDown
+        :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         class="user-select"
         id="userSelect"
         :variants="userOptions"
@@ -361,7 +368,7 @@ watch(userSelected, () => {
             <CustomInput
               v-model="selectedDateFrom"
               type="date"
-              class="form-input"
+              class="from-input"
             />
             <span class="to-date"> To: </span>
             <CustomInput
@@ -374,11 +381,28 @@ watch(userSelected, () => {
       </div>
 
       <button class="filter-button" @click="filterData">Filter</button>
+      <button class="load-button" @click="loadData()">Reload Ideas</button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.load-button {
+  grid-column: 1/3;
+  grid-row: 9/9;
+  align-self: stretch;
+  background-color: rgba(255, 255, 255, 0.801);
+  font-weight: 600;
+  border: 1px solid slategray;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.load-button:hover {
+  background-color: rgb(198, 198, 198);
+  font-weight: 700;
+}
+
 .side-panel-container {
   width: 20vw;
   padding-top: 2vw;
@@ -391,15 +415,18 @@ watch(userSelected, () => {
   grid-gap: 20px;
   font-size: 20;
   font-weight: bold;
+  border-radius: 3px;
 }
 .to-input {
   grid-column: 2/3;
   grid-row: 2/3;
+  border-radius: 3px;
 }
 
 .from-input {
   grid-column: 2/3;
   grid-row: 1/2;
+  border-radius: 3px;
 }
 .to-date {
   grid-column: 1/2;
@@ -530,12 +557,14 @@ watch(userSelected, () => {
   grid-column: 2/4;
   grid-row: 2/3;
   width: 10vw;
+  border-radius: 3px;
 }
 .text-input {
   grid-column: 2/4;
   grid-row: 3/4;
   z-index: 5;
   width: 10vw;
+  border-radius: 3px;
 }
 .status-select {
   grid-column: 2/4;
@@ -561,15 +590,32 @@ watch(userSelected, () => {
   grid-column: 1/3;
   grid-row: 8/9;
   align-self: stretch;
-  background-color: orange;
-  font-weight: bold;
+  background-color: #ffa941;
+  font-weight: 600;
   border: 1px solid slategray;
   cursor: pointer;
+  border-radius: 3px;
+}
+
+.filter-button:hover {
+  background-color: #ff8f00;
+  font-weight: 700;
 }
 
 .buttons-container {
   grid-column: 2/3;
   grid-row: 1/2;
   justify-self: end;
+  width: 100px;
+  background-color: rgba(255, 255, 255, 0.801);
+  font-weight: 600;
+  border: 1px solid slategray;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.buttons-container:hover {
+  background-color: rgb(198, 198, 198);
+  font-weight: 700;
 }
 </style>
