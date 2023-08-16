@@ -1,5 +1,5 @@
 <script setup>
-import { ref,defineProps,watch, onMounted } from 'vue';
+import { ref,defineProps,watch, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
 const slides = defineProps(['images', 'selectedImage', 'initialCurrentIndex','disabledArrow']);
@@ -37,11 +37,11 @@ function transformImageDataIntoValues(dataString) {
   selectedImageType.value = stringBeforeBase64.substring(stringBeforeBase64.indexOf(":")+1, stringBeforeBase64.indexOf(";")) ;
 }
 
-//waiting for the images to load and then setting our index 0
+// waiting for the images to load and then setting our index 0
 watch(
   () => slides.images, 
-  (newValue) => {
-    if (newValue.length > 0 && imagesLoaded.value === false && route.path === "/create-idea") {
+   (newValue) => {
+    if (newValue.length > 0 && imagesLoaded.value === false && route.path === "/create-idea" && slides.images.length > 0) {
       imagesLoaded.value = true;
       currentIndex.value = 0;
       transformImageDataIntoValues(slides.images[currentIndex.value])
@@ -51,11 +51,12 @@ watch(
   }
 );
 
-//when updating, we set the index image to be the one the idea has
+// depending on the case, we set the initial current index (creating -> 0, updating -> the image of the idea we wanna 
+// update - ||- view and delete)
 watch(
   () => slides.initialCurrentIndex, 
   (newValue) => {
-    if (route.path === "/create-idea") {
+    if (route.path === "/create-idea" && !imagesLoaded.value && slides.images.length > 0) {
       currentIndex.value = newValue;
       currentIndex.value.then((result) => {
         currentIndex.value = result;
@@ -63,6 +64,18 @@ watch(
       })
     }
 }
+);
+
+// used for when uploading an image, the image shown will be that uploaded one,
+// the length will increase and this watch will be triggered
+watch(
+  () => slides.images.length, 
+   (newSlidesImagesLength) => {
+    currentIndex.value = newSlidesImagesLength - 1;
+    transformImageDataIntoValues(slides.images[currentIndex.value])
+    emit('current-index', currentIndex.value);
+    emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
+  }
 );
 
 watch(
@@ -109,7 +122,7 @@ const nextSlide = () => {
           class="slide"
           :class="{ active: currentIndex === index }"
         >
-          <img :src="slide" />
+          <img :src="slide"/>
         </div>
       </div>
     </div>

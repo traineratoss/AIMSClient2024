@@ -43,6 +43,7 @@ async function editIdea() {
   const text = data.text;
   const categoryList = JSON.stringify(data.categoryList);
   const status = data.status;
+  const image = data.image
   if (getCurrentUsername() === data.username || getCurrentRole() === "ADMIN") {
     router.push({
       name: "create-idea",
@@ -52,7 +53,7 @@ async function editIdea() {
         updateTitle: title,
         updateText: text,
         updateCategoryList: categoryList,
-        updateStatus: status,
+        updateStatus: status
       },
     });
   }

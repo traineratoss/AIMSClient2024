@@ -15,6 +15,7 @@ import {
   getAllImages,
   createIdea,
   getImageByIdeaId,
+  getImageById
 } from "../services/idea.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 
@@ -56,12 +57,18 @@ onMounted(async () => {
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
 
+  // must optimize a lot here, we shouldn't load all the images at first, it will take a lot of time
+  // initially, load the image we need and then loading one image at a time, depending on the direction
+  // we go (arrows <-> left, right)
+  //LOCAL STORAGE USAGE
   slideImages.value = [];
+  // const dataImage = await getImageById(1);
   const dataImage = await getAllImages();
-  const imageUrls = dataImage.map((item) => {
+  const imageUrl = dataImage.map((item) => {
     return `data:image/${item.fileType};name=${item.fileName};base64,${item.base64Image}`;
   });
-  slideImages.value = imageUrls;
+  // const imageUrl = `data:image/${dataImage.fileType};name=${dataImage.fileName};base64,${dataImage.base64Image}`
+  slideImages.value = imageUrl;
 });
 
 //If the component is handling the update, we update the fields only once, we dont wanna update them multiple times
@@ -110,6 +117,12 @@ function transformImageDataIntoValues(dataString) {
     everythingBeforeBase64.indexOf(":") + 1,
     everythingBeforeBase64.indexOf(";")
   );
+  const obj = {
+    name: selectedImageName.value,
+    type: selectedImageType.value,
+    base: selectedImageBase64.value
+  }
+  return obj
 }
 
 //This is the function that is handling the updating in the db
@@ -188,19 +201,37 @@ async function initialCurrentIndex() {
     if (showDeletePopup) {
       //if we delete
       const data = await getImageByIdeaId(updatedIdea.value.id);
-      const index = await data.id;
-      return index - 1;
+      let foundIndex = 0;
+
+      slideImages.value.forEach((image, index) => {
+        if (transformImageDataIntoValues(image).base === data.image) {
+          foundIndex = index;
+        }
+      });
+      return foundIndex;
     }
     if (updatedIdea.value.disableFields) {
       //if we are viewing
       const data = await getImageByIdeaId(updatedIdea.value.id);
-      const index = await data.id;
-      return index - 1;
+      let foundIndex = 0;
+
+      slideImages.value.forEach((image, index) => {
+        if (transformImageDataIntoValues(image).base === data.image) {
+          foundIndex = index;
+        }
+      });
+      return foundIndex;
     } else {
       //if we are updating
       const data = await getImageByIdeaId(updatedIdea.value.updateId);
-      const index = await data.id;
-      return index - 1;
+      let foundIndex = 0;
+
+      slideImages.value.forEach((image, index) => {
+        if (transformImageDataIntoValues(image).base === data.image) {
+          foundIndex = index;
+        }
+      });
+      return foundIndex;
     }
   } else {
     // if we are creating
@@ -210,7 +241,6 @@ async function initialCurrentIndex() {
 
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
-  console.log(categoriesSelected.value)
   //CHECKING IF ALL THE FIELDS ARE CORRECTLY INTRODUCED
   const categoryErrorCheck =
     !Array.isArray(rawCategoriesValue) || rawCategoriesValue.length === 0;
@@ -218,11 +248,6 @@ async function createIdeaFunction() {
   const statusErrorCheck =
     statusValue.value === null || statusValue.value === "";
   const textErrorCheck = textValue.value === null || textValue.value === "";
-
-  console.log("categoryErrorCheck:", categoryErrorCheck);
-console.log("titleErrorCheck:", titleErrorCheck);
-console.log("statusErrorCheck:", statusErrorCheck);
-console.log("textErrorCheck:", textErrorCheck);
   
   // WE MIGHT USE THESE IF WE WANNA SHOW A KIND OF ERROR WHEN NOT INTRODUCING IN THE FIELD
 
@@ -326,6 +351,7 @@ async function uploadImage(event) {
   newUploadedImageUrl.value += `${base64String}`;
 
   slideImages.value.push(newUploadedImageUrl.value);
+  
 }
 
 async function shouldDisableArrows() {

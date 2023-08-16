@@ -46,14 +46,12 @@ const dropdown = ref(null);
 const isDropdownVisible = ref(false);
 // loading is used for checking when the props are updated and fully loaded, since i cant use it in the onMount (async function)
 const loading = ref(true);
-// this is the reactive value with the initial value of the objects selected
-const selectedObjectsReactive = ref(props.selectedObjects);
+// this is the reactive value with the initial value of the variants
+const allVariantsReactive = ref(props.variants);
 // the ref is stringified so i parse it to receive the full array
-const parsedSelectedOptions = ref(JSON.parse(selectedObjectsReactive.value));
+const allSelectedVariantsReactive = ref(JSON.parse(props.selectedObjects));
 
 const initialSelectedObjects = ref(null);
-
-const loaded = ref(false);
 
 onMounted(async () => {
   comboInput.value.addEventListener("click", showDropdown);
@@ -69,7 +67,7 @@ watchEffect(() => {
     props.selectedObjects.length > 0 &&
     loading.value
   ) {
-    initialSelectedObjects.value = parsedSelectedOptions.value.join(", ");
+    initialSelectedObjects.value = allSelectedVariantsReactive.value.join(", ");
     loading.value = false;
   }
 });
@@ -78,7 +76,7 @@ watch(
   () => props.variants,
   (newVariants) => {
     //when the variants are updated, im updating the selected ones
-    selectedObjectsReactive.value = newVariants;
+    allVariantsReactive.value = newVariants;
   },
   { immediate: true }
 );
@@ -99,7 +97,7 @@ watch(
 // if the clear is true, we set every checkbox to unchecked
 const isVariantSelected = (variant) => {
   if (!loading.value && !clearAllDropdownValues.value) {
-    return parsedSelectedOptions.value.includes(variant);
+    return allSelectedVariantsReactive.value.includes(variant);
   }
   if (clearAllDropdownValues.value) {
     return false;
@@ -110,12 +108,18 @@ const showDropdown = () => {
   isDropdownVisible.value = true;
 };
 
-const handleCheckboxChange = () => {
+const handleCheckboxChange = (event) => {
+  const checkbox = event.target;
+  const newValue = checkbox.checked;
+  checkbox.checked = newValue;
+  
   const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
   const selectedVariants = Array.from(checkboxes)
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
-  //comboInput.value.value = selectedVariants.join(", ");
+
+  allSelectedVariantsReactive.value = selectedVariants;
+  
   emit("update:selectedOptions", selectedVariants);
 };
 
@@ -131,7 +135,7 @@ const handleInputKeyPress = (event) => {
     if (event.key === "Enter" && event.target.value !== "" && !checkDuplicate) {
       const newCategory = event.target.value.trim();
       props.variants.push(event.target.value);
-      selectedObjectsReactive.value = props.variants;
+      allVariantsReactive.value = props.variants;
       comboInput.value.value = "";
       isDropdownVisible.value = true;
       setTimeout(() => {
@@ -139,12 +143,13 @@ const handleInputKeyPress = (event) => {
         const checkboxes = dropdown.value.querySelectorAll(
           'input[type="checkbox"]'
         );
-        console.log(checkboxes);
+        console.log(checkboxes)
         const checkbox = dropdown.value.querySelector(
           `input[value="${newCategory}"]`
         );
         if (checkbox) {
           checkbox.checked = true;
+          allSelectedVariantsReactive.value.push(newCategory);
         }
         const updatedSelectedVariants = Array.from(checkboxes)
           .filter((checkbox) => checkbox.checked)
@@ -163,7 +168,7 @@ const handleInputKeyPress = (event) => {
 // filtering the search for the custom drop down for easier searches
 const handleInputBoxChange = () => {
   const inputText = comboInput.value.value.toLowerCase(); // converting to lowercase so the search won't be case sensitive
-  selectedObjectsReactive.value = props.variants.filter((variant) => {
+  allVariantsReactive.value = props.variants.filter((variant) => {
     return variant.toLowerCase().startsWith(inputText);
   });
 };
@@ -201,7 +206,7 @@ function getInputPlaceholder() {
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
     >
-      <label v-for="variant in selectedObjectsReactive" :key="variant">
+      <label v-for="variant in allVariantsReactive" :key="variant">
         <input
           type="checkbox"
           :value="variant"

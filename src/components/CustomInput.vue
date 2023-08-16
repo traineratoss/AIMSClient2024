@@ -29,7 +29,7 @@ const handleBlur = () => {
 };
 
 const handleInputKeyPress = (event) => {
-  if (event.key === "Enter" && focused.value == true && canModifySearchValue) {
+  if (event.key === "Enter" && focused.value && canModifySearchValue) {
     searchValue.value = {
       text: event.target.value,
       key: "Enter",

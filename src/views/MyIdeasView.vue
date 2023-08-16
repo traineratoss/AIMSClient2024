@@ -49,13 +49,6 @@ const loadingPage = ref(true);
 const noIdeasFoundCondition = ref(false);
 
 onMounted(async () => {
-  // const data = await getPagedIdeasFromUser(
-  //   currentUsername,
-  //   ideasPerPage,
-  //   currentPage.value - 1,
-  //   "ASC"
-  // );
-
   if (
     searchValue &&
     searchValue.value &&
@@ -217,7 +210,15 @@ async function updateSortOrder() {
 
 // here, the filtering happens
 async function updateIdeas(filteredIdeas) {
-  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value); // the total nr of pages after filtering needs to be updated
+  // the total nr of pages after filtering needs to be updated
+  totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value);
+  if (totalPages.value === 0) {
+    noIdeasFoundCondition.value = true;
+    setCurrentVariables();
+    currentPage.value = 0;
+    ideas.value = [];
+    return 0;
+  } 
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber

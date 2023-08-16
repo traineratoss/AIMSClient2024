@@ -112,7 +112,7 @@ stats.value = await getStats();
 
 watch(searchValue, async (newValue) => {
   if (newValue && newValue.key === "Enter" && newValue.text !== undefined) {
-    setCurrentVariables();
+    inputTitle.value = searchValue.value.text;
     const data = await filterIdeas(
       inputTitle.value,
       currentText,
@@ -126,7 +126,6 @@ watch(searchValue, async (newValue) => {
       null,
       sortOrder.value
     );
-
     if (data === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
@@ -265,6 +264,13 @@ async function loadData() {
 
 async function updateIdeas(filteredIdeas) {
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value); // the total nr of pages after filtering needs to be updated
+  if (totalPages.value === 0) {
+    noIdeasFoundCondition.value = true;
+    setCurrentVariables();
+    currentPage.value = 0;
+    ideas.value = [];
+    return 0;
+  } 
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber

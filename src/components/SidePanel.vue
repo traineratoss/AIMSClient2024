@@ -8,8 +8,11 @@ import { defineEmits } from "vue";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import searchValue from "../utils/search-title";
 import { onBeforeUnmount } from "vue";
+import { useRoute } from "vue-router";
 
 window.addEventListener("keydown", handleGlobalKeyDown);
+
+const route = useRoute();
 
 const props = defineProps({
   sort: Number,
@@ -110,6 +113,10 @@ async function handleSelectedStatus(selectedStatus) {
   statusSelected.value = selectedStatus;
 }
 
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleGlobalKeyDown)
+})
+
 onMounted(async () => {
   if (searchValue && searchValue.value && searchValue.value.text) {
     inputTitle.value = searchValue.value.text; // each time we mount a view, we set the title to be the one from the search bar
@@ -151,8 +158,20 @@ const filter = async () => {
     props.sort
   );
 
-  filteredIdeasEmit.value = filteredIdeas;
-  searchValue.value = title;
+  console.log(filteredIdeas)
+  
+  if (filteredIdeas === "No ideas found.") {
+    filteredIdeasEmit.value = {
+      content: [],
+      totalPages: 0,
+      totalElements: 0
+    }
+  } else {
+    filteredIdeasEmit.value = filteredIdeas;
+    // searchValue.value.text = title;
+    console.log(filteredIdeasEmit.value)
+  }
+  
 };
 
 // clearing all when pressing the clear button
