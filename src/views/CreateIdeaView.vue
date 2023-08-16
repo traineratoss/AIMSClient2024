@@ -351,7 +351,6 @@ async function uploadImage(event) {
   newUploadedImageUrl.value += `${base64String}`;
 
   slideImages.value.push(newUploadedImageUrl.value);
-  
 }
 
 async function shouldDisableArrows() {
@@ -362,9 +361,27 @@ async function shouldDisableArrows() {
   }
 }
 
-function onMouseLeave() {}
+function onMouseLeave() {};
 
-function onMouseEnter() {}
+function onMouseEnter() {};
+
+function displaySelection(categoriesList) {
+  let finalList = "";
+
+  if (categoriesList.length === 1) {
+    finalList += categoriesList;
+
+    return finalList;
+  }
+
+  for (let category of categoriesList) {
+    if (categoriesList.indexOf(category) === categoriesList.length - 1)
+      finalList += category;
+    else finalList += category + ", ";
+  }
+
+  return finalList;
+}
 </script>
 
 <template>
@@ -407,7 +424,7 @@ function onMouseEnter() {}
         </option>
       </select>
     </div>
-    <div class="idea">
+    <div class="idea-category">
       <label for="category-idea" class="label">Category:</label>
       <CustomDropDown
         v-if="!showDeletePopup && !disableFields"
@@ -426,6 +443,11 @@ function onMouseEnter() {}
         :disabled="disableFields"
       />
     </div>
+    <div id="displayCategories">
+        <div class="display-categories">
+          {{ displaySelection(categoriesSelected) }}
+        </div>
+      </div>
 
     <div class="idea-text">
       <label for="category-idea" class="label-text">Idea text:</label>
@@ -492,6 +514,20 @@ function onMouseEnter() {}
 </template>
 
 <style scoped>
+
+
+
+.display-categories {
+  white-space: nowrap;
+  max-width: 200px;
+  font-weight: 500;
+  overflow-x: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+  margin-left: 60px;
+}
 .create-idea-container {
   align-items: center;
   justify-content: center;
@@ -523,6 +559,12 @@ function onMouseEnter() {}
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  width: 300px;
+}
+.idea-category {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 300px;
 }
 .idea-title {

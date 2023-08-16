@@ -382,7 +382,6 @@ async function changeDisplay(pageSize1) {
             class="no-ideas-message"
           >
             <img src="../assets/img/curiosity-search.svg" />
-            <!-- <CuriositySearch/> -->
             <br />
             <span class="black-font">Your search returned no results</span>
           </div>
