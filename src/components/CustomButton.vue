@@ -3,6 +3,8 @@ const props = defineProps({
   id: String,
   label: String,
   isActive: Boolean,
+  heightInPx: Number,
+  widthInPx: Number
 });
 </script>
 
@@ -10,7 +12,10 @@ const props = defineProps({
   <button
     class="customButton"
     :id="id"
-    :style="{ backgroundColor: isActive ? 'var(--selected-color)' : '' }"
+    :style="{ backgroundColor: isActive ? 'var(--selected-color)' : '', 
+              height : props.heightInPx ? props.heightInPx + 'px' : {},
+              width : props.widthInPx ? props.widthInPx + 'px' : {}
+  }"
   >
     <slot></slot>
   </button>

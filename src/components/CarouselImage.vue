@@ -1,6 +1,7 @@
 <script setup>
 import { ref,defineProps,watch, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
+import CustomLoader from './CustomLoader.vue';
 
 const slides = defineProps(['images', 'selectedImage', 'initialCurrentIndex','disabledArrow']);
 const emit = defineEmits(['current-index', 'selected-image-values']);
@@ -41,12 +42,14 @@ function transformImageDataIntoValues(dataString) {
 watch(
   () => slides.images, 
    (newValue) => {
-    if (newValue.length > 0 && imagesLoaded.value === false && route.path === "/create-idea" && slides.images.length > 0) {
-      imagesLoaded.value = true;
+    if (newValue.length > 0 && imagesLoaded.value === false && route.path === "/create-idea" && slides.images.length > 0) { 
       currentIndex.value = 0;
       transformImageDataIntoValues(slides.images[currentIndex.value])
       emit('current-index', currentIndex.value);
       emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
+      setTimeout(() => {
+        imagesLoaded.value = true;
+      }, 100)
     }
   }
 );
@@ -107,7 +110,7 @@ const nextSlide = () => {
 
 <template>
   <div class="carousel">
-    <button @click="prevSlide" :disabled="shouldDisableArrowsRef">
+    <button @click="prevSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941"></i>
     </button>
     <div class="slide-container">
@@ -116,6 +119,7 @@ const nextSlide = () => {
         :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
       >
         <div
+          v-if="imagesLoaded"
           v-for="(slide, index) in images"
           :key="index"
           class="slide"
@@ -123,9 +127,12 @@ const nextSlide = () => {
         >
           <img :src="slide"/>
         </div>
+        <div v-else id="custom-loader">
+          <CustomLoader :size="60" />
+        </div>
       </div>
     </div>
-    <button @click="nextSlide" :disabled="shouldDisableArrowsRef">
+    <button @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-right fa-2xl" style="color: #ffa941"></i>
     </button>
   </div>
@@ -136,19 +143,21 @@ const nextSlide = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   overflow: hidden;
   z-index: 10;
-  margin-top: 10px;
-  height: 20vh;
+}
+
+#custom-loader {
+  height: 180px;
+  width: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .slide-container {
   display: flex;
   overflow: hidden;
-  border: 1px solid #ccc;
-  margin: 0 10px;
-  max-width: 300px;
 }
 
 .slides {

@@ -167,9 +167,7 @@ async function updateIdeaFields() {
   if (updatedIdea.value != null) {
     inputValue.value = updatedIdea.value.updateTitle;
     textValue.value = updatedIdea.value.updateText;
-    if (updatedIdea.value.updateStatus) {
-      statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
-    }
+    statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
     const categoryArray = JSON.parse(updatedIdea.value.updateCategoryList);
     categoryArray.forEach((category, index) => {
       categoriesSelected.value.push(category.text);
@@ -250,7 +248,7 @@ async function createIdeaFunction() {
   const statusErrorCheck =
     statusValue.value === null || statusValue.value === "";
   const textErrorCheck = textValue.value === null || textValue.value === "";
-  
+
   // WE MIGHT USE THESE IF WE WANNA SHOW A KIND OF ERROR WHEN NOT INTRODUCING IN THE FIELD
 
   //const setError = (errorFlag, errorMessage) => {
@@ -267,7 +265,7 @@ async function createIdeaFunction() {
   // titleError.value = setError(titleErrorFlag, "Please select a title");
   // statusError.value = setError(statusErrorFlag, "Please select a status");
   // textError.value = setError(textErrorFlag, "Please select a text");
-    
+
   if (
     !titleErrorCheck &&
     !textErrorCheck &&
@@ -363,9 +361,9 @@ async function shouldDisableArrows() {
   }
 }
 
-function onMouseLeave() {};
+function onMouseLeave() { };
 
-function onMouseEnter() {};
+function onMouseEnter() { };
 
 function displaySelection(categoriesList) {
   let finalList = "";
@@ -387,144 +385,132 @@ function displaySelection(categoriesList) {
 </script>
 
 <template>
-  <div class="create-idea-container">
-    <div class="idea-title">
-      <h1>
-        {{ pageTitle }}
-      </h1>
-    </div>
-    <div class="idea">
-      <label for="title-idea" class="label">Title:</label>
-      <CustomInput
-        v-model="inputValue"
-        :disabled="fieldsDisabled"
-        placeholder="Write your title here..."
-      />
-    </div>
-    <div class="idea">
-      <label
-        for="status-idea"
-        class="label"
-        @mouseleave="onMouseLeave"
-        @mouseenter="onMouseEnter"
-        >Status:</label
-      >
-      <select
-        v-model="statusValue"
-        :class="{ status: statusError }"
-        @mouseenter="onMouseEnter"
-        @mouseleave="onMouseLeave"
-        name="status-idea"
-        id="status-idea"
-        class="input-width custom-select"
-        :disabled="fieldsDisabled"
-      >
-        <option value="open">Open</option>
-        <option value="draft">Draft</option>
-        <option v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'" value="implemented">
-          Implemented
-        </option>
-      </select>
-    </div>
-    <div class="idea-category">
-      <label for="category-idea" class="label">Category:</label>
-      <CustomDropDown
-        v-if="!showDeletePopup && !disableFields"
-        @update:selectedOptions="handleSelectedCategories"
-        :disabled="fieldsDisabled"
-        :variants="categoryOptions"
-        :canAddInDropdown="true"
-        :selectedObjects="stringifyCategory()"
-        :input-placeholder="`Select your categories`"
-        class="input-width"
-      >
-      </CustomDropDown>
+  <div class="wrapper">
+    <div class="create-idea-container">
 
-      <input
-        v-if="showDeletePopup || disableFields"
-        v-model="onlyForDeleteCategories"
-        :disabled="disableFields"
-      />
-    </div>
-    <div class="display-categories-container" id="displayCategories">
-        <div class="display-categories">
-          {{ displaySelection(categoriesSelected) }}
-        </div>
-    </div>
-
-    <div class="idea-text">
-      <label for="category-idea" class="label-text">Idea text:</label>
-      <textarea
-        v-model="textValue"
-        :disabled="fieldsDisabled"
-        placeholder="Write your text here..."
-        :class="{ textarea: textError }"
-      >
-      </textarea>
-    </div>
-    <div class="idea">
-      <CarouselImage
-        :images="slideImages"
-        @current-index="getCurrentIndex"
-        @selected-image-values="getSelectedImageValues"
-        :initialCurrentIndex="initialCurrentIndex()"
-        :disabledArrow="shouldDisableArrows()"
-      />
-    </div>
-    <div class="add-image">
-      <input
-        type="file"
-        id="upload"
-        hidden
-        :disabled="fieldsDisabled"
-        ref="uploadedImage"
-        v-on:change="uploadImage($event)"
-      />
-      <label
-        for="upload"
-        class="add-image-idea"
-        v-if="!deletePopup"
-        style="display: flex; align-items: center"
-      >
-        Upload Image
-        <span class="material-symbols-outlined" style="margin-left: 5px">
-          attach_file
-        </span>
-      </label>
-    </div>
-    <div>
-      <CustomButton
-        id="create-idea"
-        @click="shouldCreateOrUpdate"
-        :disabled="fieldsDisabled"
-        v-if="!deletePopup"
-      >
-        {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
-      </CustomButton>
-    </div>
-    <CustomDialog
-      ref="customDialog"
-      :open="deletePopup"
-      :title="`Are you sure you want to delete '${currentIdeaTitle}'?`"
-      message="This item will be deleted immediatly. You can't undo this action!"
-    >
-      <div class="dialog-actions">
-        <button @click="handleCancel">Cancel</button>
-        <button @click="handleConfirm">Confirm</button>
+      <div class="idea-title">
+        <h1>
+          {{ pageTitle }}
+        </h1>
       </div>
-    </CustomDialog>
+
+      <div class="input-container">
+
+        <div class="idea">
+          <label for="title-idea" class="label">Title:</label>
+          <CustomInput v-model="inputValue" :disabled="fieldsDisabled" placeholder="Write your title here..." />
+        </div>
+
+        <div class="idea">
+          <label for="status-idea" class="label" @mouseleave="onMouseLeave" @mouseenter="onMouseEnter">Status:</label>
+          <select v-model="statusValue" :class="{ status: statusError }" @mouseenter="onMouseEnter"
+            @mouseleave="onMouseLeave" name="status-idea" id="status-idea" class="input-width custom-select"
+            :disabled="fieldsDisabled">
+            <option value="open">Open</option>
+            <option value="draft">Draft</option>
+            <option v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'" value="implemented">
+              Implemented
+            </option>
+          </select>
+        </div>
+
+        <div class="idea">
+          <label for="category-idea" class="label">Categories:</label>
+
+          <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
+            :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
+            :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width">
+          </CustomDropDown>
+
+          <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
+        </div>
+
+        <div class="display-categories-container" id="displayCategories">
+          <div class="display-categories">
+            {{ displaySelection(categoriesSelected) }}
+          </div>
+        </div>
+
+        <div class="idea-text">
+          <textarea v-model="textValue" :disabled="fieldsDisabled" placeholder="  Write your idea text here..." id="textarea-id">
+          </textarea>
+        </div>
+      </div>
+
+      <div class="carousel-container">
+        <div class="idea-carousel">
+          <CarouselImage class="carousel-image" :images="slideImages" @current-index="getCurrentIndex"
+            @selected-image-values="getSelectedImageValues" :initialCurrentIndex="initialCurrentIndex()"
+            :disabledArrow="shouldDisableArrows()" />
+        </div>
+        <div class="add-image">
+          <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="uploadedImage"
+            v-on:change="uploadImage($event)" />
+          <label for="upload" class="add-image-idea" v-if="!deletePopup" style="display: flex; align-items: center">
+            Upload Image
+            <span class="material-symbols-outlined" style="margin-left: 5px">
+              attach_file
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="create-container">
+        <CustomButton id="create-idea" @click="shouldCreateOrUpdate" :disabled="fieldsDisabled" v-if="!deletePopup" :height-in-px="40" :width-in-px="300">
+          {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
+        </CustomButton>
+        <CustomDialog ref="customDialog" :open="deletePopup"
+          :title="`Are you sure you want to delete '${currentIdeaTitle}'?`"
+          message="This item will be deleted immediatly. You can't undo this action!">
+          <div class="dialog-actions">
+            <button @click="handleCancel">Cancel</button>
+            <button @click="handleConfirm">Confirm</button>
+          </div>
+        </CustomDialog>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 
-.create-idea-container {
+.carousel-image {
+  height: 15vw;
+  max-width: 23vw;
+  object-fit:scale-down;
+  margin-top: 50px;
+}
+
+.idea-carousel {
+}
+
+#textarea-id {
+  width: 23vw;
+  border: none;
+  margin-top: 10px;
+}
+
+#create-idea {
+  border-radius: 5px;
+}
+
+.wrapper {
   align-items: center;
   justify-content: center;
   display: flex;
-  flex-direction: column;
-  height: 800px;
+  height: 94vh;
+}
+
+.create-idea-container {
+  align-items: center;
+  display: grid;
+  grid-template-rows: 15% 30% 45% 10%;
+  height: 80vh;
+  width: 25vw;
   margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #b3b3b3;
 }
 
 .add-image-idea {
@@ -533,11 +519,12 @@ function displaySelection(categoriesList) {
   padding: 0.5rem;
   font-family: sans-serif;
   cursor: pointer;
-  margin-top: 1rem;
 }
+
 .input-width {
   width: 202px;
 }
+
 .custom-select {
   padding: 5px;
   border: none;
@@ -545,59 +532,98 @@ function displaySelection(categoriesList) {
 }
 
 .idea {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 8vw;
+  width: 13vw;
   align-items: center;
-  margin-bottom: 10px;
-  width: 300px;
 }
+
 .display-categories {
   white-space: nowrap;
   max-width: 200px;
   font-weight: 500;
   overflow-x: auto;
 }
+
 .display-categories-container {
   display: flex;
   align-items: center;
   width: 300px;
   margin-left: 200px;
 }
+
 .idea-category {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 300px;
 }
+
 .idea-title {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
+
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 23vw;
+  margin: auto;
+  gap: 0.5vw;
+}
+
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 23vw;
+  margin: auto;
+}
+
+.create-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 23vw;
+  margin: auto;
+}
+
 .label {
   padding-right: 20px;
 }
+
 .idea-text {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 }
+
 .label-text {
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
 textarea {
   width: 300px;
   height: 150px;
   resize: none;
   padding-top: 5px;
 }
+
 input {
   width: 192px;
 }
+
 select {
   width: 192px;
 }
+
 .add-image {
   padding-bottom: 10px;
 }
@@ -634,10 +660,12 @@ select {
   border-radius: 5px;
   margin-right: 10px;
 }
+
 .dialog-actions button:nth-child(1):hover {
   box-shadow: 0 2px 2px slategray;
   background-color: rgba(163, 161, 161, 0.565);
 }
+
 .dialog-actions button:nth-child(2):hover {
   box-shadow: 0 2px 2px slategray;
   background-color: orange;
