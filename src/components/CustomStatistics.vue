@@ -316,9 +316,9 @@ function getShortenedTitle(title, maxLength) {
               <button class="load-button" @click="loadTop5Ideas()">
                 Load top ideas
               </button>
-              <button class="load-button" @click="loadData()">
+              <!-- <button class="load-button" @click="loadData()">
                 Reload ideas
-              </button>
+              </button> -->
               <button class="load-button" @click="refreshStats()">
                 Refresh stats
               </button>

@@ -242,10 +242,14 @@ async function updateSortOrder() {
 }
 
 function loadRecievedIdeas(value) {
+  showTopIdeas.value =! showTopIdeas.value
   ideas.value = value;
 }
 
+const showTopIdeas = ref(false)
+
 async function loadData() {
+  showTopIdeas.value =! showTopIdeas.value
   loadingPage.value = true;
 
   ideas.value = [];
@@ -404,8 +408,7 @@ async function changeShowGeneral() {
         :hideUser="false"
       />
     </div>
-    <div
-      class="right-container"
+    <div class="right-container"
       :style="
         isAdmin
           ? { ' grid-template-columns': 'auto auto' }
@@ -470,7 +473,7 @@ async function changeShowGeneral() {
           </div>
         </div>
 
-        <div v-if="ideas.length > 0" class="pagination-container">
+        <div v-if="ideas.length > 0 && !showTopIdeas " class="pagination-container">
           <div class="pagination-component">
             <Pagination
               :totalPages="totalPages"
@@ -478,6 +481,9 @@ async function changeShowGeneral() {
               @changePage="changePage"
             />
           </div>
+        </div>
+        <div v-else class="pagination-container">
+          <button class="reload-button" @click="loadData()">All Ideas</button>
         </div>
       </div>
       <div v-if="isAdmin" class="custom-statistics">
@@ -536,6 +542,16 @@ async function changeShowGeneral() {
 </template>
 
 <style scoped>
+.reload-button{
+  background-color: #ffa941;
+  border-radius: 5px;
+  border: 1px solid slategray;
+  font-size: larger;
+  margin-bottom: 10px;
+}
+.reload-button:hover{
+  border: 1px solid black;
+}
 .date-picker {
   border: 1px solid slategray;
   border-radius: 5px;
