@@ -396,6 +396,7 @@ async function changeShowGeneral() {
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideaPerPage"
         @reload-data="loadData"
+        :hideUser="false"
       />
     </div>
     <div
@@ -598,6 +599,7 @@ async function changeShowGeneral() {
   text-align: center;
   width: 5.5vw;
   border-radius: 3px;
+  cursor: pointer;
 }
 
 .load-button:hover {

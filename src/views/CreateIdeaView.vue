@@ -16,7 +16,7 @@ import {
   createIdea,
   getImageByIdeaId,
 } from "../services/idea.service";
-import { getCurrentUsername } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 
 const inputValue = ref("");
 const statusValue = ref("");
@@ -30,6 +30,7 @@ const textError = ref(false);
 
 const currentUsername = getCurrentUsername();
 const slideImages = ref([]);
+const currentRole = getCurrentRole();
 
 const currentImageIndex = ref(null);
 const selectedImageBase64 = ref("");
@@ -375,7 +376,7 @@ function onMouseEnter() {}
       >
         <option value="open">Open</option>
         <option value="draft">Draft</option>
-        <option v-if="!isUpdatedIdeaEmpty" value="implemented">
+        <option v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'" value="implemented">
           Implemented
         </option>
       </select>

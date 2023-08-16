@@ -2,63 +2,36 @@
 
 <script setup>
 import CustomNavBar from "./components/CustomNavBar.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import router from "./router";
-import { getCurrentRole, getCurrentUsername, logout } from "./services/user_service";
+import { getCurrentRole, getCurrentUsername, isFirstLogin, logout } from "./services/user_service";
+import { useRoute } from "vue-router";
 
-const showNavbar = ref(true);
+const showNavbar = computed(() => {
+  const currentRoute = useRoute();
+  let value = true;
+  if (
+    currentRoute.name === "login" ||
+    currentRoute.name === "register" ||
+    currentRoute.name === "change" ||
+    currentRoute.name === "recovery" ||
+    currentRoute.name === "registration-complete" ||
+    currentRoute.name === "page-not-found" ||
+    currentRoute.name === 'password-changed' ||
+    currentRoute.name === 'default' ||
+    (!(getCurrentRole() && getCurrentUsername()))
+  ) {
+    value = false;
+  }
+
+  return value;
+})
 
 onMounted(() => {
   localStorage.setItem('current page index', 2);
 });
 
-router.afterEach((to, from) => {
-  if (
-    to.name === "login" ||
-    to.name === "register" ||
-    to.name === "change" ||
-    to.name === "recovery" ||
-    to.name === "registration-complete" ||
-    to.name === "page-not-found" ||
-    to.name === 'password-changed' ||
-    to.name === 'default'
-  ) {
-    showNavbar.value = false;
-  } else {
-    showNavbar.value = true;
-  }
 
-  if(!(getCurrentRole() && getCurrentUsername())) {
-    showNavbar.value = false;
-  }
-});
-
-router.beforeEach((to, from) => {
-  if(to.name === 'default') {
-    if(getCurrentRole() && getCurrentUsername()) {
-      router.push('/my');
-    }
-  }
-
-  if(to.name === 'admin-dashboard' && getCurrentRole() !== 'ADMIN') {
-    router.push('/page-not-found');
-    showNavbar.value = false;
-    logout();
-  }
-
-  if(to.name !== 'login' && 
-    to.name !== 'register' && 
-    to.name !== 'recovery' &&
-    to.name !== 'registration-complete' &&
-    to.name !== 'page-not-found' &&
-    to.name !== 'password-changed' &&
-    to.name !== 'default') {
-      if(!(getCurrentRole() && getCurrentUsername())) {
-        showNavbar.value = false;
-        router.push('/page-not-found');
-      }
-    }
-});
 </script>
 
 <template>

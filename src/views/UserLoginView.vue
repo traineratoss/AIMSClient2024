@@ -3,7 +3,7 @@ import FormTitle from "../components/FormTitle.vue";
 import CompanyLogo from "../components/CompanyLogo.vue";
 import router from "../router";
 import { ref } from "vue";
-import { loginUser } from "../services/user_service.js";
+import { loginUser, isFirstLogin } from "../services/user_service.js";
 import CustomInput from "../components/CustomInput.vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import bcrypt from "bcryptjs";
@@ -27,7 +27,19 @@ async function login() {
   if (usernameOrEmailText.value && passwordText.value) {
     loginUser(usernameOrEmailText.value, hashPassword)
       .then((res) => {
+        // isFirstLogin(usernameOrEmailText.value)
+        //   .then(res => {
+        //     if (res) {
+        //       router.push("/change");
+        //     } else {
         router.push("/my");
+        //     }
+        //   })
+        // const firstLogin = localStorage.getItem("isFirstLogin");
+        // if (firstLogin === "true") {
+
+        // }
+        console.log(localStorage.getItem("isFirstLogin"));
       })
       .catch((error) => {
         usernameOrEmailText.value = "";

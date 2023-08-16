@@ -37,7 +37,7 @@ async function loadPagedIdeas(
       referrerPolicy: "no-referrer",
     }
   );
-  
+
   if (!response.ok) {
     const responseText = await response.text();
     return responseText;
@@ -99,7 +99,6 @@ async function filterIdeas(
   username,
   sortDirection
 ) {
-
   switch (sortDirection) {
     case 0:
       sortDirection = "ASC";
@@ -111,9 +110,9 @@ async function filterIdeas(
   if (pageNumber < 0) {
     pageNumber = 0;
   }
-  
+
   let url = `${API_URL}/filter?pageNumber=${pageNumber}&sortDirection=${sortDirection}&pageSize=${pageSize}`;
-  
+
   if (title) url += `&title=${title}`;
   if (text) url += `&text=${text}`;
   if (status.length != 0) url += `&status=${status}`;
@@ -144,7 +143,6 @@ async function filterIdeas(
   }
 }
 
-
 async function getIdea(id) {
   const response = await fetch(API_URL + "/get?id=" + id, {
     method: "GET",
@@ -172,7 +170,7 @@ async function updateIdea(id, title, text, status, categoryList, image) {
       text: text,
       status: status.toUpperCase(),
       categoryList: categoryList,
-      image: image
+      image: image,
     }),
     redirect: "follow",
     referrerPolicy: "no-referrer",
@@ -244,8 +242,8 @@ async function getPagedIdeasFromUser(
   });
 
   if (!response.ok) {
-      const responseText = await response.text();
-      return responseText;
+    const responseText = await response.text();
+    return responseText;
   } else {
     const json = await response.json();
     return json;
@@ -259,7 +257,9 @@ async function getImageById() {
 }
 
 async function getImageByIdeaId(ideaId) {
-  const response = await fetch("http://localhost:8080/aims/api/v1/images/getByIdea?id=" + ideaId);
+  const response = await fetch(
+    "http://localhost:8080/aims/api/v1/images/getByIdea?id=" + ideaId
+  );
   const data = await response.json();
   return data;
 }
@@ -281,5 +281,5 @@ export {
   updateIdea,
   deleteIdea,
   getImageById,
-  getImageByIdeaId
+  getImageByIdeaId,
 };

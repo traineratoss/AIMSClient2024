@@ -121,7 +121,7 @@ onMounted(async () => {
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
 
-  const dataUser = await getUser(10, 0, "username");
+  const dataUser = await getUser(100, 0, "username");
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
   sortOrder.value = "ASC";
@@ -334,7 +334,7 @@ watch(userSelected, () => {
           {{ displaySelection(categoriesSelected) }}
         </div>
       </div>
-        <!--Empty comment-->
+      <!--Empty comment-->
       <span
         v-if="currentUser !== null"
         :class="userSelected.length > 0 ? 'user2' : 'user'"
@@ -394,7 +394,7 @@ watch(userSelected, () => {
   grid-row: 9/9;
   align-self: stretch;
   background-color: rgba(255, 255, 255, 0.801);
-  font-weight: bold;
+  font-weight: 600;
   border: 1px solid slategray;
   cursor: pointer;
   border-radius: 3px;
@@ -402,7 +402,9 @@ watch(userSelected, () => {
 
 .load-button:hover {
   background-color: rgb(198, 198, 198);
+  font-weight: 700;
 }
+
 .side-panel-container {
   width: 20vw;
   padding-top: 2vw;
@@ -591,7 +593,7 @@ watch(userSelected, () => {
   grid-row: 8/9;
   align-self: stretch;
   background-color: #ffa941;
-  font-weight: bold;
+  font-weight: 600;
   border: 1px solid slategray;
   cursor: pointer;
   border-radius: 3px;
@@ -599,6 +601,7 @@ watch(userSelected, () => {
 
 .filter-button:hover {
   background-color: #ff8f00;
+  font-weight: 700;
 }
 
 .buttons-container {
@@ -615,5 +618,6 @@ watch(userSelected, () => {
 
 .buttons-container:hover {
   background-color: rgb(198, 198, 198);
+  font-weight: 700;
 }
 </style>
