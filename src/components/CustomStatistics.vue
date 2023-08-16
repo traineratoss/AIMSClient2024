@@ -10,7 +10,7 @@ const props = defineProps({
   showSkeleton: Boolean,
 });
 
-const emits = defineEmits(["loadTop5Ideas"]);
+const emits = defineEmits(["loadTop5Ideas","loadData"]);
 
 onMounted(async () => {
   calculateImplementationPercentage();
@@ -57,6 +57,10 @@ function loadTop5Ideas() {
 
 async function refreshStats() {
   stats.value = await getStats();
+}
+
+function loadData(){
+  emits("loadData");
 }
 
 function getShortenedTitle(title, maxLength) {

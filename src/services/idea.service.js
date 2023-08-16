@@ -278,6 +278,7 @@ async function deleteIdea(ideaId) {
     method: "DELETE",
   });
 }
+
 export {
   loadPagedIdeas,
   createIdea,

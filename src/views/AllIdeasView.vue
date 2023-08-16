@@ -246,7 +246,6 @@ function loadRecievedIdeas(value) {
 }
 
 async function loadData() {
-  console.log("MERGE MEREG");
   loadingPage.value = true;
 
   ideas.value = [];
@@ -528,6 +527,7 @@ async function changeShowGeneral() {
             :showGenerated="showGenerated"
             :showSkeleton="showSkeleton"
             @load-top5-ideas="loadRecievedIdeas"
+            @load-data="loadData"
           />
         </Suspense>
       </div>
