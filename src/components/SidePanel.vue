@@ -295,9 +295,11 @@ watch(userSelected, () => {
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
 
-      <button class="buttons-container" @click="clearSelection()">
-        Clear all
-      </button>
+        <button class="buttons-container" @click="clearSelection()">
+          Clear all
+        </button>
+
+
 
       <span class="title"> Title: </span>
       <CustomInput
@@ -407,6 +409,11 @@ watch(userSelected, () => {
 </template>
 
 <style scoped>
+.clear-button{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
 .load-button {
   grid-column: 1/3;
   grid-row: 9/9;
@@ -424,7 +431,7 @@ watch(userSelected, () => {
 }
 
 .side-panel-container {
-  width: 20vw;
+  width: 20vw; 
   padding-top: 2vw;
   border: 1px solid slategray;
   height: 91vh;
@@ -466,8 +473,9 @@ watch(userSelected, () => {
   font-size: 20;
   font-weight: bold;
   margin-left: 1vw;
-  margin-right: 1vw;
-  width: 20vw;
+  /* margin-right: 1vw; */
+  /* width: 20vw; */
+  /* width: 300px; */
   min-width: 0;
 }
 .filterby {
@@ -574,26 +582,22 @@ watch(userSelected, () => {
   overflow-x: auto;
 }
 .title-input {
-  grid-column: 2/4;
   grid-row: 2/3;
   width: 10vw;
   border-radius: 3px;
 }
 .text-input {
-  grid-column: 2/4;
   grid-row: 3/4;
   z-index: 5;
   width: 10vw;
   border-radius: 3px;
 }
 .status-select {
-  grid-column: 2/4;
   grid-row: 4/5;
   z-index: 6;
   width: 10vw;
 }
 .category-select {
-  grid-column: 2/4;
   grid-row: 5/6;
   z-index: 5;
 }
@@ -623,7 +627,8 @@ watch(userSelected, () => {
 }
 
 .buttons-container {
-  grid-column: 2/3;
+  grid-column: 2;
+  column-span: 2;
   grid-row: 1/2;
   justify-self: end;
   width: 100px;
@@ -638,4 +643,4 @@ watch(userSelected, () => {
   background-color: rgb(198, 198, 198);
   font-weight: 700;
 }
-</style>
+</style> 
