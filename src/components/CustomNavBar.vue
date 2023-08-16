@@ -205,6 +205,7 @@ function onMouseLeaveUser() {
       <div>
         <CustomInput
           id="search-an-idea"
+          class="search-bar"
           placeholder="&#xF002; Search an Idea (Title)"
           style="font-family: Segoe UI, FontAwesome"
           :type="'text'"
@@ -351,5 +352,9 @@ nav {
 
 .aims-logo {
   padding-left: 20px;
+}
+
+.search-bar{
+  border: solid 1px;
 }
 </style>

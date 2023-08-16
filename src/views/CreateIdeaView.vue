@@ -517,17 +517,7 @@ function displaySelection(categoriesList) {
 
 
 
-.display-categories {
-  white-space: nowrap;
-  max-width: 200px;
-  font-weight: 500;
-  overflow-x: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0;
-  margin-left: 60px;
-}
+
 .create-idea-container {
   align-items: center;
   justify-content: center;
@@ -560,6 +550,13 @@ function displaySelection(categoriesList) {
   align-items: center;
   margin-bottom: 10px;
   width: 300px;
+}
+.display-categories {
+  white-space: nowrap;
+  max-width: 200px;
+  font-weight: 500;
+  overflow-x: auto;
+  margin-left: 60px;
 }
 .idea-category {
   display: flex;
