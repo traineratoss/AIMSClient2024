@@ -132,7 +132,6 @@ onMounted(async () => {
   const usernames = dataUser.map((user) => user.username);
   userOptions.value = usernames;
   sortOrder.value = "ASC";
-  console.log(userOptions);
 });
 
 const filter = async () => {

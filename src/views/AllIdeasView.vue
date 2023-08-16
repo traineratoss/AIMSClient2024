@@ -345,7 +345,7 @@ async function changeDisplay(pageSize1) {
     currentPage.value - 1,
     ideaPerPage.value,
     null,
-    "ASC"
+    sortOrder.value
   );
 
   ideas.value = data.content;

@@ -86,7 +86,6 @@ watch(
       shouldDisableArrowsRef.value.then((result) => {
         shouldDisableArrowsRef.value = result;
       })
-      console.log("disabled" +shouldDisableArrowsRef.value)
     }
 }
 );

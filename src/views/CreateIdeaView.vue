@@ -167,7 +167,9 @@ async function updateIdeaFields() {
   if (updatedIdea.value != null) {
     inputValue.value = updatedIdea.value.updateTitle;
     textValue.value = updatedIdea.value.updateText;
-    statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
+    if (updatedIdea.value.updateStatus) {
+      statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
+    }
     const categoryArray = JSON.parse(updatedIdea.value.updateCategoryList);
     categoryArray.forEach((category, index) => {
       categoriesSelected.value.push(category.text);
