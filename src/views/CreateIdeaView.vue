@@ -437,17 +437,18 @@ function displaySelection(categoriesList) {
         class="input-width"
       >
       </CustomDropDown>
+
       <input
         v-if="showDeletePopup || disableFields"
         v-model="onlyForDeleteCategories"
         :disabled="disableFields"
       />
     </div>
-    <div id="displayCategories">
+    <div class="display-categories-container" id="displayCategories">
         <div class="display-categories">
           {{ displaySelection(categoriesSelected) }}
         </div>
-      </div>
+    </div>
 
     <div class="idea-text">
       <label for="category-idea" class="label-text">Idea text:</label>
@@ -515,9 +516,6 @@ function displaySelection(categoriesList) {
 
 <style scoped>
 
-
-
-
 .create-idea-container {
   align-items: center;
   justify-content: center;
@@ -556,7 +554,12 @@ function displaySelection(categoriesList) {
   max-width: 200px;
   font-weight: 500;
   overflow-x: auto;
-  margin-left: 60px;
+}
+.display-categories-container {
+  display: flex;
+  align-items: center;
+  width: 300px;
+  margin-left: 200px;
 }
 .idea-category {
   display: flex;
