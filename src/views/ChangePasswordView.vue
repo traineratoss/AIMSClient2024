@@ -127,61 +127,63 @@ function checkPassword() {
 
 <template>
   <CompanyLogo />
-  <div class="container">
-    <h1 id="title">
-      <div class="big-text" id="name">AIMS</div>
-      <div class="big-text">Change Password</div>
-    </h1>
-    <div id="profile-img">
-      <img
-        :src="slideImages[currentAvatarId]"
-        alt="avatar not found"
-        style="height: auto; width: 8vw"
+  <div class="wrapper">
+    <div class="container">
+      <h1 id="title">
+        <div class="big-text" id="name">AIMS</div>
+        <div class="big-text">Change Password</div>
+      </h1>
+      <div id="profile-img">
+        <img
+          :src="slideImages[currentAvatarId]"
+          alt="avatar not found"
+          style="height: auto; width: 8vw"
+        />
+      </div>
+      <InvalidInputMessage
+        :message="errorMessage"
+        :class="{ 'error-message-visible': showErrorMessage }"
       />
-    </div>
-    <InvalidInputMessage
-      :message="errorMessage"
-      :class="{ 'error-message-visible': showErrorMessage }"
-    />
-    <div class="verification-container">
-      <ul>
-        <li :class="{ is_valid: containsEightCharacters }">8 Characters</li>
-        <li :class="{ is_valid: containsNumber }">Contains numbers</li>
-        <li :class="{ is_valid: containsUppercase }">Contains Uppercase</li>
-        <li :class="{ is_valid: containsSpecialCharacter }">Contains Special Character</li>
-      </ul>
-    </div>
-    <div>
-      <PasswordInput
-        :label="'Current password'"
-        :value="oldPasswordText"
-        @password-changed="handleOldPasswordTextChanged"
-        @keyup="checkPassword"
-      />
-    </div>
-    <div>
-      <PasswordInput
-        :label="'New password'"
-        :value="newPasswordText"
-        @password-changed="handleNewPasswordTextChanged"
-        @input="checkPassword"
-      />
-    </div>
-    <div>
-      <PasswordInput
-        :label="'Confirm password'"
-        :value="confirmNewPassword"
-        @password-changed="handleConfirmPasswordTextChanged"
-        @enter-password="submit"
-      />
-    </div>
-    <div id="controls-container">
-      <button
-        id="cancel"
-        :disabled="!firstLogin"
-        @click="router.push('/my')"
-      > Cancel </button>
-      <CustomButton id="submit" @click="submit">Submit</CustomButton>
+      <div class="verification-container">
+        <ul>
+          <li :class="{ is_valid: containsEightCharacters }">8 Characters</li>
+          <li :class="{ is_valid: containsNumber }">Contains numbers</li>
+          <li :class="{ is_valid: containsUppercase }">Contains Uppercase</li>
+          <li :class="{ is_valid: containsSpecialCharacter }">Contains Special Character</li>
+        </ul>
+      </div>
+      <div>
+        <PasswordInput
+          :label="'Current password'"
+          :value="oldPasswordText"
+          @password-changed="handleOldPasswordTextChanged"
+          @keyup="checkPassword"
+        />
+      </div>
+      <div>
+        <PasswordInput
+          :label="'New password'"
+          :value="newPasswordText"
+          @password-changed="handleNewPasswordTextChanged"
+          @input="checkPassword"
+        />
+      </div>
+      <div>
+        <PasswordInput
+          :label="'Confirm password'"
+          :value="confirmNewPassword"
+          @password-changed="handleConfirmPasswordTextChanged"
+          @enter-password="submit"
+        />
+      </div>
+      <div id="controls-container">
+        <button
+          id="cancel"
+          :disabled="!firstLogin"
+          @click="router.push('/my')"
+        > Cancel </button>
+        <CustomButton id="submit" @click="submit">Submit</CustomButton>
+      </div>
     </div>
   </div>
 </template>
@@ -195,6 +197,15 @@ function checkPassword() {
   gap: 20px;
   position: relative;
   margin-top: 10vh;
+  background-color: #e9e9e9;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .error-message-visible {
@@ -265,7 +276,7 @@ a {
   height: 7vh;
   width: 10vw;
   margin-bottom: 10px;
-  background-color: var(--background-color);
+  background-color: #e9e9e9;
   border-radius: 15px;
   padding: 10px;
   box-shadow: 2px 2px 5px 5px var(--sidebar-color);
