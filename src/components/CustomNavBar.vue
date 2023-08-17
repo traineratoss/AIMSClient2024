@@ -266,6 +266,7 @@ function onMouseLeaveUser() {
 
 nav {
   background-color: white;
+  box-sizing: border-box;
   display: flex;
   gap: 1vw;
   width: 100vw;

@@ -658,11 +658,11 @@ textarea {
   grid-template-rows: 10% 20% 25% 35% 10%;
   height: 87vh;
   width: 25vw;
-  margin-top: 10px;
   padding: 10px;
   border-radius: 10px;
   background-color: #e9e9e9;
   user-select: none;
+  margin-bottom: 15px;
 }
 
 .add-image-idea {

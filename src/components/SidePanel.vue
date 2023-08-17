@@ -300,6 +300,7 @@ watch(userSelected, () => {
         :placeholder="`Write a title...`"
         :can-modify-search-value="true"
         :widthInPx="13"
+        :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
       />
 
       <span class="text">Text:</span>
@@ -309,6 +310,7 @@ watch(userSelected, () => {
         :placeholder="`Write a text...`"
         :can-modify-search-value="false"
         :widthInPx="13"
+        :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
       />
 
       <span :class="statusSelected.length > 0 ? 'status2' : 'status'"
@@ -385,12 +387,14 @@ watch(userSelected, () => {
               v-model="selectedDateFrom"
               type="date"
               class="from-input"
+              :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
             />
             <span class="to-date"> To: </span>
             <CustomInput
               v-model="selectedDateTo"
               type="date"
               class="to-input"
+              :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
             />
           </div>
         </fieldset>
