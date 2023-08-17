@@ -469,7 +469,6 @@ async function changeDisplay(pageSize1) {
 }
 
 .sort-container {
-  margin: 10px;
   font-weight: bold;
 }
 .all-ideas-view-container {
