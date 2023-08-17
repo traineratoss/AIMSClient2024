@@ -433,7 +433,7 @@ function removeSelection(index) {
           <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
             :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
             :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width"
-            :width-in-vw="15.5">
+            :width-in-vw="16">
           </CustomDropDown>
 
           <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
@@ -491,6 +491,9 @@ function removeSelection(index) {
 </template>
 
 <style scoped>
+b{
+ color: #ffa941;
+}
 #textarea-id::-webkit-scrollbar {
   display: block;
   color: slategray;
@@ -522,9 +525,9 @@ function removeSelection(index) {
 
 #textarea-id {
   width: 21vw;
-  border: none;
+  border: 1px solid white;
   height: 21vh;
-  margin-top: 10px;
+  box-sizing: border-box;
   background-color: white;
   padding: 10px;
   overflow-x: hidden;
@@ -582,8 +585,18 @@ textarea {
 
 .custom-select {
   padding: 5px;
-  border: none;
+  border:1px solid white;
+  border-radius: 3px;
   height: 27px;
+  cursor: pointer;
+}
+
+.custom-select:hover{
+  border:1px solid slategray;
+}
+
+*:focus {
+  outline: none;
 }
 
 .idea {
@@ -594,6 +607,7 @@ textarea {
 }
 
 .display-categories {
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -619,14 +633,10 @@ textarea {
 }
 
 .display-categories-container::-webkit-scrollbar {
-  display: none;
-}
-
-.display-categories-container:hover::-webkit-scrollbar {
   display: block;
   color: slategray;
   width: 5px;
-  height: 10px;
+  height: 7px;
 }
 
 .display-categories-container::-webkit-scrollbar-thumb {
@@ -634,7 +644,6 @@ textarea {
   border-radius: 5px;
   border: 1px solid slategray;
 }
-
 
 .material-symbols-outlined {
   font-variation-settings:

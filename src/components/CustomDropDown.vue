@@ -198,37 +198,19 @@ function getInputPlaceholder() {
 
 <template>
   <div class="combo-box">
-    <input
-      type="text"
-      ref="comboInput"
-      class="input-dropdown"
-      :placeholder="getInputPlaceholder()"
-      :disabled="props.disabled"
-      @keydown.enter="handleInputKeyPress"
-      @input="handleInputBoxChange"
-      @mouseleave="onMouseLeave"
-      :style="{ height : props.heightInVh ? props.heightInVh + 'vh' : {},
-              width : props.widthInVw ? props.widthInVw + 'vw' : {}
-      }"
-    />
-    <div
-      v-show="isDropdownVisible && !props.disabled"
-      class="dropdown"
-      ref="dropdown"
-      id="dropdown"
-      @mouseenter="onMouseEnter"
-      @mouseleave="onMouseLeave"
-      :style="{ height : props.heightInVh ? props.heightInVh + 'vh' : {},
-              width : props.widthInVw ? props.widthInVw + 'vw' : {}
-      }"
-    >
+    <input type="text" ref="comboInput" class="input-dropdown" :placeholder="getInputPlaceholder()"
+      :disabled="props.disabled" @keydown.enter="handleInputKeyPress" @input="handleInputBoxChange"
+      @mouseleave="onMouseLeave" :style="{
+        height: props.heightInVh ? props.heightInVh + 'vh' : {},
+        width: props.widthInVw ? props.widthInVw + 'vw' : {}
+      }" />
+    <div v-show="isDropdownVisible && !props.disabled" class="dropdown" ref="dropdown" id="dropdown"
+      @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" :style="{
+        height: props.heightInVh ? props.heightInVh + 'vh' : {},
+        width: props.widthInVw ? props.widthInVw + 'vw' : {}
+      }">
       <label v-for="variant in allVariantsReactive" :key="variant">
-        <input
-          type="checkbox"
-          :value="variant"
-          :checked="isVariantSelected(variant)"
-          @change="handleCheckboxChange"
-        />
+        <input type="checkbox" :value="variant" :checked="isVariantSelected(variant)" @change="handleCheckboxChange" />
         {{ variant }}
       </label>
     </div>
@@ -259,30 +241,32 @@ function getInputPlaceholder() {
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   max-height: 12vh;
-  /* max-height: 250px; */
+  box-sizing: border-box;
   overflow-y: auto;
   padding: 5px;
   border-radius: 3px;
 }
 
-.dropdown.visible {
-  display: none;
-}
-
-.dropdown label {
+.dropdown label{
   cursor: pointer;
   display: flex;
-
   align-items: center;
-}
-
-.dropdown label:hover {
-  background-color: #f0f0f0;
+  accent-color: #ffa941;
 }
 
 .input-dropdown {
   padding: 5px;
-  border: none;
+  box-sizing: border-box;
+  border: 1px solid white;
+  background-color: white;
   border-radius: 3px;
+}
+
+.input-dropdown:hover{
+  border: 1px solid slategray;
+}
+
+*:focus {
+  outline: none;
 }
 </style>
