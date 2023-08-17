@@ -3,7 +3,7 @@ import { ref,defineProps,watch, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import CustomLoader from './CustomLoader.vue';
 
-const slides = defineProps(['images', 'selectedImage', 'initialCurrentIndex','disabledArrow']);
+const slides = defineProps(['images', 'selectedImage', 'initialCurrentIndex', 'disabledArrow', 'imageHeightPercentage']);
 const emit = defineEmits(['current-index', 'selected-image-values']);
 
 //IMPORTANT NOTE FOR THE USER TEAM: DON'T SET THE CURRENT INDEX BASED ON THE AVATAR ID, MODIFY IT VIA CODE FOR MULTIPLE USAGE
@@ -129,8 +129,12 @@ onMounted(() => {
           :key="index"
           class="slide"
           :class="{ active: currentIndex === index }"
+          style="display: flex; flex-direction: column; justify-content: center;"
         >
-          <img :src="slide"/>
+          <img 
+            :src="slide"
+            :style="`height: ${imageHeightPercentage}%`"
+          />
         </div>
         <div v-if="!imagesLoaded" id="custom-loader">
           <CustomLoader :size="60" />
@@ -205,7 +209,7 @@ button {
 }
 
 img {
-  height: 100%;
+  /* height: 100%; */
   width: 100%;
 }
 </style>

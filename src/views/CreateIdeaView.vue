@@ -456,9 +456,14 @@ function removeSelection(index) {
 
       <div class="carousel-container">
         <div class="idea-carousel">
-          <CarouselImage class="carousel-image" :images="slideImages" @current-index="getCurrentIndex"
-            @selected-image-values="getSelectedImageValues" :initialCurrentIndex="initialCurrentIndex()"
-            :disabledArrow="shouldDisableArrows()" />
+          <CarouselImage class="carousel-image" 
+            :images="slideImages" 
+            @current-index="getCurrentIndex"
+            @selected-image-values="getSelectedImageValues" 
+            :initialCurrentIndex="initialCurrentIndex()"
+            :disabledArrow="shouldDisableArrows()" 
+            :imageHeightPercentage="100"
+          />
         </div>
         <div class="add-image">
           <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="uploadedImage"

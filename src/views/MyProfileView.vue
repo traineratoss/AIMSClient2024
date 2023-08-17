@@ -134,40 +134,43 @@ function saveChanges() {
 </script>
 
 <template>
-  <div class="my-profile">
-    <h1>My profile</h1>
-    <InvalidInputMessage
-      :message="errorMessage"
-      :class="{ 'error-message-visible': showErrorMessage }"
-    />
-    <form action="">
-      <div class="form-input">
-        <label for="username"> Username </label>
-        <CustomInput type="text" v-model:model-value="usernameText" />
-      </div>
+  <div class="wrapper">
+    <div class="my-profile">
+      <h1>My profile</h1>
+      <InvalidInputMessage
+        :message="errorMessage"
+        :class="{ 'error-message-visible': showErrorMessage }"
+      />
+      <form action="">
+        <div class="form-input">
+          <label for="username"> Username </label>
+          <CustomInput type="text" v-model:model-value="usernameText" />
+        </div>
 
-      <div class="form-input">
-        <label for="full-name"> Full name </label>
-        <CustomInput type="text" v-model:model-value="fullNameText" />
-      </div>
+        <div class="form-input">
+          <label for="full-name"> Full name </label>
+          <CustomInput type="text" v-model:model-value="fullNameText" />
+        </div>
 
-      <div class="form-input">
-        <label for="email"> E-mail </label>
-        <CustomInput type="email" v-model:model-value="emailText" />
-      </div>
-    </form>
-    <CarouselImage
-      :images="slideImages"
-      class="avatar-carousel"
-      @current-index="onImageChange"
-    />
-    <CustomButton
-      id="save-changes"
-      class="save-changes-button"
-      @click="saveChanges"
-    >
-      Save changes
-    </CustomButton>
+        <div class="form-input">
+          <label for="email"> E-mail </label>
+          <CustomInput type="email" v-model:model-value="emailText" />
+        </div>
+      </form>
+      <CarouselImage
+        :images="slideImages"
+        class="avatar-carousel"
+        @current-index="onImageChange"
+        :imageHeightPercentage="80"
+      />
+      <CustomButton
+        id="save-changes"
+        class="save-changes-button"
+        @click="saveChanges"
+      >
+        Save changes
+      </CustomButton>
+    </div>
   </div>
 </template>
 
@@ -177,9 +180,16 @@ function saveChanges() {
   flex-direction: column;
   align-items: center;
   gap: 5vh;
+  margin: 8vh 0;
+  background-color: #e9e9e9;
+  padding: 10px;
+  border-radius: 10px;
+}
 
-  margin-top: 10vh;
-  width: 100vw;
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .error-message-visible {
