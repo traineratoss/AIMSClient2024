@@ -209,7 +209,7 @@ function getInputPlaceholder() {
       v-bind:style="
               error !== ''
                 ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
-                : { 'border-color': 'slategray', 'background-color': 'white' }
+                : {  'background-color': 'white' }
             "/>
     <div v-show="isDropdownVisible && !props.disabled" class="dropdown" ref="dropdown" id="dropdown"
       @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" :style="{

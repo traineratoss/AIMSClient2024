@@ -1,5 +1,5 @@
 <script setup>
-import SidePanel from "../components/SidePanel.vue";
+import CustomSidePanel from "../components/CustomSidePanel.vue";
 import { ref, onMounted, watch, computed } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
@@ -16,7 +16,6 @@ import CustomInput from "../components/CustomInput.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 const selectedDateFrom = ref();
 const selectedDateTo = ref();
-const filteredStatistics = ref([]);
 const showGenerated = ref(true);
 const showAnimation = ref(true);
 const ideaPerPage = ref(5);
@@ -409,7 +408,7 @@ async function showStatistics() {
 <template>
   <div class="all-ideas-view-container" @keyup.enter="updatePageByClick">
     <div class="left-container">
-      <SidePanel
+      <CustomSidePanel
         @filter-listening="updateIdeas"
         :sort="sortOrder"
         :currentUser="null"
@@ -591,7 +590,7 @@ async function showStatistics() {
   top: 0;
   display: grid;
   grid-template-rows: 7vh 12vh 5vh;
-  background-color: rgb(255, 255, 255);
+  background-color: white;
 }
 
 .select-date {
@@ -688,6 +687,7 @@ async function showStatistics() {
   display: grid;
   grid-template-columns: 20vw 80vw;
   height: 94vh;
+  
 }
 
 .left-container {
@@ -729,6 +729,7 @@ async function showStatistics() {
   height: 94vh;
   display: grid;
   grid-template-rows: 95% 5%;
+  border-top: 1px solid slategray;
 }
 
 .idea-container {

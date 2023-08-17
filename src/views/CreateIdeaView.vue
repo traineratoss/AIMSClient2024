@@ -269,33 +269,16 @@ async function initialCurrentIndex() {
 
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
-  //CHECKING IF ALL THE FIELDS ARE CORRECTLY INTRODUCED
   const categoryErrorCheck =
     !Array.isArray(rawCategoriesValue) || rawCategoriesValue.length === 0;
   const titleErrorCheck =
     inputValue.value === null ||
     inputValue.value === "" ||
     inputValue.value === undefined;
-  // const statusErrorCheck = statusValue.value === null || statusValue.value === "";
   const textErrorCheck =
     textValue.value === null ||
     textValue.value === "" ||
     textValue.value === undefined;
-
-  // const setError = (errorFlag, errorMessage) => {
-  //   if (errorFlag) {
-  //     return true;
-  //   }
-  //   return false;
-  // };
-
-  // categoryError.value = setError(
-  //   categoryErrorFlag,
-  //   "Please select at least one category"
-  // );
-  // titleError.value = setError(titleErrorFlag, "Please select a title");
-  // statusError.value = setError(statusErrorFlag, "Please select a status");
-  // textError.value = setError(textErrorFlag, "Please select a text");
 
   if (titleErrorCheck) {
     titleError.value = "Please select a title...";
@@ -439,7 +422,7 @@ function removeSelection(index) {
             :style="
               !titleError == ''
               ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
-              : { 'border-color': 'slategray', 'background-color': 'white' }
+              : { 'background-color': 'white' }
             "
           />
         </div>
@@ -500,7 +483,7 @@ function removeSelection(index) {
           :style="
             !textError == ''
             ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
-            : { 'border-color': 'slategray', 'background-color': 'white' }
+            : { 'background-color': 'white' }
           "
         >
         </textarea>

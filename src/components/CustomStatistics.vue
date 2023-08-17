@@ -454,7 +454,7 @@ strong {
   }
 }
 .stats-wrapper {
-  background-color: rgb(255, 255, 255);
+  background-color: white;
   box-sizing: content-box;
   padding-top: 10px;
   width: 20vw;
