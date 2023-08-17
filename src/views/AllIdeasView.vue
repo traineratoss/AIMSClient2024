@@ -56,12 +56,6 @@ const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
 
 onMounted(async () => {
-  // const data2 = await loadPagedIdeas(
-  //   ideasPerPage,
-  //   currentPage.value - 1,
-  //   "creationDate",
-  //   "ASC"
-  // );
   if (
     searchValue &&
     searchValue.value &&
@@ -404,7 +398,6 @@ async function changeShowGeneral() {
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideaPerPage"
-        @reload-data="loadData"
         :hideUser="false"
       />
     </div>
@@ -473,7 +466,7 @@ async function changeShowGeneral() {
           </div>
         </div>
 
-        <div v-if="ideas.length > 0 && !showTopIdeas " class="pagination-container">
+        <div v-if="ideas.length > 0 " class="pagination-container">
           <div class="pagination-component">
             <Pagination
               :totalPages="totalPages"
@@ -481,9 +474,6 @@ async function changeShowGeneral() {
               @changePage="changePage"
             />
           </div>
-        </div>
-        <div v-else class="pagination-container">
-          <button class="reload-button" @click="loadData()">All Ideas</button>
         </div>
       </div>
       <div v-if="isAdmin" class="custom-statistics">

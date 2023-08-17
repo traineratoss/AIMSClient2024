@@ -45,7 +45,6 @@ const emits = defineEmits([
   "filter-listening",
   "pass-input-variables",
   "generatedStatistics",
-  "reloadData",
 ]);
 
 watch(
@@ -91,10 +90,6 @@ function handleGlobalKeyDown(event) {
   if (event.key === "Enter") {
     filterData();
   }
-}
-
-function loadData() {
-  emits("reloadData");
 }
 
 const filterData = async () => {
@@ -167,7 +162,6 @@ const filter = async () => {
     }
   } else {
     filteredIdeasEmit.value = filteredIdeas;
-    // searchValue.value.text = title;
     console.log(filteredIdeasEmit.value)
   }
   
@@ -354,7 +348,6 @@ watch(userSelected, () => {
           {{ displaySelection(categoriesSelected) }}
         </div>
       </div>
-      <!--Empty comment-->
       <span
         v-if="currentUser !== null"
         :class="userSelected.length > 0 ? 'user2' : 'user'"
@@ -403,7 +396,6 @@ watch(userSelected, () => {
       </div>
 
       <button class="filter-button" @click="filterData">Filter</button>
-      <button class="load-button" @click="loadData()">Reload Ideas</button>
     </div>
   </div>
 </template>
