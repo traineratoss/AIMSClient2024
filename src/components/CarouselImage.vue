@@ -110,7 +110,7 @@ const nextSlide = () => {
 
 <template>
   <div class="carousel">
-    <button @click="prevSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
+    <button @click="prevSlide" :disabled="shouldDisableArrowsRef">
       <i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941"></i>
     </button>
     <div class="slide-container">
@@ -119,7 +119,7 @@ const nextSlide = () => {
         :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
       >
         <div
-          v-if="imagesLoaded"
+          v-if="imagesLoaded || (route.name ==='my-profile')"
           v-for="(slide, index) in images"
           :key="index"
           class="slide"
@@ -132,7 +132,7 @@ const nextSlide = () => {
         </div>
       </div>
     </div>
-    <button @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
+    <button @click="nextSlide" :disabled="shouldDisableArrowsRef">
       <i class="fa-solid fa-arrow-right fa-2xl" style="color: #ffa941"></i>
     </button>
   </div>

@@ -221,4 +221,10 @@ img {
 .save-changes-button {
   width: auto;
 }
+.avatar-carousel{
+  height: 15vw;
+  max-width: 23vw;
+  object-fit:scale-down;
+  margin-top: 50px;
+}
 </style>
