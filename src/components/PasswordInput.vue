@@ -37,6 +37,7 @@ function handleEnterPress() {
       @focus="showBorder = true"
       @blur="showBorder = false"
       id="password-input"
+      :widthInPx="7"
     />
     <button style="background-color: white" @click="changeShowPassword">
       <span

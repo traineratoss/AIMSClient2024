@@ -74,6 +74,7 @@ function handlePasswordTextChanged(password) {
         id="username-email-input"
         placeholder="Username/E-mail"
         v-model:model-value="usernameOrEmailText"
+        :widthInPx="9"
       />
     </div>
     <div id="password-input">
