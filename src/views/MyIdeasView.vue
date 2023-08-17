@@ -298,11 +298,13 @@ const onPassInputVariables = (
 //if the item has an image in the db, we return it. if not, we return a default one
 const getImageUrl = (item) => {
   if (item && item.image) {
-    return `data:image/${item.image.fileType};name=${item.image.fileName};base64,${item.image.base64Image}`;
-  } else {
-    return "https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw";
-  }
+  return `data:image/${item.image.fileType};name=${item.image.fileName};base64,${item.image.base64Image}`;
+} else {
+  return "https://play-lh.googleusercontent.com/5MTmOL5GakcBM16yjwxivvZD10sqnLVmw6va5UtYxtkf8bhQfiY5fMR--lv1fPR1i2c=w240-h480-rw";
+}
 };
+
+
 async function changeDisplay(pageSize1) {
   ideaPerPage.value = pageSize1;
   currentPage.value = 1;
@@ -317,7 +319,7 @@ async function changeDisplay(pageSize1) {
     currentPage.value - 1,
     ideaPerPage.value,
     getCurrentUsername(),
-    "ASC"
+    sortOrder.value
   );
 
   ideas.value = data.content;

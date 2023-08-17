@@ -77,11 +77,16 @@ const handleInputKeyChange = (event) => {
 <style scoped>
 .input {
   border-radius: 2px;
-  border: 1px solid slategray;
+  border: 1px solid white;
   background-color: white;
   padding: 5px;
   box-sizing: border-box;
 }
+
+.input:hover{
+  border: 1px solid slategray;
+}
+
 input {
   all: unset;
 }
