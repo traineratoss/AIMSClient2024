@@ -432,16 +432,18 @@ function removeSelection(index) {
 
           <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
             :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
-            :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width" :width-in-vw="15.5">
+            :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width"
+            :width-in-vw="15.5">
           </CustomDropDown>
 
           <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
         </div>
 
-        <div class="display-categories-container" id="displayCategories">
-          <div class="display-categories" v-for="(category, index) in categoriesSelected" @click="removeSelection(index)">
-            {{ category }} <b>x</b>
-          </div>
+        <div class="display-categories-container">
+            <div class="display-categories" v-for="(category, index) in categoriesSelected"
+              @click="removeSelection(index)">
+              {{ category }} <b>x</b>
+            </div>
         </div>
 
       </div>
@@ -509,7 +511,7 @@ function removeSelection(index) {
 .carousel-image {
   height: 13vw;
   max-width: 23vw;
-  object-fit:fill;
+  object-fit: fill;
   margin-top: 20px;
 }
 
@@ -524,17 +526,16 @@ function removeSelection(index) {
   margin-top: 10px;
   background-color: white;
   padding: 10px;
-  box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: scroll;
   word-wrap: break-word;
 }
 
-#textarea-id:hover{
+#textarea-id:hover {
   border: 1px solid slategray;
 }
 
-#textarea-id:active{
+#textarea-id:active {
   border: 1px solid slategray;
 }
 
@@ -607,16 +608,17 @@ textarea {
 }
 
 .display-categories-container {
+  margin-left: 5vw;   
   display: flex;
   align-items: center;
   gap: 10px;
   height: 4vh;
-  width: 21vw;
+  width: 16vw;
   overflow-x: scroll;
 }
 
 .display-categories-container::-webkit-scrollbar {
-display: none;
+  display: none;
 }
 
 .display-categories-container:hover::-webkit-scrollbar {
