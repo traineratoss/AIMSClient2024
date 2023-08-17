@@ -8,6 +8,7 @@ const props = defineProps({
   recievedFilteredStats: Object,
   showGenerated: Boolean,
   showSkeleton: Boolean,
+  showAnimation: Boolean,
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
@@ -193,7 +194,10 @@ function getShortenedTitle(title, maxLength) {
         </div>
       </div>
 
-      <div class="general-statistics" v-if="!props.showGenerated">
+      <div
+        class="general-statistics"
+        v-if="!props.showGenerated && !props.showAnimation"
+      >
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label">

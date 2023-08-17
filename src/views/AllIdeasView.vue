@@ -18,6 +18,7 @@ const selectedDateFrom = ref();
 const selectedDateTo = ref();
 const filteredStatistics = ref([]);
 const showGenerated = ref(true);
+const showAnimation = ref(true);
 const ideaPerPage = ref(5);
 const currentPage = ref(1);
 const ideas = ref([]);
@@ -387,14 +388,20 @@ const getImageUrl = (item) => {
 const showSkeleton = ref(true);
 
 async function showStatistics() {
-  if (selectedDateFrom.value !== undefined && selectedDateFrom.value !== "")
-    showGenerated.value = false;
-  else showGenerated.value = true;
-
+  showAnimation.value = true;
   stats.value = await sendDataForCustomStats(
     selectedDateFrom.value,
     selectedDateTo.value
   );
+
+  if (
+    (selectedDateFrom.value === undefined || selectedDateFrom.value === "") &&
+    (selectedDateTo.value === undefined || selectedDateTo.value === "")
+  )
+    showGenerated.value = true;
+  else showGenerated.value = false;
+
+  showAnimation.value = false;
   console.log("filtered ideas ", stats.value);
 }
 </script>
@@ -533,6 +540,7 @@ async function showStatistics() {
           <CustomStatistics
             :recievedFilteredStats="stats"
             :showGenerated="showGenerated"
+            :showAnimation="showAnimation"
             :showSkeleton="showSkeleton"
             @load-top5-ideas="loadRecievedIdeas"
             @load-data="loadData"

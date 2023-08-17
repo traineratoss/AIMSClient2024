@@ -3,7 +3,11 @@ const API_URL = "http://localhost:8080/aims/api/v1/statistics";
 async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
   let url = "";
 
-  if (selectedDateFrom !== undefined && selectedDateTo === undefined) {
+  if (
+    selectedDateFrom !== undefined &&
+    selectedDateFrom !== "" &&
+    (selectedDateTo === undefined || selectedDateTo === "")
+  ) {
     const today = new Date();
     const month =
       today.getMonth() < 9
@@ -14,8 +18,17 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
       today.getUTCFullYear() + "-" + month + "-" + today.getDate();
 
     url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`;
+    console.log(selectedDateFrom, " --> ", newSelectedDateTo);
+  } else if (
+    (selectedDateFrom === undefined || selectedDateFrom === "") &&
+    selectedDateTo !== undefined &&
+    selectedDateTo !== ""
+  ) {
+    url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${selectedDateTo}`;
+    console.log("2010-01-01 --> ", selectedDateTo);
   } else {
     url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`;
+    console.log(selectedDateFrom, " --> ", selectedDateTo);
   }
 
   const response = await fetch(url, {
