@@ -1,4 +1,3 @@
-import TermsAndConditionsView from "../views/TermsAndConditionsView.vue";
 import { ref } from "vue";
 
 const API_URL = "http://localhost:8080/aims/api/v1/ideas";
