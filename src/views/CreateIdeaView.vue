@@ -510,9 +510,10 @@ function removeSelection(index) {
 
 .carousel-image {
   height: 13vw;
-  max-width: 23vw;
+  max-width: 19vw;
   object-fit: fill;
   margin-top: 20px;
+
 }
 
 .carousel-image>img {
