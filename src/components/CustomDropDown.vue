@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps, watch, watchEffect } from "vue";
+import { ref, onMounted, defineProps, watch, watchEffect, nextTick } from "vue";
 
 const emit = defineEmits(["update:selectedOptions", "filter-data"]);
 
@@ -58,7 +58,6 @@ const loading = ref(true);
 const allVariantsReactive = ref(props.variants);
 // the ref is stringified so i parse it to receive the full array
 const allSelectedVariantsReactive = ref(JSON.parse(props.selectedObjects));
-
 const initialSelectedObjects = ref(null);
 
 onMounted(async () => {
@@ -66,6 +65,12 @@ onMounted(async () => {
   // i set the input to be equal to the initially selected values (from the props)
   //comboInput.value.value = initialSelectedObjects.value;
 });
+
+// checking every little modification for the selected Objects and setting its reactive value to be equal to it
+watch(
+  () => JSON.parse(props.selectedObjects),
+  (newValue) => { allSelectedVariantsReactive.value = newValue}
+)
 
 watchEffect(() => {
   //while its still loading, i check if the initialselectedcategories received the prop corectly from the parent
@@ -133,7 +138,7 @@ const handleCheckboxChange = (event) => {
   emit("update:selectedOptions", selectedVariants);
 };
 
-const handleInputKeyPress = (event) => {
+const handleInputKeyPress = async (event) => {
   if (props.canAddInDropdown) {
     // this is used for checking if the variants can pe modified by pressing Enter or not
     let checkDuplicate = false; // this var is used for preventing creation of an existant category
@@ -148,12 +153,11 @@ const handleInputKeyPress = (event) => {
       allVariantsReactive.value = props.variants;
       comboInput.value.value = "";
       isDropdownVisible.value = true;
-      setTimeout(() => {
+      await nextTick(() => {
         // we set a small timeout because
         const checkboxes = dropdown.value.querySelectorAll(
           'input[type="checkbox"]'
         );
-        console.log(checkboxes);
         const checkbox = dropdown.value.querySelector(
           `input[value="${newCategory}"]`
         );
@@ -164,10 +168,8 @@ const handleInputKeyPress = (event) => {
         const updatedSelectedVariants = Array.from(checkboxes)
           .filter((checkbox) => checkbox.checked)
           .map((checkbox) => checkbox.value);
-        setTimeout(() => {
-          emit("update:selectedOptions", updatedSelectedVariants);
-        }, 10); // we use a small timeout since the reactive vars arent updating instanlty so we have to check the variant after we create it
-      }, 0);
+        emit("update:selectedOptions", updatedSelectedVariants); // we use a small timeout since the reactive vars arent updating instanlty so we have to check the variant after we create it
+      });
     }
     //here, we are checking if we press enter on those on the filter side
   } else {
@@ -209,7 +211,7 @@ function getInputPlaceholder() {
         height: props.heightInVh ? props.heightInVh + 'vh' : {},
         width: props.widthInVw ? props.widthInVw + 'vw' : {}
       }">
-      <label v-for="variant in allVariantsReactive" :key="variant">
+      <label v-for="(variant,index) in allVariantsReactive" :key="index">
         <input type="checkbox" :value="variant" :checked="isVariantSelected(variant)" @change="handleCheckboxChange" />
         {{ variant }}
       </label>

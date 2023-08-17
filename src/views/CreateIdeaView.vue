@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { ref, onMounted, watchEffect, computed, watch } from "vue";
+import { ref, onMounted, watchEffect, computed, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
 import {
@@ -182,7 +182,7 @@ async function updateIdeaFields() {
 }
 
 // we stringify the categories selected and send it to the dropdown and then parse it there
-const stringifyCategory = () => {
+function stringifyCategory() {
   return JSON.stringify(categoriesSelected.value);
 };
 
@@ -390,9 +390,11 @@ function displaySelection(categoriesList) {
 }
 
 function removeSelection(index) {
+  const indexValue = index;
   // const newCategoryArray = categoriesSelected.value.filter((category, indexValue) => indexValue !== index);
   // categoriesSelected.value = newCategoryArray;
-  categoriesSelected.value.splice(index, 1);
+  // const removedItem = categoriesSelected.value.splice(index, 1);
+  categoriesSelected.value = categoriesSelected.value.filter((category, index) => indexValue !== index);
 }
 </script>
 
@@ -429,18 +431,16 @@ function removeSelection(index) {
 
         <div class="idea">
           <label for="category-idea" class="label">Categories:</label>
-
           <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
             :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
             :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width"
             :width-in-vw="16">
           </CustomDropDown>
-
           <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
         </div>
 
         <div class="display-categories-container">
-            <div class="display-categories" v-for="(category, index) in categoriesSelected"
+            <div class="display-categories" v-for="(category, index) in categoriesSelected" :key="index"
               @click="removeSelection(index)">
               {{ category }} <b>x</b>
             </div>
