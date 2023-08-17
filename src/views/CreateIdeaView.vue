@@ -20,7 +20,7 @@ import {
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 
 const inputValue = ref("");
-const statusValue = ref("");
+const statusValue = ref("open");
 const textValue = ref("");
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
@@ -417,7 +417,7 @@ function removeSelection(index) {
         <div class="idea">
           <label for="status-idea" class="label" @mouseleave="onMouseLeave" @mouseenter="onMouseEnter">Status:</label>
           <select v-model="statusValue" :class="{ status: statusError }" @mouseenter="onMouseEnter" style="width: 16vw;"
-            @mouseleave="onMouseLeave" name="status-idea" id="status-idea" class="input-width custom-select"
+            @mouseleave="onMouseLeave" name="status-idea"  class="custom-select"
             :disabled="fieldsDisabled">
             <option value="open">Open</option>
             <option value="draft">Draft</option>
@@ -584,7 +584,7 @@ textarea {
 
 
 .custom-select {
-  padding: 5px;
+
   border:1px solid white;
   border-radius: 3px;
   height: 27px;
