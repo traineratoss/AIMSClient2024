@@ -116,7 +116,7 @@ onMounted(() => {
 <template>
   <div class="carousel">
     <button @click="prevSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
-      <i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941"></i>
+      <i class="fa-solid fa-arrow-left fa-2xl" id="arrow"></i>
     </button>
     <div class="slide-container">
       <div
@@ -138,12 +138,29 @@ onMounted(() => {
       </div>
     </div>
     <button @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
-      <i class="fa-solid fa-arrow-right fa-2xl" style="color: #ffa941"></i>
+      <i class="fa-solid fa-arrow-right fa-2xl" id="arrow2"></i>
     </button>
   </div>
 </template>
 
 <style scoped>
+
+#arrow:hover {
+  color: #ffa941;
+}
+
+#arrow {
+  color: gray;
+}
+
+#arrow2 {
+  color: gray;
+}
+
+#arrow2:hover {
+  color: #ffa941;
+}
+
 .carousel {
   display: flex;
   align-items: center;

@@ -37,6 +37,14 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  widthInVw: {
+    type: Number,
+    default: null
+  },
+  heightInVh: {
+    type: Number,
+    default: null
+  }
 });
 
 const clearAllDropdownValues = ref(false);
@@ -100,6 +108,8 @@ const isVariantSelected = (variant) => {
     return allSelectedVariantsReactive.value.includes(variant);
   }
   if (clearAllDropdownValues.value) {
+    allVariantsReactive.value = props.variants;
+    comboInput.value.value = "";
     return false;
   }
 };
@@ -197,6 +207,9 @@ function getInputPlaceholder() {
       @keydown.enter="handleInputKeyPress"
       @input="handleInputBoxChange"
       @mouseleave="onMouseLeave"
+      :style="{ height : props.heightInVh ? props.heightInVh + 'vh' : {},
+              width : props.widthInVw ? props.widthInVw + 'vw' : {}
+      }"
     />
     <div
       v-show="isDropdownVisible && !props.disabled"
@@ -205,6 +218,9 @@ function getInputPlaceholder() {
       id="dropdown"
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
+      :style="{ height : props.heightInVh ? props.heightInVh + 'vh' : {},
+              width : props.widthInVw ? props.widthInVw + 'vw' : {}
+      }"
     >
       <label v-for="variant in allVariantsReactive" :key="variant">
         <input
@@ -239,7 +255,6 @@ function getInputPlaceholder() {
   position: absolute;
   top: 10;
   left: 0;
-  width: 100%;
   background-color: #fff;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -247,8 +262,6 @@ function getInputPlaceholder() {
   /* max-height: 250px; */
   overflow-y: auto;
   padding: 5px;
-  max-width: 10vw;
-  z-index: 10;
   border-radius: 3px;
 }
 
@@ -261,7 +274,6 @@ function getInputPlaceholder() {
   display: flex;
 
   align-items: center;
-  width: 185px;
 }
 
 .dropdown label:hover {
@@ -269,7 +281,6 @@ function getInputPlaceholder() {
 }
 
 .input-dropdown {
-  width: 10vw;
   padding: 5px;
   border: none;
   border-radius: 3px;

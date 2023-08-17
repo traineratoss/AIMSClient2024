@@ -2,13 +2,15 @@
 import { defineProps, defineEmits, ref, watch } from "vue";
 import searchValue from "../utils/search-title";
 
-const { canModifySearchValue, modelValue, placeholder, error, type, inputRef } =
+const { canModifySearchValue, modelValue, placeholder, error, type, inputRef, widthInPx, heightInPx } =
   defineProps([
     "canModifySearchValue",
     "modelValue",
     "placeholder",
     "error",
     "type",
+    "widthInPx",
+    "heightInPx"
   ]);
 
 const emit = defineEmits(["update:modelValue"]);
@@ -52,7 +54,7 @@ const handleInputKeyChange = (event) => {
 </script>
 
 <template>
-  <input
+  <input class="input"
     :type="type"
     ref="inputValue"
     :placeholder="placeholder"
@@ -64,22 +66,27 @@ const handleInputKeyChange = (event) => {
     @focus="handleFocus"
     @blur="handleBlur"
     @keyup="handleInputKeyChange"
+
+    :style="{ height : heightInPx ? heightInPx + 'vh' : {},
+              width : widthInPx ? widthInPx + 'vw' : {}
+    }"
   />
+
 </template>
 
 <style scoped>
 .input {
-  border-color: red;
-  border-width: 1.4px;
-  border-radius: 1px;
+  border-radius: 2px;
+  border: 1px solid slategray;
+  background-color: white;
+  padding: 5px;
+  box-sizing: border-box;
 }
 input {
-  width: 8vw;
-  padding: 5px;
-  border: none;
+  all: unset;
 }
 
-.input::placeholder {
-  color: red;
+.input::placeholder{
+  color: slategray;
 }
 </style>

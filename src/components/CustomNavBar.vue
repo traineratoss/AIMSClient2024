@@ -129,7 +129,12 @@ function redirectToMyIdeas() {
 }
 
 function redirectToCreateIdea() {
-  router.push("/create-idea");
+  if(route.path === "/create-idea") {
+    window.location.reload();
+  } else {
+    router.push("/create-idea");
+  }
+  
 }
 
 function onMouseEnterDashboard() {

@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { ref, onMounted, watchEffect, computed } from "vue";
+import { ref, onMounted, watchEffect, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
 import {
@@ -71,6 +71,10 @@ onMounted(async () => {
   slideImages.value = imageUrl;
 });
 
+// watch(categoriesSelected, (newValue) => {
+//   categoriesSelected.value = newValue
+// })
+
 //If the component is handling the update, we update the fields only once, we dont wanna update them multiple times
 // that s why we have a var
 watchEffect(() => {
@@ -134,23 +138,25 @@ async function updateIdeaFunction() {
   const newCategoryList = categoriesSelected.value.map((category) => {
     return { text: category };
   });
-  transformImageDataIntoValues(slideImages.value[currentImageIndex.value]);
+  if (newTitle !== "" && newStatus !== "" && newText !== "" && categoriesSelected.value.length > 0) {
+    transformImageDataIntoValues(slideImages.value[currentImageIndex.value]);
 
-  const imageDTO = {
-    fileName: selectedImageName.value,
-    fileType: selectedImageType.value,
-    image: selectedImageBase64.value,
-  };
+    const imageDTO = {
+      fileName: selectedImageName.value,
+      fileType: selectedImageType.value,
+      image: selectedImageBase64.value,
+    };
 
-  await updateIdea(
-    updatedIdeaId,
-    newTitle,
-    newText,
-    newStatus,
-    newCategoryList,
-    imageDTO
-  );
-  router.back();
+    await updateIdea(
+      updatedIdeaId,
+      newTitle,
+      newText,
+      newStatus,
+      newCategoryList,
+      imageDTO
+    );
+    router.back();
+  }
 }
 
 //Checking what we want to do (update or create) since we use the same component
@@ -382,6 +388,12 @@ function displaySelection(categoriesList) {
 
   return finalList;
 }
+
+function removeSelection(index) {
+  // const newCategoryArray = categoriesSelected.value.filter((category, indexValue) => indexValue !== index);
+  // categoriesSelected.value = newCategoryArray;
+  categoriesSelected.value.splice(index, 1);
+}
 </script>
 
 <template>
@@ -398,12 +410,13 @@ function displaySelection(categoriesList) {
 
         <div class="idea">
           <label for="title-idea" class="label">Title:</label>
-          <CustomInput v-model="inputValue" :disabled="fieldsDisabled" placeholder="Write your title here..." />
+          <CustomInput v-model="inputValue" :disabled="fieldsDisabled" placeholder="Write your title here..."
+            :widthInPx="16" />
         </div>
 
         <div class="idea">
           <label for="status-idea" class="label" @mouseleave="onMouseLeave" @mouseenter="onMouseEnter">Status:</label>
-          <select v-model="statusValue" :class="{ status: statusError }" @mouseenter="onMouseEnter"
+          <select v-model="statusValue" :class="{ status: statusError }" @mouseenter="onMouseEnter" style="width: 16vw;"
             @mouseleave="onMouseLeave" name="status-idea" id="status-idea" class="input-width custom-select"
             :disabled="fieldsDisabled">
             <option value="open">Open</option>
@@ -419,22 +432,24 @@ function displaySelection(categoriesList) {
 
           <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
             :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
-            :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width">
+            :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width" :width-in-vw="15.5">
           </CustomDropDown>
 
           <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
         </div>
 
         <div class="display-categories-container" id="displayCategories">
-          <div class="display-categories">
-            {{ displaySelection(categoriesSelected) }}
+          <div class="display-categories" v-for="(category, index) in categoriesSelected" @click="removeSelection(index)">
+            {{ category }} <b>x</b>
           </div>
         </div>
 
-        <div class="idea-text">
-          <textarea v-model="textValue" :disabled="fieldsDisabled" placeholder="  Write your idea text here..." id="textarea-id">
+      </div>
+
+      <div class="idea-text">
+        <textarea v-model="textValue" :disabled="fieldsDisabled" placeholder="  Write your idea text here..."
+          id="textarea-id">
           </textarea>
-        </div>
       </div>
 
       <div class="carousel-container">
@@ -456,7 +471,8 @@ function displaySelection(categoriesList) {
       </div>
 
       <div class="create-container">
-        <CustomButton id="create-idea" @click="shouldCreateOrUpdate" :disabled="fieldsDisabled" v-if="!deletePopup" :height-in-px="40" :width-in-px="300">
+        <CustomButton id="create-idea" @click="shouldCreateOrUpdate" :disabled="fieldsDisabled" v-if="!deletePopup"
+          :height-in-px="40" :width-in-px="300">
           {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
         </CustomButton>
         <CustomDialog ref="customDialog" :open="deletePopup"
@@ -473,25 +489,62 @@ function displaySelection(categoriesList) {
 </template>
 
 <style scoped>
-
-.carousel-image {
-  height: 15vw;
-  max-width: 23vw;
-  object-fit:scale-down;
-  margin-top: 50px;
+#textarea-id::-webkit-scrollbar {
+  display: block;
+  color: slategray;
+  width: 7px;
 }
 
-.idea-carousel {
+#textarea-id:hover::-webkit-scrollbar {
+  display: block;
+  width: 7px;
+}
+
+#textarea-id::-webkit-scrollbar-thumb {
+  background-color: #ffa941;
+  border-radius: 7px;
+  border: 1px solid slategray;
+}
+
+.carousel-image {
+  height: 13vw;
+  max-width: 23vw;
+  object-fit:fill;
+  margin-top: 20px;
+}
+
+.carousel-image>img {
+  border: 1px solid slategray;
 }
 
 #textarea-id {
-  width: 23vw;
+  width: 21vw;
   border: none;
+  height: 21vh;
   margin-top: 10px;
+  background-color: white;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  word-wrap: break-word;
+}
+
+#textarea-id:hover{
+  border: 1px solid slategray;
+}
+
+#textarea-id:active{
+  border: 1px solid slategray;
+}
+
+textarea {
+  all: unset;
 }
 
 #create-idea {
   border-radius: 5px;
+  margin-top: 10px;
 }
 
 .wrapper {
@@ -504,13 +557,14 @@ function displaySelection(categoriesList) {
 .create-idea-container {
   align-items: center;
   display: grid;
-  grid-template-rows: 15% 30% 45% 10%;
-  height: 80vh;
+  grid-template-rows: 10% 20% 25% 35% 10%;
+  height: 87vh;
   width: 25vw;
   margin-top: 10px;
   padding: 10px;
   border-radius: 10px;
-  background-color: #b3b3b3;
+  background-color: #e9e9e9;
+  user-select: none;
 }
 
 .add-image-idea {
@@ -519,11 +573,10 @@ function displaySelection(categoriesList) {
   padding: 0.5rem;
   font-family: sans-serif;
   cursor: pointer;
+  margin-top: 10px;
+  border-radius: 6px;
 }
 
-.input-width {
-  width: 202px;
-}
 
 .custom-select {
   padding: 5px;
@@ -533,23 +586,59 @@ function displaySelection(categoriesList) {
 
 .idea {
   display: grid;
-  grid-template-columns: auto 8vw;
-  width: 13vw;
+  grid-template-columns: 5vw 16vw;
+  width: 21vw;
   align-items: center;
 }
 
 .display-categories {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   white-space: nowrap;
-  max-width: 200px;
+  border-radius: 5px;
   font-weight: 500;
-  overflow-x: auto;
+  background-color: rgb(255, 255, 255);
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  gap: 10px;
 }
 
 .display-categories-container {
   display: flex;
   align-items: center;
-  width: 300px;
-  margin-left: 200px;
+  gap: 10px;
+  height: 4vh;
+  width: 21vw;
+  overflow-x: scroll;
+}
+
+.display-categories-container::-webkit-scrollbar {
+display: none;
+}
+
+.display-categories-container:hover::-webkit-scrollbar {
+  display: block;
+  color: slategray;
+  width: 5px;
+  height: 10px;
+}
+
+.display-categories-container::-webkit-scrollbar-thumb {
+  background-color: #ffa941;
+  border-radius: 5px;
+  border: 1px solid slategray;
+}
+
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' -25,
+    'opsz' 20
 }
 
 .idea-category {
@@ -563,14 +652,14 @@ function displaySelection(categoriesList) {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-transform: uppercase;
 }
 
 .input-container {
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
-  width: 23vw;
+  width: 21vw;
   margin: auto;
   gap: 0.5vw;
 }
