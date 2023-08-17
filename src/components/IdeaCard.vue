@@ -263,26 +263,16 @@ watch(
       watch(
         () => comment.replyToggle,
         () => {
-          if (comment.replyToggle === true) triggerExpandAnimation();
-          else triggerCollapseAnimation();
+          if (comment.replyToggle === true) triggerExpandAnimation(comment.id);
+          else triggerCollapseAnimation(comment.id);
         }
       );
     });
   }
 );
 
-// function triggerExpandAnimation() {
-//   const reply = document.getElementById("customReply");
-//   if (reply !== null) {
-//     reply.classList.add("expand-animation");
-
-//     setTimeout(() => {
-//       reply.classList.remove("expand-animation");
-//     }, 150);
-//   }
-// }
-function triggerExpandAnimation() {
-  const reply = document.getElementById("customReply");
+function triggerExpandAnimation(commentId) {
+  const reply = document.getElementById("customReply" + commentId);
   if (reply !== null) {
     const animation = reply.animate(
       [
@@ -303,8 +293,8 @@ function triggerExpandAnimation() {
   }
 }
 
-function triggerCollapseAnimation() {
-  const reply = document.getElementById("customReply");
+function triggerCollapseAnimation(commentId) {
+  const reply = document.getElementById("customReply" + commentId);
   if (reply !== null) {
     const animation = reply.animate(
       [
@@ -521,7 +511,7 @@ function triggerCollapseAnimation() {
         <div
           class="replies-wrapper"
           v-if="comment.replyToggle"
-          id="customReply"
+          :id="'customReply' + comment.id"
         >
           <transition-group duration="300" name="rnested">
             <div

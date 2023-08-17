@@ -10,7 +10,7 @@ const props = defineProps({
   showSkeleton: Boolean,
 });
 
-const emits = defineEmits(["loadTop5Ideas","loadData"]);
+const emits = defineEmits(["loadTop5Ideas", "loadData"]);
 
 onMounted(async () => {
   calculateImplementationPercentage();
@@ -56,10 +56,15 @@ function loadTop5Ideas() {
 }
 
 async function refreshStats() {
-  stats.value = await getStats();
+  showSkeleton.value = true;
+
+  setTimeout(async () => {
+    stats.value = await getStats();
+    showSkeleton.value = false;
+  }, "100");
 }
 
-function loadData(){
+function loadData() {
   emits("loadData");
 }
 

@@ -102,6 +102,7 @@ onMounted(async () => {
     loadingPage.value = false;
   }, 500);
 });
+
 stats.value = await getStats();
 
 watch(searchValue, async (newValue) => {
@@ -241,7 +242,7 @@ async function updateSortOrder() {
 
 function loadRecievedIdeas(value) {
   ideas.value = [];
-  
+
   setTimeout(() => {
     showTopIdeas.value = !showTopIdeas.value;
     ideas.value = value;
@@ -252,7 +253,7 @@ function loadRecievedIdeas(value) {
 const showTopIdeas = ref(false);
 
 async function loadData() {
-  showTopIdeas.value = !showTopIdeas.value;
+  showTopIdeas.value = false;
   loadingPage.value = true;
 
   ideas.value = [];
@@ -264,7 +265,7 @@ async function loadData() {
     "ASC"
   );
   ideas.value = data.content;
-  
+
   loadingPage.value = false;
 }
 
@@ -385,15 +386,16 @@ const getImageUrl = (item) => {
 
 const showSkeleton = ref(true);
 
-async function changeShowGeneral() {
-  showSkeleton.value = !showSkeleton.value;
+async function showStatistics() {
+  if (selectedDateFrom.value !== undefined && selectedDateFrom.value !== "")
+    showGenerated.value = false;
+  else showGenerated.value = true;
+
   stats.value = await sendDataForCustomStats(
     selectedDateFrom.value,
     selectedDateTo.value
   );
   console.log("filtered ideas ", stats.value);
-  showGenerated.value = !showGenerated.value;
-  showSkeleton.value = !showSkeleton.value;
 }
 </script>
 
@@ -522,7 +524,7 @@ async function changeShowGeneral() {
           </div>
 
           <div class="center-class">
-            <button class="load-button" @click="changeShowGeneral()">
+            <button class="load-button" @click="showStatistics()">
               Filter
             </button>
           </div>
@@ -672,7 +674,7 @@ async function changeShowGeneral() {
 .sort-container {
   font-weight: bold;
   position: sticky;
-  top:0;
+  top: 0;
 }
 .all-ideas-view-container {
   display: grid;
