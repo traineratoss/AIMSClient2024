@@ -281,6 +281,7 @@ watch(userSelected, () => {
     setPosition("userSelect", "displayUsers");
   }
 });
+
 </script>
 
 <template>
@@ -298,6 +299,7 @@ watch(userSelected, () => {
         class="title-input"
         :placeholder="`Write a title...`"
         :can-modify-search-value="true"
+        :widthInPx="13"
       />
 
       <span class="text">Text:</span>
@@ -306,6 +308,7 @@ watch(userSelected, () => {
         class="text-input"
         :placeholder="`Write a text...`"
         :can-modify-search-value="false"
+        :widthInPx="13"
       />
 
       <span :class="statusSelected.length > 0 ? 'status2' : 'status'"
@@ -319,6 +322,7 @@ watch(userSelected, () => {
         :canAddInDropdown="false"
         :input-placeholder="`Select your statuses...`"
         :clear-all="clearAllDropdownValues"
+        :width-in-vw="13"
       ></CustomDropDown>
 
       <div class="display-statuses-container" id="displayStatuses">
@@ -338,6 +342,7 @@ watch(userSelected, () => {
         :canAddInDropdown="false"
         :input-placeholder="`Select your categories...`"
         :clear-all="clearAllDropdownValues"
+        :width-in-vw="13"
       ></CustomDropDown>
 
       <div class="display-categories-container" id="displayCategories">
@@ -360,6 +365,7 @@ watch(userSelected, () => {
         :canAddInDropdown="false"
         :input-placeholder="`Select your users...`"
         :clear-all="clearAllDropdownValues"
+        :width-in-vw="13"
       ></CustomDropDown>
 
       <div class="display-users-container" id="displayUsers">
