@@ -91,6 +91,7 @@ input {
   all: unset;
 }
 
+
 .input::placeholder{
   color: slategray;
 }

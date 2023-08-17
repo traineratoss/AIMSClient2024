@@ -13,8 +13,8 @@ const props = defineProps({
     default: false,
   },
   error: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "",
   },
   canAddInDropdown: {
     type: Boolean,
@@ -205,7 +205,12 @@ function getInputPlaceholder() {
       @mouseleave="onMouseLeave" :style="{
         height: props.heightInVh ? props.heightInVh + 'vh' : {},
         width: props.widthInVw ? props.widthInVw + 'vw' : {}
-      }" />
+      }" 
+      v-bind:style="
+              error !== ''
+                ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
+                : { 'border-color': 'slategray', 'background-color': 'white' }
+            "/>
     <div v-show="isDropdownVisible && !props.disabled" class="dropdown" ref="dropdown" id="dropdown"
       @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" :style="{
         height: props.heightInVh ? props.heightInVh + 'vh' : {},

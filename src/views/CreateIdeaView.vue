@@ -15,7 +15,7 @@ import {
   getAllImages,
   createIdea,
   getImageByIdeaId,
-  getImageById
+  getImageById,
 } from "../services/idea.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 
@@ -24,10 +24,10 @@ const statusValue = ref("open");
 const textValue = ref("");
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
-const titleError = ref(false);
-const statusError = ref(false);
-const textError = ref(false);
-// const categoryError = ref(false);
+const titleError = ref('');
+// const statusError = ref(false);
+const textError = ref("");
+const categoryError = ref("");
 
 const currentUsername = getCurrentUsername();
 const slideImages = ref([]);
@@ -52,7 +52,6 @@ onMounted(async () => {
   if (updatedIdea.value == null) {
     categoriesSelected.value = [];
   }
-  titleError.value = false;
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
@@ -70,6 +69,24 @@ onMounted(async () => {
   // const imageUrl = `data:image/${dataImage.fileType};name=${dataImage.fileName};base64,${dataImage.base64Image}`
   slideImages.value = imageUrl;
 });
+
+watch(inputValue, (newValue) => {
+  if(newValue !== '') {
+    titleError.value = '';
+  }
+})
+
+watch(categoriesSelected, (newValue) => {
+  if(newValue.length > 0) {
+    categoryError.value = '';
+  }
+})
+
+watch(textValue, (newValue) => {
+  if(newValue !== '') {
+    textError.value = '';
+  }
+})
 
 // watch(categoriesSelected, (newValue) => {
 //   categoriesSelected.value = newValue
@@ -124,9 +141,9 @@ function transformImageDataIntoValues(dataString) {
   const obj = {
     name: selectedImageName.value,
     type: selectedImageType.value,
-    base: selectedImageBase64.value
-  }
-  return obj
+    base: selectedImageBase64.value,
+  };
+  return obj;
 }
 
 //This is the function that is handling the updating in the db
@@ -138,7 +155,12 @@ async function updateIdeaFunction() {
   const newCategoryList = categoriesSelected.value.map((category) => {
     return { text: category };
   });
-  if (newTitle !== "" && newStatus !== "" && newText !== "" && categoriesSelected.value.length > 0) {
+  if (
+    newTitle !== "" &&
+    newStatus !== "" &&
+    newText !== "" &&
+    categoriesSelected.value.length > 0
+  ) {
     transformImageDataIntoValues(slideImages.value[currentImageIndex.value]);
 
     const imageDTO = {
@@ -250,14 +272,17 @@ async function createIdeaFunction() {
   //CHECKING IF ALL THE FIELDS ARE CORRECTLY INTRODUCED
   const categoryErrorCheck =
     !Array.isArray(rawCategoriesValue) || rawCategoriesValue.length === 0;
-  const titleErrorCheck = inputValue.value === null || inputValue.value === "";
-  const statusErrorCheck =
-    statusValue.value === null || statusValue.value === "";
-  const textErrorCheck = textValue.value === null || textValue.value === "";
+  const titleErrorCheck =
+    inputValue.value === null ||
+    inputValue.value === "" ||
+    inputValue.value === undefined;
+  // const statusErrorCheck = statusValue.value === null || statusValue.value === "";
+  const textErrorCheck =
+    textValue.value === null ||
+    textValue.value === "" ||
+    textValue.value === undefined;
 
-  // WE MIGHT USE THESE IF WE WANNA SHOW A KIND OF ERROR WHEN NOT INTRODUCING IN THE FIELD
-
-  //const setError = (errorFlag, errorMessage) => {
+  // const setError = (errorFlag, errorMessage) => {
   //   if (errorFlag) {
   //     return true;
   //   }
@@ -272,12 +297,24 @@ async function createIdeaFunction() {
   // statusError.value = setError(statusErrorFlag, "Please select a status");
   // textError.value = setError(textErrorFlag, "Please select a text");
 
-  if (
-    !titleErrorCheck &&
-    !textErrorCheck &&
-    !statusErrorCheck &&
-    !categoryErrorCheck
-  ) {
+  if (titleErrorCheck) {
+    titleError.value = "Please select a title...";
+  } else {
+    titleError.value = '';
+  }
+  if (textErrorCheck) {
+    textError.value = "Please write some text...";
+  } else {
+    textError.value = "";
+  }
+  if (categoryErrorCheck) {
+    categoryError.value = "Please select at least one category...";
+  } else {
+    categoryError.value = "";
+  }
+
+
+  if (!titleErrorCheck && !textErrorCheck && !categoryErrorCheck) {
     const categoryTexts = rawCategoriesValue.map((category) => ({
       text: category,
     }));
@@ -367,27 +404,9 @@ async function shouldDisableArrows() {
   }
 }
 
-function onMouseLeave() { };
+function onMouseLeave() {}
 
-function onMouseEnter() { };
-
-function displaySelection(categoriesList) {
-  let finalList = "";
-
-  if (categoriesList.length === 1) {
-    finalList += categoriesList;
-
-    return finalList;
-  }
-
-  for (let category of categoriesList) {
-    if (categoriesList.indexOf(category) === categoriesList.length - 1)
-      finalList += category;
-    else finalList += category + ", ";
-  }
-
-  return finalList;
-}
+function onMouseEnter() {}
 
 function removeSelection(index) {
   const indexValue = index;
@@ -401,7 +420,6 @@ function removeSelection(index) {
 <template>
   <div class="wrapper">
     <div class="create-idea-container">
-
       <div class="idea-title">
         <h1>
           {{ pageTitle }}
@@ -409,11 +427,21 @@ function removeSelection(index) {
       </div>
 
       <div class="input-container">
-
         <div class="idea">
           <label for="title-idea" class="label">Title:</label>
-          <CustomInput v-model="inputValue" :disabled="fieldsDisabled" placeholder="Write your title here..."
-            :widthInPx="16" />
+          <CustomInput
+            v-model="inputValue"
+            :disabled="fieldsDisabled"
+            :placeholder="!titleError == '' ? titleError : 'Write a title here...'"
+            :widthInPx="16"
+            style="background-color: rgba(255, 145, 153, 0.679);"
+            :class="titleError ? 'shake' : ''"
+            :style="
+              !titleError == ''
+              ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
+              : { 'border-color': 'slategray', 'background-color': 'white' }
+            "
+          />
         </div>
 
         <div class="idea">
@@ -423,7 +451,10 @@ function removeSelection(index) {
             :disabled="fieldsDisabled">
             <option value="open">Open</option>
             <option value="draft">Draft</option>
-            <option v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'" value="implemented">
+            <option
+              v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'"
+              value="implemented"
+            >
               Implemented
             </option>
           </select>
@@ -431,10 +462,22 @@ function removeSelection(index) {
 
         <div class="idea">
           <label for="category-idea" class="label">Categories:</label>
-          <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
-            :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
-            :selectedObjects="stringifyCategory()" :input-placeholder="`Select your categories`" class="input-width"
-            :width-in-vw="16">
+
+          <CustomDropDown
+            v-if="!showDeletePopup && !disableFields"
+            @update:selectedOptions="handleSelectedCategories"
+            :disabled="fieldsDisabled"
+            :variants="categoryOptions"
+            :canAddInDropdown="true"
+            :selectedObjects="stringifyCategory()"
+            :input-placeholder="
+              categoryError ? categoryError : 'Select your categories...'
+            "
+            class="input-width"
+            :width-in-vw="16"
+            v-bind:class="categoryError ? 'shake' : ''"
+            :error="categoryError"
+          >
           </CustomDropDown>
           <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
         </div>
@@ -445,13 +488,22 @@ function removeSelection(index) {
               {{ category }} <b>x</b>
             </div>
         </div>
-
       </div>
 
       <div class="idea-text">
-        <textarea v-model="textValue" :disabled="fieldsDisabled" placeholder="  Write your idea text here..."
-          id="textarea-id">
-          </textarea>
+        <textarea
+          v-model="textValue"
+          :disabled="fieldsDisabled"
+          :placeholder="!textError == '' ? textError : 'Write a title here...'"
+          id="textarea-id"
+          v-bind:class="textError ? 'shake' : ''"
+          :style="
+            !textError == ''
+            ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
+            : { 'border-color': 'slategray', 'background-color': 'white' }
+          "
+        >
+        </textarea>
       </div>
 
       <div class="carousel-container">
@@ -466,9 +518,20 @@ function removeSelection(index) {
           />
         </div>
         <div class="add-image">
-          <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="uploadedImage"
-            v-on:change="uploadImage($event)" />
-          <label for="upload" class="add-image-idea" v-if="!deletePopup" style="display: flex; align-items: center">
+          <input
+            type="file"
+            id="upload"
+            hidden
+            :disabled="fieldsDisabled"
+            ref="uploadedImage"
+            v-on:change="uploadImage($event)"
+          />
+          <label
+            for="upload"
+            class="add-image-idea"
+            v-if="!deletePopup"
+            style="display: flex; align-items: center"
+          >
             Upload Image
             <span class="material-symbols-outlined" style="margin-left: 5px">
               attach_file
@@ -478,13 +541,22 @@ function removeSelection(index) {
       </div>
 
       <div class="create-container">
-        <CustomButton id="create-idea" @click="shouldCreateOrUpdate" :disabled="fieldsDisabled" v-if="!deletePopup"
-          :height-in-px="40" :width-in-px="300">
+        <CustomButton
+          id="create-idea"
+          @click="shouldCreateOrUpdate"
+          :disabled="fieldsDisabled"
+          v-if="!deletePopup"
+          :height-in-px="40"
+          :width-in-px="300"
+        >
           {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
         </CustomButton>
-        <CustomDialog ref="customDialog" :open="deletePopup"
+        <CustomDialog
+          ref="customDialog"
+          :open="deletePopup"
           :title="`Are you sure you want to delete '${currentIdeaTitle}'?`"
-          message="This item will be deleted immediatly. You can't undo this action!">
+          message="This item will be deleted immediatly. You can't undo this action!"
+        >
           <div class="dialog-actions">
             <button @click="handleCancel">Cancel</button>
             <button @click="handleConfirm">Confirm</button>
@@ -496,9 +568,26 @@ function removeSelection(index) {
 </template>
 
 <style scoped>
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation-name: shake;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+}
+
 b{
  color: #ffa941;
 }
+
 #textarea-id::-webkit-scrollbar {
   display: block;
   color: slategray;
@@ -521,10 +610,9 @@ b{
   max-width: 19vw;
   object-fit: fill;
   margin-top: 20px;
-
 }
 
-.carousel-image>img {
+.carousel-image > img {
   border: 1px solid slategray;
 }
 
@@ -587,7 +675,6 @@ textarea {
   border-radius: 6px;
 }
 
-
 .custom-select {
 
   border:1px solid white;
@@ -628,7 +715,7 @@ textarea {
 }
 
 .display-categories-container {
-  margin-left: 5vw;   
+  margin-left: 5vw;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -651,11 +738,7 @@ textarea {
 }
 
 .material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' -25,
-    'opsz' 20
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" -25, "opsz" 20;
 }
 
 .idea-category {
@@ -775,5 +858,9 @@ select {
 .dialog-actions button:nth-child(2):hover {
   box-shadow: 0 2px 2px slategray;
   background-color: orange;
+}
+
+.border-alert {
+  border: 2px solid red;
 }
 </style>
