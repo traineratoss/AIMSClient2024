@@ -109,8 +109,8 @@ async function handleSelectedStatus(selectedStatus) {
 }
 
 onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleGlobalKeyDown)
-})
+  window.removeEventListener("keydown", handleGlobalKeyDown);
+});
 
 onMounted(async () => {
   if (searchValue && searchValue.value && searchValue.value.text) {
@@ -152,19 +152,18 @@ const filter = async () => {
     props.sort
   );
 
-  console.log(filteredIdeas)
-  
+  console.log(filteredIdeas);
+
   if (filteredIdeas === "No ideas found.") {
     filteredIdeasEmit.value = {
       content: [],
       totalPages: 0,
-      totalElements: 0
-    }
+      totalElements: 0,
+    };
   } else {
     filteredIdeasEmit.value = filteredIdeas;
-    console.log(filteredIdeasEmit.value)
+    console.log(filteredIdeasEmit.value);
   }
-  
 };
 
 // clearing all when pressing the clear button
@@ -213,7 +212,7 @@ function setPosition(componentId, overlayId) {
     const x = componentCoords.left;
     const y = componentCoords.top;
 
-    overlay.style.marginTop = y + 25 + "px";
+    overlay.style.marginTop = y + 30 + "px";
     overlay.style.marginLeft = x + "px";
   }
 }
@@ -289,11 +288,9 @@ watch(userSelected, () => {
     <div class="control-container">
       <span class="filter-by">Filter By:</span>
 
-        <button class="buttons-container" @click="clearSelection()">
-          Clear all
-        </button>
-
-
+      <button class="buttons-container" @click="clearSelection()">
+        Clear all
+      </button>
 
       <span class="title"> Title: </span>
       <CustomInput
@@ -349,14 +346,12 @@ watch(userSelected, () => {
         </div>
       </div>
       <span
-        v-if="currentUser !== null"
         :class="userSelected.length > 0 ? 'user2' : 'user'"
         :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         >User:</span
       >
 
       <CustomDropDown
-        v-if="currentUser !== null"
         :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
         class="user-select"
         id="userSelect"
@@ -401,7 +396,7 @@ watch(userSelected, () => {
 </template>
 
 <style scoped>
-.clear-button{
+.clear-button {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -423,7 +418,7 @@ watch(userSelected, () => {
 }
 
 .side-panel-container {
-  width: 20vw; 
+  width: 20vw;
   padding-top: 2vw;
   border: 1px solid slategray;
   height: 91vh;
@@ -536,16 +531,23 @@ watch(userSelected, () => {
   overflow-x: auto;
 }
 
-/* .display-categories::-webkit-scrollbar {
+.display-statuses::-webkit-scrollbar,
+.display-users::-webkit-scrollbar,
+.display-categories::-webkit-scrollbar {
   display: block;
-  width: 5px;
+  height: 8px;
+  background-color: rgba(128, 128, 128, 0.259);
+  cursor: pointer;
 }
 
+.display-statuses::-webkit-scrollbar-thumb,
+.display-users::-webkit-scrollbar-thumb,
 .display-categories::-webkit-scrollbar-thumb {
   background-color: #eb9224;
   border-radius: 5px;
-  border: 1px solid slategray; 
-}*/
+  border: 1px solid slategray;
+  cursor: pointer;
+}
 
 .user {
   grid-column: 1/2;
@@ -563,7 +565,7 @@ watch(userSelected, () => {
   top: 0;
   left: 0;
   width: 200px;
-  height: 25px;
+  height: 30px;
   z-index: 1;
 }
 
@@ -596,6 +598,7 @@ watch(userSelected, () => {
 .user-select {
   grid-column: 2/3;
   grid-row: 6/7;
+  z-index: 2;
 }
 .date-chooser {
   grid-column: 1/3;
@@ -635,4 +638,4 @@ watch(userSelected, () => {
   background-color: rgb(198, 198, 198);
   font-weight: 700;
 }
-</style> 
+</style>

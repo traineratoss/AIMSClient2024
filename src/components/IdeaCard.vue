@@ -43,7 +43,7 @@ async function editIdea() {
   const text = data.text;
   const categoryList = JSON.stringify(data.categoryList);
   const status = data.status;
-  const image = data.image
+  const image = data.image;
   if (getCurrentUsername() === data.username || getCurrentRole() === "ADMIN") {
     router.push({
       name: "create-idea",
@@ -53,7 +53,7 @@ async function editIdea() {
         updateTitle: title,
         updateText: text,
         updateCategoryList: categoryList,
-        updateStatus: status
+        updateStatus: status,
       },
     });
   }
@@ -840,6 +840,7 @@ img {
   max-height: 22vh;
   box-sizing: border-box;
   margin-top: 10px;
+  word-wrap: break-word;
 }
 
 #comment-input-textarea {
@@ -851,6 +852,7 @@ img {
   box-sizing: border-box;
   border: 1px solid slategray;
   border-radius: 3px;
+  word-wrap: break-word;
 }
 
 .comment-input-bottom {

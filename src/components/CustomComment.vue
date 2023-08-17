@@ -339,6 +339,7 @@ function clearInput() {
   display: flex;
   min-height: 7vh;
   flex-direction: column;
+  word-wrap: break-word;
 }
 
 .material-symbols-outlined {
@@ -387,6 +388,7 @@ button:hover {
   max-width: 29vw;
   border: 1px solid slategray;
   border-radius: 3px;
+  word-wrap: break-word;
 }
 
 #reply-textarea {
@@ -398,6 +400,7 @@ button:hover {
   width: 29vw;
   resize: none;
   border: none;
+  word-wrap: break-word;
 }
 
 #postButton {

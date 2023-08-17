@@ -112,14 +112,14 @@ const handleCheckboxChange = (event) => {
   const checkbox = event.target;
   const newValue = checkbox.checked;
   checkbox.checked = newValue;
-  
+
   const checkboxes = dropdown.value.querySelectorAll('input[type="checkbox"]');
   const selectedVariants = Array.from(checkboxes)
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
 
   allSelectedVariantsReactive.value = selectedVariants;
-  
+
   emit("update:selectedOptions", selectedVariants);
 };
 
@@ -143,7 +143,7 @@ const handleInputKeyPress = (event) => {
         const checkboxes = dropdown.value.querySelectorAll(
           'input[type="checkbox"]'
         );
-        console.log(checkboxes)
+        console.log(checkboxes);
         const checkbox = dropdown.value.querySelector(
           `input[value="${newCategory}"]`
         );
@@ -248,7 +248,7 @@ function getInputPlaceholder() {
   overflow-y: auto;
   padding: 5px;
   max-width: 10vw;
-  z-index: 5;
+  z-index: 10;
   border-radius: 3px;
 }
 

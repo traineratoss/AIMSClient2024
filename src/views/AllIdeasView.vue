@@ -136,6 +136,10 @@ async function changePage(pageNumber) {
   // the ideas.value represents the ideas shown on the page, not all the images
   // this is because, from the servers, i get a list of pageSize ideas (2, 3, ...), not the whole nr of ideas
   // i emited all the filtering options for us to know which inputs are completed
+
+  ideas.value = [];
+  noIdeasFoundCondition.value = false;
+
   const data = await filterIdeas(
     currentTitle,
     currentText,
@@ -236,14 +240,18 @@ async function updateSortOrder() {
 }
 
 function loadRecievedIdeas(value) {
-  showTopIdeas.value =! showTopIdeas.value
-  ideas.value = value;
+  ideas.value = [];
+
+  setTimeout(() => {
+    showTopIdeas.value = !showTopIdeas.value;
+    ideas.value = value;
+  }, "500");
 }
 
-const showTopIdeas = ref(false)
+const showTopIdeas = ref(false);
 
 async function loadData() {
-  showTopIdeas.value =! showTopIdeas.value
+  showTopIdeas.value = !showTopIdeas.value;
   loadingPage.value = true;
 
   ideas.value = [];
@@ -267,7 +275,7 @@ async function updateIdeas(filteredIdeas) {
     currentPage.value = 0;
     ideas.value = [];
     return 0;
-  } 
+  }
   if (currentPage.value > totalPages.value) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
@@ -401,7 +409,8 @@ async function changeShowGeneral() {
         :hideUser="false"
       />
     </div>
-    <div class="right-container"
+    <div
+      class="right-container"
       :style="
         isAdmin
           ? { ' grid-template-columns': 'auto auto' }
@@ -466,7 +475,7 @@ async function changeShowGeneral() {
           </div>
         </div>
 
-        <div v-if="ideas.length > 0 " class="pagination-container">
+        <div v-if="ideas.length > 0" class="pagination-container">
           <div class="pagination-component">
             <Pagination
               :totalPages="totalPages"
@@ -532,14 +541,14 @@ async function changeShowGeneral() {
 </template>
 
 <style scoped>
-.reload-button{
+.reload-button {
   background-color: #ffa941;
   border-radius: 5px;
   border: 1px solid slategray;
   font-size: larger;
   margin-bottom: 10px;
 }
-.reload-button:hover{
+.reload-button:hover {
   border: 1px solid black;
 }
 .date-picker {
