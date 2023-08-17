@@ -6,6 +6,7 @@ import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue
 import { ref, watch, onMounted } from "vue";
 import {
   getCurrentAvatarId,
+  getCurrentFullName,
   getCurrentRole,
   getCurrentUsername,
 } from "../services/user_service";
@@ -230,7 +231,7 @@ function onMouseLeaveUser() {
           to="/my-profile"
           style="text-decoration: none; color: black"
         >
-          User details
+          {{ getCurrentFullName() || 'User details' }}
         </router-link>
       </div>
       <CustomButton
