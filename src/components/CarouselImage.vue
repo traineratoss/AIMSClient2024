@@ -106,11 +106,16 @@ const nextSlide = () => {
   emit('current-index', currentIndex.value);
   emit('selected-image-values', selectedImageBase64.value, selectedImageName.value, selectedImageType.value );
 };
+onMounted(() => {
+  if(route.name ==='my-profile'){
+    imagesLoaded.value = true;
+  }
+});
 </script>
 
 <template>
   <div class="carousel">
-    <button @click="prevSlide" :disabled="shouldDisableArrowsRef">
+    <button @click="prevSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-left fa-2xl" style="color: #ffa941"></i>
     </button>
     <div class="slide-container">
@@ -119,7 +124,7 @@ const nextSlide = () => {
         :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
       >
         <div
-          v-if="imagesLoaded || (route.name ==='my-profile')"
+          v-if="imagesLoaded"
           v-for="(slide, index) in images"
           :key="index"
           class="slide"
@@ -127,12 +132,12 @@ const nextSlide = () => {
         >
           <img :src="slide"/>
         </div>
-        <div v-else id="custom-loader">
+        <div v-if="!imagesLoaded" id="custom-loader">
           <CustomLoader :size="60" />
         </div>
       </div>
     </div>
-    <button @click="nextSlide" :disabled="shouldDisableArrowsRef">
+    <button @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-right fa-2xl" style="color: #ffa941"></i>
     </button>
   </div>
