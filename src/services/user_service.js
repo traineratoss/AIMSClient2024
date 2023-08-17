@@ -69,6 +69,14 @@ async function postUser(username, email) {
   return json;
 }
 
+async function sendEmailToAllAdmins(username) {
+  const response = await fetch(
+    `${API_URL}/send-email-to-admin?username=${username}`, {
+      method: "POST"
+    }
+  );
+}
+
 async function updateUser(username, userUpdateDto) {
   console.log(userUpdateDto.avatarId);
 
@@ -319,5 +327,6 @@ export {
   getCurrentFullName,
   getCurrentAvatarId,
   validateUsername,
-  isFirstLogin
+  isFirstLogin, 
+  sendEmailToAllAdmins
 };

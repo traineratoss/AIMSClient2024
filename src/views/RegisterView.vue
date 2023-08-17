@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import FormTitle from "../components/FormTitle.vue";
 import CustomInput from "../components/CustomInput.vue";
 import { ref } from "vue";
-import { postUser, validateUsername } from "../services/user_service.js";
+import { postUser, validateUsername, sendEmailToAllAdmins } from "../services/user_service.js";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import TermsAndConditionsModal from "../components/TermsAndConditionsModal.vue";
@@ -42,6 +42,7 @@ function signUp() {
           showErrorMessage.value = false;
           postUser(usernameText.value.toLowerCase(), emailText.value)
             .then((res) => {
+              sendEmailToAllAdmins(usernameText.value);
               router.push("/registration-complete");
             })
             .catch((error) => {
