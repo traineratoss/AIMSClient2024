@@ -322,7 +322,6 @@ nav {
   justify-content: center;
   right: 0;
   margin-right: 1vw;
-  height: 3.5vh;
 }
 
 .user {
