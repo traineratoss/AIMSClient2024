@@ -102,7 +102,6 @@ function showTermsAndConditionsPopup() {
     <CompanyLogo />
     <div class="register">
       <FormTitle label="Register" />
-      <span class="material-symbols-outlined"> account_circle </span>
       <InvalidInputMessage
         :message="message"
         :class="{ 'error-message-visible': showErrorMessage }"
@@ -192,10 +191,6 @@ function showTermsAndConditionsPopup() {
   align-items: center;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.5);
-}
-
-.material-symbols-outlined {
-  font-size: 10vh;
 }
 
 .register i {
