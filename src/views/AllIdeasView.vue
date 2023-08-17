@@ -241,11 +241,12 @@ async function updateSortOrder() {
 
 function loadRecievedIdeas(value) {
   ideas.value = [];
-
+  
   setTimeout(() => {
     showTopIdeas.value = !showTopIdeas.value;
     ideas.value = value;
   }, "500");
+  totalPages.value = 1;
 }
 
 const showTopIdeas = ref(false);
@@ -263,7 +264,7 @@ async function loadData() {
     "ASC"
   );
   ideas.value = data.content;
-
+  
   loadingPage.value = false;
 }
 
