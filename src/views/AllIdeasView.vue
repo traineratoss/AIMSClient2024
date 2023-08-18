@@ -248,6 +248,7 @@ function loadRecievedIdeas(value) {
     ideas.value = value;
   }, "500");
   totalPages.value = 1;
+  currentPage.value = 1;
 }
 
 const showTopIdeas = ref(false);
