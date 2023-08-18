@@ -459,7 +459,7 @@ function removeSelection(index) {
 
       <div class="idea-text">
         <textarea v-model="textValue" :disabled="fieldsDisabled" :maxlength="500"
-          :placeholder="!textError == '' ? textError : 'Write a title here...'" id="textarea-id"
+          :placeholder="!textError == '' ? textError : 'Write some text here...'" id="textarea-id"
           v-bind:class="textError ? 'shake' : ''" :style="!textError == ''
             ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '2px' }
             : { 'background-color': 'white', 'border-radius': '2px' }
