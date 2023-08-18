@@ -633,6 +633,7 @@ textarea {
   justify-content: center;
   display: flex;
   height: 94vh;
+  /* border-top: 1px solid slategray; */
 }
 
 .create-idea-container {
@@ -646,6 +647,7 @@ textarea {
   background-color: #e9e9e9;
   user-select: none;
   margin-bottom: 15px;
+  
 }
 
 .add-image-idea {

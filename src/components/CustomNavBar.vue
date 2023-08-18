@@ -272,6 +272,7 @@ nav {
   width: 100vw;
   align-items: center;
   min-height: 6vh;
+  border-bottom: 1px solid slategray;
 }
 
 .material-symbols-outlined {

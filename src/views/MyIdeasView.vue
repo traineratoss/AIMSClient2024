@@ -507,6 +507,7 @@ async function changeDisplay(pageSize1) {
   height: 91vh;
   display: grid;
   grid-template-rows: 5% 90% 5%;
+  /* border-top: 1px solid slategray; */
 }
 
 .idea-container {

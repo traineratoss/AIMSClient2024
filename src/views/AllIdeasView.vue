@@ -407,7 +407,7 @@ async function showStatistics() {
 </script>
 
 <template>
-  <div class="all-ideas-view-container" @keyup.enter="updatePageByClick">
+  <div class="all-ideas-view-container">
     <div class="left-container">
       <CustomSidePanel
         @filter-listening="updateIdeas"
@@ -730,7 +730,7 @@ async function showStatistics() {
   height: 94vh;
   display: grid;
   grid-template-rows: 95% 5%;
-  border-top: 1px solid slategray;
+  /* border-top: 1px solid slategray; */
 }
 
 .idea-container {

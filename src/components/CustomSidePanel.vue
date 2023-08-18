@@ -587,7 +587,7 @@ span {
     display: grid;
     height: 94vh;
     grid-template-rows: 50% 50%;
-    border: 1px solid slategray;
+    border-right: 1px solid slategray;;
 }
 
 #clear-all-button {
