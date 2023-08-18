@@ -416,11 +416,11 @@ function removeSelection(index) {
       <div class="input-container">
         <div class="idea">
           <label for="title-idea" class="label">Title:</label>
-          <CustomInput v-model="inputValue" :disabled="fieldsDisabled"
+          <CustomInput v-model="inputValue" :disabled="fieldsDisabled" :maxlength="50"
             :placeholder="!titleError == '' ? titleError : 'Write a title here...'" :widthInPx="16"
             style="background-color: rgba(255, 145, 153, 0.679);" :class="titleError ? 'shake' : ''" :style="!titleError == ''
-                ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '4px' }
-                : { 'background-color': 'white', 'border-radius': '4px' }
+              ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '4px' }
+              : { 'background-color': 'white', 'border-radius': '4px' }
               " />
         </div>
 
@@ -442,14 +442,15 @@ function removeSelection(index) {
           <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
             :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
             :selectedObjects="stringifyCategory()" :input-placeholder="categoryError ? categoryError : 'Select your categories...'
-              " class="input-width" :width-in-vw="16" v-bind:class="categoryError ? 'shake' : ''" :error="categoryError">
+              " class="input-width" :width-in-vw="16" v-bind:class="categoryError ? 'shake' : ''"
+            :error="categoryError">
           </CustomDropDown>
           <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
         </div>
 
         <div class="display-categories-container">
           <div class="display-categories" v-for="(category, index) in categoriesSelected" :key="index"
-            :style="!disableFields ? {'background-color': 'white'} : { 'background-color': '#cccccc' }"
+            :style="!disableFields ? { 'background-color': 'white' } : { 'background-color': '#cccccc' }"
             @click="removeSelection(index)">
             {{ category }} <b>x</b>
           </div>
@@ -457,13 +458,14 @@ function removeSelection(index) {
       </div>
 
       <div class="idea-text">
-        <textarea v-model="textValue" :disabled="fieldsDisabled"
+        <textarea v-model="textValue" :disabled="fieldsDisabled" :maxlength="500"
           :placeholder="!textError == '' ? textError : 'Write a title here...'" id="textarea-id"
           v-bind:class="textError ? 'shake' : ''" :style="!textError == ''
-              ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '2px' }
-              : { 'background-color': 'white', 'border-radius': '2px' }
+            ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '2px' }
+            : { 'background-color': 'white', 'border-radius': '2px' }
             ">
         </textarea>
+        <p id="maxlength-textarea">{{textValue ? textValue.length : 0 }} / 500</p>
       </div>
 
       <div class="carousel-container">
@@ -534,6 +536,14 @@ function removeSelection(index) {
 
 b {
   color: #ffa941;
+}
+
+#maxlength-textarea {
+  position: absolute;
+  bottom: 0;
+  right: 11.5vw;
+  padding: 0;
+  margin: 0;
 }
 
 #textarea-id::-webkit-scrollbar {
@@ -741,6 +751,7 @@ textarea {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  position: relative;
 }
 
 .label-text {
