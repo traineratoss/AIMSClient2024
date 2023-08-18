@@ -162,6 +162,11 @@ async function changePassword(changePasswordDTO) {
       newPassword: changePasswordDTO.newPassword,
     }),
   });
+
+  if (!response.ok) {
+    throw new Error('Incorrect old password');
+  }
+
   return response;
 }
 
