@@ -15,20 +15,57 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
         : today.getMonth() + 1;
 
     const newSelectedDateTo =
-      today.getUTCFullYear() + "-" + month + "-" + today.getDate();
+      today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
 
     url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`;
-    console.log(selectedDateFrom, " --> ", newSelectedDateTo);
   } else if (
     (selectedDateFrom === undefined || selectedDateFrom === "") &&
     selectedDateTo !== undefined &&
     selectedDateTo !== ""
   ) {
-    url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${selectedDateTo}`;
-    console.log("2010-01-01 --> ", selectedDateTo);
+    const today = new Date();
+    const month =
+      today.getMonth() < 9
+        ? "0" + (today.getMonth() + 1)
+        : today.getMonth() + 1;
+
+    let newSelectedDateTo =
+      today.getUTCFullYear() + "-" + month + "-" + today.getDate();
+    if (selectedDateTo === newSelectedDateTo) {
+      newSelectedDateTo =
+        today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
+      url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${newSelectedDateTo}`;
+    } else {
+      url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${selectedDateTo}`;
+    }
+  } else if (
+    (selectedDateFrom === undefined || selectedDateFrom === "") &&
+    (selectedDateTo === undefined || selectedDateTo === "")
+  ) {
+    const today = new Date();
+    const month =
+      today.getMonth() < 9
+        ? "0" + (today.getMonth() + 1)
+        : today.getMonth() + 1;
+
+    let newSelectedDateTo =
+      today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
+    url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${newSelectedDateTo}`;
   } else {
-    url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`;
-    console.log(selectedDateFrom, " --> ", selectedDateTo);
+    const today = new Date();
+    const month =
+      today.getMonth() < 9
+        ? "0" + (today.getMonth() + 1)
+        : today.getMonth() + 1;
+
+    let newSelectedDateTo =
+      today.getUTCFullYear() + "-" + month + "-" + today.getDate();
+    if (selectedDateTo === newSelectedDateTo) {
+      newSelectedDateTo =
+        today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
+      url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`;
+    } else
+      url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`;
   }
 
   const response = await fetch(url, {

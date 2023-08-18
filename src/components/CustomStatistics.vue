@@ -83,7 +83,10 @@ function getShortenedTitle(title, maxLength) {
 
   <transition name="stats-fade">
     <div class="stats-wrapper" v-if="!showSkeleton">
-      <div class="general-statistics" v-if="props.showGenerated">
+      <div
+        class="general-statistics"
+        v-if="props.showGenerated && !props.showAnimation"
+      >
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label"><b>Total Ideas:</b></p>
@@ -165,9 +168,9 @@ function getShortenedTitle(title, maxLength) {
                 Load top ideas
               </button>
 
-              <button class="load-button" @click="refreshStats()">
+              <!-- <button class="load-button" @click="refreshStats()">
                 Refresh
-              </button>
+              </button> -->
             </div>
           </div>
           <div class="most-commented-ideas" style="margin-bottom: 50px">
@@ -328,13 +331,15 @@ function getShortenedTitle(title, maxLength) {
               <!-- <button class="load-button" @click="loadData()">
                 Reload ideas
               </button> -->
-              <button class="load-button" @click="refreshStats()">
-                Refresh stats
-              </button>
+
+              <!-- Uncomment only if you implement it right -->
+              <!-- <button class="load-button" @click="refreshStats()">
+                Refresh 
+              </button> -->
             </div>
           </div>
           <div class="most-commented-ideas" style="margin-bottom: 50px">
-            <p>Overall info :</p>
+            <p>Overall information:</p>
             <table id="idea-table">
               <tr>
                 <td>Total no. of Comments:</td>

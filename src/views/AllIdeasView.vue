@@ -97,6 +97,7 @@ onMounted(async () => {
     ideas.value = data.content;
   }
 
+  showStatistics();
   stats.value = await getStats();
   setTimeout(() => {
     loadingPage.value = false;
@@ -188,7 +189,6 @@ function setCurrentVariables() {
 // here, the page asc or desc is happening
 async function updateSortOrder() {
   if (sortOrder.value == 0) {
-
     ideas.value = [];
 
     sortOrder.value = 0;
@@ -216,7 +216,6 @@ async function updateSortOrder() {
       setCurrentVariables();
     }
   } else if (sortOrder.value == 1) {
-
     ideas.value = [];
 
     sortOrder.value = 1;
@@ -272,7 +271,6 @@ async function loadData() {
     "ASC"
   );
   ideas.value = data.content;
-
   loadingPage.value = false;
 }
 
@@ -344,7 +342,6 @@ async function updateIdeas(filteredIdeas) {
   }
 }
 async function changeDisplay(pageSize1) {
-
   ideas.value = [];
 
   ideaPerPage.value = pageSize1;
@@ -405,6 +402,7 @@ const showSkeleton = ref(true);
 
 async function showStatistics() {
   showAnimation.value = true;
+
   stats.value = await sendDataForCustomStats(
     selectedDateFrom.value,
     selectedDateTo.value
@@ -704,7 +702,6 @@ async function showStatistics() {
   display: grid;
   grid-template-columns: 20vw 80vw;
   height: 94vh;
-  
 }
 
 .left-container {
