@@ -264,7 +264,7 @@ function getShortText(text, numberOfRows, numberOfCharacters) {
     for(let i = 0; i < splitArray.length; i++) {
       returnText += splitArray[i] + "\n"
     }
-    
+
     for (let word of returnText) {
       if (row.length + word.length <= numberOfCharacters - 1) row += "" + word;
       else {
@@ -387,7 +387,7 @@ function triggerCollapseAnimation(commentId) {
               </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ getShortText(props.text, 5, 59) }}
+                  {{ getShortText(props.text, 8, 59) }}
                 </div>
                 <div class="text" v-else>
                   {{ getShortText(props.text, 3, 59) }}
