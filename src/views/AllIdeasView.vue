@@ -287,12 +287,9 @@ async function updateIdeas(filteredIdeas) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
     // we have to filter each time with each page to get our good ideas
-
-    while (currentPage.value > totalPages.value && totalPages.value != 0) {
-      currentPage.value = currentPage.value - 1;
-      //OPTIMIZED A BIT SO IT WILL FILTER ONLY WHEN IT GETS TO THE RIGHT PAGE NUMBER
+      currentPage.value = 1;
       ideas.value = [];
-      if (currentPage.value == totalPages.value) {
+      // if (currentPage.value == totalPages.value) {
         const data = await filterIdeas(
           inputTitle.value,
           inputText.value,
@@ -316,16 +313,10 @@ async function updateIdeas(filteredIdeas) {
           setCurrentVariables();
           ideas.value = data != null ? data.content : [];
         }
-      }
-    }
-
-    // if there are no ideas
-    if (totalPages.value === 0) {
-      setCurrentVariables();
-      currentPage.value = 0;
-      ideas.value = [];
-    }
+      // }
+    // }
   } else {
+    ideas.value = [];
     if (filteredIdeas === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
@@ -333,9 +324,7 @@ async function updateIdeas(filteredIdeas) {
     } else {
       noIdeasFoundCondition.value = false;
       // being sure the current page doesnt go below 0
-      if (currentPage.value <= 0) {
-        currentPage.value = 1;
-      }
+      currentPage.value = 1;
       setCurrentVariables();
       ideas.value = filteredIdeas.content;
     }
