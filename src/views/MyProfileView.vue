@@ -163,13 +163,21 @@ function saveChanges() {
         @current-index="onImageChange"
         :imageHeightPercentage="80"
       />
-      <CustomButton
-        id="save-changes"
-        class="save-changes-button"
-        @click="saveChanges"
-      >
-        Save changes
-      </CustomButton>
+      <div class="button-container">
+        <button
+          @click="router.push('/my')"
+          class="cancel-button"
+        >
+          Cancel
+        </button>
+        <CustomButton
+          id="save-changes"
+          class="save-changes-button"
+          @click="saveChanges"
+        >
+          Save changes
+        </CustomButton>
+      </div>
     </div>
   </div>
 </template>
@@ -186,10 +194,25 @@ function saveChanges() {
   border-radius: 10px;
 }
 
+.cancel-button {
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+}
+
+.cancel-button:hover {
+  cursor: pointer;
+}
+
 .wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.button-container {
+  display: flex;
+  gap: 1vh;
 }
 
 .error-message-visible {
