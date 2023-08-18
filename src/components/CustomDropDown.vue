@@ -252,6 +252,21 @@ function getInputPlaceholder() {
   overflow-y: auto;
   padding: 5px;
   border-radius: 3px;
+  z-index: 2;
+}
+
+.dropdown::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+    cursor: pointer;
+    width: 6px;
+}
+
+.dropdown::-webkit-scrollbar-thumb {
+    background-color: #eb9224;
+    border-radius: 5px;
+    border: 1px solid slategray;
+    cursor: pointer;
 }
 
 .dropdown label{

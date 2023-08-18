@@ -36,6 +36,12 @@ const filteredIdeasEmit = ref({});
 
 const clearAllDropdownValues = ref(false);
 
+const statusPercentage = ref('10%')
+const categoryPercentage = ref('10%')
+const userPercentage = ref('10%')
+
+
+
 const statusOptions =
     props.currentUser === null
         ? ["OPEN", "IMPLEMENTED"]
@@ -310,11 +316,25 @@ function stringifyOptions(option) {
 
 };
 
+function topContainerGridPercentages() {
+    if(statusSelected.value.length > 0 && categoriesSelected.value.length === 0) {
+        return 'top-container-status-activated';
+    }
+    if(statusSelected.value.length === 0 && categoriesSelected.value.length > 0) {
+        return 'top-container-category-activated';
+    }
+    if(statusSelected.value.length > 0 && categoriesSelected.value.length > 0) {
+        return 'top-container-status-and-category-activated';
+    } else {
+        return 'top-container';
+    }
+}
+
 </script>
 
 <template>
     <div class="side-panel-container">
-        <div class="top-container">
+        <div :class="topContainerGridPercentages()">
 
             <div class="top-container-child">
                 <span class="filter-by">Filter By:</span>
@@ -434,6 +454,10 @@ function stringifyOptions(option) {
 </template>
 
 <style scoped>
+
+b{
+ color: #ffa941;
+}
 span {
     font-weight: 700;
 }
@@ -515,7 +539,34 @@ span {
     width: 18vw;
     margin-top: 3vh;
     display: grid;
-    grid-template-rows: 10% 10% 10% 20% 20% 20%;
+    grid-template-rows: 10% 10% 10% 10% 10% 10%;
+}
+
+.top-container-status-activated {
+    margin-left: auto;
+    margin-right: auto;
+    width: 18vw;
+    margin-top: 3vh;
+    display: grid;
+    grid-template-rows: 10% 10% 10% 20% 10% 10%;
+}
+
+.top-container-category-activated {
+    margin-left: auto;
+    margin-right: auto;
+    width: 18vw;
+    margin-top: 3vh;
+    display: grid;
+    grid-template-rows: 10% 10% 10% 10% 20% 10%;
+}
+
+.top-container-status-and-category-activated {
+    margin-left: auto;
+    margin-right: auto;
+    width: 18vw;
+    margin-top: 3vh;
+    display: grid;
+    grid-template-rows: 10% 10% 10% 20% 20% 10%;
 }
 
 .low-container {
