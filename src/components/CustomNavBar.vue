@@ -229,7 +229,7 @@ function onMouseLeaveUser() {
         </h3>
         <router-link
           to="/my-profile"
-          style="text-decoration: none; color: black"
+          style="text-decoration: none; color: black; text-align: center;"
         >
           {{ getCurrentFullName() || 'User details' }}
         </router-link>
