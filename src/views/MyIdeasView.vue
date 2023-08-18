@@ -473,6 +473,8 @@ async function changeDisplay(pageSizeChanged) {
 
 .sort-container {
   font-weight: bold;
+  margin-right: 5px;
+  margin-top: 2px;
 }
 .all-ideas-view-container {
   display: grid;
@@ -485,6 +487,7 @@ async function changeDisplay(pageSizeChanged) {
 }
 .middle-container {
   overflow-y: auto;
+  margin-top: 2px;
 }
 
 .middle-container::-webkit-scrollbar {

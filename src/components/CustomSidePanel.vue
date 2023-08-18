@@ -597,6 +597,11 @@ span {
     border: none;
     margin-left: 8vw;
     cursor: pointer;
+    border: 1px solid slategray;
+}
+
+#clear-all-button:hover {
+    background-color: #cfcfcf;
 }
 
 #filter-button {
@@ -605,9 +610,14 @@ span {
     border-radius: 5px;
     border: none;
     width: 15vw;
-    background-color: #ff8f00;
+    background-color: #fb9209;
     cursor: pointer;
     border: 1px solid slategray;
+    font-weight: 100;
+}
+
+#filter-button:hover {
+    background-color: #e68608;
 }
 
 #filter-buttons {
