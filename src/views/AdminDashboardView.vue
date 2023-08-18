@@ -34,7 +34,6 @@ function removeUser(user) {
 
 async function search(username) {
   usernameSearch.value = username;
-  usernameSearch.value = usernameSearch.value.toLowerCase();
   await getAllUserByUsername(
     pageSize.value,
     currentPage.value - 1,
@@ -125,6 +124,7 @@ async function changeDisplay(pageSize1) {
       <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
       <div class="pageSize">
         <PageSizeSelect
+          v-if="!showImage"
           id="pageSizeSelect"
           label="Users:"
           @change-display="changeDisplay"

@@ -139,6 +139,7 @@ function showTermsAndConditionsPopup() {
           type="checkbox"
           v-model="acceptedTermsAndConditions"
           name="acceptedTermsAndConditions"
+          @keydown.enter="acceptedTermsAndConditions = !acceptedTermsAndConditions"
         />
         <button
           class="terms-and-conditions-button"
