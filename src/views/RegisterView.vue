@@ -32,7 +32,7 @@ function signUp() {
       showErrorMessage.value = true;
     } else {
       if (validateEmail(emailText.value) === true) {
-        if (validateUsername(usernameText.value.toLowerCase()) === true) {
+        if (validateUsername(usernameText.value) === true) {
           buttonDisabled.value = true;
           setTimeout(() => {
             if (!showErrorMessage.value) {
@@ -40,7 +40,7 @@ function signUp() {
             }
           }, 250);
           showErrorMessage.value = false;
-          postUser(usernameText.value.toLowerCase(), emailText.value)
+          postUser(usernameText.value, emailText.value)
             .then((res) => {
               sendEmailToAllAdmins(usernameText.value);
               router.push("/registration-complete");
@@ -116,10 +116,13 @@ function showTermsAndConditionsPopup() {
             @focus="showUsernameDetails = true"
           />
         </label>
-        <span v-show="showUsernameDetails" id="usernameConstraints"
-          >*Username should only contain: lowercase letters (a-z), numbers
-          (0-9), dots (.) and underscores (_)</span
+        <span 
+          v-show="showUsernameDetails" 
+          id="usernameConstraints"
         >
+          *Username may contain letters, numbers
+          (0-9), dots (.) or underscores (_)
+        </span>
         <label for="email">
           <CustomInput
             type="email"

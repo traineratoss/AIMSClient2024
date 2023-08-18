@@ -285,7 +285,7 @@ function validateUsername(username) {
     - Dots (.)
     - Underscores (_)
   */
-  const res = /^[a-z0-9_\.]+$/.exec(username);
+  const res = /^[a-zA-Z0-9_\.]+$/.exec(username);
   const valid = !!res;
   if (valid) {
     return true;
