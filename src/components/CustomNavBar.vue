@@ -25,6 +25,8 @@ const activePage = ref('my');
 
 let userDashboardElements = [];
 
+const isSearchInputFocused = ref(false);
+
 const slideImages = [
   "src/assets/img/avatars/avatar1.svg",
   "src/assets/img/avatars/avatar2.svg",
@@ -50,13 +52,18 @@ const dashboardElements = [
   },
 ];
 
+const isSearchInputFocusedSetter = (focused) => {
+  isSearchInputFocused.value = focused;
+  console.log(focused)
+}
+
 // dont change this watch, it updates the search bar with the input title i give
 watch(searchValue, (newValue) => {
   if (newValue.text !== undefined && newValue) {
     searchBarTitle.value = newValue.text;
   }
   if (newValue.key === "Enter" && newValue) {
-    if(route.path !== "/all") {
+    if(route.path !== "/all" && route.path !== "/my" && isSearchInputFocused.value) {
       router.push({ path: '/all'});
     }
     searchBarTitle.value = newValue.text;
@@ -217,6 +224,7 @@ function onMouseLeaveUser() {
           :type="'text'"
           :can-modify-search-value="true"
           v-model="searchBarTitle"
+          @input-focused="isSearchInputFocusedSetter"
         />
       </div>
     </div>

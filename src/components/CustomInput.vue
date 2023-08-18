@@ -13,7 +13,7 @@ const { canModifySearchValue, modelValue, placeholder, error, type, inputRef, wi
     "heightInPx"
   ]);
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "input-focused"]);
 
 const inputChange = (event) => {
   emit("update:modelValue", event.target.value);
@@ -24,10 +24,12 @@ const inputValue = ref("");
 
 const handleFocus = () => {
   focused.value = true;
+  emit("input-focused", focused.value)
 };
 
 const handleBlur = () => {
   focused.value = false;
+  emit("input-focused", focused.value)
 };
 
 const handleInputKeyPress = (event) => {
