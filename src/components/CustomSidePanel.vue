@@ -444,6 +444,7 @@ span {
     height: 3vh;
     overflow-x: scroll;
     gap: 10px;
+    overflow-y: hidden;
 }
 
 .display-items-container {
