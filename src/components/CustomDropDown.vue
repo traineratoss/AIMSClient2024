@@ -203,7 +203,7 @@ function getInputPlaceholder() {
     <input type="text" ref="comboInput" class="input-dropdown" :placeholder="getInputPlaceholder()"
       :disabled="props.disabled" @keydown.enter="handleInputKeyPress" @input="handleInputBoxChange"
       @mouseleave="onMouseLeave" :style="{
-        height: props.heightInVh ? props.heightInVh + 'vh' : {},
+        height: props.heightInVh ? props.heightInVh/2 + 'vh' : {},
         width: props.widthInVw ? props.widthInVw + 'vw' : {}
       }" 
       v-bind:style="

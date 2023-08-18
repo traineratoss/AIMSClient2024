@@ -344,7 +344,7 @@ function stringifyOptions(option) {
 
                     <CustomDropDown :variants="statusOptions" @update:selectedOptions="handleSelectedStatus"
                         :canAddInDropdown="false" :input-placeholder="`Select your statuses...`"
-                        :clear-all="clearAllDropdownValues" :width-in-vw="13" :height-in-vh="2.5"
+                        :clear-all="clearAllDropdownValues" :width-in-vw="13" :height-in-vh="5"
                         :selectedObjects="stringifyOptions('status')">
                     </CustomDropDown>
 
@@ -365,7 +365,7 @@ function stringifyOptions(option) {
                 <div class="top-container-child-dropdown">
                     <CustomDropDown :variants="categoryOptions" @update:selectedOptions="handleSelectedCategories"
                         :canAddInDropdown="false" :input-placeholder="`Select your categories...`"
-                        :clear-all="clearAllDropdownValues" :width-in-vw="13" :height-in-vh="2.5"
+                        :clear-all="clearAllDropdownValues" :width-in-vw="13" :height-in-vh="5"
                         :selectedObjects="stringifyOptions('category')">
                     </CustomDropDown>
 
@@ -387,7 +387,7 @@ function stringifyOptions(option) {
                     <CustomDropDown :style="{ visibility: hideUser ? 'hidden' : 'visible' }" :variants="userOptions"
                         @update:selectedOptions="handleSelectedUsers" :canAddInDropdown="false"
                         :input-placeholder="`Select your users...`" :clear-all="clearAllDropdownValues" :width-in-vw="13"
-                        :height-in-vh="2.5" :selectedObjects="stringifyOptions('user')">
+                        :height-in-vh="5" :selectedObjects="stringifyOptions('user')">
                     </CustomDropDown>
 
                     <div class="display-container">
@@ -523,6 +523,7 @@ span {
     width: 18vw;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 20vh;
 }
 
 

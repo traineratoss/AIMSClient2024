@@ -2,6 +2,7 @@
 import SidePanel from "../components/SidePanel.vue";
 
 import { ref, onMounted, computed, watch, toRaw } from "vue";
+import CustomSidePanel from "../components/CustomSidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, getPagedIdeasFromUser } from "../services/idea.service";
 import { getCurrentUsername } from "../services/user_service";
@@ -330,10 +331,10 @@ async function changeDisplay(pageSize1) {
 <template>
   <div class="all-ideas-view-container">
     <div class="sidebar-container">
-      <SidePanel
+      <CustomSidePanel
         @filter-listening="updateIdeas"
         :sort="sortOrder"
-        :currentUser="getCurrentUsername()"
+        :currentUser="null"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideaPerPage"
