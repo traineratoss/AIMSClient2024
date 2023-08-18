@@ -3,7 +3,7 @@ import { ref,defineProps,watch, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import CustomLoader from './CustomLoader.vue';
 
-const slides = defineProps(['images', 'selectedImage', 'initialCurrentIndex', 'disabledArrow', 'imageHeightPercentage']);
+const slides = defineProps(['images', 'selectedImage', 'initialCurrentIndex', 'disabledArrow', 'imageHeightPercentage', 'hiddenArrows']);
 const emit = defineEmits(['current-index', 'selected-image-values']);
 
 //IMPORTANT NOTE FOR THE USER TEAM: DON'T SET THE CURRENT INDEX BASED ON THE AVATAR ID, MODIFY IT VIA CODE FOR MULTIPLE USAGE
@@ -21,6 +21,7 @@ const selectedImageType = ref(null)
 const selectedImageName = ref(null);
 const imagesLoaded = ref(false);
 const shouldDisableArrowsRef = ref(false);
+const shouldHideArrowsRef = ref(false);
 
 //this function transforms my whole image string into 3 parts: type, name and base64
 //needed for the request dto
