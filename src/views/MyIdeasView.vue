@@ -1,5 +1,4 @@
 <script setup>
-import SidePanel from "../components/SidePanel.vue";
 
 import { ref, onMounted, computed, watch, toRaw } from "vue";
 import CustomSidePanel from "../components/CustomSidePanel.vue";
@@ -14,6 +13,7 @@ import CuriositySearch from "../views/CuriositySearch.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 
 const currentUsername = getCurrentUsername();
+console.log(currentUsername)
 
 const ideaPerPage = ref(5);
 const currentPage = ref(1);
@@ -170,7 +170,7 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value - 1,
       ideaPerPage.value,
-      currentUsername,
+      getCurrentUsername(),
       "ASC"
     );
 
@@ -194,7 +194,7 @@ async function updateSortOrder() {
       currentSelectedDateTo,
       currentPage.value - 1,
       ideaPerPage.value,
-      currentUsername,
+      getCurrentUsername(),
       "DESC"
     );
 
@@ -238,7 +238,7 @@ async function updateIdeas(filteredIdeas) {
           inputSelectedDateTo.value,
           currentPage.value - 1,
           ideaPerPage.value,
-          currentUsername,
+          getCurrentUsername(),
           sortOrder.value
         );
 
@@ -334,7 +334,7 @@ async function changeDisplay(pageSize1) {
       <CustomSidePanel
         @filter-listening="updateIdeas"
         :sort="sortOrder"
-        :currentUser="null"
+        :currentUser="getCurrentUsername()"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideaPerPage"

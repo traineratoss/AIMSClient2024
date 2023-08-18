@@ -539,7 +539,8 @@ span {
     width: 18vw;
     margin-top: 3vh;
     display: grid;
-    grid-template-rows: 10% 10% 10% 10% 10% 10%;
+    gap: 10px;
+    grid-template-rows: 10% 10% 10% 10% 10% 20%;
 }
 
 .top-container-status-activated {
@@ -548,7 +549,8 @@ span {
     width: 18vw;
     margin-top: 3vh;
     display: grid;
-    grid-template-rows: 10% 10% 10% 20% 10% 10%;
+    gap: 10px;
+    grid-template-rows: 10% 10% 10% 20% 10% 20%;
 }
 
 .top-container-category-activated {
@@ -557,7 +559,8 @@ span {
     width: 18vw;
     margin-top: 3vh;
     display: grid;
-    grid-template-rows: 10% 10% 10% 10% 20% 10%;
+    gap: 10px;
+    grid-template-rows: 10% 10% 10% 10% 20% 20%;
 }
 
 .top-container-status-and-category-activated {
@@ -566,7 +569,8 @@ span {
     width: 18vw;
     margin-top: 3vh;
     display: grid;
-    grid-template-rows: 10% 10% 10% 20% 20% 10%;
+    gap: 10px;
+    grid-template-rows: 10% 10% 10% 20% 20% 20%;
 }
 
 .low-container {

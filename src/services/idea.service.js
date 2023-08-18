@@ -102,7 +102,6 @@ async function filterIdeas(
   sortDirection
 ) {
     
-    // if(!isFiltering.value) {
       isFiltering.value = true;
       switch (sortDirection) {
         case 0:
