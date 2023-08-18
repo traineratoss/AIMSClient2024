@@ -308,6 +308,7 @@ async function createIdeaFunction() {
       image: selectedImageBase64.value,
     };
 
+
     const data = await createIdea(
       inputValue.value,
       textValue.value,

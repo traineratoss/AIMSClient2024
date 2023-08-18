@@ -128,8 +128,8 @@ function getRepliesForComment(commentId) {
     (entry) => entry[0] === commentId
   )
     ? arrayOfCommentIdAndReplyPair.value.find(
-        (entry) => entry[0] === commentId
-      )[1]
+      (entry) => entry[0] === commentId
+    )[1]
     : [];
 }
 
@@ -166,7 +166,7 @@ async function postReplyDynamic(username, parentId, commentText) {
     } else {
       arrayOfCommentIdAndReplyPair.value.push([parentId, parentReplies]);
     }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 function deleteCommentDynamic(commentId) {
@@ -219,32 +219,73 @@ function getShortText(text, numberOfRows, numberOfCharacters) {
   let shortText = "";
   let row = "";
   let countRows = 1;
+  let splitVar = false;
 
   if (text.length <= numberOfCharacters * numberOfRows) return text;
 
-  const wordsArray = text.split(" ");
-
-  for (let word of wordsArray) {
-    if (row.length + word.length <= numberOfCharacters - 1) row += " " + word;
-    else {
-      if (countRows === numberOfRows) {
-        row += " ";
-        for (let letter of word) {
-          if (row.length <= numberOfCharacters - 4) row += letter;
-        }
-        row += "...";
-        shortText += row;
-        break;
-      } else {
-        row += "\n";
-        shortText += row;
-        countRows++;
-        row = word;
-      }
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] == " ") {
+      splitVar = true;
     }
   }
+  if (splitVar) {
+    const wordsArray = text.split(" ");
+    console.log(wordsArray)
+    for (let word of wordsArray) {
+      if (row.length + word.length <= numberOfCharacters - 1) row += " " + word;
+      else {
+        if (countRows === numberOfRows) {
+          row += " ";
+          for (let letter of word) {
+            if (row.length <= numberOfCharacters - 4) row += letter;
+          }
+          row += "...";
+          shortText += row;
+          break;
+        } else {
+          row += "\n";
+          shortText += row;
+          countRows++;
+          row = word;
+        }
+      }
+    }
 
-  return shortText;
+    return shortText;
+  } else {
+
+    const splitArray = [];
+    let returnText = "";
+
+    for (let i = 0; i < text.length; i += numberOfCharacters) {
+        splitArray.push(text.slice(i, i + numberOfCharacters));
+    }
+
+    for(let i = 0; i < splitArray.length; i++) {
+      returnText += splitArray[i] + "\n"
+    }
+    
+    for (let word of returnText) {
+      if (row.length + word.length <= numberOfCharacters - 1) row += "" + word;
+      else {
+        if (countRows === numberOfRows) {
+          row += " ";
+          for (let letter of word) {
+            if (row.length <= numberOfCharacters - 4) row += letter;
+          }
+          row += "...";
+          shortText += row;
+          break;
+        } else {
+          row += "\n";
+          shortText += row;
+          countRows++;
+          row = word;
+        }
+      }
+    }
+    return shortText;
+  }
 }
 
 function selectIdea() {
@@ -318,25 +359,18 @@ function triggerCollapseAnimation(commentId) {
 
 <template>
   <div class="container">
-    <div
-      class="clickable-container"
-      @click="
-        selectIdea();
-        loadIdeaComments();
-      "
-    >
+    <div class="clickable-container" @click="
+      selectIdea();
+    loadIdeaComments();
+    ">
       <div class="wrapper" v-bind:class="isSelected ? 'selected-class' : ''">
-        <div
-          class="border"
-          v-bind:style="
-            isSelected
-              ? {
-                  'background-color': '#ffa941',
-                  'animation-play-state': 'paused',
-                }
-              : { 'background-color': 'white' }
-          "
-        ></div>
+        <div class="border" v-bind:style="isSelected
+            ? {
+              'background-color': '#ffa941',
+              'animation-play-state': 'paused',
+            }
+            : { 'background-color': 'white' }
+          "></div>
         <div class="idea-card">
           <div class="top-container">
             <div class="left-container">
@@ -361,24 +395,15 @@ function triggerCollapseAnimation(commentId) {
               </div>
               <div class="left-container-buttons">
                 <div class="left-container-buttons-grouped" v-if="isSelected">
-                  <button
-                    v-if="props.loggedUser === props.username || isAdmin"
-                    @click.stop="editIdea()"
-                    class="idea-button"
-                  >
+                  <button v-if="props.loggedUser === props.username || isAdmin" @click.stop="editIdea()"
+                    class="idea-button">
                     EDIT
                   </button>
-                  <button
-                    @click.stop="redirectToCreateIdeaView()"
-                    class="idea-button"
-                  >
+                  <button @click.stop="redirectToCreateIdeaView()" class="idea-button">
                     VIEW
                   </button>
-                  <button
-                    @click.stop="showDeletePopup()"
-                    v-if="props.loggedUser === props.username || isAdmin"
-                    class="idea-button"
-                  >
+                  <button @click.stop="showDeletePopup()" v-if="props.loggedUser === props.username || isAdmin"
+                    class="idea-button">
                     DELETE
                   </button>
                 </div>
@@ -406,22 +431,11 @@ function triggerCollapseAnimation(commentId) {
             <div class="bottom-container-left"></div>
             <div class="bottom-container-center">
               <div v-if="isSelected">
-                <button
-                  v-if="props.commentsNumber > 0"
-                  @click.stop="toggleComments()"
-                  id="view-replies-button"
-                >
-                  <span
-                    v-if="!showCommentsToggle"
-                    class="material-symbols-outlined"
-                  >
+                <button v-if="props.commentsNumber > 0" @click.stop="toggleComments()" id="view-replies-button">
+                  <span v-if="!showCommentsToggle" class="material-symbols-outlined">
                     expand_more
                   </span>
-                  <span
-                    v-else
-                    class="material-symbols-outlined"
-                    :style="{ color: 'orange' }"
-                  >
+                  <span v-else class="material-symbols-outlined" :style="{ color: 'orange' }">
                     expand_less
                   </span>
                 </button>
@@ -430,25 +444,18 @@ function triggerCollapseAnimation(commentId) {
 
             <div class="bottom-container-right">
               <span v-if="buttonSelected">
-                <button
-                  class="action-icon-button"
-                  :style="{ color: 'orange' }"
-                  @click.stop="
-                    postToggle = !postToggle;
-                    buttonSelected = !buttonSelected;
-                  "
-                >
+                <button class="action-icon-button" :style="{ color: 'orange' }" @click.stop="
+                  postToggle = !postToggle;
+                buttonSelected = !buttonSelected;
+                ">
                   <span class="material-symbols-outlined"> add_comment </span>
                 </button>
               </span>
               <span v-if="!buttonSelected && isSelected">
-                <button
-                  class="action-icon-button"
-                  @click.stop="
-                    postToggle = !postToggle;
-                    buttonSelected = !buttonSelected;
-                  "
-                >
+                <button class="action-icon-button" @click.stop="
+                  postToggle = !postToggle;
+                buttonSelected = !buttonSelected;
+                ">
                   <span class="material-symbols-outlined"> add_comment </span>
                 </button>
               </span>
@@ -459,12 +466,8 @@ function triggerCollapseAnimation(commentId) {
     </div>
     <div v-if="postToggle" class="comment-input-wrapper">
       <div class="comment-input-container">
-        <textarea
-          id="comment-input-textarea"
-          v-model="commentText"
-          :maxlength="maxCommentLength"
-          placeholder="  Write your comment here .."
-        >
+        <textarea id="comment-input-textarea" v-model="commentText" :maxlength="maxCommentLength"
+          placeholder="  Write your comment here ..">
         </textarea>
       </div>
 
@@ -472,63 +475,30 @@ function triggerCollapseAnimation(commentId) {
         <div class="chars">
           <div></div>
           <p>{{ commentText.length }} / 500</p>
-          <button
-            id="post-button"
-            @click.stop="
-              postCommentDynamic(props.loggedUser, props.ideaId, commentText);
-              postToggle = !postToggle;
-              buttonSelected = !buttonSelected;
-            "
-          >
+          <button id="post-button" @click.stop="
+            postCommentDynamic(props.loggedUser, props.ideaId, commentText);
+          postToggle = !postToggle;
+          buttonSelected = !buttonSelected;
+          ">
             Post comment
           </button>
         </div>
       </div>
     </div>
     <transition-group duration="300" name="nested">
-      <div
-        class="comment-container"
-        v-if="showCommentsToggle"
-        v-for="comment in allLoadedComments"
-        :key="comment.id"
-      >
-        <CustomComment
-          :elapsedTime="comment.elapsedTime"
-          :isReply="false"
-          :commentId="comment.id"
-          :text="comment.commentText"
-          :username="comment.username"
-          :hasReplies="comment.hasReplies"
-          :parentId="comment.id"
-          :ideaId="comment.ideaId"
-          :loggedUser="props.loggedUser"
-          @toggleReplies="toggleCommentReplies(comment)"
-          @showReplies="showCommentReplies(comment)"
-          @loadReplies="loadCommentReplies(comment)"
-          @postReply="postReplyDynamic"
-          @deleteComment="deleteCommentDynamic"
-        />
-        <div
-          class="replies-wrapper"
-          v-if="comment.replyToggle"
-          :id="'customReply' + comment.id"
-        >
+      <div class="comment-container" v-if="showCommentsToggle" v-for="comment in allLoadedComments" :key="comment.id">
+        <CustomComment :elapsedTime="comment.elapsedTime" :isReply="false" :commentId="comment.id"
+          :text="comment.commentText" :username="comment.username" :hasReplies="comment.hasReplies" :parentId="comment.id"
+          :ideaId="comment.ideaId" :loggedUser="props.loggedUser" @toggleReplies="toggleCommentReplies(comment)"
+          @showReplies="showCommentReplies(comment)" @loadReplies="loadCommentReplies(comment)"
+          @postReply="postReplyDynamic" @deleteComment="deleteCommentDynamic" />
+        <div class="replies-wrapper" v-if="comment.replyToggle" :id="'customReply' + comment.id">
           <transition-group duration="300" name="rnested">
-            <div
-              v-for="reply in getRepliesForComment(comment.id)"
-              :key="reply.id"
-              class="reply-container"
-            >
+            <div v-for="reply in getRepliesForComment(comment.id)" :key="reply.id" class="reply-container">
               <div class="custom-reply">
-                <CustomComment
-                  :elapsedTime="reply.elapsedTime"
-                  :isReply="true"
-                  :replyId="reply.id"
-                  :text="reply.commentText"
-                  :username="reply.username"
-                  :loggedUser="props.loggedUser"
-                  @deleteReply="deleteReplyDynamic"
-                />
+                <CustomComment :elapsedTime="reply.elapsedTime" :isReply="true" :replyId="reply.id"
+                  :text="reply.commentText" :username="reply.username" :loggedUser="props.loggedUser"
+                  @deleteReply="deleteReplyDynamic" />
               </div>
             </div>
           </transition-group>
@@ -545,6 +515,7 @@ function triggerCollapseAnimation(commentId) {
   transform: translateY(-20px);
   opacity: 0.001;
 }
+
 .nested-enter-active {
   transition: all 0.1s ease-in-out;
   transition-delay: 0.05s;
@@ -607,6 +578,7 @@ function triggerCollapseAnimation(commentId) {
   cursor: pointer;
   user-select: none;
 }
+
 /*
    I know it might be repetitive but at the moment
   i do no have enough time to further investigate this issue but 
@@ -637,6 +609,7 @@ function triggerCollapseAnimation(commentId) {
     transform: translateX(-100%);
     left: 0;
   }
+
   to {
     left: 100%;
     transform: translateX(0);
@@ -650,11 +623,13 @@ function triggerCollapseAnimation(commentId) {
     left: 0;
     background-color: #ffa941;
   }
+
   100% {
     left: 100%;
     transform: translateX(-100%);
   }
 }
+
 .idea-card {
   position: relative;
   background-color: white;
@@ -704,6 +679,30 @@ function triggerCollapseAnimation(commentId) {
 
 .left-container-text {
   margin-left: 3px;
+  word-wrap: break-word;
+  color: black;
+  min-height: 4vh;
+  max-height: 20vh;
+  max-width: 23vw;
+  min-width: 18vw;
+  border-radius: 5px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  overflow-x: hidden;
+}
+
+.left-container-text::-webkit-scrollbar {
+  display: block;
+  height: 5px;
+  cursor: pointer;
+  width: 7px;
+}
+
+.left-container-text::-webkit-scrollbar-thumb {
+  background-color: #eb9224;
+  border-radius: 5px;
+  border: 1px solid slategray;
+  cursor: pointer;
 }
 
 .left-container-buttons {
@@ -717,10 +716,12 @@ function triggerCollapseAnimation(commentId) {
   display: flex;
   gap: 5px;
 }
+
 .right-container {
   display: grid;
   grid-template-rows: 60% 40%;
 }
+
 .right-container-image {
   display: flex;
   align-items: center;
@@ -768,7 +769,7 @@ function triggerCollapseAnimation(commentId) {
   border: 1px solid rgb(93, 93, 93);
 }
 
-.comment-container > .replies-wrapper {
+.comment-container>.replies-wrapper {
   margin-bottom: 10px;
   margin-top: 10px;
 }
@@ -808,6 +809,7 @@ function triggerCollapseAnimation(commentId) {
   height: auto;
   width: 6vw;
 }
+
 img {
   border: 1px solid slategray;
 }

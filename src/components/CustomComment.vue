@@ -321,6 +321,7 @@ function clearInput() {
   margin-bottom: 10px;
   overflow-x: hidden;
   padding-right: 7px;
+  word-wrap: break-word;
 }
 .footer-container {
   display: grid;
