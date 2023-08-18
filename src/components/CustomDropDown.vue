@@ -213,7 +213,6 @@ function getInputPlaceholder() {
             "/>
     <div v-show="isDropdownVisible && !props.disabled" class="dropdown" ref="dropdown" id="dropdown"
       @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" :style="{
-        height: props.heightInVh ? props.heightInVh + 'vh' : {},
         width: props.widthInVw ? props.widthInVw + 'vw' : {}
       }">
       <label v-for="(variant,index) in allVariantsReactive" :key="index">
