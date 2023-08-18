@@ -421,8 +421,8 @@ function removeSelection(index) {
             :class="titleError ? 'shake' : ''"
             :style="
               !titleError == ''
-              ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
-              : { 'background-color': 'white' }
+              ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '4px' }
+              : { 'background-color': 'white', 'border-radius': '4px' }
             "
           />
         </div>
@@ -482,8 +482,8 @@ function removeSelection(index) {
           v-bind:class="textError ? 'shake' : ''"
           :style="
             !textError == ''
-            ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)' }
-            : { 'background-color': 'white' }
+            ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '2px' }
+            : { 'background-color': 'white', 'border-radius': '2px' }
           "
         >
         </textarea>
@@ -747,6 +747,7 @@ textarea {
   width: 21vw;
   margin: auto;
   gap: 0.5vw;
+
 }
 
 .carousel-container {

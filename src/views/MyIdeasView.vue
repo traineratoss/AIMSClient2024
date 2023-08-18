@@ -306,8 +306,8 @@ const getImageUrl = (item) => {
 };
 
 
-async function changeDisplay(pageSize1) {
-  ideaPerPage.value = pageSize1;
+async function changeDisplay(pageSizeChanged) {
+  ideaPerPage.value = pageSizeChanged;
   currentPage.value = 1;
   const data = await filterIdeas(
     inputTitle.value,

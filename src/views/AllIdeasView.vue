@@ -188,6 +188,9 @@ function setCurrentVariables() {
 // here, the page asc or desc is happening
 async function updateSortOrder() {
   if (sortOrder.value == 0) {
+
+    ideas.value = [];
+
     sortOrder.value = 0;
     const data = await filterIdeas(
       currentTitle,
@@ -213,6 +216,9 @@ async function updateSortOrder() {
       setCurrentVariables();
     }
   } else if (sortOrder.value == 1) {
+
+    ideas.value = [];
+
     sortOrder.value = 1;
     const data = await filterIdeas(
       currentTitle,
@@ -287,6 +293,7 @@ async function updateIdeas(filteredIdeas) {
     while (currentPage.value > totalPages.value && totalPages.value != 0) {
       currentPage.value = currentPage.value - 1;
       //OPTIMIZED A BIT SO IT WILL FILTER ONLY WHEN IT GETS TO THE RIGHT PAGE NUMBER
+      ideas.value = [];
       if (currentPage.value == totalPages.value) {
         const data = await filterIdeas(
           inputTitle.value,
@@ -337,6 +344,9 @@ async function updateIdeas(filteredIdeas) {
   }
 }
 async function changeDisplay(pageSize1) {
+
+  ideas.value = [];
+
   ideaPerPage.value = pageSize1;
   currentPage.value = 1;
   const data = await filterIdeas(
@@ -353,8 +363,14 @@ async function changeDisplay(pageSize1) {
     sortOrder.value
   );
 
-  ideas.value = data.content;
-  totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+  if (data === "No ideas found.") {
+    noIdeasFoundCondition.value = true;
+    totalPages.value = 0;
+    ideas.value = [];
+  } else {
+    ideas.value = data.content;
+    totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+  }
 }
 
 // Here I pass the vars from the side panel
