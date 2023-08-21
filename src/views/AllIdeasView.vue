@@ -185,7 +185,7 @@ function scrollFade() {
 
     var elementBottom =
       reveals[i].getBoundingClientRect().top -
-      ideasTransitionContainer.value.getBoundingClientRect().bottom; 
+      ideasTransitionContainer.value.getBoundingClientRect().bottom;
 
     let distanceBottom = scrollDirection === "down" ? 100 : -100;
 
@@ -219,11 +219,11 @@ function scrollFade() {
 
         if (
           ideasTransitionContainer.value.clientHeight -
-          reveals[i].getBoundingClientRect().bottom <
-          -50 &&
+            reveals[i].getBoundingClientRect().bottom <
+            -50 &&
           ideasTransitionContainer.value.clientHeight -
-          reveals[i].getBoundingClientRect().bottom >
-          -300
+            reveals[i].getBoundingClientRect().bottom >
+            -300
         ) {
           const distanceDown =
             ideasTransitionContainer.value.clientHeight -
@@ -241,13 +241,13 @@ function scrollFade() {
 
       if (
         ideasTransitionContainer.value.clientHeight -
-        reveals[i].getBoundingClientRect().bottom >
+          reveals[i].getBoundingClientRect().bottom >
         -100
       ) {
         reveals[i].style.transform = `translateY(-200px)`;
       } else if (
         reveals[i].getBoundingClientRect().top -
-        ideasTransitionContainer.value.getBoundingClientRect().top >
+          ideasTransitionContainer.value.getBoundingClientRect().top >
         50
       ) {
         reveals[i].style.transform = `translateY(200px)`;
@@ -479,26 +479,26 @@ async function loadRecievedIdeas(mostCommentedIdeas) {
   }, "500");
 }
 
-// async function loadData() {
-//   showTopIdeas.value = false;
-//   loadingPage.value = true;
+async function loadData() {
+  showTopIdeas.value = false;
+  loadingPage.value = true;
 
-//   ideas.value = [];
+  ideas.value = [];
 
-//   const data = await loadPagedIdeas(
-//     ideaPerPage.value,
-//     currentPage.value - 1,
-//     "creationDate",
-//     "ASC"
-//   );
-//   ideas.value = data.content;
-//   loadingPage.value = false;
-//   setTimeout(() => {
-//     scrollFade();
-//     ideasTransitionContainer.value.style.overflowY = "auto";
-//     document.getElementById("scrollable-middle").scrollTop = "0";
-//   }, 0);
-// }
+  const data = await loadPagedIdeas(
+    ideaPerPage.value,
+    currentPage.value - 1,
+    "creationDate",
+    "ASC"
+  );
+  ideas.value = data.content;
+  loadingPage.value = false;
+  setTimeout(() => {
+    scrollFade();
+    ideasTransitionContainer.value.style.overflowY = "auto";
+    document.getElementById("scrollable-middle").scrollTop = "0";
+  }, 0);
+}
 
 async function updateIdeas(filteredIdeas) {
   ideasTransitionContainer.value.style.overflowY = "hidden";
@@ -669,49 +669,102 @@ async function showStatistics() {
   else showGenerated.value = false;
 
   showAnimation.value = false;
+  if (showTopIdeas.value === true) loadData();
 }
 </script>
 
 <template>
   <div class="all-ideas-view-container">
     <div class="left-container">
-      <CustomSidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="null" :currentPage="currentPage"
-        @pass-input-variables="onPassInputVariables" :ideasPerPage="ideaPerPage" :hideUser="false"
-        :clear-all="showTopIdeas" />
+      <CustomSidePanel
+        @filter-listening="updateIdeas"
+        :sort="sortOrder"
+        :currentUser="null"
+        :currentPage="currentPage"
+        @pass-input-variables="onPassInputVariables"
+        :ideasPerPage="ideaPerPage"
+        :hideUser="false"
+        :clear-all="showTopIdeas"
+      />
     </div>
-    <div class="right-container" :style="isAdmin
-      ? { ' grid-template-columns': 'auto auto' }
-      : { 'grid-template-columns': '80vw' }
-      ">
+    <div
+      class="right-container"
+      :style="
+        isAdmin
+          ? { ' grid-template-columns': 'auto auto' }
+          : { 'grid-template-columns': '80vw' }
+      "
+    >
       <div class="main-container">
-        <div v-if="ideas.length === 0 && !noIdeasFoundCondition" class="loading-placeholder">
+        <div
+          v-if="ideas.length === 0 && !noIdeasFoundCondition"
+          class="loading-placeholder"
+        >
           <CustomLoader :size="100" />
         </div>
-        <div class="middle-container" ref="ideasTransitionContainer" id="scrollable-middle">
-          <div class="sort-container" :style="ideas
-            ? ideas.length === 0 || showTopIdeas
-              ? { visibility: 'hidden', 'text-align': 'right' }
-              : { visibility: 'visible', 'text-align': 'right' }
-            : { 'text-align': 'right' }
-            ">
+        <div
+          class="middle-container"
+          ref="ideasTransitionContainer"
+          id="scrollable-middle"
+        >
+          <div
+            v-if="!showTopIdeas"
+            class="sort-container"
+            :style="
+              ideas
+                ? ideas.length === 0 || showTopIdeas
+                  ? { visibility: 'hidden', 'text-align': 'right' }
+                  : { visibility: 'visible', 'text-align': 'right' }
+                : { 'text-align': 'right' }
+            "
+          >
             <label for="sortOrder">Sort by: </label>
-            <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder" style="width: 3.8vw;">
-              <option :value="0"> Oldest </option>
-              <option :value="1"> Newest </option>
+            <select
+              id="sortOrder"
+              v-model="sortOrder"
+              @change="updateSortOrder"
+              style="width: 3.8vw"
+            >
+              <option :value="0">Newest</option>
+              <option :value="1">Oldest</option>
             </select>
             <div class="pageSize">
-              <PageSizeSelect id="pageSizeSelect" label="Ideas:" @change-display="changeDisplay" />
+              <PageSizeSelect
+                id="pageSizeSelect"
+                label="Ideas:"
+                @change-display="changeDisplay"
+              />
             </div>
           </div>
+          <div
+            class="ideas-transition-container"
+            ref="ideasTransitionContainer"
+          >
+            <h2 v-if="showTopIdeas">Top ideas</h2>
 
-          <div class="ideas-transition-container" ref="ideasTransitionContainer">
-            <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item reveal">
-              <IdeaCard :title="idea.title" :text="idea.text" :status="idea.status" :username="idea.username"
-                :ideaId="idea.id" :commentsNumber="idea.commentsNumber" :elapsedTime="idea.elapsedTime"
-                :image="getImageUrl(idea)" :loggedUser="getCurrentUsername()" @comment-counter-add="idea.commentsNumber++"
-                @comment-counter-sub="idea.commentsNumber--" />
+            <div
+              v-for="idea in ideas"
+              :key="idea.id"
+              class="idea-transition-item reveal"
+            >
+              <IdeaCard
+                :title="idea.title"
+                :text="idea.text"
+                :status="idea.status"
+                :username="idea.username"
+                :ideaId="idea.id"
+                :commentsNumber="idea.commentsNumber"
+                :elapsedTime="idea.elapsedTime"
+                :image="getImageUrl(idea)"
+                :loggedUser="getCurrentUsername()"
+                @comment-counter-add="idea.commentsNumber++"
+                @comment-counter-sub="idea.commentsNumber--"
+              />
             </div>
-            <div v-if="ideas.length === 0 && noIdeasFoundCondition" class="no-ideas-message">
+            <div
+              v-if="ideas.length === 0 && noIdeasFoundCondition"
+              class="no-ideas-message"
+            >
               <img src="../assets/img/curiosity-search.svg" />
               <br />
               <span class="black-font">Your search returned no results</span>
@@ -721,7 +774,11 @@ async function showStatistics() {
 
         <div v-if="ideas.length > 0" class="pagination-container">
           <div class="pagination-component">
-            <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
+            <Pagination
+              :totalPages="totalPages"
+              :currentPage="currentPage"
+              @changePage="changePage"
+            />
           </div>
         </div>
       </div>
@@ -742,11 +799,19 @@ async function showStatistics() {
               <div class="date-input">
                 <div>
                   <span class="from-date"> From: </span>
-                  <CustomInput v-model="selectedDateFrom" type="date" class="date-picker" />
+                  <CustomInput
+                    v-model="selectedDateFrom"
+                    type="date"
+                    class="date-picker"
+                  />
                 </div>
                 <div>
                   <span class="to-date"> To: </span>
-                  <CustomInput v-model="selectedDateTo" type="date" class="date-picker" />
+                  <CustomInput
+                    v-model="selectedDateTo"
+                    type="date"
+                    class="date-picker"
+                  />
                 </div>
               </div>
             </fieldset>
@@ -759,9 +824,15 @@ async function showStatistics() {
           </div>
         </div>
         <Suspense>
-          <CustomStatistics :recievedFilteredStats="stats" :showGenerated="showGenerated" :showAnimation="showAnimation"
-            :showSkeleton="showSkeleton" @load-top5-ideas="loadRecievedIdeas" @load-data="loadData"
-            :show-top-ideas="showTopIdeas" />
+          <CustomStatistics
+            :recievedFilteredStats="stats"
+            :showGenerated="showGenerated"
+            :showAnimation="showAnimation"
+            :showSkeleton="showSkeleton"
+            @load-top5-ideas="loadRecievedIdeas"
+            @load-data="loadData"
+            :show-top-ideas="showTopIdeas"
+          />
         </Suspense>
       </div>
     </div>
@@ -769,6 +840,11 @@ async function showStatistics() {
 </template>
 
 <style scoped>
+h2 {
+  margin-top: 15px;
+  margin-right: 20px;
+}
+
 .reveal {
   position: relative;
   opacity: 0;
@@ -837,7 +913,7 @@ async function showStatistics() {
   text-align: center;
 }
 
-.date-input>div {
+.date-input > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
