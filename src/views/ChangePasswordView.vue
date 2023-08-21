@@ -6,7 +6,7 @@ import {
   getCurrentAvatarId,
   getCurrentUsername,
   logout,
-  isFirstLogin
+  isFirstLogin,
 } from "../services/user_service";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
@@ -40,7 +40,7 @@ const slideImages = [
 
 onMounted(() => {
   firstLogin.value = localStorage.getItem("isFirstLogin");
-})
+});
 
 function submit() {
   if (
@@ -149,7 +149,9 @@ function checkPassword() {
           <li :class="{ is_valid: containsEightCharacters }">8 Characters</li>
           <li :class="{ is_valid: containsNumber }">Contains numbers</li>
           <li :class="{ is_valid: containsUppercase }">Contains Uppercase</li>
-          <li :class="{ is_valid: containsSpecialCharacter }">Contains Special Character</li>
+          <li :class="{ is_valid: containsSpecialCharacter }">
+            Contains Special Character
+          </li>
         </ul>
       </div>
       <div>
@@ -177,11 +179,9 @@ function checkPassword() {
         />
       </div>
       <div id="controls-container">
-        <button
-          id="cancel"
-          :disabled="!firstLogin"
-          @click="router.push('/my')"
-        > Cancel </button>
+        <button id="cancel" :disabled="!firstLogin" @click="router.push('/my')">
+          Cancel
+        </button>
         <CustomButton id="submit" @click="submit">Submit</CustomButton>
       </div>
     </div>
@@ -190,15 +190,16 @@ function checkPassword() {
 
 <style scoped>
 .container {
+  min-width: 20vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 2vh;
   position: relative;
   margin-top: 10vh;
   background-color: #e9e9e9;
-  padding: 25px;
+  padding: 20px;
   border-radius: 10px;
 }
 
@@ -273,7 +274,6 @@ a {
 }
 
 .verification-container {
-  height: 7vh;
   width: 10vw;
   margin-bottom: 10px;
   background-color: #e9e9e9;

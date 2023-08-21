@@ -5,13 +5,13 @@ import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
 import { ref, onMounted } from "vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
-import { 
-  getCurrentUsername, 
-  updateUser, 
-  getCurrentEmail, 
-  getCurrentFullName, 
+import {
+  getCurrentUsername,
+  updateUser,
+  getCurrentEmail,
+  getCurrentFullName,
   getCurrentAvatarId,
-  validateUsername
+  validateUsername,
 } from "../services/user_service";
 import router from "../router";
 
@@ -46,9 +46,9 @@ onMounted(() => {
 });
 
 // function validateUsername(username) {
-//   /* 
-//     Usernames can only have: 
-//     - Lowercase Letters (a-z) 
+//   /*
+//     Usernames can only have:
+//     - Lowercase Letters (a-z)
 //     - Numbers (0-9)
 //     - Dots (.)
 //     - Underscores (_)
@@ -82,12 +82,12 @@ function saveChanges() {
     let userUpdateDTO = {};
 
     userUpdateDTO.avatarId = carouselImageIndex.value;
-    localStorage.setItem('avatarId', userUpdateDTO.avatarId);
-    
-    if(usernameText.value !== oldUsername && usernameText.value !== '') {
+    localStorage.setItem("avatarId", userUpdateDTO.avatarId);
+
+    if (usernameText.value !== oldUsername && usernameText.value !== "") {
       if (validateUsername(usernameText.value)) {
         userUpdateDTO.username = usernameText.value;
-        localStorage.setItem('username', userUpdateDTO.username);        
+        localStorage.setItem("username", userUpdateDTO.username);
       } else {
         errorMessage.value = "Invalid username format!";
         showErrorMessage.value = true;
@@ -164,10 +164,7 @@ function saveChanges() {
         :imageHeightPercentage="80"
       />
       <div class="button-container">
-        <button
-          @click="router.push('/my')"
-          class="cancel-button"
-        >
+        <button @click="router.push('/my')" class="cancel-button">
           Cancel
         </button>
         <CustomButton
@@ -187,10 +184,9 @@ function saveChanges() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5vh;
-  margin: 8vh 0;
+  gap: 2vh;
   background-color: #e9e9e9;
-  padding: 10px;
+  padding: 20px;
   border-radius: 10px;
 }
 
@@ -208,6 +204,7 @@ function saveChanges() {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: calc(94vh - 1px);
 }
 
 .button-container {
@@ -254,10 +251,10 @@ img {
 .save-changes-button {
   width: auto;
 }
-.avatar-carousel{
+.avatar-carousel {
   height: 15vw;
   max-width: 23vw;
-  object-fit:scale-down;
+  object-fit: scale-down;
   margin-top: 50px;
 }
 </style>
