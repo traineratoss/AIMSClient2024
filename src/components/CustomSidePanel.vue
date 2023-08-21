@@ -20,6 +20,7 @@ const props = defineProps({
     ideasPerPage: Number,
     currentUser: String,
     hideUser: Boolean,
+    clearAll: Boolean
 });
 
 const categoryOptions = ref([]);
@@ -52,6 +53,12 @@ const emits = defineEmits([
     "pass-input-variables",
     "generatedStatistics",
 ]);
+
+watch(() => props.clearAll, (newValue) => {
+    if(newValue) {
+        clearSelection();
+    }
+})
 
 watch(
     [
@@ -347,14 +354,14 @@ function topContainerGridPercentages() {
             <div class="top-container-child">
                 <span class="title"> Title: </span>
                 <CustomInput v-model="inputTitle" :placeholder="`Write a title...`" :can-modify-search-value="true"
-                    :widthInPx="13" :height-in-px="2.5" :style="{ 'background-color': 'white', 'font-weight': '400' }" />
+                    :widthInPx="13" :height-in-px="2.5" :style="{ 'background-color': 'white', 'font-weight': '370' }" />
             </div>
 
             <div class="top-container-child">
                 <span class="text">Text:</span>
                 <CustomInput v-model="inputText" class="text-input" :placeholder="`Write a text...`"
                     :can-modify-search-value="false" :widthInPx="13" :height-in-px="2.5"
-                    :style="{ 'background-color': 'white', 'font-weight': '400' }" />
+                    :style="{ 'background-color': 'white', 'font-weight': '370' }" />
             </div>
 
             <div class="top-container-child">
@@ -501,8 +508,11 @@ span {
 }
 
 .date-picker {
-    border: 1px solid slategray;
     border-radius: 5px;
+}
+
+.date-picker:hover {
+    border: 1px solid slategray;
 }
 
 .date-input>div {
@@ -579,7 +589,7 @@ span {
     width: 18vw;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 20vh;
+    margin-bottom: 30vh;
 }
 
 
@@ -602,10 +612,10 @@ span {
 
 #clear-all-button:hover {
     background-color: #cfcfcf;
+    font-weight:500;
 }
 
 #filter-button {
-
     height: 3vh;
     border-radius: 5px;
     border: none;
@@ -613,11 +623,13 @@ span {
     background-color: #fb9209;
     cursor: pointer;
     border: 1px solid slategray;
-    font-weight: 100;
+    margin-top: 3vh;
+    font-weight: 400;
 }
 
 #filter-button:hover {
     background-color: #e68608;
+    font-weight:500;
 }
 
 #filter-buttons {

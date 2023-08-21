@@ -84,8 +84,25 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
   return data;
 }
 
-async function getStats() {
-  const response = await fetch(API_URL + "/stats");
+async function getStats(sortOrder) {
+
+  let url = API_URL + "/stats";
+
+  if (sortOrder) {
+    url += `?mostCommentedSIdeasSortOrder=${sortOrder}`
+  }
+
+  const response = await fetch(url, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  });
   const data = await response.json();
   return data;
 }

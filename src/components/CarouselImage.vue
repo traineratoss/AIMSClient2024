@@ -119,10 +119,11 @@ onMounted(() => {
     <button @click="prevSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-left fa-2xl" id="arrow"></i>
     </button>
-    <div class="slide-container">
+    <div class="slide-container" :style="imagesLoaded ? (route.name === 'create-idea' ? {'border': '4px solid gray', 'border-radius': '10px'} : 
+    {'border': '0px', 'border-radius': '0px'}) : {'border': '0px', 'border-radius': '0px'} ">
       <div
         class="slides"
-        :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
+        :style="imagesLoaded ? { transform: `translateX(-${currentIndex * 100}%)` } : {}"
       >
         <div
           v-if="imagesLoaded"

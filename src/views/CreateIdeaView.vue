@@ -24,7 +24,7 @@ const statusValue = ref("open");
 const textValue = ref("");
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
-const titleError = ref('');
+const titleError = ref("");
 // const statusError = ref(false);
 const textError = ref("");
 const categoryError = ref("");
@@ -43,6 +43,8 @@ updatedIdea.value = useRoute().query;
 const isWatchEffectExecuted = ref(false);
 
 const onlyForDeleteCategories = ref([]);
+
+const ideaNotValid = ref(false);
 
 const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
@@ -71,22 +73,22 @@ onMounted(async () => {
 });
 
 watch(inputValue, (newValue) => {
-  if (newValue !== '') {
-    titleError.value = '';
+  if (newValue !== "") {
+    titleError.value = "";
   }
-})
+});
 
 watch(categoriesSelected, (newValue) => {
   if (newValue.length > 0) {
-    categoryError.value = '';
+    categoryError.value = "";
   }
-})
+});
 
 watch(textValue, (newValue) => {
-  if (newValue !== '') {
-    textError.value = '';
+  if (newValue !== "") {
+    textError.value = "";
   }
-})
+});
 
 // watch(categoriesSelected, (newValue) => {
 //   categoriesSelected.value = newValue
@@ -206,7 +208,7 @@ async function updateIdeaFields() {
 // we stringify the categories selected and send it to the dropdown and then parse it there
 function stringifyCategory() {
   return JSON.stringify(categoriesSelected.value);
-};
+}
 
 const getCurrentIndex = (currentIndex) => {
   currentImageIndex.value = currentIndex;
@@ -283,7 +285,7 @@ async function createIdeaFunction() {
   if (titleErrorCheck) {
     titleError.value = "Please select a title...";
   } else {
-    titleError.value = '';
+    titleError.value = "";
   }
   if (textErrorCheck) {
     textError.value = "Please write some text...";
@@ -296,7 +298,6 @@ async function createIdeaFunction() {
     categoryError.value = "";
   }
 
-
   if (!titleErrorCheck && !textErrorCheck && !categoryErrorCheck) {
     const categoryTexts = rawCategoriesValue.map((category) => ({
       text: category,
@@ -307,7 +308,6 @@ async function createIdeaFunction() {
       fileType: selectedImageType.value,
       image: selectedImageBase64.value,
     };
-
 
     const data = await createIdea(
       inputValue.value,
@@ -333,20 +333,24 @@ if (disableFields) loadIdeaForDelete();
 const currentIdeaTitle = ref("");
 async function loadIdeaForDelete() {
   const response = await getIdea(ideaId);
-  currentIdeaTitle.value = response.title;
-  inputValue.value = response.title;
-  statusValue.value = response.status.toLowerCase();
+  if (response === "Idea doesn't exist.") {
+    ideaNotValid.value = true;
+  } else {
+    currentIdeaTitle.value = response.title;
+    inputValue.value = response.title;
+    statusValue.value = response.status.toLowerCase();
 
-  // for (let category of response.categoryList) {
-  //   onlyForDeleteCategories.value.push(" " + category.text);
-  // }
+    // for (let category of response.categoryList) {
+    //   onlyForDeleteCategories.value.push(" " + category.text);
+    // }
 
-  onlyForDeleteCategories.value = "Your categories..."
-  for (let category of response.categoryList) {
-    categoriesSelected.value.push(category.text)
+    onlyForDeleteCategories.value = "Your categories...";
+    for (let category of response.categoryList) {
+      categoriesSelected.value.push(category.text);
+    }
+
+    textValue.value = response.text;
   }
-
-  textValue.value = response.text;
 }
 
 const customDialog = ref(null);
@@ -393,14 +397,16 @@ async function shouldDisableArrows() {
   }
 }
 
-function onMouseLeave() { }
+function onMouseLeave() {}
 
-function onMouseEnter() { }
+function onMouseEnter() {}
 
 function removeSelection(index) {
   if (!disableFields) {
     const indexValue = index;
-    categoriesSelected.value = categoriesSelected.value.filter((category, index) => indexValue !== index);
+    categoriesSelected.value = categoriesSelected.value.filter(
+      (category, index) => indexValue !== index
+    );
   }
 }
 </script>
@@ -417,21 +423,52 @@ function removeSelection(index) {
       <div class="input-container">
         <div class="idea">
           <label for="title-idea" class="label">Title:</label>
-          <CustomInput v-model="inputValue" :disabled="fieldsDisabled" :maxlength="50"
-            :placeholder="!titleError == '' ? titleError : 'Write a title here...'" :widthInPx="16"
-            style="background-color: rgba(255, 145, 153, 0.679);" :class="titleError ? 'shake' : ''" :style="!titleError == ''
-              ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '4px' }
-              : { 'background-color': 'white', 'border-radius': '4px' }
-              " />
+          <CustomInput
+            v-model="inputValue"
+            :disabled="fieldsDisabled"
+            :maxlength="50"
+            :placeholder="
+              !titleError == '' ? titleError : 'Write a title here...'
+            "
+            :widthInPx="16"
+            style="background-color: rgba(255, 145, 153, 0.679)"
+            :class="titleError ? 'shake' : ''"
+            :style="
+              !titleError == ''
+                ? {
+                    'border-color': 'red',
+                    'background-color': 'rgb(255, 145, 153, 0.379)',
+                    'border-radius': '4px',
+                  }
+                : { 'background-color': 'white', 'border-radius': '4px' }
+            "
+          />
         </div>
 
         <div class="idea">
-          <label for="status-idea" class="label" @mouseleave="onMouseLeave" @mouseenter="onMouseEnter">Status:</label>
-          <select v-model="statusValue" :class="{ status: statusError }" @mouseenter="onMouseEnter" style="width: 16vw;"
-            @mouseleave="onMouseLeave" name="status-idea" class="custom-select" :disabled="fieldsDisabled">
+          <label
+            for="status-idea"
+            class="label"
+            @mouseleave="onMouseLeave"
+            @mouseenter="onMouseEnter"
+            >Status:</label
+          >
+          <select
+            v-model="statusValue"
+            :class="{ status: statusError }"
+            @mouseenter="onMouseEnter"
+            style="width: 16vw"
+            @mouseleave="onMouseLeave"
+            name="status-idea"
+            class="custom-select"
+            :disabled="fieldsDisabled"
+          >
             <option value="open">Open</option>
             <option value="draft">Draft</option>
-            <option v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'" value="implemented">
+            <option
+              v-if="!isUpdatedIdeaEmpty && currentRole == 'ADMIN'"
+              value="implemented"
+            >
               Implemented
             </option>
           </select>
@@ -440,45 +477,120 @@ function removeSelection(index) {
         <div class="idea">
           <label for="category-idea" class="label">Categories:</label>
 
-          <CustomDropDown v-if="!showDeletePopup && !disableFields" @update:selectedOptions="handleSelectedCategories"
-            :disabled="fieldsDisabled" :variants="categoryOptions" :canAddInDropdown="true"
-            :selectedObjects="stringifyCategory()" :input-placeholder="categoryError ? categoryError : 'Select your categories...'
-              " class="input-width" :width-in-vw="16" v-bind:class="categoryError ? 'shake' : ''"
-            :error="categoryError">
+          <CustomDropDown
+            v-if="!showDeletePopup && !disableFields"
+            @update:selectedOptions="handleSelectedCategories"
+            :disabled="fieldsDisabled"
+            :variants="categoryOptions"
+            :canAddInDropdown="true"
+            :selectedObjects="stringifyCategory()"
+            :input-placeholder="
+              categoryError ? categoryError : 'Select your categories...'
+            "
+            class="input-width"
+            :width-in-vw="16"
+            v-bind:class="categoryError ? 'shake' : ''"
+            :error="categoryError"
+          >
           </CustomDropDown>
-          <input v-if="showDeletePopup || disableFields" v-model="onlyForDeleteCategories" :disabled="disableFields" />
+          <input
+            v-if="showDeletePopup || disableFields || ideaNotValid"
+            v-model="onlyForDeleteCategories"
+            :disabled="disableFields"
+            style="border: 0px solid slategray; border-radius: 2px; width: 15.8vw;"
+          />
         </div>
 
         <div class="display-categories-container">
-          <div class="display-categories" v-for="(category, index) in categoriesSelected" :key="index"
-            :style="!disableFields ? { 'background-color': 'white' } : { 'background-color': '#cccccc' }"
-            @click="removeSelection(index)">
+          <div
+            class="display-categories"
+            v-for="(category, index) in categoriesSelected"
+            :key="index"
+            :style="
+              !disableFields
+                ? { 'background-color': 'white' }
+                : { 'background-color': '#cccccc' }
+            "
+            @click="removeSelection(index)"
+          >
             {{ category }} <b>x</b>
           </div>
         </div>
       </div>
 
       <div class="idea-text">
-        <textarea v-model="textValue" :disabled="fieldsDisabled" :maxlength="500"
-          :placeholder="!textError == '' ? textError : 'Write some text here...'" id="textarea-id"
-          v-bind:class="textError ? 'shake' : ''" :style="!textError == ''
-            ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.279)', 'border-radius': '2px' }
-            : { 'background-color': 'white', 'border-radius': '2px' }
-            ">
-        </textarea>
-        <p id="maxlength-textarea">{{textValue ? textValue.length : 0 }} / 500</p>
+        <div class="text-input-wrapper">
+          <div class="input-text-container">
+            <textarea
+              v-model="textValue"
+              :disabled="fieldsDisabled"
+              :maxlength="500"
+              :placeholder="
+                !textError == '' ? textError : 'Write a text here...'
+              "
+              id="textarea-id"
+              v-bind:class="textError ? 'shake' : ''"
+              :style="
+                !textError == ''
+                  ? {
+                      'border-color': 'red',
+                      'background-color': 'rgb(255, 145, 153, 0.479)',
+                      'border-radius': '2px',
+                    }
+                  : { 'background-color': 'white', 'border-radius': '2px' }
+              "
+            >
+            </textarea>
+          </div>
+          <div class="input-bottom">
+            <p
+              id="maxlength-textarea"
+              :style="{
+                color: textValue
+                  ? textValue.length == 500
+                    ? 'red'
+                    : 'slategray'
+                  : 'slategray',
+                opacity: textValue
+                  ? textValue.length == 500
+                    ? '100'
+                    : '70%'
+                  : '70%',
+              }"
+            >
+              {{ textValue ? textValue.length : 0 }} / 500
+            </p>
+          </div>
+        </div>
       </div>
 
       <div class="carousel-container">
         <div class="idea-carousel">
-          <CarouselImage class="carousel-image" :images="slideImages" @current-index="getCurrentIndex"
-            @selected-image-values="getSelectedImageValues" :initialCurrentIndex="initialCurrentIndex()"
-            :disabledArrow="shouldDisableArrows()" :imageHeightPercentage="100" />
+          <CarouselImage
+            class="carousel-image"
+            :images="slideImages"
+            @current-index="getCurrentIndex"
+            @selected-image-values="getSelectedImageValues"
+            :initialCurrentIndex="initialCurrentIndex()"
+            :disabledArrow="shouldDisableArrows()"
+            :imageHeightPercentage="100"
+          />
         </div>
         <div class="add-image">
-          <input type="file" id="upload" hidden :disabled="fieldsDisabled" ref="uploadedImage"
-            v-on:change="uploadImage($event)" />
-          <label for="upload" class="add-image-idea" v-if="!deletePopup" style="display: flex; align-items: center">
+          <input
+            type="file"
+            id="upload"
+            hidden
+            :disabled="fieldsDisabled"
+            ref="uploadedImage"
+            v-on:change="uploadImage($event)"
+          />
+          <label
+            for="upload"
+            class="add-image-idea"
+            v-if="!deletePopup && !disableFields"
+            style="display: flex; align-items: center"
+          >
             Upload Image
             <span class="material-symbols-outlined" style="margin-left: 5px">
               attach_file
@@ -488,16 +600,28 @@ function removeSelection(index) {
       </div>
 
       <div class="create-container">
-        <CustomButton id="create-idea" @click="shouldCreateOrUpdate" :disabled="fieldsDisabled" v-if="!deletePopup"
-          :height-in-px="40" :width-in-px="300">
+        <CustomButton
+          id="create-idea"
+          @click="shouldCreateOrUpdate"
+          :disabled="fieldsDisabled"
+          v-if="!deletePopup && !disableFields"
+          :height-in-px="40"
+          :width-in-px="300"
+        >
           {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
         </CustomButton>
-        <CustomDialog ref="customDialog" :open="deletePopup"
-          :title="`Are you sure you want to delete '${currentIdeaTitle}'?`"
-          message="This item will be deleted immediatly. You can't undo this action!">
-          <div class="dialog-actions">
+        <CustomDialog
+          ref="customDialog"
+          :open="deletePopup || ideaNotValid"
+          :title="!ideaNotValid ? `Are you sure you want to delete '${currentIdeaTitle}'?` : `This idea doesn't exist anymore`"
+          :message="!ideaNotValid ? 'This item will be deleted immediately. You can\'t undo this action!' : 'Please go back to the main page.'"
+        >
+          <div class="dialog-actions" v-if="deletePopup && !ideaNotValid">
             <button @click="handleCancel">Cancel</button>
             <button @click="handleConfirm">Confirm</button>
+          </div>
+          <div class="dialog-actions" v-if="ideaNotValid">
+            <button @click="handleConfirm" id="back-button">Back</button>
           </div>
         </CustomDialog>
       </div>
@@ -506,6 +630,28 @@ function removeSelection(index) {
 </template>
 
 <style scoped>
+
+#back-button:hover {
+  background-color: #f8920b;
+}
+.comment-input-bottom {
+  width: 29vw;
+}
+.text-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 22vw;
+  background-color: white;
+  border: 1px solid slategray;
+  border-radius: 5px;
+  min-height: 17vh;
+  max-height: 22vh;
+  box-sizing: border-box;
+  margin-top: 10px;
+  word-wrap: break-word;
+}
+
 @keyframes shake {
   0% {
     transform: translateX(0);
@@ -542,9 +688,10 @@ b {
 #maxlength-textarea {
   position: absolute;
   bottom: 0;
-  right: 11.5vw;
+  right: 11vw;
   padding: 0;
   margin: 0;
+  margin-bottom: 1px;
 }
 
 #textarea-id::-webkit-scrollbar {
@@ -571,20 +718,21 @@ b {
   margin-top: 20px;
 }
 
-.carousel-image>img {
+.carousel-image > img {
   border: 1px solid slategray;
 }
 
 #textarea-id {
-  width: 21vw;
-  border: 1px solid white;
-  height: 21vh;
+  resize: none;
+  height: 14.6vh;
+  width: 21.5vw;
+  overflow: auto;
   box-sizing: border-box;
-  background-color: white;
-  padding: 10px;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  border: 1px solid slategray;
+  border-radius: 3px;
   word-wrap: break-word;
+  margin-top: 4px;
+  padding: 5px;
 }
 
 #textarea-id:hover {
@@ -600,8 +748,14 @@ textarea {
 }
 
 #create-idea {
+  background-color: #fb9209;
   border-radius: 5px;
-  margin-top: 10px;
+  margin-top: 20px;
+}
+
+#create-idea:hover {
+  background-color: #e68608;
+  font-weight: 500;
 }
 
 .wrapper {
@@ -615,7 +769,7 @@ textarea {
 .create-idea-container {
   align-items: center;
   display: grid;
-  grid-template-rows: 10% 20% 25% 35% 10%;
+  grid-template-rows: 10% 20% 20% 35% 15%;
   height: 87vh;
   width: 25vw;
   padding: 10px;
@@ -623,7 +777,6 @@ textarea {
   background-color: #e9e9e9;
   user-select: none;
   margin-bottom: 15px;
-
 }
 
 .add-image-idea {
@@ -632,12 +785,15 @@ textarea {
   padding: 0.5rem;
   font-family: sans-serif;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 5px;
   border-radius: 6px;
+  height: 1.9vh;
+}
+.add-image-idea:hover {
+  background-color: rgba(128, 128, 128, 0.753);
 }
 
 .custom-select {
-
   border: 1px solid white;
   border-radius: 3px;
   height: 27px;
@@ -722,7 +878,6 @@ textarea {
   width: 21vw;
   margin: auto;
   gap: 0.5vw;
-
 }
 
 .carousel-container {
@@ -732,6 +887,7 @@ textarea {
   flex-direction: column;
   width: 23vw;
   margin: auto;
+  margin-top: 10px;
 }
 
 .create-container {
@@ -745,6 +901,7 @@ textarea {
 
 .label {
   padding-right: 20px;
+  font-weight: 500;
 }
 
 .idea-text {

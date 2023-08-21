@@ -1,6 +1,6 @@
 <script setup>
 import CustomSidePanel from "../components/CustomSidePanel.vue";
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, onUnmounted } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
 import {
@@ -14,6 +14,7 @@ import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import CustomInput from "../components/CustomInput.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
+
 const selectedDateFrom = ref();
 const selectedDateTo = ref();
 const showGenerated = ref(true);
@@ -48,14 +49,23 @@ let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 let currentUserRole = "";
 
+// fade images variables
+const ideasTransitionContainer = ref(null);
+let prevScrollPosition = 0;
+
 const loadingPage = ref(true);
 
 const noIdeasFoundCondition = ref(false);
+
+const showTopIdeas = ref(false);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
 
 onMounted(async () => {
+  ideasTransitionContainer.value.addEventListener("scroll", scrollFade);
+  ideasTransitionContainer.value.style.overflowY = "hidden";
+
   if (
     searchValue &&
     searchValue.value &&
@@ -83,7 +93,6 @@ onMounted(async () => {
   loggedUser.value = getCurrentUsername();
   currentUserRole = getCurrentRole();
   checkAdmin();
-  console.log(currentUserRole);
 
   if (data === "No ideas found.") {
     noIdeasFoundCondition.value = true;
@@ -95,20 +104,26 @@ onMounted(async () => {
     sortOrder.value = 0;
     totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
     ideas.value = data.content;
+    setTimeout(() => {
+      scrollFade();
+      ideasTransitionContainer.value.style.overflowY = "auto";
+      document.getElementById("scrollable-middle").scrollTop = "0";
+    }, 0);
   }
 
   showStatistics();
-  stats.value = await getStats();
   setTimeout(() => {
     loadingPage.value = false;
   }, 500);
 });
 
-stats.value = await getStats();
+stats.value = await getStats("ASC");
 
 watch(searchValue, async (newValue) => {
   if (newValue && newValue.key === "Enter" && newValue.text !== undefined) {
+    ideasTransitionContainer.value.style.overflowY = "hidden";
     inputTitle.value = searchValue.value.text;
+    ideas.value = [];
     const data = await filterIdeas(
       inputTitle.value,
       currentText,
@@ -126,12 +141,110 @@ watch(searchValue, async (newValue) => {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
+      showTopIdeas.value = false;
     } else {
       noIdeasFoundCondition.value = false;
+      showTopIdeas.value = false;
       updateIdeas(data); // we need to update the for multiple use cases
+      setTimeout(() => {
+        scrollFade();
+        document.getElementById("scrollable-middle").scrollTop = "0";
+      }, 0);
     }
   }
 });
+
+function scrollFade() {
+  // Firstly, we take the items that have this class (reveal)
+  // Calculate our scroll direction (up <-> down)
+  // Get the height of our container that has the scrollable
+  // The element top is the distance between the top of our idea card and the whole container top
+  // We compare it to a gap we introduce manually so we know when the idea should fade in or out (elementTop < gap)
+  // The other comparison is used to work the upper ideas which should fade up (elementTop > containerTopHeight - distanceTop)
+  // The bottom ones should fade down
+  // The distances differ, so we have cases when we scroll up or down
+  // If these are true, we put them active so they have 1 opacity
+  // Now the cases to check if it should up or down, modifying the translation (+- 150px)
+
+  const reveals = ideasTransitionContainer.value.querySelectorAll(".reveal");
+
+  const currentScrollPosition = ideasTransitionContainer.value.scrollTop;
+
+  const scrollDirection =
+    currentScrollPosition > prevScrollPosition ? "down" : "up";
+  prevScrollPosition = currentScrollPosition;
+
+  for (let i = 0; i < reveals.length; i++) {
+    var ideasTransitionHeight = ideasTransitionContainer.value.clientHeight;
+
+    const containerTopHeight = ideasTransitionContainer.value.offsetTop;
+
+    var elementTop =
+      reveals[i].getBoundingClientRect().top -
+      ideasTransitionContainer.value.getBoundingClientRect().top;
+
+    let distanceBottom = scrollDirection === "down" ? -100 : 100;
+
+    let distanceTop = scrollDirection === "down" ? 170 : 400;
+
+    const gapTop = ideasTransitionHeight - distanceBottom;
+
+    // If the card is visible
+
+    if (elementTop < gapTop && elementTop > containerTopHeight - distanceTop) {
+      reveals[i].classList.add("active");
+      reveals[i].style.transform = `translateY(0px)`;
+
+      // Setting the opacities of the top elements to fade in and out
+
+      if (elementTop < 0 && scrollDirection === "down") {
+        const topOpacityPercentage = 1 + elementTop / 50;
+        reveals[i].style.opacity = `${topOpacityPercentage}`;
+      }
+
+      if (elementTop < 0 && scrollDirection === "up") {
+        reveals[i].style.opacity = `1`;
+      }
+
+      // Setting the opacities of the bottom elements to fade in and out
+
+      if (
+        ideasTransitionContainer.value.clientHeight -
+          reveals[i].getBoundingClientRect().bottom <
+          -50 &&
+        ideasTransitionContainer.value.clientHeight -
+          reveals[i].getBoundingClientRect().bottom >
+          -300
+      ) {
+        const distanceDown =
+          ideasTransitionContainer.value.clientHeight -
+          reveals[i].getBoundingClientRect().bottom;
+
+        const bottomOpacityPercentage = (distanceDown + 300) / 200;
+
+        reveals[i].style.opacity = `${bottomOpacityPercentage}`;
+      }
+
+      // If the card doesnt respect the conditions, it isn't active anymore and I check which direction it will go
+    } else {
+      reveals[i].classList.remove("active");
+
+      if (
+        ideasTransitionContainer.value.clientHeight -
+          reveals[i].getBoundingClientRect().bottom >
+        -100
+      ) {
+        reveals[i].style.transform = `translateY(-150px)`;
+      } else if (
+        reveals[i].getBoundingClientRect().top -
+          ideasTransitionContainer.value.getBoundingClientRect().top >
+        50
+      ) {
+        reveals[i].style.transform = `translateY(150px)`;
+      }
+    }
+  }
+}
 
 async function changePage(pageNumber) {
   // every time i change the page, i should filter the pages to check from the server every page, same aplies for every method which implies changing the ideas.value
@@ -141,6 +254,7 @@ async function changePage(pageNumber) {
 
   ideas.value = [];
   noIdeasFoundCondition.value = false;
+  ideasTransitionContainer.value.style.overflowY = "hidden";
 
   const data = await filterIdeas(
     currentTitle,
@@ -165,6 +279,12 @@ async function changePage(pageNumber) {
     ideas.value = data.content;
     currentPage.value = pageNumber;
     setCurrentVariables();
+
+    setTimeout(() => {
+      scrollFade();
+      ideasTransitionContainer.value.style.overflowY = "auto";
+      document.getElementById("scrollable-middle").scrollTop = "0";
+    }, 0);
   }
 }
 
@@ -189,93 +309,191 @@ function setCurrentVariables() {
 // here, the page asc or desc is happening
 async function updateSortOrder() {
   if (sortOrder.value == 0) {
-    ideas.value = [];
-
-    sortOrder.value = 0;
-    const data = await filterIdeas(
-      currentTitle,
-      currentText,
-      currentStatus,
-      currentCategory,
-      currentUser,
-      currentSelectedDateFrom,
-      currentSelectedDateTo,
-      currentPage.value - 1,
-      ideaPerPage.value,
-      null,
-      "ASC"
-    );
-
-    if (data === "No ideas found.") {
-      noIdeasFoundCondition.value = true;
-      totalPages.value = 0;
+    if (!showTopIdeas.value) {
+      ideasTransitionContainer.value.style.overflowY = "hidden";
       ideas.value = [];
+
+      sortOrder.value = 0;
+      const data = await filterIdeas(
+        currentTitle,
+        currentText,
+        currentStatus,
+        currentCategory,
+        currentUser,
+        currentSelectedDateFrom,
+        currentSelectedDateTo,
+        currentPage.value - 1,
+        ideaPerPage.value,
+        null,
+        "ASC"
+      );
+
+      if (data === "No ideas found.") {
+        noIdeasFoundCondition.value = true;
+        totalPages.value = 0;
+        ideas.value = [];
+      } else {
+        noIdeasFoundCondition.value = false;
+        ideas.value = data.content;
+        setCurrentVariables();
+        setTimeout(() => {
+          scrollFade();
+          ideasTransitionContainer.value.style.overflowY = "auto";
+          document.getElementById("scrollable-middle").scrollTop = "0";
+        }, 0);
+      }
     } else {
+      ideas.value = [];
+      currentPage.value = 1;
+      totalPages.value = 1;
+      ideasTransitionContainer.value.style.overflowY = "hidden";
+
+      stats.value = await getStats("ASC");
+
+      ideas.value = stats.value.mostCommentedIdeas;
       noIdeasFoundCondition.value = false;
-      ideas.value = data.content;
-      setCurrentVariables();
+      setTimeout(() => {
+        scrollFade();
+        ideasTransitionContainer.value.style.overflowY = "auto";
+        document.getElementById("scrollable-middle").scrollTop = "0";
+      }, 0);
     }
   } else if (sortOrder.value == 1) {
-    ideas.value = [];
-
-    sortOrder.value = 1;
-    const data = await filterIdeas(
-      currentTitle,
-      currentText,
-      currentStatus,
-      currentCategory,
-      currentUser,
-      currentSelectedDateFrom,
-      currentSelectedDateTo,
-      currentPage.value - 1,
-      ideaPerPage.value,
-      null,
-      "DESC"
-    );
-
-    if (data === "No ideas found.") {
-      noIdeasFoundCondition.value = true;
-      totalPages.value = 0;
+    if (!showTopIdeas.value) {
+      ideasTransitionContainer.value.style.overflowY = "hidden";
       ideas.value = [];
+
+      sortOrder.value = 1;
+      const data = await filterIdeas(
+        currentTitle,
+        currentText,
+        currentStatus,
+        currentCategory,
+        currentUser,
+        currentSelectedDateFrom,
+        currentSelectedDateTo,
+        currentPage.value - 1,
+        ideaPerPage.value,
+        null,
+        "DESC"
+      );
+
+      if (data === "No ideas found.") {
+        noIdeasFoundCondition.value = true;
+        totalPages.value = 0;
+        ideas.value = [];
+      } else {
+        noIdeasFoundCondition.value = false;
+        ideas.value = data.content;
+        setCurrentVariables();
+        setTimeout(() => {
+          scrollFade();
+          ideasTransitionContainer.value.style.overflowY = "auto";
+          document.getElementById("scrollable-middle").scrollTop = "0";
+        }, 0);
+      }
     } else {
+      ideas.value = [];
+      currentPage.value = 1;
+      totalPages.value = 1;
+      ideasTransitionContainer.value.style.overflowY = "hidden";
+
+      stats.value = await getStats("DESC");
+
+      ideas.value = stats.value.mostCommentedIdeas;
       noIdeasFoundCondition.value = false;
-      ideas.value = data.content;
-      setCurrentVariables();
+      setTimeout(() => {
+        scrollFade();
+        ideasTransitionContainer.value.style.overflowY = "auto";
+        document.getElementById("scrollable-middle").scrollTop = "0";
+      }, 0);
     }
   }
 }
 
-function loadRecievedIdeas(value) {
+async function loadRecievedIdeas() {
   ideas.value = [];
-
-  setTimeout(() => {
-    showTopIdeas.value = !showTopIdeas.value;
-    ideas.value = value;
-  }, "500");
   totalPages.value = 1;
   currentPage.value = 1;
+
+  setTimeout(async () => {
+    showTopIdeas.value = !showTopIdeas.value;
+
+    if (showTopIdeas.value) {
+      const stats = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
+      ideas.value = stats.mostCommentedIdeas;
+
+      setTimeout(() => {
+        scrollFade();
+        ideasTransitionContainer.value.style.overflowY = "auto";
+        document.getElementById("scrollable-middle").scrollTop = "0";
+      }, 0);
+    } else {
+      const data = await filterIdeas(
+        inputTitle.value,
+        currentText,
+        currentStatus,
+        currentCategory,
+        currentUser,
+        currentSelectedDateFrom,
+        currentSelectedDateTo,
+        currentPage.value - 1,
+        ideaPerPage.value,
+        null,
+        sortOrder.value
+      );
+
+      loadingPage.value = true;
+      loggedUser.value = getCurrentUsername();
+      currentUserRole = getCurrentRole();
+      checkAdmin();
+
+      if (data === "No ideas found.") {
+        noIdeasFoundCondition.value = true;
+        sortOrder.value = 0;
+        totalPages.value = 0;
+        ideas.value = [];
+      } else {
+        noIdeasFoundCondition.value = false;
+        sortOrder.value = 0;
+        totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+        ideas.value = data.content;
+        setTimeout(() => {
+          scrollFade();
+          ideasTransitionContainer.value.style.overflowY = "auto";
+          document.getElementById("scrollable-middle").scrollTop = "0";
+        }, 0);
+      }
+    }
+  }, "500");
 }
 
-const showTopIdeas = ref(false);
+// async function loadData() {
+//   showTopIdeas.value = false;
+//   loadingPage.value = true;
 
-async function loadData() {
-  showTopIdeas.value = false;
-  loadingPage.value = true;
+//   ideas.value = [];
 
-  ideas.value = [];
-
-  const data = await loadPagedIdeas(
-    ideaPerPage.value,
-    currentPage.value - 1,
-    "creationDate",
-    "ASC"
-  );
-  ideas.value = data.content;
-  loadingPage.value = false;
-}
+//   const data = await loadPagedIdeas(
+//     ideaPerPage.value,
+//     currentPage.value - 1,
+//     "creationDate",
+//     "ASC"
+//   );
+//   ideas.value = data.content;
+//   loadingPage.value = false;
+//   setTimeout(() => {
+//     scrollFade();
+//     ideasTransitionContainer.value.style.overflowY = "auto";
+//     document.getElementById("scrollable-middle").scrollTop = "0";
+//   }, 0);
+// }
 
 async function updateIdeas(filteredIdeas) {
+  ideasTransitionContainer.value.style.overflowY = "hidden";
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value); // the total nr of pages after filtering needs to be updated
+  showTopIdeas.value = false;
+
   if (totalPages.value === 0) {
     noIdeasFoundCondition.value = true;
     setCurrentVariables();
@@ -287,33 +505,38 @@ async function updateIdeas(filteredIdeas) {
     // here, the use-case: if im on page 2 and after filtering, there is only one page left, it goes behind, etc
     // here, we go behind with one page each time so wwe know when we got to our good pageNumber
     // we have to filter each time with each page to get our good ideas
-      currentPage.value = 1;
-      ideas.value = [];
-      // if (currentPage.value == totalPages.value) {
-        const data = await filterIdeas(
-          inputTitle.value,
-          inputText.value,
-          inputStatus.value,
-          inputCategory.value,
-          inputUser.value,
-          inputSelectedDateFrom.value,
-          inputSelectedDateTo.value,
-          currentPage.value - 1,
-          ideaPerPage.value,
-          null,
-          sortOrder.value
-        );
+    currentPage.value = 1;
+    ideas.value = [];
+    // if (currentPage.value == totalPages.value) {
+    const data = await filterIdeas(
+      inputTitle.value,
+      inputText.value,
+      inputStatus.value,
+      inputCategory.value,
+      inputUser.value,
+      inputSelectedDateFrom.value,
+      inputSelectedDateTo.value,
+      currentPage.value - 1,
+      ideaPerPage.value,
+      null,
+      sortOrder.value
+    );
 
-        if (data === "No ideas found.") {
-          noIdeasFoundCondition.value = true;
-          totalPages.value = 0;
-          ideas.value = [];
-        } else {
-          noIdeasFoundCondition.value = false;
-          setCurrentVariables();
-          ideas.value = data != null ? data.content : [];
-        }
-      // }
+    if (data === "No ideas found.") {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      setCurrentVariables();
+      ideas.value = data != null ? data.content : [];
+      setTimeout(() => {
+        scrollFade();
+        ideasTransitionContainer.value.style.overflowY = "auto";
+        document.getElementById("scrollable-middle").scrollTop = "0";
+      }, 0);
+    }
+    // }
     // }
   } else {
     ideas.value = [];
@@ -327,35 +550,65 @@ async function updateIdeas(filteredIdeas) {
       currentPage.value = 1;
       setCurrentVariables();
       ideas.value = filteredIdeas.content;
+      setTimeout(() => {
+        scrollFade();
+        ideasTransitionContainer.value.style.overflowY = "auto";
+        document.getElementById("scrollable-middle").scrollTop = "0";
+      }, 0);
     }
   }
 }
-async function changeDisplay(pageSize1) {
-  ideas.value = [];
-
-  ideaPerPage.value = pageSize1;
-  currentPage.value = 1;
-  const data = await filterIdeas(
-    inputTitle.value,
-    currentText,
-    currentStatus,
-    currentCategory,
-    currentUser,
-    currentSelectedDateFrom,
-    currentSelectedDateTo,
-    currentPage.value - 1,
-    ideaPerPage.value,
-    null,
-    sortOrder.value
-  );
-
-  if (data === "No ideas found.") {
-    noIdeasFoundCondition.value = true;
-    totalPages.value = 0;
+async function changeDisplay(pageSize) {
+  if (!showTopIdeas.value) {
     ideas.value = [];
+    ideasTransitionContainer.value.style.overflowY = "hidden";
+
+    ideaPerPage.value = pageSize;
+    currentPage.value = 1;
+    const data = await filterIdeas(
+      inputTitle.value,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideaPerPage.value,
+      null,
+      sortOrder.value
+    );
+
+    if (data === "No ideas found.") {
+      noIdeasFoundCondition.value = true;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      ideas.value = data.content;
+      noIdeasFoundCondition.value = false;
+      totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+      setTimeout(() => {
+        scrollFade();
+        ideasTransitionContainer.value.style.overflowY = "auto";
+        document.getElementById("scrollable-middle").scrollTop = "0";
+      }, 0);
+    }
   } else {
-    ideas.value = data.content;
-    totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+    ideas.value = [];
+    currentPage.value = 1;
+    totalPages.value = 1;
+    ideasTransitionContainer.value.style.overflowY = "hidden";
+    ideaPerPage.value = pageSize;
+
+    stats.value = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
+
+    ideas.value = stats.value.mostCommentedIdeas;
+    noIdeasFoundCondition.value = false;
+    setTimeout(() => {
+      scrollFade();
+      ideasTransitionContainer.value.style.overflowY = "auto";
+      document.getElementById("scrollable-middle").scrollTop = "0";
+    }, 0);
   }
 }
 
@@ -405,7 +658,6 @@ async function showStatistics() {
   else showGenerated.value = false;
 
   showAnimation.value = false;
-  console.log("filtered ideas ", stats.value);
 }
 </script>
 
@@ -420,6 +672,7 @@ async function showStatistics() {
         @pass-input-variables="onPassInputVariables"
         :ideasPerPage="ideaPerPage"
         :hideUser="false"
+        :clear-all="showTopIdeas"
       />
     </div>
     <div
@@ -431,8 +684,27 @@ async function showStatistics() {
       "
     >
       <div class="main-container">
-        <div class="middle-container">
-          <div class="sort-container" style="text-align: right">
+        <div
+          v-if="ideas.length === 0 && !noIdeasFoundCondition"
+          class="loading-placeholder"
+        >
+          <CustomLoader :size="100" />
+        </div>
+        <div
+          class="middle-container"
+          ref="ideasTransitionContainer"
+          id="scrollable-middle"
+        >
+          <div
+            class="sort-container"
+            :style="
+              ideas
+                ? ideas.length === 0
+                  ? { visibility: 'hidden', 'text-align': 'right' }
+                  : { visibility: 'visible', 'text-align': 'right' }
+                : { 'text-align': 'right' }
+            "
+          >
             <label for="sortOrder">Sort by: </label>
             <select
               id="sortOrder"
@@ -451,11 +723,14 @@ async function showStatistics() {
             </div>
           </div>
 
-          <div class="ideas-transition-container">
+          <div
+            class="ideas-transition-container"
+            ref="ideasTransitionContainer"
+          >
             <div
               v-for="idea in ideas"
               :key="idea.id"
-              class="idea-transition-item"
+              class="idea-transition-item reveal"
             >
               <IdeaCard
                 :title="idea.title"
@@ -478,12 +753,6 @@ async function showStatistics() {
               <img src="../assets/img/curiosity-search.svg" />
               <br />
               <span class="black-font">Your search returned no results</span>
-            </div>
-            <div
-              v-if="ideas.length === 0 && !noIdeasFoundCondition"
-              class="loading-placeholder"
-            >
-              <CustomLoader :size="100" />
             </div>
           </div>
         </div>
@@ -547,6 +816,7 @@ async function showStatistics() {
             :showSkeleton="showSkeleton"
             @load-top5-ideas="loadRecievedIdeas"
             @load-data="loadData"
+            :show-top-ideas="showTopIdeas"
           />
         </Suspense>
       </div>
@@ -555,6 +825,17 @@ async function showStatistics() {
 </template>
 
 <style scoped>
+.reveal {
+  position: relative;
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.8s ease;
+}
+
+.reveal.active {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
 .reload-button {
   background-color: #ffa941;
   border-radius: 5px;
@@ -599,7 +880,7 @@ async function showStatistics() {
 
 .select-date {
   width: 15vw;
-  height: 9vh;
+  height: 10vh;
 }
 
 .date-input {
@@ -642,13 +923,13 @@ async function showStatistics() {
 }
 
 .ideas-transition-container {
-  margin-top: 20px;
   transition: opacity 0.5s;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   font-weight: normal;
+  z-index: 2;
 }
 
 .fade-enter-active,
@@ -686,6 +967,8 @@ async function showStatistics() {
   font-weight: bold;
   position: sticky;
   top: 0;
+  margin-right: 0.2vw;
+  padding-top: 0.3vh;
 }
 .all-ideas-view-container {
   display: grid;
@@ -710,6 +993,7 @@ async function showStatistics() {
 .middle-container {
   overflow-y: auto;
   min-width: 60vw;
+  scroll-behavior: smooth;
 }
 
 .middle-container::-webkit-scrollbar {
@@ -731,7 +1015,7 @@ async function showStatistics() {
 .main-container {
   height: 94vh;
   display: grid;
-  grid-template-rows: 95% 5%;
+  grid-template-rows: 87% 13%;
   /* border-top: 1px solid slategray; */
 }
 
@@ -757,7 +1041,7 @@ async function showStatistics() {
 
 .pagination-component {
   width: 30vw;
-  margin-bottom: 15px;
+  margin-bottom: 5vh;
 }
 
 .page-number {
@@ -799,7 +1083,6 @@ async function showStatistics() {
 .pageSize {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 2vh;
   margin-top: 5px;
 }
 </style>

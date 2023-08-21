@@ -370,6 +370,6 @@ nav {
 }
 
 .search-bar{
-  border: solid 1px;
+  border: solid 1px slategray;
 }
 </style>

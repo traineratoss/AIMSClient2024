@@ -9,6 +9,7 @@ const props = defineProps({
   showGenerated: Boolean,
   showSkeleton: Boolean,
   showAnimation: Boolean,
+  showTopIdeas: Boolean
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
@@ -30,9 +31,15 @@ const implementationPercentage = ref(0);
 const progressBar = ref(0);
 const loadingSpeed = 10;
 
+const showTopIdeas = ref(false);
+
 watch(progressBar, (newX) => {
   progressBar.value = newX;
 });
+
+watch(() => props.showTopIdeas, (newValue) => {
+  showTopIdeas.value = newValue;
+})
 
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
@@ -53,6 +60,7 @@ async function calculateImplementationPercentage() {
 }
 
 function loadTop5Ideas() {
+  console.log(props.recievedFilteredStats.mostCommentedIdeas)
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
 
@@ -60,7 +68,7 @@ async function refreshStats() {
   showSkeleton.value = true;
 
   setTimeout(async () => {
-    stats.value = await getStats();
+    stats.value = await getStats("ASC");
     showSkeleton.value = false;
   }, "100");
 }
@@ -165,7 +173,7 @@ function getShortenedTitle(title, maxLength) {
             </table>
             <div class="swich-buttons">
               <button class="load-button" @click="loadTop5Ideas()">
-                Load top ideas
+                {{!showTopIdeas ? "Load top ideas" : "Load All Ideas"}}
               </button>
 
               <!-- <button class="load-button" @click="refreshStats()">
@@ -467,10 +475,10 @@ strong {
 
 .stats-container {
   text-align: center;
-  border-radius: 5px;
   height: 70vh;
   overflow: auto;
   margin-bottom: 15vh;
+  border-top: 1px solid slategray;
 }
 
 .stats-container::-webkit-scrollbar {

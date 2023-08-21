@@ -162,8 +162,13 @@ async function getIdea(id) {
     redirect: "follow",
     referrerPolicy: "no-referrer",
   });
-  const data = await response.json();
-  return data;
+  if (!response.ok) {
+    const responseText = await response.text();
+    return responseText;
+  } else {
+    const json = await response.json();
+    return json;
+  }
 }
 
 async function updateIdea(id, title, text, status, categoryList, image) {
