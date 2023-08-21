@@ -212,15 +212,14 @@ function onMouseLeaveUser() {
           @click="redirectToCreateIdea"
           :is-active="activePage === 'create-idea'"
         >
-          Create an Idea
+          Create idea
         </CustomButton>
       </div>
       <div>
         <CustomInput
           id="search-an-idea"
           class="search-bar"
-          placeholder="&#xF002; Search an Idea (Title)"
-          style="font-family: Segoe UI, FontAwesome"
+          placeholder="&#xF002; Search an idea (Title)"
           :type="'text'"
           :can-modify-search-value="true"
           v-model="searchBarTitle"
@@ -268,8 +267,28 @@ function onMouseLeaveUser() {
 
 
 <style scoped>
-.dashboard-hovered {
-  background-color: var(--selected-color);
+
+#all-ideas {
+  font-size: 15px;
+  border-radius: 1px;
+  border-width: 3px;
+}
+
+#my-ideas {
+  font-size: 15px;
+  border-radius: 1px;
+  border-width: 3px;
+}
+
+#create-idea {
+  font-size: large;
+  border-radius: 2px;
+  border-width: 5px;
+}
+
+#dashboard {
+  font-size: 15px;
+  border-radius: 1px;
 }
 
 nav {
@@ -349,6 +368,8 @@ nav {
 
 #search-an-idea {
   padding: 2.5px;
+  font-family: Segoe UI, FontAwesome;
+  border-radius: 3px;
 }
 
 .dropdown-content {
