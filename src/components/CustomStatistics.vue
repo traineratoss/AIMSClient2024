@@ -75,7 +75,7 @@ async function refreshStats() {
   showSkeleton.value = true;
 
   setTimeout(async () => {
-    stats.value = await getStats("ASC");
+    stats.value = await getStats();
     showSkeleton.value = false;
   }, "100");
 }

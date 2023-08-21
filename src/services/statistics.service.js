@@ -84,13 +84,9 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
   return data;
 }
 
-async function getStats(sortOrder) {
+async function getStats() {
 
   let url = API_URL + "/stats";
-
-  if (sortOrder) {
-    url += `?mostCommentedSIdeasSortOrder=${sortOrder}`
-  }
 
   const response = await fetch(url, {
     method: "GET",

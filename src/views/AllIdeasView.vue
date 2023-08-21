@@ -117,7 +117,7 @@ onMounted(async () => {
   }, 500);
 });
 
-stats.value = await getStats("ASC");
+stats.value = await getStats();
 
 watch(searchValue, async (newValue) => {
   if (newValue && newValue.key === "Enter" && newValue.text !== undefined) {
@@ -352,7 +352,7 @@ async function updateSortOrder() {
       totalPages.value = 1;
       ideasTransitionContainer.value.style.overflowY = "hidden";
 
-      stats.value = await getStats("ASC");
+      stats.value = await getStats();
 
       ideas.value = stats.value.mostCommentedIdeas;
       noIdeasFoundCondition.value = false;
@@ -402,7 +402,7 @@ async function updateSortOrder() {
       totalPages.value = 1;
       ideasTransitionContainer.value.style.overflowY = "hidden";
 
-      stats.value = await getStats("DESC");
+      stats.value = await getStats();
 
       ideas.value = stats.value.mostCommentedIdeas;
       noIdeasFoundCondition.value = false;
@@ -605,7 +605,7 @@ async function changeDisplay(pageSize) {
     ideasTransitionContainer.value.style.overflowY = "hidden";
     ideaPerPage.value = pageSize;
 
-    stats.value = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
+    stats.value = await getStats();
 
     ideas.value = stats.value.mostCommentedIdeas;
     noIdeasFoundCondition.value = false;
@@ -683,7 +683,7 @@ async function showStatistics() {
         </div>
         <div class="middle-container" ref="ideasTransitionContainer" id="scrollable-middle">
           <div class="sort-container" :style="ideas
-              ? ideas.length === 0
+              ? ideas.length === 0 || showTopIdeas
                 ? { visibility: 'hidden', 'text-align': 'right' }
                 : { visibility: 'visible', 'text-align': 'right' }
               : { 'text-align': 'right' }
