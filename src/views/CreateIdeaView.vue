@@ -723,7 +723,7 @@ b {
 
 #textarea-id {
   resize: none;
-  height: 14.7vh;
+  height: 14.5vh;
   width: 21.5vw;
   overflow: auto;
   box-sizing: border-box;
