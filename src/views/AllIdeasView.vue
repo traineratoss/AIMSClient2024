@@ -415,7 +415,7 @@ async function updateSortOrder() {
   }
 }
 
-async function loadRecievedIdeas() {
+async function loadRecievedIdeas(mostCommentedIdeas) {
   ideas.value = [];
   totalPages.value = 1;
   currentPage.value = 1;
@@ -424,8 +424,9 @@ async function loadRecievedIdeas() {
     showTopIdeas.value = !showTopIdeas.value;
 
     if (showTopIdeas.value) {
-      const stats = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
-      ideas.value = stats.mostCommentedIdeas;
+      // const stats = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
+      // ideas.value = stats.mostCommentedIdeas;
+      ideas.value = mostCommentedIdeas;
 
       setTimeout(() => {
         scrollFade();
