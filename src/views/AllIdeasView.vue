@@ -696,8 +696,8 @@ async function showStatistics() {
             ">
             <label for="sortOrder">Sort by: </label>
             <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder" style="width: 3.8vw;">
-              <option :value="0"> Newest </option>
-              <option :value="1"> Oldest</option>
+              <option :value="0"> Oldest </option>
+              <option :value="1"> Newest </option>
             </select>
             <div class="pageSize">
               <PageSizeSelect id="pageSizeSelect" label="Ideas:" @change-display="changeDisplay" />
