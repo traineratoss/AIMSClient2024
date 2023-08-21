@@ -159,18 +159,24 @@ function scrollFade() {
     const containerTopHeight = ideasTransitionContainer.value.offsetTop;
 
     var elementTop =
-      reveals[i].getBoundingClientRect().top -
+      reveals[i].getBoundingClientRect().bottom -
       ideasTransitionContainer.value.getBoundingClientRect().top;
 
-    let distanceBottom = scrollDirection === "down" ? -100 : 100;
+    var elementBottom =
+      reveals[i].getBoundingClientRect().top -
+      ideasTransitionContainer.value.getBoundingClientRect().bottom; 
 
-    let distanceTop = scrollDirection === "down" ? 170 : 400;
+    let distanceBottom = scrollDirection === "down" ? 100 : -100;
 
-    const gapTop = ideasTransitionHeight - distanceBottom;
+    let distanceTop = scrollDirection === "down" ? 120 : -80;
+
+    const gapTop = distanceBottom;
+
+    const gapBottom = distanceTop;
 
     // If the card is visible
 
-    if (elementTop < gapTop && elementTop > containerTopHeight - distanceTop) {
+    if (elementTop > gapTop && elementBottom < gapBottom) {
       reveals[i].classList.add("active");
       reveals[i].style.transform = `translateY(0px)`;
 
@@ -543,7 +549,7 @@ async function changeDisplay(pageSize) {
           <div
             v-for="idea in ideas"
             :key="idea.id"
-            class="idea-transition-item"
+            class="idea-transition-item reveal"
           >
             <IdeaCard
               :title="idea.title"

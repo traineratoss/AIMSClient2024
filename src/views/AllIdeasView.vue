@@ -180,24 +180,30 @@ function scrollFade() {
     const containerTopHeight = ideasTransitionContainer.value.offsetTop;
 
     var elementTop =
-      reveals[i].getBoundingClientRect().top -
+      reveals[i].getBoundingClientRect().bottom -
       ideasTransitionContainer.value.getBoundingClientRect().top;
 
-    let distanceBottom = scrollDirection === "down" ? -100 : 100;
+    var elementBottom =
+      reveals[i].getBoundingClientRect().top -
+      ideasTransitionContainer.value.getBoundingClientRect().bottom; 
 
-    let distanceTop = scrollDirection === "down" ? 170 : 400;
+    let distanceBottom = scrollDirection === "down" ? 100 : -100;
 
-    const gapTop = ideasTransitionHeight - distanceBottom;
+    let distanceTop = scrollDirection === "down" ? 120 : -80;
+
+    const gapTop = distanceBottom;
+
+    const gapBottom = distanceTop;
 
     // If the card is visible
 
-    if (elementTop < gapTop && elementTop > containerTopHeight - distanceTop) {
+    if (elementTop > gapTop && elementBottom < gapBottom) {
       reveals[i].classList.add("active");
       reveals[i].style.transform = `translateY(0px)`;
 
       // Setting the opacities of the top elements to fade in and out
 
-      let shouldFade = false;
+      let shouldFade = true;
 
       if (shouldFade) {
         if (elementTop < 0 && scrollDirection === "down") {
@@ -238,13 +244,13 @@ function scrollFade() {
         reveals[i].getBoundingClientRect().bottom >
         -100
       ) {
-        reveals[i].style.transform = `translateY(-150px)`;
+        reveals[i].style.transform = `translateY(-200px)`;
       } else if (
         reveals[i].getBoundingClientRect().top -
         ideasTransitionContainer.value.getBoundingClientRect().top >
         50
       ) {
-        reveals[i].style.transform = `translateY(150px)`;
+        reveals[i].style.transform = `translateY(200px)`;
       }
     }
   }
@@ -674,8 +680,8 @@ async function showStatistics() {
         :clear-all="showTopIdeas" />
     </div>
     <div class="right-container" :style="isAdmin
-        ? { ' grid-template-columns': 'auto auto' }
-        : { 'grid-template-columns': '80vw' }
+      ? { ' grid-template-columns': 'auto auto' }
+      : { 'grid-template-columns': '80vw' }
       ">
       <div class="main-container">
         <div v-if="ideas.length === 0 && !noIdeasFoundCondition" class="loading-placeholder">
@@ -683,14 +689,14 @@ async function showStatistics() {
         </div>
         <div class="middle-container" ref="ideasTransitionContainer" id="scrollable-middle">
           <div class="sort-container" :style="ideas
-              ? ideas.length === 0 || showTopIdeas
-                ? { visibility: 'hidden', 'text-align': 'right' }
-                : { visibility: 'visible', 'text-align': 'right' }
-              : { 'text-align': 'right' }
+            ? ideas.length === 0 || showTopIdeas
+              ? { visibility: 'hidden', 'text-align': 'right' }
+              : { visibility: 'visible', 'text-align': 'right' }
+            : { 'text-align': 'right' }
             ">
             <label for="sortOrder">Sort by: </label>
             <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder" style="width: 3.8vw;">
-              <option :value="0"> Newest  </option>
+              <option :value="0"> Newest </option>
               <option :value="1"> Oldest</option>
             </select>
             <div class="pageSize">
@@ -699,7 +705,7 @@ async function showStatistics() {
           </div>
 
           <div class="ideas-transition-container" ref="ideasTransitionContainer">
-            <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item">
+            <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item reveal">
               <IdeaCard :title="idea.title" :text="idea.text" :status="idea.status" :username="idea.username"
                 :ideaId="idea.id" :commentsNumber="idea.commentsNumber" :elapsedTime="idea.elapsedTime"
                 :image="getImageUrl(idea)" :loggedUser="getCurrentUsername()" @comment-counter-add="idea.commentsNumber++"
