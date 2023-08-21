@@ -399,10 +399,10 @@ function triggerCollapseAnimation(commentId) {
               </div>
               <div class="left-container-text">
                 <div class="text" v-if="isSelected">
-                  {{ getShortText(props.text, 8, 59) }}
+                  {{ getShortText(props.text, 3, 49) }}
                 </div>
                 <div class="text" v-else>
-                  {{ getShortText(props.text, 3, 59) }}
+                  {{ getShortText(props.text, 2, 49) }}
                 </div>
               </div>
               <div class="left-container-buttons">
