@@ -921,6 +921,7 @@ h2 {
   display: grid;
   grid-template-rows: 7vh 12vh 5vh;
   background-color: white;
+  border-bottom: 1px solid slategray;
 }
 
 .select-date {
@@ -953,7 +954,7 @@ h2 {
 }
 
 .load-button {
-  margin-top: 10px;
+  margin-top: -6px;
   border: 1px solid black;
   background-color: #ffa941;
   height: 30px;

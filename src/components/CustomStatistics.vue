@@ -4,6 +4,7 @@ import { getStats } from "../services/statistics.service";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import PieChart from "./PieChart.vue";
 import RegisterView from "../views/RegisterView.vue";
+import CustomLoader from "../components/CustomLoader.vue";
 
 const props = defineProps({
   recievedFilteredStats: Object,
@@ -44,13 +45,17 @@ watch(
     showTopIdeas.value = newValue;
   }
 );
+
+watch(() => props.showAnimation, (newValue) => {
+  console.log(newValue)
+})
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(
       (props.recievedFilteredStats.implementedIdeas /
         (props.recievedFilteredStats.openIdeas +
           props.recievedFilteredStats.implementedIdeas)) *
-        100
+      100
     );
   } else {
     implementationPercentage.value = 0;
@@ -98,10 +103,12 @@ function getShortenedTitle(title, maxLength) {
 
   <transition name="stats-fade">
     <div class="stats-wrapper" v-if="!showSkeleton">
-      <div
-        class="general-statistics"
-        v-if="props.showGenerated && !props.showAnimation"
-      >
+      <div v-if="props.showAnimation" style="display: flex; align-items: center; justify-content: center;">
+        <div class="loader" style="margin-top: 30vh;">
+          <CustomLoader :size="60" />
+        </div>
+      </div>
+      <div class="general-statistics" v-if="props.showGenerated && !props.showAnimation">
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label"><b>Total Ideas:</b></p>
@@ -125,25 +132,12 @@ function getShortenedTitle(title, maxLength) {
           </div>
 
           <div class="piechart">
-            <pie-chart
-              :sizeInVW="10"
-              :speedInMS="loadingSpeed"
-              :openP="stats.openP"
-              :implP="stats.implP"
-              :draftP="stats.draftP"
-              :colorOpen="'#fadebc'"
-              :colorImpl="'#ffb55a'"
-              :colorDraft="'#b3b3b3'"
-              :backgroundColor="'#b3b3b3'"
-              :openIdeasNumber="stats.openIdeas"
-              :implementedIdeasNumber="stats.implementedIdeas"
-              :draftIdeasNumber="stats.draftIdeas"
-            />
+            <pie-chart :sizeInVW="10" :speedInMS="loadingSpeed" :openP="stats.openP" :implP="stats.implP"
+              :draftP="stats.draftP" :colorOpen="'#fadebc'" :colorImpl="'#ffb55a'" :colorDraft="'#b3b3b3'"
+              :backgroundColor="'#b3b3b3'" :openIdeasNumber="stats.openIdeas"
+              :implementedIdeasNumber="stats.implementedIdeas" :draftIdeasNumber="stats.draftIdeas" />
           </div>
-          <div
-            v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0"
-            class="most-commented-ideas"
-          >
+          <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0" class="most-commented-ideas">
             <p>Top most commented ideas:</p>
             <table id="idea-table">
               <tr>
@@ -191,10 +185,7 @@ function getShortenedTitle(title, maxLength) {
               </button> -->
             </div>
           </div>
-          <div
-            v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
-            class="most-commented-ideas"
-          >
+          <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
             <p>Top Most commented ideas:</p>
             <h4>No comments were posted in this time interval</h4>
           </div>
@@ -222,10 +213,7 @@ function getShortenedTitle(title, maxLength) {
         </div>
       </div>
 
-      <div
-        class="general-statistics"
-        v-if="!props.showGenerated && !props.showAnimation"
-      >
+      <div class="general-statistics" v-if="!props.showGenerated && !props.showAnimation">
         <div class="stats-container">
           <div class="stat-item" style="margin-top: 30px">
             <p class="stat-label">
@@ -242,29 +230,15 @@ function getShortenedTitle(title, maxLength) {
           </div>
           <div class="piechart">
             <Suspense>
-              <pie-chart
-                :sizeInVW="10"
-                :speedInMS="loadingSpeed"
-                :openP="props.recievedFilteredStats.openP"
-                :implP="props.recievedFilteredStats.implP"
-                :draftP="props.recievedFilteredStats.draftP"
-                :colorOpen="'#fadebc'"
-                :colorImpl="'#ffb55a'"
-                :colorDraft="'#b3b3b3'"
-                :backgroundColor="'#b3b3b3'"
-                :openIdeasNumber="props.recievedFilteredStats.openIdeas"
-                :implementedIdeasNumber="
-                  props.recievedFilteredStats.implementedIdeas
-                "
-                :draftIdeasNumber="props.recievedFilteredStats.draftIdeas"
-              />
+              <pie-chart :sizeInVW="10" :speedInMS="loadingSpeed" :openP="props.recievedFilteredStats.openP"
+                :implP="props.recievedFilteredStats.implP" :draftP="props.recievedFilteredStats.draftP"
+                :colorOpen="'#fadebc'" :colorImpl="'#ffb55a'" :colorDraft="'#b3b3b3'" :backgroundColor="'#b3b3b3'"
+                :openIdeasNumber="props.recievedFilteredStats.openIdeas" :implementedIdeasNumber="props.recievedFilteredStats.implementedIdeas
+                  " :draftIdeasNumber="props.recievedFilteredStats.draftIdeas" />
               <template #fallback> Loading... </template>
             </Suspense>
           </div>
-          <div
-            v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0"
-            class="most-commented-ideas"
-          >
+          <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0" class="most-commented-ideas">
             <p>Top Most commented ideas :</p>
             <table id="idea-table">
               <tr>
@@ -366,10 +340,7 @@ function getShortenedTitle(title, maxLength) {
               </button> -->
             </div>
           </div>
-          <div
-            v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
-            class="most-commented-ideas"
-          >
+          <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
             <p>Top Most commented ideas:</p>
             <h4>No comments were posted in this time interval</h4>
           </div>
@@ -457,9 +428,11 @@ strong {
   opacity: 0.3;
   transition: opacity 0.7s;
 }
+
 .stats-fade-enter-to {
   opacity: 1;
 }
+
 .skeleton-loader {
   display: flex;
   align-items: center;
@@ -475,12 +448,10 @@ strong {
   width: 100%;
   height: 93vh;
   background-color: #f2f2f2;
-  background-image: linear-gradient(
-    90deg,
-    #f5f5f5 25%,
-    #e6e6e6 37%,
-    #f6f4f4 63%
-  );
+  background-image: linear-gradient(90deg,
+      #f5f5f5 25%,
+      #e6e6e6 37%,
+      #f6f4f4 63%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.5s infinite linear;
 }
@@ -489,10 +460,12 @@ strong {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
 }
+
 .stats-wrapper {
   background-color: white;
   box-sizing: content-box;
@@ -505,7 +478,6 @@ strong {
   height: 70vh;
   overflow: auto;
   margin-bottom: 15vh;
-  border-top: 1px solid slategray;
 }
 
 .stats-container::-webkit-scrollbar {
