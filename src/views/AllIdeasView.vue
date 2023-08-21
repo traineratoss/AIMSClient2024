@@ -188,7 +188,7 @@ function scrollFade() {
       reveals[i].getBoundingClientRect().top -
       ideasTransitionContainer.value.getBoundingClientRect().bottom;
 
-    let distanceBottom = scrollDirection === "down" ? 100 : -100;
+    let distanceBottom = scrollDirection === "down" ? 30 : -30;
 
     let distanceTop = scrollDirection === "down" ? 120 : -80;
 
@@ -210,7 +210,7 @@ function scrollFade() {
       let shouldFade = true;
 
       if (shouldFade) {
-        if (elementBottom < 0) {
+        if (elementBottom < -30) {
           const topOpacityPercentage = -10/3 - (reveals[i].getBoundingClientRect().top -
           ideasTransitionContainer.value.getBoundingClientRect().bottom) / 30;
           reveals[i].style.opacity = `${topOpacityPercentage}`;
