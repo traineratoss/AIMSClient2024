@@ -197,32 +197,36 @@ function scrollFade() {
 
       // Setting the opacities of the top elements to fade in and out
 
-      if (elementTop < 0 && scrollDirection === "down") {
-        const topOpacityPercentage = 1 + elementTop / 50;
-        reveals[i].style.opacity = `${topOpacityPercentage}`;
-      }
+      let shouldFade = false;
 
-      if (elementTop < 0 && scrollDirection === "up") {
-        reveals[i].style.opacity = `1`;
-      }
+      if (shouldFade) {
+        if (elementTop < 0 && scrollDirection === "down") {
+          const topOpacityPercentage = 1 + elementTop / 50;
+          reveals[i].style.opacity = `${topOpacityPercentage}`;
+        }
 
-      // Setting the opacities of the bottom elements to fade in and out
+        if (elementTop < 0 && scrollDirection === "up") {
+          reveals[i].style.opacity = `1`;
+        }
 
-      if (
-        ideasTransitionContainer.value.clientHeight -
+        // Setting the opacities of the bottom elements to fade in and out
+
+        if (
+          ideasTransitionContainer.value.clientHeight -
           reveals[i].getBoundingClientRect().bottom <
           -50 &&
-        ideasTransitionContainer.value.clientHeight -
+          ideasTransitionContainer.value.clientHeight -
           reveals[i].getBoundingClientRect().bottom >
           -300
-      ) {
-        const distanceDown =
-          ideasTransitionContainer.value.clientHeight -
-          reveals[i].getBoundingClientRect().bottom;
+        ) {
+          const distanceDown =
+            ideasTransitionContainer.value.clientHeight -
+            reveals[i].getBoundingClientRect().bottom;
 
-        const bottomOpacityPercentage = (distanceDown + 300) / 200;
+          const bottomOpacityPercentage = (distanceDown + 300) / 200;
 
-        reveals[i].style.opacity = `${bottomOpacityPercentage}`;
+          reveals[i].style.opacity = `${bottomOpacityPercentage}`;
+        }
       }
 
       // If the card doesnt respect the conditions, it isn't active anymore and I check which direction it will go
@@ -231,13 +235,13 @@ function scrollFade() {
 
       if (
         ideasTransitionContainer.value.clientHeight -
-          reveals[i].getBoundingClientRect().bottom >
+        reveals[i].getBoundingClientRect().bottom >
         -100
       ) {
         reveals[i].style.transform = `translateY(-150px)`;
       } else if (
         reveals[i].getBoundingClientRect().top -
-          ideasTransitionContainer.value.getBoundingClientRect().top >
+        ideasTransitionContainer.value.getBoundingClientRect().top >
         50
       ) {
         reveals[i].style.transform = `translateY(150px)`;
@@ -664,92 +668,43 @@ async function showStatistics() {
 <template>
   <div class="all-ideas-view-container">
     <div class="left-container">
-      <CustomSidePanel
-        @filter-listening="updateIdeas"
-        :sort="sortOrder"
-        :currentUser="null"
-        :currentPage="currentPage"
-        @pass-input-variables="onPassInputVariables"
-        :ideasPerPage="ideaPerPage"
-        :hideUser="false"
-        :clear-all="showTopIdeas"
-      />
+      <CustomSidePanel @filter-listening="updateIdeas" :sort="sortOrder" :currentUser="null" :currentPage="currentPage"
+        @pass-input-variables="onPassInputVariables" :ideasPerPage="ideaPerPage" :hideUser="false"
+        :clear-all="showTopIdeas" />
     </div>
-    <div
-      class="right-container"
-      :style="
-        isAdmin
-          ? { ' grid-template-columns': 'auto auto' }
-          : { 'grid-template-columns': '80vw' }
-      "
-    >
+    <div class="right-container" :style="isAdmin
+        ? { ' grid-template-columns': 'auto auto' }
+        : { 'grid-template-columns': '80vw' }
+      ">
       <div class="main-container">
-        <div
-          v-if="ideas.length === 0 && !noIdeasFoundCondition"
-          class="loading-placeholder"
-        >
+        <div v-if="ideas.length === 0 && !noIdeasFoundCondition" class="loading-placeholder">
           <CustomLoader :size="100" />
         </div>
-        <div
-          class="middle-container"
-          ref="ideasTransitionContainer"
-          id="scrollable-middle"
-        >
-          <div
-            class="sort-container"
-            :style="
-              ideas
-                ? ideas.length === 0
-                  ? { visibility: 'hidden', 'text-align': 'right' }
-                  : { visibility: 'visible', 'text-align': 'right' }
-                : { 'text-align': 'right' }
-            "
-          >
+        <div class="middle-container" ref="ideasTransitionContainer" id="scrollable-middle">
+          <div class="sort-container" :style="ideas
+              ? ideas.length === 0
+                ? { visibility: 'hidden', 'text-align': 'right' }
+                : { visibility: 'visible', 'text-align': 'right' }
+              : { 'text-align': 'right' }
+            ">
             <label for="sortOrder">Sort by: </label>
-            <select
-              id="sortOrder"
-              v-model="sortOrder"
-              @change="updateSortOrder"
-            >
+            <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
               <option :value="0">Date ascending</option>
               <option :value="1">Date descending</option>
             </select>
             <div class="pageSize">
-              <PageSizeSelect
-                id="pageSizeSelect"
-                label="Ideas:"
-                @change-display="changeDisplay"
-              />
+              <PageSizeSelect id="pageSizeSelect" label="Ideas:" @change-display="changeDisplay" />
             </div>
           </div>
 
-          <div
-            class="ideas-transition-container"
-            ref="ideasTransitionContainer"
-          >
-            <div
-              v-for="idea in ideas"
-              :key="idea.id"
-              class="idea-transition-item reveal"
-            >
-              <IdeaCard
-                :title="idea.title"
-                :text="idea.text"
-                :status="idea.status"
-                :username="idea.username"
-                :ideaId="idea.id"
-                :commentsNumber="idea.commentsNumber"
-                :elapsedTime="idea.elapsedTime"
-                :image="getImageUrl(idea)"
-                :loggedUser="getCurrentUsername()"
-                @comment-counter-add="idea.commentsNumber++"
-                @comment-counter-sub="idea.commentsNumber--"
-              />
+          <div class="ideas-transition-container" ref="ideasTransitionContainer">
+            <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item reveal">
+              <IdeaCard :title="idea.title" :text="idea.text" :status="idea.status" :username="idea.username"
+                :ideaId="idea.id" :commentsNumber="idea.commentsNumber" :elapsedTime="idea.elapsedTime"
+                :image="getImageUrl(idea)" :loggedUser="getCurrentUsername()" @comment-counter-add="idea.commentsNumber++"
+                @comment-counter-sub="idea.commentsNumber--" />
             </div>
-            <div
-              v-if="ideas.length === 0 && noIdeasFoundCondition"
-              class="no-ideas-message"
-            >
+            <div v-if="ideas.length === 0 && noIdeasFoundCondition" class="no-ideas-message">
               <img src="../assets/img/curiosity-search.svg" />
               <br />
               <span class="black-font">Your search returned no results</span>
@@ -759,11 +714,7 @@ async function showStatistics() {
 
         <div v-if="ideas.length > 0" class="pagination-container">
           <div class="pagination-component">
-            <Pagination
-              :totalPages="totalPages"
-              :currentPage="currentPage"
-              @changePage="changePage"
-            />
+            <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" />
           </div>
         </div>
       </div>
@@ -784,19 +735,11 @@ async function showStatistics() {
               <div class="date-input">
                 <div>
                   <span class="from-date"> From: </span>
-                  <CustomInput
-                    v-model="selectedDateFrom"
-                    type="date"
-                    class="date-picker"
-                  />
+                  <CustomInput v-model="selectedDateFrom" type="date" class="date-picker" />
                 </div>
                 <div>
                   <span class="to-date"> To: </span>
-                  <CustomInput
-                    v-model="selectedDateTo"
-                    type="date"
-                    class="date-picker"
-                  />
+                  <CustomInput v-model="selectedDateTo" type="date" class="date-picker" />
                 </div>
               </div>
             </fieldset>
@@ -809,15 +752,9 @@ async function showStatistics() {
           </div>
         </div>
         <Suspense>
-          <CustomStatistics
-            :recievedFilteredStats="stats"
-            :showGenerated="showGenerated"
-            :showAnimation="showAnimation"
-            :showSkeleton="showSkeleton"
-            @load-top5-ideas="loadRecievedIdeas"
-            @load-data="loadData"
-            :show-top-ideas="showTopIdeas"
-          />
+          <CustomStatistics :recievedFilteredStats="stats" :showGenerated="showGenerated" :showAnimation="showAnimation"
+            :showSkeleton="showSkeleton" @load-top5-ideas="loadRecievedIdeas" @load-data="loadData"
+            :show-top-ideas="showTopIdeas" />
         </Suspense>
       </div>
     </div>
@@ -843,9 +780,11 @@ async function showStatistics() {
   font-size: larger;
   margin-bottom: 10px;
 }
+
 .reload-button:hover {
   border: 1px solid black;
 }
+
 .date-picker {
   border: 1px solid slategray;
   border-radius: 5px;
@@ -856,6 +795,7 @@ async function showStatistics() {
   align-items: center;
   justify-content: center;
 }
+
 .no-ideas-message {
   display: flex;
   justify-content: center;
@@ -890,7 +830,7 @@ async function showStatistics() {
   text-align: center;
 }
 
-.date-input > div {
+.date-input>div {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -970,6 +910,7 @@ async function showStatistics() {
   margin-right: 0.2vw;
   padding-top: 0.3vh;
 }
+
 .all-ideas-view-container {
   display: grid;
   grid-template-columns: 20vw 80vw;
@@ -1023,10 +964,13 @@ async function showStatistics() {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(50% - 20px); /* 50% width minus margins on both sides */
-  margin: 10px auto; /* Center the ideas horizontally */
+  width: calc(50% - 20px);
+  /* 50% width minus margins on both sides */
+  margin: 10px auto;
+  /* Center the ideas horizontally */
   padding: 10px;
 }
+
 .big-container {
   display: flex;
   justify-content: center;
@@ -1080,6 +1024,7 @@ async function showStatistics() {
 .current-page:hover {
   text-decoration: underline;
 }
+
 .pageSize {
   display: flex;
   justify-content: flex-end;

@@ -168,40 +168,59 @@ function scrollFade() {
 
     const gapTop = ideasTransitionHeight - distanceBottom;
 
+    // If the card is visible
+
     if (elementTop < gapTop && elementTop > containerTopHeight - distanceTop) {
       reveals[i].classList.add("active");
       reveals[i].style.transform = `translateY(0px)`;
 
       // Setting the opacities of the top elements to fade in and out
 
-      if (elementTop < 0 && scrollDirection === "down") {
-        const topOpacityPercentage = 1 + elementTop / 50;
-        reveals[i].style.opacity = `${topOpacityPercentage}`;
-      }
+      let shouldFade = false;
 
-      if (elementTop < 0 && scrollDirection === "up") {
-        reveals[i].style.opacity = `1`;
-      }
+      if (shouldFade) {
+        if (elementTop < 0 && scrollDirection === "down") {
+          const topOpacityPercentage = 1 + elementTop / 50;
+          reveals[i].style.opacity = `${topOpacityPercentage}`;
+        }
 
-      // Setting the opacities of the bottom elements to fade in and out
+        if (elementTop < 0 && scrollDirection === "up") {
+          reveals[i].style.opacity = `1`;
+        }
 
-      if(ideasTransitionContainer.value.clientHeight - reveals[i].getBoundingClientRect().bottom < -50 &&
-        ideasTransitionContainer.value.clientHeight - reveals[i].getBoundingClientRect().bottom > -300) {
-          const distanceDown = ideasTransitionContainer.value.clientHeight - reveals[i].getBoundingClientRect().bottom;
+        // Setting the opacities of the bottom elements to fade in and out
+
+        if (
+          ideasTransitionContainer.value.clientHeight -
+          reveals[i].getBoundingClientRect().bottom <
+          -50 &&
+          ideasTransitionContainer.value.clientHeight -
+          reveals[i].getBoundingClientRect().bottom >
+          -300
+        ) {
+          const distanceDown =
+            ideasTransitionContainer.value.clientHeight -
+            reveals[i].getBoundingClientRect().bottom;
+
           const bottomOpacityPercentage = (distanceDown + 300) / 200;
+
           reveals[i].style.opacity = `${bottomOpacityPercentage}`;
+        }
       }
+
+      // If the card doesnt respect the conditions, it isn't active anymore and I check which direction it will go
     } else {
       reveals[i].classList.remove("active");
+
       if (
         ideasTransitionContainer.value.clientHeight -
-          reveals[i].getBoundingClientRect().bottom >
+        reveals[i].getBoundingClientRect().bottom >
         -100
       ) {
         reveals[i].style.transform = `translateY(-150px)`;
       } else if (
         reveals[i].getBoundingClientRect().top -
-          ideasTransitionContainer.value.getBoundingClientRect().top >
+        ideasTransitionContainer.value.getBoundingClientRect().top >
         50
       ) {
         reveals[i].style.transform = `translateY(150px)`;
