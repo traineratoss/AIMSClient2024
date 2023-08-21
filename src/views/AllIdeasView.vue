@@ -699,7 +699,7 @@ async function showStatistics() {
           </div>
 
           <div class="ideas-transition-container" ref="ideasTransitionContainer">
-            <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item reveal">
+            <div v-for="idea in ideas" :key="idea.id" class="idea-transition-item">
               <IdeaCard :title="idea.title" :text="idea.text" :status="idea.status" :username="idea.username"
                 :ideaId="idea.id" :commentsNumber="idea.commentsNumber" :elapsedTime="idea.elapsedTime"
                 :image="getImageUrl(idea)" :loggedUser="getCurrentUsername()" @comment-counter-add="idea.commentsNumber++"
