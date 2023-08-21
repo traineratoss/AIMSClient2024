@@ -144,7 +144,7 @@ function getShortenedTitle(title, maxLength) {
             v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0"
             class="most-commented-ideas"
           >
-            <p>Top 5 Most commented ideas :</p>
+            <p>Top most commented ideas:</p>
             <table id="idea-table">
               <tr>
                 <th>Idea title</th>
