@@ -525,9 +525,9 @@ async function changeDisplay(pageSize) {
             "
           >
           <label for="sortOrder">Sort by: </label>
-          <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder">
-            <option :value="0">Date ascending</option>
-            <option :value="1">Date descending</option>
+          <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder" style="width: 3.8vw">
+            <option :value="0"> Newest  </option>
+              <option :value="1"> Oldest</option>
           </select>
           <div class="pageSize">
             <PageSizeSelect
