@@ -497,7 +497,7 @@ function removeSelection(index) {
             v-if="showDeletePopup || disableFields || ideaNotValid"
             v-model="onlyForDeleteCategories"
             :disabled="disableFields"
-            style="border: 0px solid slategray; border-radius: 2px; width: 15.8vw;"
+            style="width: 15.8vw; height: 2vh; background-color: rgba(255, 255, 255, 0.597); border-radius: 3px; border: 1px  slategray; color: black;"
           />
         </div>
 
