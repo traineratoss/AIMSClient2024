@@ -549,7 +549,7 @@ async function changeDisplay(pageSize) {
           <div
             v-for="idea in ideas"
             :key="idea.id"
-            class="idea-transition-item reveal"
+            class="idea-transition-item"
           >
             <IdeaCard
               :title="idea.title"
