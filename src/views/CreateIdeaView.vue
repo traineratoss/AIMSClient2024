@@ -630,7 +630,6 @@ function removeSelection(index) {
 </template>
 
 <style scoped>
-
 #back-button:hover {
   background-color: #f8920b;
 }
@@ -724,11 +723,11 @@ b {
 
 #textarea-id {
   resize: none;
-  height: 14.6vh;
+  height: 14.7vh;
   width: 21.5vw;
   overflow: auto;
   box-sizing: border-box;
-  border: 1px solid slategray;
+  border: 1px solid rgba(112, 128, 144, 0.349);
   border-radius: 3px;
   word-wrap: break-word;
   margin-top: 4px;
