@@ -2,16 +2,24 @@
 import { defineProps, defineEmits, ref, watch } from "vue";
 import searchValue from "../utils/search-title";
 
-const { canModifySearchValue, modelValue, placeholder, error, type, inputRef, widthInPx, heightInPx } =
-  defineProps([
-    "canModifySearchValue",
-    "modelValue",
-    "placeholder",
-    "error",
-    "type",
-    "widthInPx",
-    "heightInPx"
-  ]);
+const {
+  canModifySearchValue,
+  modelValue,
+  placeholder,
+  error,
+  type,
+  inputRef,
+  widthInPx,
+  heightInPx,
+} = defineProps([
+  "canModifySearchValue",
+  "modelValue",
+  "placeholder",
+  "error",
+  "type",
+  "widthInPx",
+  "heightInPx",
+]);
 
 const emit = defineEmits(["update:modelValue", "input-focused"]);
 
@@ -24,12 +32,12 @@ const inputValue = ref("");
 
 const handleFocus = () => {
   focused.value = true;
-  emit("input-focused", focused.value)
+  emit("input-focused", focused.value);
 };
 
 const handleBlur = () => {
   focused.value = false;
-  emit("input-focused", focused.value)
+  emit("input-focused", focused.value);
 };
 
 const handleInputKeyPress = (event) => {
@@ -56,7 +64,8 @@ const handleInputKeyChange = (event) => {
 </script>
 
 <template>
-  <input class="input"
+  <input
+    class="input"
     :type="type"
     ref="inputValue"
     :placeholder="placeholder"
@@ -68,12 +77,11 @@ const handleInputKeyChange = (event) => {
     @focus="handleFocus"
     @blur="handleBlur"
     @keyup="handleInputKeyChange"
-
-    :style="{ height : heightInPx ? heightInPx + 'vh' : {},
-              width : widthInPx ? widthInPx + 'vw' : {}
+    :style="{
+      height: heightInPx ? heightInPx + 'vh' : {},
+      width: widthInPx ? widthInPx + 'vw' : {},
     }"
   />
-
 </template>
 
 <style scoped>
@@ -83,9 +91,10 @@ const handleInputKeyChange = (event) => {
   background-color: white;
   padding: 5px;
   box-sizing: border-box;
+  cursor: text;
 }
 
-.input:hover{
+.input:hover {
   border: 1px solid slategray;
 }
 
@@ -93,8 +102,7 @@ input {
   all: unset;
 }
 
-
-.input::placeholder{
+.input::placeholder {
   color: slategray;
 }
 </style>
