@@ -164,7 +164,7 @@ function scrollFade() {
 
     var elementBottom =
       reveals[i].getBoundingClientRect().top -
-      ideasTransitionContainer.value.getBoundingClientRect().bottom; 
+      ideasTransitionContainer.value.getBoundingClientRect().bottom;
 
     let distanceBottom = scrollDirection === "down" ? 100 : -100;
 
@@ -176,42 +176,55 @@ function scrollFade() {
 
     // If the card is visible
 
+    // console.log(reveals[4].getBoundingClientRect().top -
+    //   ideasTransitionContainer.value.getBoundingClientRect().bottom)
+
     if (elementTop > gapTop && elementBottom < gapBottom) {
       reveals[i].classList.add("active");
       reveals[i].style.transform = `translateY(0px)`;
 
       // Setting the opacities of the top elements to fade in and out
 
-      let shouldFade = false;
+      let shouldFade = true;
 
       if (shouldFade) {
-        if (elementTop < 0 && scrollDirection === "down") {
-          const topOpacityPercentage = 1 + elementTop / 50;
+        if (elementBottom < 0) {
+          const topOpacityPercentage = -10/3 - (reveals[i].getBoundingClientRect().top -
+          ideasTransitionContainer.value.getBoundingClientRect().bottom) / 30;
           reveals[i].style.opacity = `${topOpacityPercentage}`;
         }
 
-        if (elementTop < 0 && scrollDirection === "up") {
-          reveals[i].style.opacity = `1`;
-        }
+        // if (elementBottom < -200 && scrollDirection === "up") {
+        //   reveals[4].style.opacity = `1`;
+        // }
 
         // Setting the opacities of the bottom elements to fade in and out
 
-        if (
-          ideasTransitionContainer.value.clientHeight -
-          reveals[i].getBoundingClientRect().bottom <
-          -50 &&
-          ideasTransitionContainer.value.clientHeight -
-          reveals[i].getBoundingClientRect().bottom >
-          -300
-        ) {
-          const distanceDown =
-            ideasTransitionContainer.value.clientHeight -
-            reveals[i].getBoundingClientRect().bottom;
 
-          const bottomOpacityPercentage = (distanceDown + 300) / 200;
-
-          reveals[i].style.opacity = `${bottomOpacityPercentage}`;
+        if (elementTop < 125) {
+          const topOpacityPercentage = -75/50 + (reveals[i].getBoundingClientRect().top -
+          ideasTransitionContainer.value.getBoundingClientRect().bottom) / 50;
+          reveals[i].style.opacity = `${topOpacityPercentage}`;
         }
+      //   console.log(reveals[1].getBoundingClientRect().bottom -
+      // ideasTransitionContainer.value.getBoundingClientRect().top)
+
+        // if (
+        //   ideasTransitionContainer.value.clientHeight -
+        //     reveals[i].getBoundingClientRect().bottom <
+        //     -50 &&
+        //   ideasTransitionContainer.value.clientHeight -
+        //     reveals[i].getBoundingClientRect().bottom >
+        //     -300
+        // ) {
+        //   const distanceDown =
+        //     ideasTransitionContainer.value.clientHeight -
+        //     reveals[i].getBoundingClientRect().bottom;
+
+        //   const bottomOpacityPercentage = (distanceDown + 300) / 200;
+
+        //   reveals[i].style.opacity = `${bottomOpacityPercentage}`;
+        // }
       }
 
       // If the card doesnt respect the conditions, it isn't active anymore and I check which direction it will go
@@ -220,16 +233,16 @@ function scrollFade() {
 
       if (
         ideasTransitionContainer.value.clientHeight -
-        reveals[i].getBoundingClientRect().bottom >
+          reveals[i].getBoundingClientRect().bottom >
         -100
       ) {
-        reveals[i].style.transform = `translateY(-150px)`;
+        reveals[i].style.transform = `translateY(-200px)`;
       } else if (
         reveals[i].getBoundingClientRect().top -
-        ideasTransitionContainer.value.getBoundingClientRect().top >
+          ideasTransitionContainer.value.getBoundingClientRect().top >
         50
       ) {
-        reveals[i].style.transform = `translateY(150px)`;
+        reveals[i].style.transform = `translateY(200px)`;
       }
     }
   }
@@ -495,6 +508,13 @@ async function changeDisplay(pageSize) {
     }, 0);
   }
 }
+
+function scrollFadeOnExpand() {
+  setTimeout(() => {
+    scrollFade();
+  }, 600)
+}
+
 </script>
 
 <template>
@@ -549,7 +569,7 @@ async function changeDisplay(pageSize) {
           <div
             v-for="idea in ideas"
             :key="idea.id"
-            class="idea-transition-item"
+            class="idea-transition-item reveal"
           >
             <IdeaCard
               :title="idea.title"
@@ -563,6 +583,7 @@ async function changeDisplay(pageSize) {
               :loggedUser="getCurrentUsername()"
               @comment-counter-add="idea.commentsNumber++"
               @comment-counter-sub="idea.commentsNumber--"
+              @revealOnScroll="scrollFadeOnExpand()"
             />
           </div>
           <div

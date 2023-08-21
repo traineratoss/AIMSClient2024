@@ -24,7 +24,7 @@ const props = defineProps({
   image: "",
 });
 
-const emits = defineEmits(["commentCounterAdd", "commentCounterSub", "ideaNotValid"]);
+const emits = defineEmits(["commentCounterAdd", "commentCounterSub", "ideaNotValid", "revealOnScroll"]);
 
 const allLoadedComments = ref([]);
 const commentText = ref([]);
@@ -102,6 +102,7 @@ async function loadCommentReplies(comment) {
 function toggleCommentReplies(comment) {
   comment.replyToggle = !comment.replyToggle;
   loadCommentReplies(comment);
+  emits("revealOnScroll", true)
 }
 
 function showCommentReplies(comment) {
@@ -128,6 +129,7 @@ function showDeletePopup() {
 function toggleComments() {
   loadIdeaComments();
   showCommentsToggle.value = !showCommentsToggle.value;
+  emits("revealOnScroll", true)
 }
 
 function getRepliesForComment(commentId) {
