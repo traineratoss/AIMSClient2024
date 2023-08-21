@@ -3,13 +3,14 @@ import { ref, onMounted, watch, computed } from "vue";
 import { getStats } from "../services/statistics.service";
 import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import PieChart from "./PieChart.vue";
+import RegisterView from "../views/RegisterView.vue";
 
 const props = defineProps({
   recievedFilteredStats: Object,
   showGenerated: Boolean,
   showSkeleton: Boolean,
   showAnimation: Boolean,
-  showTopIdeas: Boolean
+  showTopIdeas: Boolean,
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
@@ -37,10 +38,12 @@ watch(progressBar, (newX) => {
   progressBar.value = newX;
 });
 
-watch(() => props.showTopIdeas, (newValue) => {
-  showTopIdeas.value = newValue;
-})
-
+watch(
+  () => props.showTopIdeas,
+  (newValue) => {
+    showTopIdeas.value = newValue;
+  }
+);
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(
@@ -60,7 +63,11 @@ async function calculateImplementationPercentage() {
 }
 
 function loadTop5Ideas() {
-  console.log(props.recievedFilteredStats.mostCommentedIdeas)
+  console.log(
+    "Top 5 ideas >> ",
+    props.recievedFilteredStats.mostCommentedIdeas
+  );
+
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
 
@@ -133,7 +140,10 @@ function getShortenedTitle(title, maxLength) {
               :draftIdeasNumber="stats.draftIdeas"
             />
           </div>
-          <div class="most-commented-ideas">
+          <div
+            v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0"
+            class="most-commented-ideas"
+          >
             <p>Top 5 Most commented ideas :</p>
             <table id="idea-table">
               <tr>
@@ -173,7 +183,7 @@ function getShortenedTitle(title, maxLength) {
             </table>
             <div class="swich-buttons">
               <button class="load-button" @click="loadTop5Ideas()">
-                {{!showTopIdeas ? "Load top ideas" : "Load All Ideas"}}
+                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
 
               <!-- <button class="load-button" @click="refreshStats()">
@@ -181,8 +191,15 @@ function getShortenedTitle(title, maxLength) {
               </button> -->
             </div>
           </div>
+          <div
+            v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
+            class="most-commented-ideas"
+          >
+            <p>Top Most commented ideas:</p>
+            <h4>No comments were posted in this time interval</h4>
+          </div>
           <div class="most-commented-ideas" style="margin-bottom: 50px">
-            <p>Overall information :</p>
+            <p>General information:</p>
             <table id="idea-table">
               <tr>
                 <td>Number of Users:</td>
@@ -244,7 +261,10 @@ function getShortenedTitle(title, maxLength) {
               <template #fallback> Loading... </template>
             </Suspense>
           </div>
-          <div class="most-commented-ideas">
+          <div
+            v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0"
+            class="most-commented-ideas"
+          >
             <p>Top Most commented ideas :</p>
             <table id="idea-table">
               <tr>
@@ -334,7 +354,7 @@ function getShortenedTitle(title, maxLength) {
             </table>
             <div class="swich-buttons">
               <button class="load-button" @click="loadTop5Ideas()">
-                Load top ideas
+                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
               <!-- <button class="load-button" @click="loadData()">
                 Reload ideas
@@ -346,8 +366,15 @@ function getShortenedTitle(title, maxLength) {
               </button> -->
             </div>
           </div>
+          <div
+            v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
+            class="most-commented-ideas"
+          >
+            <p>Top Most commented ideas:</p>
+            <h4>No comments were posted in this time interval</h4>
+          </div>
           <div class="most-commented-ideas" style="margin-bottom: 50px">
-            <p>Overall information:</p>
+            <p>General information for the selected time interval:</p>
             <table id="idea-table">
               <tr>
                 <td>Total no. of Comments:</td>
