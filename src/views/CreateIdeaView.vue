@@ -114,9 +114,9 @@ const pageTitle = computed(() => {
   } else if (isUpdatedIdeaEmpty.value) {
     return "Create an Idea";
   } else if (disableFields) {
-    return "View your Idea";
+    return "View Idea";
   } else {
-    return "Update your Idea";
+    return "Update Idea";
   }
 });
 
