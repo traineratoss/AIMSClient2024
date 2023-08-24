@@ -515,6 +515,11 @@ function scrollFadeOnExpand() {
   }, 600)
 }
 
+function setIdeasEmptyFunction(){
+  ideas.value = [];
+}
+
+
 </script>
 
 <template>
@@ -526,6 +531,7 @@ function scrollFadeOnExpand() {
         :currentUser="getCurrentUsername()"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
+        @setIdeasEmpty = "setIdeasEmptyFunction()"
         :ideasPerPage="ideaPerPage"
         :hideUser="true"
       />
@@ -620,7 +626,7 @@ function scrollFadeOnExpand() {
 
 .reveal.active {
   transform: translateY(0px);
-  opacity: 1;
+  opacity: 0;
 }
 .reload-button {
   background-color: #ffa941;

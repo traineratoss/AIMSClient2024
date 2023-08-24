@@ -52,6 +52,7 @@ const emits = defineEmits([
     "filter-listening",
     "pass-input-variables",
     "generatedStatistics",
+    "setIdeasEmpty"
 ]);
 
 watch(() => props.clearAll, (newValue) => {
@@ -143,6 +144,8 @@ onMounted(async () => {
 });
 
 const filter = async () => {
+    
+    emits("setIdeasEmpty", true);
     const title = inputTitle.value;
     const text = inputText.value;
     const category = categoriesSelected.value;

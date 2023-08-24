@@ -516,6 +516,7 @@ async function loadData() {
 
 async function updateIdeas(filteredIdeas) {
   ideasTransitionContainer.value.style.overflowY = "hidden";
+  
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value); // the total nr of pages after filtering needs to be updated
   showTopIdeas.value = false;
 
@@ -564,12 +565,12 @@ async function updateIdeas(filteredIdeas) {
     // }
     // }
   } else {
-    ideas.value = [];
     if (filteredIdeas === "No ideas found.") {
       noIdeasFoundCondition.value = true;
       totalPages.value = 0;
       ideas.value = [];
     } else {
+      ideas.value = [];
       noIdeasFoundCondition.value = false;
       // being sure the current page doesnt go below 0
       currentPage.value = 1;
@@ -692,6 +693,10 @@ function scrollFadeOnExpand() {
   }, 600)
 }
 
+function setIdeasEmptyFunction(){
+  ideas.value = [];
+}
+
 </script>
 
 <template>
@@ -703,6 +708,7 @@ function scrollFadeOnExpand() {
         :currentUser="null"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
+        @setIdeasEmpty = "setIdeasEmptyFunction()"
         :ideasPerPage="ideaPerPage"
         :hideUser="false"
         :clear-all="showTopIdeas"
@@ -718,7 +724,7 @@ function scrollFadeOnExpand() {
     >
       <div class="main-container">
         <div
-          v-if="ideas.length === 0 && !noIdeasFoundCondition"
+          v-if="ideas && ideas.length <= 0 && !noIdeasFoundCondition"
           class="loading-placeholder"
         >
           <CustomLoader :size="100" />
@@ -784,7 +790,7 @@ function scrollFadeOnExpand() {
               />
             </div>
             <div
-              v-if="ideas.length === 0 && noIdeasFoundCondition"
+              v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"
               class="no-ideas-message"
             >
               <img src="../assets/img/curiosity-search.svg" />
@@ -875,7 +881,7 @@ h2 {
 
 .reveal.active {
   transform: translateY(0px);
-  opacity: 1;
+  opacity: 0;
 }
 
 .reload-button {
