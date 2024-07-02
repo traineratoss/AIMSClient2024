@@ -11,6 +11,7 @@ pageNumber = numarul pagini , 0 prima pagina si asa mai departe
 sortCategory = categoria dupa care se face sortarea
 sortDirection = cum vrei sa sortezi , ASC sau DSC
 */
+
 async function loadPagedIdeas(
   pageSize,
   pageNumber,
