@@ -1,4 +1,4 @@
-<script setup>
+<script setup>   
 import { ref,defineProps,watch, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import CustomLoader from './CustomLoader.vue';
