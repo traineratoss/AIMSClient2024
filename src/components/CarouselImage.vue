@@ -13,7 +13,7 @@ const route = useRoute();
 
 const avatarId = parseInt(localStorage.getItem('avatarId'));
 
-//Initially set it to yours and if im on create idea, it will update automatically
+//Initially set it to yours and if im on create idea, it will update automatically 
 const currentIndex = ref(avatarId);
 
 const selectedImageBase64 = ref(null);
