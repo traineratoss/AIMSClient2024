@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, ref, computed, defineEmits } from "vue";
-import CustomButton from "../components/CustomButton.vue"
+import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import { logout } from "../services/user_service";
 
@@ -9,13 +9,13 @@ const dashboardIsHovered = ref(false);
 const props = defineProps({
   element: {
     type: Object,
-    required: true
+    required: true,
   },
-  disabled : {
+  disabled: {
     type: Boolean,
-    required: true
+    required: true,
   },
-  image: String
+  image: String,
 });
 
 props.element.forEach((element) => {
@@ -33,17 +33,16 @@ function onMouseLeave(element) {
 }
 
 const onClickHandler = (element) => {
-  if(element.id === 'logout') {
+  if (element.id === "logout") {
     logout();
   }
-  
+
   router.push(element.route);
 };
 
 const shouldDisableDiv = computed(() => {
   return props.disabled && !dashboardIsHovered.value;
 });
-
 </script>
 
 <template>
@@ -71,18 +70,29 @@ const shouldDisableDiv = computed(() => {
       <span class="material-symbols-outlined">
         {{ element.icon }}
       </span>
-      <span style="flex: 1;">{{ element.name }}</span>
+      <span style="flex: 1">{{ element.name }}</span>
     </CustomButton>
   </div>
 </template>
 
 <style>
-
-#all-users, #stats, #profile, #change-password, #dashboard, #logout, #my-ideas {
+#all-users,
+#stats,
+#profile,
+#change-password,
+#dashboard,
+#logout,
+#my-ideas {
   background-color: white;
 }
 
-#all-users:hover, #stats:hover, #profile:hover, #change-password:hover, #dashboard:hover, #logout:hover, #my-ideas:hover {
+#all-users:hover,
+#stats:hover,
+#profile:hover,
+#change-password:hover,
+#dashboard:hover,
+#logout:hover,
+#my-ideas:hover {
   background-color: var(--selected-color);
 }
 </style>
