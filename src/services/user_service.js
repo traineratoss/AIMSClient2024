@@ -77,8 +77,7 @@ async function sendEmailToAllAdmins(username) {
   );
 }
 
-async function updateUser(username, userUpdateDto) {
-  console.log(userUpdateDto.avatarId);
+async function updateUser(username, userUpdateDto) {  
 
   const response = await fetch(
     `${API_URL}/update-profile?username=${username}`,

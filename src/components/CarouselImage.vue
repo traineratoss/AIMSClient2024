@@ -124,9 +124,9 @@ onMounted(() => {
       <div
         class="slides"
         :style="imagesLoaded ? { transform: `translateX(-${currentIndex * 100}%)` } : {}"
-      >
-        <div
-          v-if="imagesLoaded"
+        v-if="imagesLoaded"
+        >
+        <div          
           v-for="(slide, index) in images"
           :key="index"
           class="slide"
@@ -142,7 +142,7 @@ onMounted(() => {
           <CustomLoader :size="60" />
         </div>
       </div>
-    </div>
+    </div> 
     <button @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-right fa-2xl" id="arrow2"></i>
     </button>

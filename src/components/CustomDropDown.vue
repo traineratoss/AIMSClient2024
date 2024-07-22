@@ -205,12 +205,7 @@ function getInputPlaceholder() {
       @mouseleave="onMouseLeave" :style="{
         height: props.heightInVh ? props.heightInVh/2 + 'vh' : {},
         width: props.widthInVw ? props.widthInVw + 'vw' : {}
-      }" 
-      v-bind:style="
-              error !== ''
-                ? { 'border-color': 'red', 'background-color': 'rgb(255, 145, 153, 0.379)' }
-                : {  'background-color': 'white' }
-            "/>
+      }">
     <div v-show="isDropdownVisible && !props.disabled" class="dropdown" ref="dropdown" id="dropdown"
       @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" :style="{
         width: props.widthInVw ? props.widthInVw + 'vw' : {}

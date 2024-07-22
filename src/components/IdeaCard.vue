@@ -10,6 +10,7 @@ import {
 } from "../services/comment.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import { getIdea } from "../services/idea.service";
+import RatingStars from "../components/RatingStars.vue"
 
 const props = defineProps({
   title: "",
@@ -302,6 +303,10 @@ function selectIdea() {
   }
 }
 
+function isSelectedRating(){
+  isSelected.value = false;
+}
+
 const isAdmin = getCurrentRole() === "ADMIN";
 
 watch(
@@ -361,7 +366,8 @@ function triggerCollapseAnimation(commentId) {
       reply.style.opacity = "";
     };
   }
-}
+} 
+
 </script>
 
 <template>
@@ -395,7 +401,7 @@ function triggerCollapseAnimation(commentId) {
                 <div class="text" v-else>
                   {{ getShortenedTitle(title, 32) }}
                 </div>
-              </div>
+              </div> 
               <div class="status">
                 {{ props.status }}
               </div>
@@ -409,28 +415,32 @@ function triggerCollapseAnimation(commentId) {
               </div>
               <div class="left-container-buttons">
                 <div class="left-container-buttons-grouped" v-if="isSelected">
-                  <button
-                    v-if="props.loggedUser === props.username || isAdmin"
-                    @click.stop="editIdea()"
-                    class="idea-button"
-                  >
-                    EDIT
-                  </button>
-                  <button
-                    @click.stop="redirectToCreateIdeaView()"
-                    class="idea-button"
-                  >
-                    VIEW
-                  </button>
-                  <button
-                    @click.stop="showDeletePopup()"
-                    v-if="props.loggedUser === props.username || isAdmin"
-                    class="idea-button"
-                  >
-                    DELETE
-                  </button>
+                    <div class="starsRating" @click="isSelectedRating">
+                      <RatingStars :initialRating="4"/>
+                    </div> 
+                    <div>
+                    <button
+                      v-if="props.loggedUser === props.username || isAdmin"
+                      @click.stop="editIdea()"
+                      class="idea-button"
+                    >
+                      EDIT
+                    </button>
+                    <button
+                      @click.stop="redirectToCreateIdeaView()"
+                      class="idea-button"
+                    >
+                      VIEW
+                    </button>
+                    <button
+                      @click.stop="showDeletePopup()"
+                      v-if="props.loggedUser === props.username || isAdmin"
+                      class="idea-button"
+                    >
+                      DELETE
+                    </button>
+                  </div>                
                 </div>
-
                 <div class="left-container-buttons-post"></div>
               </div>
             </div>
@@ -533,10 +543,9 @@ function triggerCollapseAnimation(commentId) {
         </div>
       </div>
     </div>
-    <transition-group duration="300" name="nested">
+    <transition-group duration="300" name="nested" v-if="showCommentsToggle">
       <div
         class="comment-container"
-        v-if="showCommentsToggle"
         v-for="comment in allLoadedComments"
         :key="comment.id"
       >
@@ -784,6 +793,7 @@ function triggerCollapseAnimation(commentId) {
 }
 
 .left-container-buttons {
+  flex-direction: column;
   margin-left: 1vw;
   display: flex;
   justify-content: space-between;
@@ -792,7 +802,7 @@ function triggerCollapseAnimation(commentId) {
 
 .left-container-buttons-grouped {
   display: flex;
-  gap: 5px;
+  flex-direction: column;
 }
 
 .right-container {
@@ -897,6 +907,7 @@ img {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
+
 .comment-input-wrapper {
   display: flex;
   justify-content: center;
@@ -953,6 +964,7 @@ button:hover {
   margin-right: 10px;
   min-width: 9vh;
   max-width: 10vh;
+  cursor: pointer;
 }
 
 .idea-button:hover {
