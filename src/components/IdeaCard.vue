@@ -371,7 +371,7 @@ function triggerCollapseAnimation(commentId) {
 </script>
 
 <template>
-  <div class="container" @dblclick="redirectToCreateIdeaView()">
+  <div class="container">
     <div
       class="clickable-container"
       @click="
@@ -391,7 +391,7 @@ function triggerCollapseAnimation(commentId) {
               : { 'background-color': 'white' }
           "
         ></div>
-        <div class="idea-card">
+        <div class="idea-card" @dblclick="redirectToCreateIdeaView()">
           <div class="top-container">
             <div class="left-container">
               <div class="left-container-title">
@@ -430,7 +430,7 @@ function triggerCollapseAnimation(commentId) {
                     >
                       DELETE
                     </button>
-                      <RatingStars :initialRating="4" @click="isSelectedRating" class="rating-stars"/>
+                      <RatingStars :initialRating="props.ratingAvg+1" @click="isSelectedRating" class="rating-stars"/>
                   </div>                
                 </div>
                 <div class="left-container-buttons-post"></div>
