@@ -57,9 +57,9 @@ async function loginUser(username, hashPassword) {
     throw new Error("Server connection error");
   }
 
-  const json = await response.json();
+  const text = await response.text();
 
-  if (json.message === "User was deactivated") {
+  if (text.message === "User was deactivated") {
     throw new Error(json.message);
   }
 
