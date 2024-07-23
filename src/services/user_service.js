@@ -186,14 +186,11 @@ async function changePassword(changePasswordDTO) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: changePasswordDTO.username,
-      oldPassword: changePasswordDTO.oldPassword,
       newPassword: changePasswordDTO.newPassword,
     }),
   });
 
-  if (!response.ok) {
-    throw new Error('Incorrect old password');
-  }
+
 
   return response;
 }
