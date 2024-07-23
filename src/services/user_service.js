@@ -25,12 +25,20 @@ async function checkValidationeCode(otp, usernameOrEmail) {
       })
   });
 
-  if (!response.ok) {
+  if (response.ok) {
+    const json = await response.json()
+    localStorage.setItem("username", json.username);
+    localStorage.setItem("role", json.role);
+    localStorage.setItem("email", json.email);
+    localStorage.setItem("fullName", json.fullName);
+    localStorage.setItem("avatarId", json.avatarId - 1);
+    localStorage.setItem("isFirstLogin", json.isFirstLogin);
+    return json;
+  } else {
     const text = await response.text();
     console.log(text)
     throw new Error(text)
   }
-  return response;
 }
 
 async function loginUser(username, hashPassword) {

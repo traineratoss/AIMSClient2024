@@ -123,6 +123,11 @@ function checkPassword() {
   containsUppercase.value = /[A-Z]/.test(newPasswordText.value);
   containsSpecialCharacter.value = format.test(newPasswordText.value);
 }
+
+function cancel() {
+  logout();
+  router.push("/login");
+}
 </script>
 
 <template>
@@ -179,7 +184,7 @@ function checkPassword() {
         />
       </div>
       <div id="controls-container">
-        <button id="cancel" :disabled="!firstLogin" @click="router.push('/my')">
+        <button id="cancel" :disabled="!firstLogin" @click="cancel">
           Cancel
         </button>
         <CustomButton id="submit" @click="submit">Submit</CustomButton>
