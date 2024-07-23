@@ -57,23 +57,22 @@ async function loginUser(username, hashPassword) {
     throw new Error("Server connection error");
   }
 
-  const text = await response.text();
-
-  if (text.message === "User was deactivated") {
-    throw new Error(json.message);
-  }
-
   if (!response.ok) {
+    const text = await response.text();
+    if (text.message === "User was deactivated") {
+      throw new Error(json.message);
+    }
     throw new Error("Invalid username or password");
   } else {
+    const json = await response.json();
     localStorage.setItem("username", json.username);
     localStorage.setItem("role", json.role);
     localStorage.setItem("email", json.email);
     localStorage.setItem("fullName", json.fullName);
     localStorage.setItem("avatarId", json.avatarId - 1);
     localStorage.setItem("isFirstLogin", json.isFirstLogin);
+    return json;
   }
-  return json;
 }
 
 async function postUser(username, email) {
@@ -186,7 +185,7 @@ async function changePassword(changePasswordDTO) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: changePasswordDTO.username,
-      oldPassword: changePasswordDTO.oldPassword,
+      // oldPassword: changePasswordDTO.oldPassword,
       newPassword: changePasswordDTO.newPassword,
     }),
   });
