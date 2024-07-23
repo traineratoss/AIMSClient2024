@@ -169,7 +169,7 @@ function clearInput() {
           </div>
         </div>
         <div class="footer-container-right">
-         <Like/>
+         <LikeButton/>
           <span v-if="buttonSelected">
             <button
               class="action-icon-button"
