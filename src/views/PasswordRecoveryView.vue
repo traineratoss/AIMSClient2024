@@ -2,31 +2,46 @@
 import CompanyLogo from "../components/CompanyLogo.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
-import { sendNewPassword } from "../services/user_service.js";
+import { checkValidationeCode, sendNewPassword } from "../services/user_service.js";
 import { ref } from "vue";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import FormTitle from "../components/FormTitle.vue";
+import CodeValidation from "../components/CodeValidation.vue";
 
 const usernameOrEmailText = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
+const showCodeValidation = ref(false);
+const code = ref([]);
+const validOTPFormat = ref(false)
 
-function requestNewPassword() {
+function requestNewPassword() { 
   if (usernameOrEmailText.value.toLowerCase()) {
     sendNewPassword(usernameOrEmailText.value)
-      .then((res) => {
-        router.push("/login");
-      })
-      .catch((error) => {
-        showErrorMessage.value = true;
-        errorMessage.value = error.message;
-      });
-  } else {
+    showCodeValidation.value = true; 
+    } else {
     showErrorMessage.value = true;
     errorMessage.value = "The field must not be empty";
   }
 }
+  
+async function verifyOtp() {
+  const otp = code.value.join(""); 
+  try {
+    await checkValidationeCode(otp, usernameOrEmailText.value);
+    router.push('/change'); 
+  } catch (error) {
+    showErrorMessage.value = true;
+    errorMessage.value = error.message;
+  }
+}
+
+function updateOTP(otp, validFormat) {
+  code.value = otp;
+  validOTPFormat.value = validFormat;
+} 
+  
 </script>
 
 <template>
@@ -50,12 +65,24 @@ function requestNewPassword() {
     </div>
     <div>
       <CustomButton 
+        v-if="!showCodeValidation"
         id="request-password" 
-        @click="requestNewPassword"
+        @click="requestNewPassword" 
         style="width: auto;"
       >
         Request new Password
       </CustomButton>
+      <div class="container validate-otp" v-else>        
+        <p>Please input your verification code below:</p>
+        <CodeValidation @otp-updated="updateOTP" />
+        <CustomButton 
+          id="validation-code" 
+          @click="verifyOtp" 
+          :disabled="!validOTPFormat"
+        >
+          Check Validation Code
+        </CustomButton>
+      </div>
     </div>
   </div>
 </template>
@@ -69,6 +96,19 @@ function requestNewPassword() {
   gap: 30px;
   position: relative;
   margin-top: 10vh;
+}
+
+.validate-otp {
+  margin-top: 50px;
+}
+
+.validate-otp > * {
+  width: auto;
+}
+
+p {
+  font-size: 17px;
+  margin: 0px;
 }
 
 .error-message-visible {

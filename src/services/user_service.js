@@ -12,6 +12,35 @@ async function getUserByEmail(email) {
   return json;
 }
 
+async function checkValidationeCode(otp, usernameOrEmail) {
+  
+  const response = await fetch(
+    `${API_URL}/verify-otp`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usernameOrEmail: usernameOrEmail,
+        otpCode: otp,
+      })
+  });
+
+  if (response.ok) {
+    const json = await response.json()
+    localStorage.setItem("username", json.username);
+    localStorage.setItem("role", json.role);
+    localStorage.setItem("email", json.email);
+    localStorage.setItem("fullName", json.fullName);
+    localStorage.setItem("avatarId", json.avatarId - 1);
+    localStorage.setItem("isFirstLogin", json.isFirstLogin);
+    return json;
+  } else {
+    const text = await response.text();
+    console.log(text)
+    throw new Error(text)
+  }
+}
+
 async function getIdByUsername(username) {
   const response = await fetch(`${API_URL}/idByUsername?username=${username}`);
   const json = await response.json();
@@ -34,23 +63,22 @@ async function loginUser(username, hashPassword) {
     throw new Error("Server connection error");
   }
 
-  const json = await response.json();
-
-  if (json.message === "User was deactivated") {
-    throw new Error(json.message);
-  }
-
   if (!response.ok) {
+    const text = await response.text();
+    if (text.message === "User was deactivated") {
+      throw new Error(json.message);
+    }
     throw new Error("Invalid username or password");
   } else {
+    const json = await response.json();
     localStorage.setItem("username", json.username);
     localStorage.setItem("role", json.role);
     localStorage.setItem("email", json.email);
     localStorage.setItem("fullName", json.fullName);
     localStorage.setItem("avatarId", json.avatarId - 1);
     localStorage.setItem("isFirstLogin", json.isFirstLogin);
+    return json;
   }
-  return json;
 }
 
 async function postUser(username, email) {
@@ -163,14 +191,11 @@ async function changePassword(changePasswordDTO) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: changePasswordDTO.username,
-      oldPassword: changePasswordDTO.oldPassword,
       newPassword: changePasswordDTO.newPassword,
     }),
   });
 
-  if (!response.ok) {
-    throw new Error('Incorrect old password');
-  }
+
 
   return response;
 }
@@ -318,6 +343,7 @@ export {
   getUserByEmail,
   getIdByUsername,
   getUserByUsername,
+  checkValidationeCode,
   postUser,
   updateUser,
   updateUserRole,
