@@ -12,6 +12,27 @@ async function getUserByEmail(email) {
   return json;
 }
 
+async function checkValidationeCode(otp, usernameOrEmail) {
+  
+  const response = await fetch(
+    `${API_URL}/verify-otp`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usernameOrEmail: usernameOrEmail,
+        otpCode: otp,
+      })
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    console.log(text)
+    throw new Error(text)
+  }
+  return response;
+}
+
 async function loginUser(username, hashPassword) {
   let connectionError = false;
   let response;
@@ -312,6 +333,7 @@ async function isFirstLogin(usernameOrEmail) {
 export {
   getUserByEmail,
   getUserByUsername,
+  checkValidationeCode,
   postUser,
   updateUser,
   updateUserRole,
