@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment } from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole } from "../services/user_service";
+import { deleteComment,deleteLike } from "../services/comment.service";
+import { getCurrentUsername, getCurrentRole ,getIdByUsername} from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
 
@@ -25,6 +25,7 @@ const emits = defineEmits([
   "loadReplies",
   "postReply",
   "deleteComment",
+  "deleteLike",
   "deleteReply",
 ]);
 
@@ -44,6 +45,25 @@ onMounted(async () => {
 function loadCommentReplies() {
   emits("loadReplies");
 }
+
+async function deleteLikeForComment() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+   await deleteLike(props.commentId,userId);
+  } catch (error) {
+    console.error("Error deleting like:", error);
+  }
+}
+
+async function deleteLikeForReply() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+  await deleteLike(props.replyId,userId);
+  } catch (error) {
+    console.error("Error deleting like:", error);
+  }
+}
+
 
 async function deleteCommentById(commentId) {
   try {
@@ -114,7 +134,7 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <LikeButton/>
+          <LikeButton @likeChanged="deleteLikeForReply"/>
           <button
             v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
@@ -169,7 +189,7 @@ function clearInput() {
           </div>
         </div>
         <div class="footer-container-right">
-         <LikeButton/>
+          <LikeButton @likeChanged="deleteLikeForComment"/> 
           <span v-if="buttonSelected">
             <button
               class="action-icon-button"

@@ -85,4 +85,11 @@ async function deleteComment(commentId) {
   return response;
 }
 
-export { loadComments, postComment, postReply, loadReplies, deleteComment };
+async function deleteLike(commentId,userId) {
+  return fetch(API_URL + "/comments/like/delete/"+commentId+"/"+userId, {
+    method: "DELETE",
+  });
+  return response;
+}
+
+export { loadComments, postComment, postReply, loadReplies, deleteComment,deleteLike };
