@@ -112,6 +112,8 @@ onMounted(async () => {
     }, 0);
   }
 
+  console.log(ideas);
+
   showStatistics();
   setTimeout(() => {
     loadingPage.value = false;

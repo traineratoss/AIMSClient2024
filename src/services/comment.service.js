@@ -93,4 +93,11 @@ async function getLikesCount(commentId) {
   return data;
 }
 
-export { loadComments, postComment, postReply, loadReplies, deleteComment , getLikesCount};
+async function deleteLike(commentId,userId) {
+  return fetch(API_URL + "/comments/like/delete/"+commentId+"/"+userId, {
+    method: "DELETE",
+  });
+  return response;
+}
+
+export { loadComments, postComment, postReply, loadReplies, deleteComment,deleteLike , getLikesCount};

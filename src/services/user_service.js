@@ -41,6 +41,12 @@ async function checkValidationeCode(otp, usernameOrEmail) {
   }
 }
 
+async function getIdByUsername(username) {
+  const response = await fetch(`${API_URL}/idByUsername?username=${username}`);
+  const json = await response.json();
+  return json;
+}
+
 async function loginUser(username, hashPassword) {
   let connectionError = false;
   let response;
@@ -335,6 +341,7 @@ async function isFirstLogin(usernameOrEmail) {
 
 export {
   getUserByEmail,
+  getIdByUsername,
   getUserByUsername,
   checkValidationeCode,
   postUser,
