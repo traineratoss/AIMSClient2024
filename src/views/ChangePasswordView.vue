@@ -13,7 +13,6 @@ import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import PasswordInput from "../components/PasswordInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 
-const oldPasswordText = ref("");
 const newPasswordText = ref("");
 const confirmNewPassword = ref("");
 const showErrorMessage = ref(false);
@@ -44,7 +43,6 @@ onMounted(() => {
 
 function submit() {
   if (
-    oldPasswordText.value &&
     newPasswordText.value &&
     confirmNewPassword.value
   ) {
@@ -80,17 +78,12 @@ function submit() {
       if (passwordFormatOK) {
         changePassword({
           username: getCurrentUsername(),
-          oldPassword: oldPasswordText.value,
           newPassword: newPasswordText.value,
         })
           .then((res) => {
             logout();
             router.push("/login");
           })
-          .catch((error) => {
-            errorMessage.value = "Old password is incorrect";
-            showErrorMessage.value = true;
-          });
       }
     } else {
       errorMessage.value = "Passwords are not equal";
@@ -102,9 +95,6 @@ function submit() {
   }
 }
 
-function handleOldPasswordTextChanged(password) {
-  oldPasswordText.value = password;
-}
 
 function handleNewPasswordTextChanged(password) {
   newPasswordText.value = password;
@@ -158,14 +148,6 @@ function cancel() {
             Contains Special Character
           </li>
         </ul>
-      </div>
-      <div>
-        <PasswordInput
-          :label="'Current password'"
-          :value="oldPasswordText"
-          @password-changed="handleOldPasswordTextChanged"
-          @keyup="checkPassword"
-        />
       </div>
       <div>
         <PasswordInput

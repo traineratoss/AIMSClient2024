@@ -11,7 +11,7 @@ import AdminDashboardView from "../views/AdminDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import TestView from "../views/TestView.vue";
-import { getCurrentRole, getCurrentUsername, isFirstLogin, logout } from "../services/user_service";
+import { getCurrentRole, getCurrentUsername } from "../services/user_service";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -109,11 +109,6 @@ router.beforeEach((to, from) => {
       showNavbar.value = false;
       return;
     }
-
-    const firstLogin = localStorage.getItem("isFirstLogin");
-    if (firstLogin === 'true') {
-      router.push('/change');
-    } 
   } else {
     if (to.name !== 'login' && 
         to.name !== 'register' && 
