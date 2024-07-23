@@ -85,4 +85,12 @@ async function deleteComment(commentId) {
   return response;
 }
 
-export { loadComments, postComment, postReply, loadReplies, deleteComment };
+async function getLikesCount(commentId) {
+  const response = await fetch(`${API_URL}/comments/${commentId}/likes/count`,{
+    method: "GET",
+  });
+  const data = await response.json();
+  return data;
+}
+
+export { loadComments, postComment, postReply, loadReplies, deleteComment , getLikesCount};

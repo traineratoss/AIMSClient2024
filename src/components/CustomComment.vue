@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment } from "../services/comment.service";
+import { deleteComment, getLikesCount } from "../services/comment.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
@@ -26,6 +26,7 @@ const emits = defineEmits([
   "postReply",
   "deleteComment",
   "deleteReply",
+  "getLikesCount",
 ]);
 
 const replyToggled = ref(false);
@@ -36,10 +37,23 @@ const commentText = ref("");
 const buttonSelected = ref(false);
 const showModal = ref(false);
 const maxlength = 500;
+const likesCounts = ref([]);
 
 onMounted(async () => {
   currentUserRole.value = getCurrentRole();
+  await fetchLikesCount();
 });
+
+async function fetchLikesCount() {
+    try {
+      const id = props.isReply ? props.replyId : props.commentId;
+      const data = await getLikesCount(id);
+      likesCounts.value.push(data);
+    } catch (error) {
+      console.error("Failed to fetch likes count:", error);
+    }
+}
+
 
 function loadCommentReplies() {
   emits("loadReplies");
@@ -115,6 +129,7 @@ function clearInput() {
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
           <LikeButton/>
+          <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
           <button
             v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
@@ -170,6 +185,7 @@ function clearInput() {
         </div>
         <div class="footer-container-right">
          <LikeButton/>
+         <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
           <span v-if="buttonSelected">
             <button
               class="action-icon-button"
@@ -420,5 +436,12 @@ button:hover {
   text-align: center;
   display: grid;
   grid-template-columns: 20% 60% 20%;
+}
+
+.likes-count {
+  color: black;
+  font-weight: bold;
+  margin-left: 1.5px;
+  margin-right: 10px;
 }
 </style>
