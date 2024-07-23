@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import { deleteComment } from "../services/comment.service";
 import { getCurrentUsername, getCurrentRole } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
+import LikeButton from "../components/LikeButton.vue";
+
 
 const props = defineProps({
   commentId: "",
@@ -112,6 +114,7 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
+          <LikeButton/>
           <button
             v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
@@ -166,6 +169,7 @@ function clearInput() {
           </div>
         </div>
         <div class="footer-container-right">
+         <LikeButton/>
           <span v-if="buttonSelected">
             <button
               class="action-icon-button"
@@ -345,7 +349,6 @@ function clearInput() {
 
 .material-symbols-outlined {
   background-color: inherit;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
 .elapsedTime {

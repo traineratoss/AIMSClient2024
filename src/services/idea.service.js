@@ -102,7 +102,7 @@ async function filterIdeas(
   username,
   sortDirection
 ) {
-    
+
       isFiltering.value = true;
       switch (sortDirection) {
         case 0:
@@ -148,7 +148,7 @@ async function filterIdeas(
         isFiltering.value = false;
         return json;
       }
-    // }
+      // }
 }
 
 async function getIdea(id) {

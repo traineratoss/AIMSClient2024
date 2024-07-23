@@ -11,9 +11,9 @@ const emit = defineEmits(['current-index', 'selected-image-values']);
 //checked the condition with the route path and fixed it, works for both teams
 const route = useRoute();
 
-const avatarId = parseInt(localStorage.getItem('avatarId'));
+const avatarId = parseInt(localStorage.getItem('avatarId')); 
 
-//Initially set it to yours and if im on create idea, it will update automatically
+//Initially set it to yours and if im on create idea, it will update automatically 
 const currentIndex = ref(avatarId);
 
 const selectedImageBase64 = ref(null);
@@ -124,9 +124,9 @@ onMounted(() => {
       <div
         class="slides"
         :style="imagesLoaded ? { transform: `translateX(-${currentIndex * 100}%)` } : {}"
-      >
-        <div
-          v-if="imagesLoaded"
+        v-if="imagesLoaded"
+        >
+        <div          
           v-for="(slide, index) in images"
           :key="index"
           class="slide"
@@ -142,7 +142,7 @@ onMounted(() => {
           <CustomLoader :size="60" />
         </div>
       </div>
-    </div>
+    </div> 
     <button @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-right fa-2xl" id="arrow2"></i>
     </button>
