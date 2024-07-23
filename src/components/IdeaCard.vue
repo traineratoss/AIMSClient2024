@@ -13,7 +13,7 @@ import { getIdea } from "../services/idea.service";
 import RatingStars from "../components/RatingStars.vue"
 
 const props = defineProps({
-  title: "",
+  title: "", 
   text: "",
   status: "",
   username: "",
@@ -22,7 +22,7 @@ const props = defineProps({
   elapsedTime: "",
   image: "",
   loggedUser: "",
-  image: "",
+  ratingAvg: "",
 });
 
 const emits = defineEmits(["commentCounterAdd", "commentCounterSub", "ideaNotValid", "revealOnScroll"]);
@@ -371,7 +371,7 @@ function triggerCollapseAnimation(commentId) {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container" @dblclick="redirectToCreateIdeaView()">
     <div
       class="clickable-container"
       @click="
@@ -414,11 +414,8 @@ function triggerCollapseAnimation(commentId) {
                 </div>
               </div>
               <div class="left-container-buttons">
-                <div class="left-container-buttons-grouped" v-if="isSelected">
-                    <div class="starsRating" @click="isSelectedRating">
-                      <RatingStars :initialRating="4"/>
-                    </div> 
-                    <div>
+                <div class="left-container-buttons-grouped" v-if="isSelected"> 
+                    <div class="action-on-idea">
                     <button
                       v-if="props.loggedUser === props.username || isAdmin"
                       @click.stop="editIdea()"
@@ -427,18 +424,13 @@ function triggerCollapseAnimation(commentId) {
                       EDIT
                     </button>
                     <button
-                      @click.stop="redirectToCreateIdeaView()"
-                      class="idea-button"
-                    >
-                      VIEW
-                    </button>
-                    <button
                       @click.stop="showDeletePopup()"
                       v-if="props.loggedUser === props.username || isAdmin"
                       class="idea-button"
                     >
                       DELETE
                     </button>
+                      <RatingStars :initialRating="4" @click="isSelectedRating" class="rating-stars"/>
                   </div>                
                 </div>
                 <div class="left-container-buttons-post"></div>
@@ -793,7 +785,6 @@ function triggerCollapseAnimation(commentId) {
 }
 
 .left-container-buttons {
-  flex-direction: column;
   margin-left: 1vw;
   display: flex;
   justify-content: space-between;
@@ -802,7 +793,13 @@ function triggerCollapseAnimation(commentId) {
 
 .left-container-buttons-grouped {
   display: flex;
-  flex-direction: column;
+}
+
+.action-on-idea{
+  display: flex;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
 }
 
 .right-container {

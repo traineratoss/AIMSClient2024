@@ -58,7 +58,6 @@ watch(toRef(props, 'initialRating'), (newVal) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 1rem;
 }
 
 .star {
