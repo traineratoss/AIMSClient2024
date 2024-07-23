@@ -16,13 +16,14 @@ function onInput(index, event) {
   const value = event.target.value;
   if (/^\d$/.test(value)) { //check if the value is a number between 0-9
     code.value[index] = value;
-if (index < code.value.length - 1) {
+    if (index < code.value.length - 1) {
       inputRef.value[index + 1].focus();
-        emits("otp-updated", code.value);
     }
   } else {
     code.value[index] = "";
   }
+
+  emits("otp-updated", code.value, !code.value.includes(""));
 }
 
 function onKeydown(event, index) {

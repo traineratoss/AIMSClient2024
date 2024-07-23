@@ -14,9 +14,9 @@ const showErrorMessage = ref(false);
 const errorMessage = ref("");
 const showCodeValidation = ref(false);
 const code = ref([]);
+const validOTPFormat = ref(false)
 
-
- function requestNewPassword() { 
+function requestNewPassword() { 
   if (usernameOrEmailText.value.toLowerCase()) {
     sendNewPassword(usernameOrEmailText.value)
     showCodeValidation.value = true; 
@@ -37,9 +37,9 @@ async function verifyOtp() {
   }
 }
 
-function updateOTP(otp) {
-  console.log(otp);
+function updateOTP(otp, validFormat) {
   code.value = otp;
+  validOTPFormat.value = validFormat;
 } 
   
 </script>
@@ -72,15 +72,17 @@ function updateOTP(otp) {
       >
         Request new Password
       </CustomButton>
-      <CodeValidation v-if="showCodeValidation" @otp-updated="updateOTP" />
-      <CustomButton 
-        v-if="showCodeValidation"
-        id="validation-code" 
-        @click="verifyOtp" 
-        style="display: flex; justify-content: center; align-items: center; height: 30px; width: 140px; margin-top: 20px; margin-left: 100px;"
-      >
-        Check Validation Code
-      </CustomButton>
+      <div class="container validate-otp" v-else>        
+        <p>Please input your verification code below:</p>
+        <CodeValidation @otp-updated="updateOTP" />
+        <CustomButton 
+          id="validation-code" 
+          @click="verifyOtp" 
+          :disabled="!validOTPFormat"
+        >
+          Check Validation Code
+        </CustomButton>
+      </div>
     </div>
   </div>
 </template>
@@ -94,6 +96,19 @@ function updateOTP(otp) {
   gap: 30px;
   position: relative;
   margin-top: 10vh;
+}
+
+.validate-otp {
+  margin-top: 50px;
+}
+
+.validate-otp > * {
+  width: auto;
+}
+
+p {
+  font-size: 17px;
+  margin: 0px;
 }
 
 .error-message-visible {
