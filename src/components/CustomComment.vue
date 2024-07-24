@@ -1,10 +1,17 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment, getLikesCount,deleteLike } from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole ,getIdByUsername} from "../services/user_service";
+import {
+  deleteComment,
+  getLikesCount,
+  deleteLike,
+} from "../services/comment.service";
+import {
+  getCurrentUsername,
+  getCurrentRole,
+  getIdByUsername,
+} from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
-
 
 const props = defineProps({
   commentId: "",
@@ -46,15 +53,14 @@ onMounted(async () => {
 });
 
 async function fetchLikesCount() {
-    try {
-      const id = props.isReply ? props.replyId : props.commentId;
-      const data = await getLikesCount(id);
-      likesCounts.value.push(data);
-    } catch (error) {
-      console.error("Failed to fetch likes count:", error);
-    }
+  try {
+    const id = props.isReply ? props.replyId : props.commentId;
+    const data = await getLikesCount(id);
+    likesCounts.value.push(data);
+  } catch (error) {
+    console.error("Failed to fetch likes count:", error);
+  }
 }
-
 
 function loadCommentReplies() {
   emits("loadReplies");
@@ -63,7 +69,7 @@ function loadCommentReplies() {
 async function deleteLikeForComment() {
   const userId = await getIdByUsername(currentUser);
   try {
-   await deleteLike(props.commentId,userId);
+    await deleteLike(props.commentId, userId);
   } catch (error) {
     console.error("Error deleting like:", error);
   }
@@ -72,7 +78,7 @@ async function deleteLikeForComment() {
 async function deleteLikeForReply() {
   const userId = await getIdByUsername(currentUser);
   try {
-  await deleteLike(props.replyId,userId);
+    await deleteLike(props.replyId, userId);
   } catch (error) {
     console.error("Error deleting like:", error);
   }
