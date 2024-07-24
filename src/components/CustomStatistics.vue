@@ -24,6 +24,7 @@ onMounted(async () => {
 
 // do not touch this , do not touch !!! do not touch , whatever happens , do not touch under any circumstances !!!!
 const stats = ref(props.recievedFilteredStats);
+console.log("Initial props.recievedFilteredStats:", props.recievedFilteredStats);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
@@ -47,7 +48,7 @@ watch(
 );
 
 watch(() => props.showAnimation, (newValue) => {
-  console.log(newValue)
+  console.log("showAnimation",newValue)
 })
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
@@ -184,6 +185,50 @@ function getShortenedTitle(title, maxLength) {
                 Refresh
               </button> -->
             </div>
+          </div>
+          <div v-if="stats.mostLikedComments.length !== 0" class="most-liked-comments">
+            <p>Top most liked comments:</p>
+            <table id="comment-table">
+              <tr>
+                <th>Comment content</th>
+                <th>No. of likes</th>
+              </tr>
+              <tr>
+                <td>
+                  {{ getShortenedTitle(stats.mostLikedComments[0].commentText, 20) }}
+                </td>
+                <td>{{ stats.mostLikedComments[0].nrLikes }}</td>
+              </tr>
+              <tr>
+                <td>
+                  {{ getShortenedTitle(stats.mostLikedComments[1].commentText, 20) }}
+                </td>
+                <td>{{ stats.mostLikedComments[1].nrLikes }}</td>
+              </tr>
+              <tr>
+                <td>
+                  {{ getShortenedTitle(stats.mostLikedComments[2].commentText, 20) }}
+                </td>
+                <td>{{ stats.mostLikedComments[2].nrLikes }}</td>
+              </tr>
+              <tr>
+                <td>
+                  {{ getShortenedTitle(stats.mostLikedComments[3].commentText, 20) }}
+                </td>
+                <td>{{ stats.mostLikedComments[3].nrLikes }}</td>
+              </tr>
+              <tr>
+                <td>
+                  {{ getShortenedTitle(stats.mostLikedComments[4].commentText, 20) }}
+                </td>
+                <td>{{ stats.mostLikedComments[4].nrLikes }}</td>
+              </tr>
+            </table>
+            <!-- <div class="swich-buttons">
+              <button class="load-button" @click="loadTop5Ideas()">
+                {{ !showTopIdeas ? "Load top comments" : "Load all comments" }}
+              </button>
+            </div> -->
           </div>
           <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
             <p>Top Most commented ideas:</p>
@@ -340,6 +385,7 @@ function getShortenedTitle(title, maxLength) {
               </button> -->
             </div>
           </div>
+          
           <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
             <p>Top Most commented ideas:</p>
             <h4>No comments were posted in this time interval</h4>
@@ -399,6 +445,24 @@ function getShortenedTitle(title, maxLength) {
 }
 
 #idea-table {
+  margin-top: 10px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: 1px solid slategray;
+  text-align: center;
+  width: 18vw;
+  min-height: 10vh;
+}
+
+.most-liked-comments {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+#comment-table {
   margin-top: 10px;
   table-layout: fixed;
   border-collapse: collapse;
