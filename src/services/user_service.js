@@ -36,7 +36,6 @@ async function checkValidationeCode(otp, usernameOrEmail) {
     return json;
   } else {
     const text = await response.text();
-    console.log(text)
     throw new Error(text)
   }
 }
@@ -192,11 +191,25 @@ async function changePassword(changePasswordDTO) {
     body: JSON.stringify({
       username: changePasswordDTO.username,
       newPassword: changePasswordDTO.newPassword,
+      oldPassword: changePasswordDTO.oldPassword
     }),
   });
 
+  if (!response.ok) {
+    throw new Error('Incorrect old password');
+  }
 
+  return response;
+}
 
+async function abortChangePassword() {
+  const response = await fetch(`${API_URL}/change-password/abort`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: getCurrentUsername()
+    }),
+  });
   return response;
 }
 
@@ -365,5 +378,6 @@ export {
   getCurrentAvatarId,
   validateUsername,
   isFirstLogin, 
-  sendEmailToAllAdmins
+  sendEmailToAllAdmins,
+  abortChangePassword
 };
