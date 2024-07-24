@@ -1,10 +1,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment, getLikesCount,deleteLike } from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole ,getIdByUsername} from "../services/user_service";
+import {
+  deleteComment,
+  getLikesCount,
+  deleteLike,
+  postLike,
+} from "../services/comment.service";
+import {
+  getCurrentUsername,
+  getCurrentRole,
+  getIdByUsername,
+} from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
-
 
 const props = defineProps({
   commentId: "",
@@ -19,6 +27,8 @@ const props = defineProps({
   loggedUser: "",
 });
 
+console.log("Initial props:", props);
+
 const emits = defineEmits([
   "toggleReplies",
   "showReplies",
@@ -28,6 +38,7 @@ const emits = defineEmits([
   "deleteLike",
   "deleteReply",
   "getLikesCount",
+  "postLike",
 ]);
 
 const replyToggled = ref(false);
@@ -46,15 +57,14 @@ onMounted(async () => {
 });
 
 async function fetchLikesCount() {
-    try {
-      const id = props.isReply ? props.replyId : props.commentId;
-      const data = await getLikesCount(id);
-      likesCounts.value.push(data);
-    } catch (error) {
-      console.error("Failed to fetch likes count:", error);
-    }
+  try {
+    const id = props.isReply ? props.replyId : props.commentId;
+    const data = await getLikesCount(id);
+    likesCounts.value.push(data);
+  } catch (error) {
+    console.error("Failed to fetch likes count:", error);
+  }
 }
-
 
 function loadCommentReplies() {
   emits("loadReplies");
@@ -63,21 +73,36 @@ function loadCommentReplies() {
 async function deleteLikeForComment() {
   const userId = await getIdByUsername(currentUser);
   try {
-   await deleteLike(props.commentId,userId);
+    await deleteLike(props.commentId, userId);
   } catch (error) {
     console.error("Error deleting like:", error);
+  }
+}
+async function postLikeForComment() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+    await postLike(props.commentId, userId);
+  } catch (error) {
+    console.error("Error posting like:", error);
   }
 }
 
 async function deleteLikeForReply() {
   const userId = await getIdByUsername(currentUser);
   try {
-  await deleteLike(props.replyId,userId);
+    await deleteLike(props.replyId, userId);
   } catch (error) {
     console.error("Error deleting like:", error);
   }
 }
-
+async function postLikeForReply() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+    await postLike(props.replyId, userId);
+  } catch (error) {
+    console.error("Error posting like:", error);
+  }
+}
 
 async function deleteCommentById(commentId) {
   try {
@@ -148,8 +173,17 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <LikeButton @likeChanged="deleteLikeForReply"/>
-          <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
+          <LikeButton
+            @deleteLike="deleteLikeForReply"
+            @addLike="postLikeForReply"
+            v-if="currentUser != props.username"
+          />
+          <span
+            v-for="(count, index) in likesCounts"
+            :key="index"
+            class="likes-count"
+            >{{ count }}</span
+          >
           <button
             v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
@@ -204,8 +238,17 @@ function clearInput() {
           </div>
         </div>
         <div class="footer-container-right">
-          <LikeButton @likeChanged="deleteLikeForComment"/> 
-         <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
+          <LikeButton
+            @deleteLike="deleteLikeForComment"
+            @addLike="postLikeForComment"
+            v-if="currentUser != props.username"
+          />
+          <span
+            v-for="(count, index) in likesCounts"
+            :key="index"
+            class="likes-count"
+            >{{ count }}</span
+          >
           <span v-if="buttonSelected">
             <button
               class="action-icon-button"
