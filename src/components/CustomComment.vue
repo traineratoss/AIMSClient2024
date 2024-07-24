@@ -178,6 +178,7 @@ function clearInput() {
             @addLike="postLikeForReply"
             v-if="currentUser != props.username"
           />
+          <b v-if="currentUser == props.username">Likes: </b>
           <span
             v-for="(count, index) in likesCounts"
             :key="index"
@@ -243,6 +244,7 @@ function clearInput() {
             @addLike="postLikeForComment"
             v-if="currentUser != props.username"
           />
+          <b v-if="currentUser == props.username">Likes: </b>
           <span
             v-for="(count, index) in likesCounts"
             :key="index"
