@@ -74,6 +74,7 @@ async function deleteLikeForComment() {
   const userId = await getIdByUsername(currentUser);
   try {
     await deleteLike(props.commentId, userId);
+    likesCounts.value[0]--;
   } catch (error) {
     console.error("Error deleting like:", error);
   }
@@ -82,6 +83,7 @@ async function postLikeForComment() {
   const userId = await getIdByUsername(currentUser);
   try {
     await postLike(props.commentId, userId);
+    likesCounts.value[0]++;
   } catch (error) {
     console.error("Error posting like:", error);
   }
@@ -91,6 +93,7 @@ async function deleteLikeForReply() {
   const userId = await getIdByUsername(currentUser);
   try {
     await deleteLike(props.replyId, userId);
+    likesCounts.value[0]--;
   } catch (error) {
     console.error("Error deleting like:", error);
   }
@@ -99,6 +102,7 @@ async function postLikeForReply() {
   const userId = await getIdByUsername(currentUser);
   try {
     await postLike(props.replyId, userId);
+    likesCounts.value[0]++;
   } catch (error) {
     console.error("Error posting like:", error);
   }
