@@ -79,6 +79,7 @@ async function deleteLikeForReply() {
 }
 
 
+
 async function deleteCommentById(commentId) {
   try {
     const response = await deleteComment(commentId);
@@ -148,7 +149,7 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <LikeButton @likeChanged="deleteLikeForReply"/>
+          <LikeButton @deleteLike="deleteLikeForReply"/>
           <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
           <button
             v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
@@ -204,7 +205,7 @@ function clearInput() {
           </div>
         </div>
         <div class="footer-container-right">
-          <LikeButton @likeChanged="deleteLikeForComment"/> 
+          <LikeButton @deleteLike="deleteLikeForComment"/> 
          <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
           <span v-if="buttonSelected">
             <button

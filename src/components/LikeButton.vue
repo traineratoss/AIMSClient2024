@@ -2,18 +2,16 @@
   <script setup>
   import { ref, computed } from 'vue';
 
-  const emits = defineEmits(['likeChanged']);
+  const emits = defineEmits(['deleteLike']);
   
   const isBlackIcon = ref(false);
   
   const toggleIcon = () => {
-    isBlackIcon.value = !isBlackIcon.value;
-    if(!isBlackIcon.value)
-    {
-    emits('likeChanged');
-    }
-    
-  };
+  if (isBlackIcon.value) {
+    emits("deleteLike");
+  } 
+  isBlackIcon.value = !isBlackIcon.value;
+};
   
   const iconClass = computed(() => {
     return isBlackIcon.value ? 'blackIcon' : '';
