@@ -4,6 +4,7 @@ import {
   deleteComment,
   getLikesCount,
   deleteLike,
+  postLike,
 } from "../services/comment.service";
 import {
   getCurrentUsername,
@@ -26,6 +27,8 @@ const props = defineProps({
   loggedUser: "",
 });
 
+console.log("Initial props:", props);
+
 const emits = defineEmits([
   "toggleReplies",
   "showReplies",
@@ -35,6 +38,7 @@ const emits = defineEmits([
   "deleteLike",
   "deleteReply",
   "getLikesCount",
+  "postLike",
 ]);
 
 const replyToggled = ref(false);
@@ -74,6 +78,14 @@ async function deleteLikeForComment() {
     console.error("Error deleting like:", error);
   }
 }
+async function postLikeForComment() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+    await postLike(props.commentId, userId);
+  } catch (error) {
+    console.error("Error posting like:", error);
+  }
+}
 
 async function deleteLikeForReply() {
   const userId = await getIdByUsername(currentUser);
@@ -83,8 +95,14 @@ async function deleteLikeForReply() {
     console.error("Error deleting like:", error);
   }
 }
-
-
+async function postLikeForReply() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+    await postLike(props.replyId, userId);
+  } catch (error) {
+    console.error("Error posting like:", error);
+  }
+}
 
 async function deleteCommentById(commentId) {
   try {
@@ -155,8 +173,18 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <LikeButton @deleteLike="deleteLikeForReply"/>
-          <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
+          <LikeButton
+            @deleteLike="deleteLikeForReply"
+            @addLike="postLikeForReply"
+            v-if="currentUser != props.username"
+          />
+          <b v-if="currentUser == props.username">Likes: </b>
+          <span
+            v-for="(count, index) in likesCounts"
+            :key="index"
+            class="likes-count"
+            >{{ count }}</span
+          >
           <button
             v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
             class="action-icon-button"
@@ -211,8 +239,18 @@ function clearInput() {
           </div>
         </div>
         <div class="footer-container-right">
-          <LikeButton @deleteLike="deleteLikeForComment"/> 
-         <span v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count }}</span>
+          <LikeButton
+            @deleteLike="deleteLikeForComment"
+            @addLike="postLikeForComment"
+            v-if="currentUser != props.username"
+          />
+          <b v-if="currentUser == props.username">Likes: </b>
+          <span
+            v-for="(count, index) in likesCounts"
+            :key="index"
+            class="likes-count"
+            >{{ count }}</span
+          >
           <span v-if="buttonSelected">
             <button
               class="action-icon-button"
