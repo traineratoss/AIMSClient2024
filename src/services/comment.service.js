@@ -100,13 +100,19 @@ async function deleteLike(commentId, userId) {
 }
 
 async function postLike(commentId, userId) {
-  console.log(commentId);
-  console.log(userId);
   return fetch(API_URL + "/comments/like/" + commentId + "/" + userId, {
     method: "POST",
   });
 }
+async function getLike(commentId, userId) {
+  
+  const response = await fetch(API_URL + "/comments/find/" + commentId + "/" + userId, {
+    method: "GET",
+  });
 
+  const text = await response.json();
+  return text;
+}
 
 export {
   loadComments,
@@ -117,4 +123,5 @@ export {
   deleteLike,
   getLikesCount,
   postLike,
+  getLike,
 };

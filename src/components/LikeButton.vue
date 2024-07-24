@@ -1,22 +1,20 @@
 <script setup>
 import { ref, computed } from "vue";
+import { getLike } from "../services/comment.service";
 
-  const emits = defineEmits(['addLike','deleteLike']);
-  
-  const isBlackIcon = ref(false);
-  
-  const toggleIcon = () => {
-  if (isBlackIcon.value) {
+const props=defineProps({isBlackIcon: false});
+const emits = defineEmits(["addLike", "deleteLike"]);
+
+const toggleIcon = () => {
+  if (props.isBlackIcon) {
     emits("deleteLike");
-  } else
-  {
+  } else {
     emits("addLike");
   }
-  isBlackIcon.value = !isBlackIcon.value;
 };
 
 const iconClass = computed(() => {
-  return isBlackIcon.value ? "blackIcon" : "";
+  return props.isBlackIcon ? "blackIcon" : "";
 });
 </script>
 
