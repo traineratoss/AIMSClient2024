@@ -33,6 +33,7 @@ const selectedDateFrom = ref("");
 const selectedDateTo = ref("");
 const sortOrder = ref("ASC");
 const filteredIdeasEmit = ref({});
+const ratingSelected = ref("");
 
 const clearAllDropdownValues = ref(false);
 
@@ -54,6 +55,7 @@ watch(
     statusSelected,
     categoriesSelected,
     userSelected,
+    ratingSelected,
     selectedDateFrom,
     selectedDateTo,
   ],
@@ -63,6 +65,7 @@ watch(
     newStatusSelected,
     newCategoriesSelected,
     newUserSelected,
+    newRatingSelected,
     newSelectedDateFrom,
     newSelectedDateTo,
   ]) => {
@@ -73,6 +76,7 @@ watch(
       newStatusSelected,
       newCategoriesSelected,
       newUserSelected,
+      newRatingSelected,
       newSelectedDateFrom,
       newSelectedDateTo
     );
@@ -136,6 +140,7 @@ const filter = async () => {
   const dateFrom = selectedDateFrom.value;
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
+  const rating = ratingSelected.value;
   const status = statusSelected.value;
 
   const filteredIdeas = await filterIdeas(
@@ -149,6 +154,7 @@ const filter = async () => {
     props.currentPage - 1,
     props.ideasPerPage,
     props.currentUser,
+    rating,
     props.sort
   );
 
@@ -179,6 +185,7 @@ function clearSelection() {
   categoriesSelected.value = [];
   userSelected.value = [];
   statusSelected.value = [];
+  ratingSelected.value = "";
   clearAllDropdownValues.value = true;
   setTimeout(() => {
     clearAllDropdownValues.value = false;
@@ -281,7 +288,6 @@ watch(userSelected, () => {
     setPosition("userSelect", "displayUsers");
   }
 });
-
 </script>
 
 <template>
@@ -300,7 +306,11 @@ watch(userSelected, () => {
         :placeholder="`Write a title...`"
         :can-modify-search-value="true"
         :widthInPx="13"
-        :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
+        :style="{
+          'border-color': 'slategray',
+          'background-color': 'white',
+          'font-weight': '400',
+        }"
       />
 
       <span class="text">Text:</span>
@@ -310,7 +320,11 @@ watch(userSelected, () => {
         :placeholder="`Write a text...`"
         :can-modify-search-value="false"
         :widthInPx="13"
-        :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
+        :style="{
+          'border-color': 'slategray',
+          'background-color': 'white',
+          'font-weight': '400',
+        }"
       />
 
       <span :class="statusSelected.length > 0 ? 'status2' : 'status'"
@@ -387,14 +401,22 @@ watch(userSelected, () => {
               v-model="selectedDateFrom"
               type="date"
               class="from-input"
-              :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
+              :style="{
+                'border-color': 'slategray',
+                'background-color': 'white',
+                'font-weight': '400',
+              }"
             />
             <span class="to-date"> To: </span>
             <CustomInput
               v-model="selectedDateTo"
               type="date"
               class="to-input"
-              :style=" { 'border-color': 'slategray', 'background-color': 'white', 'font-weight': '400' }"
+              :style="{
+                'border-color': 'slategray',
+                'background-color': 'white',
+                'font-weight': '400',
+              }"
             />
           </div>
         </fieldset>
