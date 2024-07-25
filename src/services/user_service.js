@@ -33,6 +33,7 @@ async function checkValidationeCode(otp, usernameOrEmail) {
     localStorage.setItem("fullName", json.fullName);
     localStorage.setItem("avatarId", json.avatarId - 1);
     localStorage.setItem("isFirstLogin", json.isFirstLogin);
+    localStorage.setItem("userId", json.id);
     return json;
   } else {
     const text = await response.text();
@@ -77,6 +78,7 @@ async function loginUser(username, hashPassword) {
     localStorage.setItem("fullName", json.fullName);
     localStorage.setItem("avatarId", json.avatarId - 1);
     localStorage.setItem("isFirstLogin", json.isFirstLogin);
+    localStorage.setItem("userId", json.id);
     return json;
   }
 }
@@ -176,7 +178,7 @@ async function getAllUserByUsername(
   pageNumber,
   sortCategory,
   username,
-  currentUsername
+  currentUsername,
 ) {
   const response = await fetch(
     `${API_URL}/allByUsername?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}&username=${username}&currentUsername=${currentUsername}`
@@ -300,6 +302,10 @@ function getCurrentAvatarId() {
   return localStorage.getItem("avatarId");
 }
 
+function getCurrentUserId(){
+  return localStorage.getItem("userId");
+}
+
 function setCurrentUsername(username) {
   localStorage.setItem('username', username);
 }
@@ -363,6 +369,7 @@ export {
   getCurrentEmail,
   getCurrentFullName,
   getCurrentAvatarId,
+  getCurrentUserId,
   validateUsername,
   isFirstLogin, 
   sendEmailToAllAdmins

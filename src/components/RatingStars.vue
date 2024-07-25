@@ -1,31 +1,39 @@
 <script setup>
-import { ref, watch, toRef } from "vue";
+import { ref, watch, toRef, defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   initialRating: {
     type: Number,
-    required: true,
-    default: 0
+    required: true
+  },
+  disableHover: {
+    type: Boolean,
+    default: false
   }
 });
+
+const emit = defineEmits(['ratingUpdated']);
 
 const currentRating = ref(props.initialRating);
 const hoverRating = ref(0);
 const isHovered = ref(false);
 
-function setRating(rating) {
-  currentRating.value = rating;
-  isHovered.value = false; 
-}
-
 function setHoverRating(rating) {
-  hoverRating.value = rating;
-  isHovered.value = true;
+  if (!props.disableHover) {
+    hoverRating.value = rating;
+    isHovered.value = true;
+  }
 }
 
 function resetHover() {
-  hoverRating.value = 0;
-  isHovered.value = false;
+  if (!props.disableHover) {
+    hoverRating.value = 0;
+    isHovered.value = false;
+  }
+}
+
+function setRating(rating) {
+  emit('ratingUpdated', rating);
 }
 
 watch(toRef(props, 'initialRating'), (newVal) => {
@@ -40,18 +48,17 @@ watch(toRef(props, 'initialRating'), (newVal) => {
       :key="index"
       class="material-symbols-outlined star"
       :class="{
-        filled: index < (isHovered ? hoverRating : currentRating),
-        hover: isHovered && index < hoverRating
+        filled: index <= (isHovered ? hoverRating : currentRating),
+        hover: !props.disableHover && isHovered && index <= hoverRating
       }"
-      @click="setRating(index + 1)"
-      @mouseover="setHoverRating(index + 1)"
+      @click="setRating(index)"
+      @mouseover="setHoverRating(index)"
       @mouseleave="resetHover"
     >
       star
     </span>
   </div>
 </template>
-
 
 <style scoped>
 .starsRating {
@@ -73,7 +80,7 @@ watch(toRef(props, 'initialRating'), (newVal) => {
   color: black;
 }
 
-.star.hover{
+.star.hover {
   font-variation-settings:
     'FILL' 1,
     'wght' 400,
@@ -82,4 +89,3 @@ watch(toRef(props, 'initialRating'), (newVal) => {
   color: #ffa941;
 }
 </style>
-

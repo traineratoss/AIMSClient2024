@@ -590,6 +590,7 @@ function setIdeasEmptyFunction(){
               @comment-counter-add="idea.commentsNumber++"
               @comment-counter-sub="idea.commentsNumber--"
               @revealOnScroll="scrollFadeOnExpand()"
+              :ratingAvg="idea.ratingAvg"
             />
           </div>
           <div

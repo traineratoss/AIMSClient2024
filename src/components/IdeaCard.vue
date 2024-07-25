@@ -8,9 +8,10 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole, getCurrentUserId } from "../services/user_service";
 import { getIdea } from "../services/idea.service";
 import RatingStars from "../components/RatingStars.vue"
+import { postRating } from "../services/rating_service";
 
 const props = defineProps({
   title: "", 
@@ -36,6 +37,7 @@ const arrayOfCommentIdAndReplyPair = ref([]);
 const isSelected = ref(false);
 const maxCommentLength = 500;
 const numberOfDisplayedComments = ref(10);
+const userId = getCurrentUserId();
 
 async function editIdea() {
   const data = await getIdea(props.ideaId);
@@ -368,6 +370,18 @@ function triggerCollapseAnimation(commentId) {
   }
 } 
 
+const ratingAvg = ref(props.ratingAvg);
+
+const updateRating = async (newRating) => {
+  try {
+    await postRating(props.ideaId, userId, newRating);
+    const response = await getIdea(props.ideaId);
+    ratingAvg.value = response.ratingAvg;
+  } catch (error) {
+    console.error("Error", error);
+  }
+};
+
 </script>
 
 <template>
@@ -430,7 +444,12 @@ function triggerCollapseAnimation(commentId) {
                     >
                       DELETE
                     </button>
-                      <RatingStars :initialRating="props.ratingAvg+1" @click="isSelectedRating" class="rating-stars"/>
+                    <RatingStars
+                      :initialRating="ratingAvg"
+                      @ratingUpdated="updateRating"
+                      @click="isSelectedRating"
+                      class="rating-stars"
+                    />
                   </div>                
                 </div>
                 <div class="left-container-buttons-post"></div>

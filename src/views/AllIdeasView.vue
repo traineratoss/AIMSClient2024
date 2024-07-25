@@ -2,7 +2,7 @@
 import CustomSidePanel from "../components/CustomSidePanel.vue";
 import { ref, onMounted, watch, computed, onUnmounted } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas } from "../services/idea.service";
+import { filterIdeas, loadPagedIdeas, getIdea } from "../services/idea.service";
 import {
   getStats,
   sendDataForCustomStats,
@@ -112,7 +112,7 @@ onMounted(async () => {
     }, 0);
   }
 
-  console.log(ideas);
+  // console.log(ideas);
 
   showStatistics();
   setTimeout(() => {

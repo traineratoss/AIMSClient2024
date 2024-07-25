@@ -19,7 +19,6 @@ const emits = defineEmits(["loadTop5Ideas", "loadData"]);
 onMounted(async () => {
   calculateImplementationPercentage();
   showSkeleton.value = false;
-  console.log(" din stats ", stats.value);
 });
 
 // do not touch this , do not touch !!! do not touch , whatever happens , do not touch under any circumstances !!!!

@@ -6,6 +6,7 @@ import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
 import { ref, onMounted, watchEffect, computed, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
+import RatingStars from "../components/RatingStars.vue"
 import router from "../router";
 import {
   getCategory,
@@ -17,7 +18,8 @@ import {
   getImageByIdeaId,
   getImageById,
 } from "../services/idea.service";
-import { getCurrentUsername, getCurrentRole } from "../services/user_service";
+import { getCurrentUsername, getCurrentRole, getCurrentUserId } from "../services/user_service";
+import { getRating } from "../services/rating_service";
 
 const inputValue = ref("");
 const statusValue = ref("open");
@@ -53,6 +55,20 @@ const handleSelectedCategories = (selectedCategories) => {
   categoriesSelected.value = selectedCategories;
 };
 
+const user_id = getCurrentUserId();
+const idea_id = useRoute().query.id;
+const value = ref(0);
+
+async function getRatingFunction(){
+  try {
+    const response = await getRating(idea_id, user_id);
+    value.value = response;
+  } catch (error) {
+    console.error("Error", error);
+  }
+};
+
+
 onMounted(async () => {
   if (updatedIdea.value == null) {
     categoriesSelected.value = [];
@@ -60,6 +76,7 @@ onMounted(async () => {
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
+  getRatingFunction();
 
   // must optimize a lot here, we shouldn't load all the images at first, it will take a lot of time
   // initially, load the image we need and then loading one image at a time, depending on the direction
@@ -436,6 +453,15 @@ function onMouseLeave() {}
 
 function onMouseEnter() {}
 
+const route = useRoute();
+
+const shouldDisplayRatingStars = computed(() => {
+  const currentPath = route.path;
+  const query = route.query;
+
+  return currentPath === '/create-idea' && 'disableFields' in query;
+});
+
 function removeSelection(index) {
   if (!disableFields) {
     const indexValue = index;
@@ -558,6 +584,15 @@ function removeSelection(index) {
             {{ category }} <b>x</b>
           </div>
         </div>
+        <div class="rating" v-if="shouldDisplayRatingStars">
+          <label for="title-idea" class="label">Rating:</label>
+          <RatingStars
+            :initialRating="value"
+            :disableHover="true"
+            class="rating-stars"
+          />
+        </div>
+        
       </div>
 
       <div class="idea-text">
@@ -1030,5 +1065,24 @@ select {
 
 .border-alert {
   border: 2px solid red;
+}
+
+.rating{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.rating-stars{
+  justify-content: start;
+  padding-left: 2rem;
+}
+
+.idea-text{
+  margin-top: 3rem;
+}
+
+.carousel-container{
+  padding-top: 2rem;
 }
 </style>
