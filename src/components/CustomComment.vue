@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment,deleteLike } from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole ,getIdByUsername} from "../services/user_service";
+import { deleteComment, getLikesCount, deleteLike, postLike, getLike } from "../services/comment.service";
+import { getCurrentUsername, getCurrentRole, getIdByUsername, } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
 
@@ -19,6 +19,8 @@ const props = defineProps({
   loggedUser: "",
 });
 
+console.log("Initial props:", props);
+
 const emits = defineEmits([
   "toggleReplies",
   "showReplies",
@@ -27,6 +29,8 @@ const emits = defineEmits([
   "deleteComment",
   "deleteLike",
   "deleteReply",
+  "getLikesCount",
+  "postLike",
 ]);
 
 const replyToggled = ref(false);
@@ -37,10 +41,38 @@ const commentText = ref("");
 const buttonSelected = ref(false);
 const showModal = ref(false);
 const maxlength = 500;
+const likesCounts = ref([]);
+const isBlackIcon = ref(true);
 
 onMounted(async () => {
   currentUserRole.value = getCurrentRole();
+  await fetchLikesCount();
+
+  const userId = await getIdByUsername(currentUser);
+  try {
+    if (props.commentId !== undefined) {
+      const liked = await getLike(props.commentId, userId);
+      isBlackIcon.value = liked;
+    } else {
+      const liked = await getLike(props.replyId, userId);
+      isBlackIcon.value = liked;
+    }
+
+  } catch (error) {
+    console.error("Error fetching like status:", error);
+  }
 });
+
+
+async function fetchLikesCount() {
+  try {
+    const id = props.isReply ? props.replyId : props.commentId;
+    const data = await getLikesCount(id);
+    likesCounts.value.push(data);
+  } catch (error) {
+    console.error("Failed to fetch likes count:", error);
+  }
+}
 
 function loadCommentReplies() {
   emits("loadReplies");
@@ -49,21 +81,44 @@ function loadCommentReplies() {
 async function deleteLikeForComment() {
   const userId = await getIdByUsername(currentUser);
   try {
-   await deleteLike(props.commentId,userId);
+    await deleteLike(props.commentId, userId);
+    likesCounts.value[0]--;
+    isBlackIcon.value = !isBlackIcon.value;
   } catch (error) {
     console.error("Error deleting like:", error);
+  }
+}
+async function postLikeForComment() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+    await postLike(props.commentId, userId);
+    likesCounts.value[0]++;
+    isBlackIcon.value = !isBlackIcon.value;
+  } catch (error) {
+    console.error("Error posting like:", error);
   }
 }
 
 async function deleteLikeForReply() {
   const userId = await getIdByUsername(currentUser);
   try {
-  await deleteLike(props.replyId,userId);
+    await deleteLike(props.replyId, userId);
+    likesCounts.value[0]--;
+    isBlackIcon.value = !isBlackIcon.value;
   } catch (error) {
     console.error("Error deleting like:", error);
   }
 }
-
+async function postLikeForReply() {
+  const userId = await getIdByUsername(currentUser);
+  try {
+    await postLike(props.replyId, userId);
+    likesCounts.value[0]++;
+    isBlackIcon.value = !isBlackIcon.value;
+  } catch (error) {
+    console.error("Error posting like:", error);
+  }
+}
 
 async function deleteCommentById(commentId) {
   try {
@@ -134,20 +189,17 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <LikeButton @likeChanged="deleteLikeForReply"/>
-          <button
-            v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
-            class="action-icon-button"
-            @click="showModal = true"
-          >
+          <LikeButton @deleteLike="deleteLikeForReply" @addLike="postLikeForReply" v-if="currentUser != props.username"
+            :isBlackIcon="isBlackIcon" />
+          <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
+          <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
+          }}</span>
+          <button v-if="currentUser === props.username || currentUserRole === 'ADMIN'" class="action-icon-button"
+            @click="showModal = true">
             <span class="material-symbols-outlined"> delete </span>
           </button>
           <Teleport to="body">
-            <CustomModal
-              :show="showModal"
-              @close="showModal = false"
-              @delete="deleteReplyById(props.replyId)"
-            >
+            <CustomModal :show="showModal" @close="showModal = false" @delete="deleteReplyById(props.replyId)">
               <template #header>
                 <h3>Do you want to delete this reply?</h3>
               </template>
@@ -178,54 +230,40 @@ function clearInput() {
               <span v-if="!replyToggled" class="material-symbols-outlined">
                 expand_more
               </span>
-              <span
-                v-else
-                class="material-symbols-outlined"
-                :style="{ color: 'orange' }"
-              >
+              <span v-else class="material-symbols-outlined" :style="{ color: 'orange' }">
                 expand_less
               </span>
             </button>
           </div>
         </div>
         <div class="footer-container-right">
-          <LikeButton @likeChanged="deleteLikeForComment"/> 
+          <LikeButton @deleteLike="deleteLikeForComment" @addLike="postLikeForComment"
+            v-if="currentUser != props.username" :isBlackIcon="isBlackIcon" />
+          <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
+          <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
+          }}</span>
           <span v-if="buttonSelected">
-            <button
-              class="action-icon-button"
-              :style="{ color: 'orange' }"
-              @click="
-                postToggle = !postToggle;
-                buttonSelected = !buttonSelected;
-              "
-            >
+            <button class="action-icon-button" :style="{ color: 'orange' }" @click="
+              postToggle = !postToggle;
+            buttonSelected = !buttonSelected;
+            ">
               <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
           <span v-if="!buttonSelected">
-            <button
-              class="action-icon-button"
-              @click="
-                postToggle = !postToggle;
-                buttonSelected = !buttonSelected;
-              "
-            >
+            <button class="action-icon-button" @click="
+              postToggle = !postToggle;
+            buttonSelected = !buttonSelected;
+            ">
               <span class="material-symbols-outlined"> add_comment </span>
             </button>
           </span>
-          <button
-            v-if="currentUser === props.username || currentUserRole === 'ADMIN'"
-            class="action-icon-button"
-            @click="showModal = true"
-          >
+          <button v-if="currentUser === props.username || currentUserRole === 'ADMIN'" class="action-icon-button"
+            @click="showModal = true">
             <span class="material-symbols-outlined"> delete </span>
           </button>
           <Teleport to="body">
-            <CustomModal
-              :show="showModal"
-              @close="showModal = false"
-              @delete="deleteCommentById(props.commentId)"
-            >
+            <CustomModal :show="showModal" @close="showModal = false" @delete="deleteCommentById(props.commentId)">
               <template #header>
                 <h3>Do you want to delete this comment?</h3>
               </template>
@@ -235,24 +273,17 @@ function clearInput() {
       </div>
     </div>
     <div class="reply-input-container" v-if="postToggle">
-      <textarea
-        :maxlength="maxlength"
-        v-model="commentText"
-        placeholder="  Write your reply here .."
-        id="insert-reply-textarea"
-      >
+      <textarea :maxlength="maxlength" v-model="commentText" placeholder="  Write your reply here .."
+        id="insert-reply-textarea">
       </textarea>
       <div class="chars">
         <div></div>
         <p>{{ commentText.length }} / 500</p>
-        <button
-          id="postButton"
-          @click="
-            postReply(currentUser, props.parentId, commentText);
-            postToggle = !postToggle;
-            buttonSelected = !buttonSelected;
-          "
-        >
+        <button id="postButton" @click="
+          postReply(currentUser, props.parentId, commentText);
+        postToggle = !postToggle;
+        buttonSelected = !buttonSelected;
+        ">
           Post reply
         </button>
       </div>
@@ -273,6 +304,7 @@ function clearInput() {
   max-height: 45vh;
   box-sizing: border-box;
 }
+
 .reply-container {
   background-color: rgb(255, 255, 255);
   border-radius: 5px;
@@ -347,6 +379,7 @@ function clearInput() {
   padding-right: 7px;
   word-wrap: break-word;
 }
+
 .footer-container {
   display: grid;
   grid-template-columns: 25% 50% 25%;
@@ -374,6 +407,7 @@ function clearInput() {
 .elapsedTime {
   margin-right: 5px;
 }
+
 .action-icon-button {
   background-color: inherit;
   border: none;
@@ -440,5 +474,12 @@ button:hover {
   text-align: center;
   display: grid;
   grid-template-columns: 20% 60% 20%;
+}
+
+.likes-count {
+  color: black;
+  font-weight: bold;
+  margin-left: 1.5px;
+  margin-right: 10px;
 }
 </style>

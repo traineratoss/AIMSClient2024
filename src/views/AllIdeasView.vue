@@ -36,6 +36,7 @@ const inputUser = ref([]);
 const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const isAdmin = ref("");
+const selectedRating = ref("");
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -48,6 +49,7 @@ let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 let currentUserRole = "";
+let currentRating = "";
 
 // fade images variables
 const ideasTransitionContainer = ref(null);
@@ -64,7 +66,7 @@ const sleepNow = (delay) =>
 
 onMounted(async () => {
   ideasTransitionContainer.value.addEventListener("scroll", scrollFade);
-  ideasTransitionContainer.value.addEventListener("wheel", scrollFade)
+  ideasTransitionContainer.value.addEventListener("wheel", scrollFade);
   ideasTransitionContainer.value.style.overflowY = "hidden";
 
   if (
@@ -87,8 +89,11 @@ onMounted(async () => {
     currentPage.value - 1,
     ideaPerPage.value,
     null,
+    currentRating,
     "ASC"
   );
+
+  console.log(currentRating);
 
   loadingPage.value = true;
   loggedUser.value = getCurrentUsername();
@@ -138,6 +143,7 @@ watch(searchValue, async (newValue) => {
       currentPage.value - 1,
       ideaPerPage.value,
       null,
+      currentRating,
       sortOrder.value
     );
     if (data === "No ideas found.") {
@@ -213,8 +219,11 @@ function scrollFade() {
 
       if (shouldFade) {
         if (elementBottom < -30) {
-          const topOpacityPercentage = -10/3 - (reveals[i].getBoundingClientRect().top -
-          ideasTransitionContainer.value.getBoundingClientRect().bottom) / 30;
+          const topOpacityPercentage =
+            -10 / 3 -
+            (reveals[i].getBoundingClientRect().top -
+              ideasTransitionContainer.value.getBoundingClientRect().bottom) /
+              30;
           reveals[i].style.opacity = `${topOpacityPercentage}`;
         }
 
@@ -224,14 +233,16 @@ function scrollFade() {
 
         // Setting the opacities of the bottom elements to fade in and out
 
-
         if (elementTop < 125) {
-          const topOpacityPercentage = -75/50 + (reveals[i].getBoundingClientRect().top -
-          ideasTransitionContainer.value.getBoundingClientRect().bottom) / 50;
+          const topOpacityPercentage =
+            -75 / 50 +
+            (reveals[i].getBoundingClientRect().top -
+              ideasTransitionContainer.value.getBoundingClientRect().bottom) /
+              50;
           reveals[i].style.opacity = `${topOpacityPercentage}`;
         }
-      //   console.log(reveals[1].getBoundingClientRect().bottom -
-      // ideasTransitionContainer.value.getBoundingClientRect().top)
+        //   console.log(reveals[1].getBoundingClientRect().bottom -
+        // ideasTransitionContainer.value.getBoundingClientRect().top)
 
         // if (
         //   ideasTransitionContainer.value.clientHeight -
@@ -293,6 +304,7 @@ async function changePage(pageNumber) {
     pageNumber - 1,
     ideaPerPage.value,
     null,
+    currentRating,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
 
@@ -330,6 +342,7 @@ function setCurrentVariables() {
   currentUser = inputUser.value;
   currentSelectedDateFrom = inputSelectedDateFrom.value;
   currentSelectedDateTo = inputSelectedDateTo.value;
+  currentRating = selectedRating.value;
 }
 
 // here, the page asc or desc is happening
@@ -351,6 +364,7 @@ async function updateSortOrder() {
         currentPage.value - 1,
         ideaPerPage.value,
         null,
+        currentRating,
         "ASC"
       );
 
@@ -401,6 +415,7 @@ async function updateSortOrder() {
         currentPage.value - 1,
         ideaPerPage.value,
         null,
+        currentRating,
         "DESC"
       );
 
@@ -467,6 +482,7 @@ async function loadRecievedIdeas(mostCommentedIdeas) {
         currentPage.value - 1,
         ideaPerPage.value,
         null,
+        currentRating,
         sortOrder.value
       );
 
@@ -507,6 +523,7 @@ async function loadData() {
     "creationDate",
     "ASC"
   );
+
   ideas.value = data.content;
   loadingPage.value = false;
   setTimeout(() => {
@@ -518,7 +535,7 @@ async function loadData() {
 
 async function updateIdeas(filteredIdeas) {
   ideasTransitionContainer.value.style.overflowY = "hidden";
-  
+
   totalPages.value = Math.ceil(filteredIdeas.totalElements / ideaPerPage.value); // the total nr of pages after filtering needs to be updated
   showTopIdeas.value = false;
 
@@ -547,6 +564,7 @@ async function updateIdeas(filteredIdeas) {
       currentPage.value - 1,
       ideaPerPage.value,
       null,
+      selectedRating.value,
       sortOrder.value
     );
 
@@ -564,8 +582,6 @@ async function updateIdeas(filteredIdeas) {
         document.getElementById("scrollable-middle").scrollTop = "0";
       }, 0);
     }
-    // }
-    // }
   } else {
     if (filteredIdeas === "No ideas found.") {
       noIdeasFoundCondition.value = true;
@@ -604,6 +620,7 @@ async function changeDisplay(pageSize) {
       currentPage.value - 1,
       ideaPerPage.value,
       null,
+      currentRating,
       sortOrder.value
     );
 
@@ -648,7 +665,8 @@ const onPassInputVariables = (
   inputCategoryParam,
   inputUserParam,
   inputSelectedDateFromParam,
-  inputSelectedDateToParam
+  inputSelectedDateToParam,
+  selectedRatingParam
 ) => {
   inputTitle.value = inputTitleParam;
   inputText.value = inputTextParam;
@@ -657,6 +675,7 @@ const onPassInputVariables = (
   inputUser.value = inputUserParam;
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
+  selectedRating.value = selectedRatingParam;
 };
 
 //if the item has an image in the db, we return it. if not, we return a default one
@@ -692,13 +711,12 @@ async function showStatistics() {
 function scrollFadeOnExpand() {
   setTimeout(() => {
     scrollFade();
-  }, 600)
+  }, 600);
 }
 
-function setIdeasEmptyFunction(){
+function setIdeasEmptyFunction() {
   ideas.value = [];
 }
-
 </script>
 
 <template>
@@ -710,7 +728,7 @@ function setIdeasEmptyFunction(){
         :currentUser="null"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
-        @setIdeasEmpty = "setIdeasEmptyFunction()"
+        @setIdeasEmpty="setIdeasEmptyFunction()"
         :ideasPerPage="ideaPerPage"
         :hideUser="false"
         :clear-all="showTopIdeas"
@@ -754,8 +772,8 @@ function setIdeasEmptyFunction(){
               @change="updateSortOrder"
               style="width: 3.8vw"
             >
-            <option :value="0"> Oldest </option>
-            <option :value="1"> Newest </option>
+              <option :value="0">Oldest</option>
+              <option :value="1">Newest</option>
             </select>
             <div class="pageSize">
               <PageSizeSelect

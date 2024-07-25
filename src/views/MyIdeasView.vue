@@ -28,6 +28,7 @@ const inputCategory = ref([]);
 const inputUser = ref([]);
 const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
+const inputRating = ref("");
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -39,6 +40,7 @@ let currentCategory = [];
 let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
+let currentRating = "";
 
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);
@@ -76,6 +78,7 @@ onMounted(async () => {
     currentPage.value - 1,
     ideaPerPage.value,
     currentUsername,
+    currentRating,
     "ASC"
   );
 
@@ -115,6 +118,7 @@ watch(searchValue, async (newValue) => {
       currentPage.value - 1,
       ideaPerPage.value,
       currentUsername,
+      currentRating,
       sortOrder.value
     );
 
@@ -189,8 +193,11 @@ function scrollFade() {
 
       if (shouldFade) {
         if (elementBottom < -30) {
-          const topOpacityPercentage = -10/3 - (reveals[i].getBoundingClientRect().top -
-          ideasTransitionContainer.value.getBoundingClientRect().bottom) / 30;
+          const topOpacityPercentage =
+            -10 / 3 -
+            (reveals[i].getBoundingClientRect().top -
+              ideasTransitionContainer.value.getBoundingClientRect().bottom) /
+              30;
           reveals[i].style.opacity = `${topOpacityPercentage}`;
         }
 
@@ -200,14 +207,16 @@ function scrollFade() {
 
         // Setting the opacities of the bottom elements to fade in and out
 
-
         if (elementTop < 125) {
-          const topOpacityPercentage = -75/50 + (reveals[i].getBoundingClientRect().top -
-          ideasTransitionContainer.value.getBoundingClientRect().bottom) / 50;
+          const topOpacityPercentage =
+            -75 / 50 +
+            (reveals[i].getBoundingClientRect().top -
+              ideasTransitionContainer.value.getBoundingClientRect().bottom) /
+              50;
           reveals[i].style.opacity = `${topOpacityPercentage}`;
         }
-      //   console.log(reveals[1].getBoundingClientRect().bottom -
-      // ideasTransitionContainer.value.getBoundingClientRect().top)
+        //   console.log(reveals[1].getBoundingClientRect().bottom -
+        // ideasTransitionContainer.value.getBoundingClientRect().top)
 
         // if (
         //   ideasTransitionContainer.value.clientHeight -
@@ -269,6 +278,7 @@ async function changePage(pageNumber) {
     pageNumber - 1,
     ideaPerPage.value,
     currentUsername,
+    currentRating,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
 
@@ -299,6 +309,7 @@ function setCurrentVariables() {
   currentUser = inputUser.value;
   currentSelectedDateFrom = inputSelectedDateFrom.value;
   currentSelectedDateTo = inputSelectedDateTo.value;
+  currentRating = inputRating.value;
 }
 
 // here, the page asc or desc is happening
@@ -319,6 +330,7 @@ async function updateSortOrder() {
       currentPage.value - 1,
       ideaPerPage.value,
       getCurrentUsername(),
+      currentRating,
       "ASC"
     );
 
@@ -351,6 +363,7 @@ async function updateSortOrder() {
       currentPage.value - 1,
       ideaPerPage.value,
       getCurrentUsername(),
+      currentRating,
       "DESC"
     );
 
@@ -401,6 +414,7 @@ async function updateIdeas(filteredIdeas) {
       currentPage.value - 1,
       ideaPerPage.value,
       currentUsername,
+      currentRating,
       sortOrder.value
     );
 
@@ -448,6 +462,7 @@ const onPassInputVariables = (
   inputStatusParam,
   inputCategoryParam,
   inputUserParam,
+  inputRatingParam,
   inputSelectedDateFromParam,
   inputSelectedDateToParam
 ) => {
@@ -456,6 +471,7 @@ const onPassInputVariables = (
   inputStatus.value = inputStatusParam;
   inputCategory.value = inputCategoryParam;
   inputUser.value = inputUserParam;
+  inputRating.value = inputRatingParam;
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
 };
@@ -470,7 +486,6 @@ const getImageUrl = (item) => {
 };
 
 async function changeDisplay(pageSize) {
-
   ideas.value = [];
   ideasTransitionContainer.value.style.overflowY = "hidden";
 
@@ -487,6 +502,7 @@ async function changeDisplay(pageSize) {
     currentPage.value - 1,
     ideaPerPage.value,
     currentUsername,
+    currentRating,
     "ASC"
   );
 
@@ -512,14 +528,12 @@ async function changeDisplay(pageSize) {
 function scrollFadeOnExpand() {
   setTimeout(() => {
     scrollFade();
-  }, 600)
+  }, 600);
 }
 
-function setIdeasEmptyFunction(){
+function setIdeasEmptyFunction() {
   ideas.value = [];
 }
-
-
 </script>
 
 <template>
@@ -531,35 +545,43 @@ function setIdeasEmptyFunction(){
         :currentUser="getCurrentUsername()"
         :currentPage="currentPage"
         @pass-input-variables="onPassInputVariables"
-        @setIdeasEmpty = "setIdeasEmptyFunction()"
+        @setIdeasEmpty="setIdeasEmptyFunction()"
         :ideasPerPage="ideaPerPage"
         :hideUser="true"
       />
       />
     </div>
     <div class="main-container">
-      
       <div
         v-if="ideas.length === 0 && !noIdeasFoundCondition"
         class="loading-placeholder"
       >
         <CustomLoader :size="100" />
       </div>
-      <div class="middle-container" id="scrollable-middle" ref="ideasTransitionContainer">
+      <div
+        class="middle-container"
+        id="scrollable-middle"
+        ref="ideasTransitionContainer"
+      >
         <div
-            class="sort-container"
-            :style="
-              ideas
-                ? ideas.length === 0
-                  ? { visibility: 'hidden', 'text-align': 'right' }
-                  : { visibility: 'visible', 'text-align': 'right' }
-                : { 'text-align': 'right' }
-            "
-          >
+          class="sort-container"
+          :style="
+            ideas
+              ? ideas.length === 0
+                ? { visibility: 'hidden', 'text-align': 'right' }
+                : { visibility: 'visible', 'text-align': 'right' }
+              : { 'text-align': 'right' }
+          "
+        >
           <label for="sortOrder">Sort by: </label>
-          <select id="sortOrder" v-model="sortOrder" @change="updateSortOrder" style="width: 3.8vw">
-            <option :value="0"> Oldest </option>
-            <option :value="1"> Newest </option>
+          <select
+            id="sortOrder"
+            v-model="sortOrder"
+            @change="updateSortOrder"
+            style="width: 3.8vw"
+          >
+            <option :value="0">Oldest</option>
+            <option :value="1">Newest</option>
           </select>
           <div class="pageSize">
             <PageSizeSelect
@@ -570,8 +592,7 @@ function setIdeasEmptyFunction(){
           </div>
         </div>
 
-        <div class="ideas-transition-container"
-            ref="ideasTransitionContainer" >
+        <div class="ideas-transition-container" ref="ideasTransitionContainer">
           <div
             v-for="idea in ideas"
             :key="idea.id"
@@ -594,13 +615,13 @@ function setIdeasEmptyFunction(){
             />
           </div>
           <div
-        v-if="ideas.length === 0 && noIdeasFoundCondition"
-        class="no-ideas-message"
-      >
-        <img src="../assets/img/curiosity-search.svg" />
-        <br />
-        <span class="black-font">Your search returned no results</span>
-      </div>
+            v-if="ideas.length === 0 && noIdeasFoundCondition"
+            class="no-ideas-message"
+          >
+            <img src="../assets/img/curiosity-search.svg" />
+            <br />
+            <span class="black-font">Your search returned no results</span>
+          </div>
         </div>
       </div>
 
@@ -618,7 +639,6 @@ function setIdeasEmptyFunction(){
 </template>
 
 <style scoped>
-
 .reveal {
   position: relative;
   opacity: 0;

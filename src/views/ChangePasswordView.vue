@@ -6,13 +6,14 @@ import {
   getCurrentAvatarId,
   getCurrentUsername,
   logout,
-  isFirstLogin,
+  abortChangePassword
 } from "../services/user_service";
 import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import PasswordInput from "../components/PasswordInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 
+const oldPasswordText = ref("");
 const newPasswordText = ref("");
 const confirmNewPassword = ref("");
 const showErrorMessage = ref(false);
@@ -24,7 +25,7 @@ const containsEightCharacters = ref(false);
 const containsNumber = ref(false);
 const containsUppercase = ref(false);
 const containsSpecialCharacter = ref(false);
-const firstLogin = ref(false);
+const isFirstLogin = ref(localStorage.getItem("isFirstLogin") === "true");
 currentAvatarId.value = getCurrentAvatarId();
 
 const slideImages = [
@@ -37,64 +38,68 @@ const slideImages = [
   "src/assets/img/avatars/avatar7.svg",
 ];
 
-onMounted(() => {
-  firstLogin.value = localStorage.getItem("isFirstLogin");
-});
+function checkPasswords(newPassword, confirmNewPassword) {
+  if (newPassword !== confirmNewPassword) {
+    throw new Error("Passwords don't match");
+  }
 
-function submit() {
-  if (
+  const upperCaseRegex = /[A-Z]/;
+  const numberRegex = /[0-9]/;
+  const specialCharacterRegex = /[#$^&*_@]/;
+
+  if (newPassword.length < 8) {
+    throw new Error("The new password must contain at least 8 characters");
+  }
+
+  if (!upperCaseRegex.test(newPassword)) {
+    throw new Error("The new password must contain at least one uppercase character");
+  }
+
+  if (!numberRegex.test(newPassword)) {
+    throw new Error("The new password must contain at least one number");
+  }
+
+  if (!specialCharacterRegex.test(newPassword)) {
+    throw new Error("The new password must contain at least one special character(#$^&*_@)");
+  }
+}
+
+function checkAllFieldsComplelted() {
+  if (!(
+    (oldPasswordText.value || isFirstLogin.value) &&
     newPasswordText.value &&
     confirmNewPassword.value
-  ) {
-    if (newPasswordText.value === confirmNewPassword.value) {
-      let passwordFormatOK = true;
-      const upperCaseRegex = /[A-Z]/;
-      const specialCharacterRegex = /[#$^&*_@]/;
+  )) {
+    throw new Error("All fields must be filled in")
+  }
+}
 
-      if (newPasswordText.value.length < 8) {
-        errorMessage.value =
-          "The new password must contain at least 8 characters";
-        showErrorMessage.value = true;
-        passwordFormatOK = false;
-      }
+async function submit() {
+  try {
+    checkAllFieldsComplelted();
+    checkPasswords(newPasswordText.value, confirmNewPassword.value);
 
-      if (!upperCaseRegex.test(newPasswordText.value) && passwordFormatOK) {
-        errorMessage.value =
-          "The new password must contain at least one uppercase character";
-        showErrorMessage.value = true;
-        passwordFormatOK = false;
-      }
-
-      if (
-        !specialCharacterRegex.test(newPasswordText.value) &&
-        passwordFormatOK
-      ) {
-        errorMessage.value =
-          "The new password must contain at least one special character(#$^&*_@)";
-        showErrorMessage.value = true;
-        passwordFormatOK = false;
-      }
-
-      if (passwordFormatOK) {
-        changePassword({
-          username: getCurrentUsername(),
-          newPassword: newPasswordText.value,
-        })
-          .then((res) => {
-            logout();
-            router.push("/login");
-          })
-      }
-    } else {
-      errorMessage.value = "Passwords are not equal";
-      showErrorMessage.value = true;
+    try {
+      await changePassword({
+        username: getCurrentUsername(),
+        oldPassword: oldPasswordText.value,
+        newPassword: newPasswordText.value,
+      });
+      logout();
+      router.push("/login");
+    } catch (error) {
+      throw new Error("Old password is incorrect");
     }
-  } else {
-    errorMessage.value = "All fields must be completed";
+
+  } catch (error) {
+    errorMessage.value = error.message;
     showErrorMessage.value = true;
   }
 }
 
+function handleOldPasswordTextChanged(password) {
+  oldPasswordText.value = password;
+}
 
 function handleNewPasswordTextChanged(password) {
   newPasswordText.value = password;
@@ -114,9 +119,14 @@ function checkPassword() {
   containsSpecialCharacter.value = format.test(newPasswordText.value);
 }
 
-function cancel() {
-  logout();
-  router.push("/login");
+async function cancel() {
+  if (isFirstLogin.value) {    
+    await abortChangePassword();
+    logout();
+    router.push("/login");
+  } else {
+    router.push("/my");
+  }
 }
 </script>
 
@@ -149,6 +159,14 @@ function cancel() {
           </li>
         </ul>
       </div>
+      <div v-if="!isFirstLogin">
+        <PasswordInput
+          :label="'Current password'"
+          :value="oldPasswordText"
+          @password-changed="handleOldPasswordTextChanged"
+          @keyup="checkPassword"
+        />
+      </div>
       <div>
         <PasswordInput
           :label="'New password'"
@@ -166,7 +184,7 @@ function cancel() {
         />
       </div>
       <div id="controls-container">
-        <button id="cancel" :disabled="!firstLogin" @click="cancel">
+        <button id="cancel" @click="cancel">
           Cancel
         </button>
         <CustomButton id="submit" @click="submit">Submit</CustomButton>

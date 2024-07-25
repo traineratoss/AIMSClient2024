@@ -85,11 +85,43 @@ async function deleteComment(commentId) {
   return response;
 }
 
-async function deleteLike(commentId,userId) {
-  return fetch(API_URL + "/comments/like/delete/"+commentId+"/"+userId, {
-    method: "DELETE",
+async function getLikesCount(commentId) {
+  const response = await fetch(`${API_URL}/comments/${commentId}/likes/count`, {
+    method: "GET",
   });
-  return response;
+  const data = await response.json();
+  return data;
 }
 
-export { loadComments, postComment, postReply, loadReplies, deleteComment,deleteLike };
+async function deleteLike(commentId, userId) {
+  return fetch(API_URL + "/comments/like/delete/" + commentId + "/" + userId, {
+    method: "DELETE",
+  });
+}
+
+async function postLike(commentId, userId) {
+  return fetch(API_URL + "/comments/like/" + commentId + "/" + userId, {
+    method: "POST",
+  });
+}
+async function getLike(commentId, userId) {
+  
+  const response = await fetch(API_URL + "/comments/find/" + commentId + "/" + userId, {
+    method: "GET",
+  });
+
+  const text = await response.json();
+  return text;
+}
+
+export {
+  loadComments,
+  postComment,
+  postReply,
+  loadReplies,
+  deleteComment,
+  deleteLike,
+  getLikesCount,
+  postLike,
+  getLike,
+};

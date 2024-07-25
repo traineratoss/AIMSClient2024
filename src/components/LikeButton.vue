@@ -1,48 +1,38 @@
+<script setup>
+import { ref, computed } from "vue";
+import { getLike } from "../services/comment.service";
 
-  <script setup>
-  import { ref, computed } from 'vue';
+const props=defineProps({isBlackIcon: false});
+const emits = defineEmits(["addLike", "deleteLike"]);
 
-  const emits = defineEmits(['likeChanged']);
-  
-  const isBlackIcon = ref(false);
-  
-  const toggleIcon = () => {
-    isBlackIcon.value = !isBlackIcon.value;
-    if(!isBlackIcon.value)
-    {
-    emits('likeChanged');
-    }
-    
-  };
-  
-  const iconClass = computed(() => {
-    return isBlackIcon.value ? 'blackIcon' : '';
-  });
-  </script>
-  
-
-  <template>
-    <button class="action-icon-button" @click="toggleIcon">
-      <span class="material-symbols-outlined" :class="iconClass"> thumb_up </span>
-    </button>
-  </template>
-
-
-
-  <style scoped>
-  .blackIcon {
-    font-variation-settings: 
-    'FILL' 1, 
-    'wght' 400, 
-    'GRAD' 0, 
-    'opsz' 24;
-    color: black;
+const toggleIcon = () => {
+  if (props.isBlackIcon) {
+    emits("deleteLike");
+  } else {
+    emits("addLike");
   }
-  
-  .action-icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  </style>
-  
+};
+
+const iconClass = computed(() => {
+  return props.isBlackIcon ? "blackIcon" : "";
+});
+</script>
+
+<template>
+  <button class="action-icon-button" @click="toggleIcon">
+    <span class="material-symbols-outlined" :class="iconClass"> thumb_up </span>
+  </button>
+</template>
+
+<style scoped>
+.blackIcon {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+  color: black;
+}
+
+.action-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+</style>
