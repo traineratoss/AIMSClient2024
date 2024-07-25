@@ -8,13 +8,17 @@ import {
   postComment,
   postReply,
 } from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole, getCurrentUserId } from "../services/user_service";
+import {
+  getCurrentUsername,
+  getCurrentRole,
+  getCurrentUserId,
+} from "../services/user_service";
 import { getIdea } from "../services/idea.service";
-import RatingStars from "../components/RatingStars.vue"
+import RatingStars from "../components/RatingStars.vue";
 import { postRating } from "../services/rating_service";
 
 const props = defineProps({
-  title: "", 
+  title: "",
   text: "",
   status: "",
   username: "",
@@ -26,7 +30,12 @@ const props = defineProps({
   ratingAvg: "",
 });
 
-const emits = defineEmits(["commentCounterAdd", "commentCounterSub", "ideaNotValid", "revealOnScroll"]);
+const emits = defineEmits([
+  "commentCounterAdd",
+  "commentCounterSub",
+  "ideaNotValid",
+  "revealOnScroll",
+]);
 
 const allLoadedComments = ref([]);
 const commentText = ref([]);
@@ -39,12 +48,13 @@ const maxCommentLength = 500;
 const numberOfDisplayedComments = ref(10);
 const userId = getCurrentUserId();
 
+console.log(userId);
 async function editIdea() {
   const data = await getIdea(props.ideaId);
 
   if (data === "Idea doesn't exist.") {
     // emits("ideaNotValid", true)
-    // TODO 
+    // TODO
   } else {
     const username = data.username;
     const title = data.title;
@@ -105,7 +115,7 @@ async function loadCommentReplies(comment) {
 function toggleCommentReplies(comment) {
   comment.replyToggle = !comment.replyToggle;
   loadCommentReplies(comment);
-  emits("revealOnScroll", true)
+  emits("revealOnScroll", true);
 }
 
 function showCommentReplies(comment) {
@@ -132,7 +142,7 @@ function showDeletePopup() {
 function toggleComments() {
   loadIdeaComments();
   showCommentsToggle.value = !showCommentsToggle.value;
-  emits("revealOnScroll", true)
+  emits("revealOnScroll", true);
 }
 
 function getRepliesForComment(commentId) {
@@ -305,7 +315,7 @@ function selectIdea() {
   }
 }
 
-function isSelectedRating(){
+function isSelectedRating() {
   isSelected.value = false;
 }
 
@@ -368,7 +378,7 @@ function triggerCollapseAnimation(commentId) {
       reply.style.opacity = "";
     };
   }
-} 
+}
 
 const ratingAvg = ref(props.ratingAvg);
 
@@ -381,7 +391,6 @@ const updateRating = async (newRating) => {
     console.error("Error", error);
   }
 };
-
 </script>
 
 <template>
@@ -415,7 +424,7 @@ const updateRating = async (newRating) => {
                 <div class="text" v-else>
                   {{ getShortenedTitle(title, 32) }}
                 </div>
-              </div> 
+              </div>
               <div class="status">
                 {{ props.status }}
               </div>
@@ -428,8 +437,8 @@ const updateRating = async (newRating) => {
                 </div>
               </div>
               <div class="left-container-buttons">
-                <div class="left-container-buttons-grouped" v-if="isSelected"> 
-                    <div class="action-on-idea">
+                <div class="left-container-buttons-grouped" v-if="isSelected">
+                  <div class="action-on-idea">
                     <button
                       v-if="props.loggedUser === props.username || isAdmin"
                       @click.stop="editIdea()"
@@ -450,7 +459,7 @@ const updateRating = async (newRating) => {
                       @click="isSelectedRating"
                       class="rating-stars"
                     />
-                  </div>                
+                  </div>
                 </div>
                 <div class="left-container-buttons-post"></div>
               </div>
@@ -814,7 +823,7 @@ const updateRating = async (newRating) => {
   display: flex;
 }
 
-.action-on-idea{
+.action-on-idea {
   display: flex;
   flex-direction: row;
   display: flex;
@@ -922,7 +931,6 @@ img {
   background-color: inherit;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
-
 
 .comment-input-wrapper {
   display: flex;
