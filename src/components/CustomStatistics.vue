@@ -192,42 +192,13 @@ function getShortenedTitle(title, maxLength) {
                 <th>Comment content</th>
                 <th>No. of likes</th>
               </tr>
-              <tr>
+              <tr v-for="(comment, index) in stats.mostLikedComments" :key="index">
                 <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[0].commentText, 20) }}
+                  {{ getShortenedTitle(comment.commentText, 20) }}
                 </td>
-                <td>{{ stats.mostLikedComments[0].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[1].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[1].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[2].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[2].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[3].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[3].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[4].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[4].nrLikes }}</td>
+                <td>{{ comment.nrLikes }}</td>
               </tr>
             </table>
-            <!-- <div class="swich-buttons">
-              <button class="load-button" @click="loadTop5Ideas()">
-                {{ !showTopIdeas ? "Load top comments" : "Load all comments" }}
-              </button>
-            </div> -->
           </div>
           <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
             <p>Top Most commented ideas:</p>
