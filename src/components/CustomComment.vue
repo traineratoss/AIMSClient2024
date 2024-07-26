@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment, getLikesCount, deleteLike, postLike, getLike } from "../services/comment.service";
+import { deleteComment, getLikesCount, deleteLike, postLike, getLike ,reportComment} from "../services/comment.service";
 import { getCurrentUsername, getCurrentRole, getIdByUsername, } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
@@ -40,9 +40,11 @@ const currentUserRole = ref("");
 const commentText = ref("");
 const buttonSelected = ref(false);
 const showModal = ref(false);
+const showModal2 = ref(false);
 const maxlength = 500;
 const likesCounts = ref([]);
 const isBlackIcon = ref(true);
+const isReported = ref(false);
 
 onMounted(async () => {
   currentUserRole.value = getCurrentRole();
@@ -84,22 +86,6 @@ async function postLikeForComment() {
     console.error("Error posting like:", error);
   }
 }
-
-
-
-async function deleteLikeAll() {
-  const id = props.isReply ? props.replyId : props.commentId;
-  const userId = await getIdByUsername(currentUser);
-  try {
-    await deleteLike(id, userId);
-    likesCounts.value[0]--;
-    isBlackIcon.value = !isBlackIcon.value;
-  } catch (error) {
-    console.error("Error deleting like:", error);
-  }
-  
-}
-
 
 async function postLikeForReply() {
   const userId = await getIdByUsername(currentUser);
@@ -163,7 +149,35 @@ function postReply(username, parentId, commentText) {
 function clearInput() {
   commentText.value = "";
 }
+
+async function deleteLikeAll() {
+  const id = props.isReply ? props.replyId : props.commentId;
+  const userId = await getIdByUsername(currentUser);
+  try {
+    await deleteLike(id, userId);
+    likesCounts.value[0]--;
+    isBlackIcon.value = !isBlackIcon.value;
+  } catch (error) {
+    console.error("Error deleting like:", error);
+  }
+  
+}
+
+async function handleReport() {
+  const userId = await getIdByUsername(currentUser);
+  const commentId = props.isReply ? props.replyId : props.commentId;
+  try {
+    const result = await reportComment(commentId, userId); 
+    console.log("Comment reported:", result);
+    isReported.value = true; 
+    showModal2.value = false; 
+  } catch (error) {
+    console.error("Error reporting comment:", error);
+  }
+}
+
 </script>
+
 
 <template>
   <div v-if="props.isReply" class="reply-container">
@@ -181,6 +195,16 @@ function clearInput() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
+          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true">
+            <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
+          </button>
+          <Teleport to="body">
+            <CustomModal :show="showModal2" @close="showModal2 = false" @delete="handleReport()">
+              <template #header>
+                <h3>Do you want to report this reply?</h3>
+              </template>
+            </CustomModal>
+          </Teleport>
           <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply" v-if="currentUser != props.username"
             :isBlackIcon="isBlackIcon" />
           <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
@@ -229,6 +253,16 @@ function clearInput() {
           </div>
         </div>
         <div class="footer-container-right">
+          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true">
+            <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
+          </button>
+          <Teleport to="body">
+            <CustomModal :show="showModal2" @close="showModal2 = false" @delete="handleReport()">
+              <template #header>
+                <h3>Do you want to report this comment?</h3>
+              </template>
+            </CustomModal>
+          </Teleport>
           <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForComment"
             v-if="currentUser != props.username" :isBlackIcon="isBlackIcon" />
           <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
