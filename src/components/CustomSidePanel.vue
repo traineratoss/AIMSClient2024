@@ -174,7 +174,8 @@ const filter = async () => {
     props.sort
   );
 
-  console.log(filteredIdeas);
+  //console.log(filteredIdeas);
+  console.log("asfasf")
 
   if (filteredIdeas === "No ideas found.") {
     filteredIdeasEmit.value = {
