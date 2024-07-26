@@ -37,10 +37,7 @@ async function postComment(username, ideaId, commentText) {
     },
   });
 
-  //console.log(username);
   const data = await response.json();
-  //console.log(data);
-
   return data;
 }
 
@@ -114,18 +111,6 @@ async function getLike(commentId, userId) {
   return text;
 }
 
-// async function reportComment(commentId, userId) {
-//   const response = await fetch(API_URL + "/comments/report/" + commentId + "/" + userId, {
-//     method: "POST",
-//   });
-//   if (!response.ok) {
-//     throw new Error("Network response was not ok");
-//   }
-//   const text = await response.json();
-//   console.log(text);
-//   return text;
-// }
-
 async function reportComment(commentId, userId) {
   const response = await fetch(API_URL + "/comments/report/" + commentId + "/" + userId, {
     method: "POST",
@@ -135,14 +120,13 @@ async function reportComment(commentId, userId) {
     throw new Error("Network response was not ok");
   }
 
-  // Check if response is JSON, if not, handle as text
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.indexOf("application/json") !== -1) {
     const data = await response.json();
     return data;
   } else {
     const text = await response.text();
-    return { message: text }; // wrap text response in a JSON object
+    return { message: text };
   }
 }
 
