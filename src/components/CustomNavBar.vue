@@ -50,6 +50,12 @@ const dashboardElements = [
     route: "/all",
     icon: "bar_chart",
   },
+  {
+    id: "reported-comments",
+    name: "Reported Comments",
+    route: "/reports-dashboard",
+    icon: "report",
+  },
 ];
 
 const isSearchInputFocusedSetter = (focused) => {

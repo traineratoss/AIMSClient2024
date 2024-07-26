@@ -34,18 +34,18 @@ const progressBar = ref(0);
 const loadingSpeed = 10;
 
 const showTopIdeas = ref(false);
-
+ 
 watch(progressBar, (newX) => {
   progressBar.value = newX;
 });
-
+ 
 watch(
   () => props.showTopIdeas,
   (newValue) => {
     showTopIdeas.value = newValue;
   }
 );
-
+ 
 watch(() => props.showAnimation, (newValue) => {
   console.log("showAnimation",newValue)
 })
@@ -66,7 +66,7 @@ async function calculateImplementationPercentage() {
     progressBar.value++;
   }
 }
-
+ 
 function loadTop5Ideas() {
   console.log(
     "Top 5 ideas >> ",
@@ -75,7 +75,7 @@ function loadTop5Ideas() {
 
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
-
+ 
 async function refreshStats() {
   showSkeleton.value = true;
 
@@ -130,7 +130,7 @@ function getShortenedTitle(title, maxLength) {
               <div class="fill" :style="{ width: progressBar + '%' }"></div>
             </div>
           </div>
-
+ 
           <div class="piechart">
             <pie-chart :sizeInVW="10" :speedInMS="loadingSpeed" :openP="stats.openP" :implP="stats.implP"
               :draftP="stats.draftP" :colorOpen="'#fadebc'" :colorImpl="'#ffb55a'" :colorDraft="'#b3b3b3'"
@@ -179,7 +179,7 @@ function getShortenedTitle(title, maxLength) {
               <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
-
+ 
               <!-- <button class="load-button" @click="refreshStats()">
                 Refresh
               </button> -->
@@ -192,42 +192,13 @@ function getShortenedTitle(title, maxLength) {
                 <th>Comment content</th>
                 <th>No. of likes</th>
               </tr>
-              <tr>
+              <tr v-for="(comment, index) in stats.mostLikedComments" :key="index">
                 <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[0].commentText, 20) }}
+                  {{ getShortenedTitle(comment.commentText, 20) }}
                 </td>
-                <td>{{ stats.mostLikedComments[0].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[1].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[1].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[2].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[2].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[3].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[3].nrLikes }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostLikedComments[4].commentText, 20) }}
-                </td>
-                <td>{{ stats.mostLikedComments[4].nrLikes }}</td>
+                <td>{{ comment.nrLikes }}</td>
               </tr>
             </table>
-            <!-- <div class="swich-buttons">
-              <button class="load-button" @click="loadTop5Ideas()">
-                {{ !showTopIdeas ? "Load top comments" : "Load all comments" }}
-              </button>
-            </div> -->
           </div>
           <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
             <p>Top Most commented ideas:</p>
@@ -407,7 +378,7 @@ function getShortenedTitle(title, maxLength) {
     </div>
   </transition>
 </template>
-
+ 
 <style scoped>
 .swich-buttons {
   display: flex;
@@ -416,7 +387,7 @@ function getShortenedTitle(title, maxLength) {
   flex-direction: row;
   gap: 15px;
 }
-
+ 
 .load-button {
   margin-top: 20px;
   border: 1px solid black;
@@ -427,14 +398,14 @@ function getShortenedTitle(title, maxLength) {
   border-radius: 3px;
   cursor: pointer;
 }
-
+ 
 .load-button:hover {
   /* color: #ffa941;
   border: 1px solid #ffa941; */
   background-color: #ffa941;
   font-weight: bold;
 }
-
+ 
 .most-commented-ideas {
   display: flex;
   align-items: center;
@@ -442,7 +413,7 @@ function getShortenedTitle(title, maxLength) {
   flex-direction: column;
   margin-top: 20px;
 }
-
+ 
 #idea-table {
   margin-top: 10px;
   table-layout: fixed;
@@ -452,7 +423,7 @@ function getShortenedTitle(title, maxLength) {
   width: 18vw;
   min-height: 10vh;
 }
-
+ 
 .most-liked-comments {
   display: flex;
   align-items: center;
@@ -460,7 +431,7 @@ function getShortenedTitle(title, maxLength) {
   flex-direction: column;
   margin-top: 20px;
 }
-
+ 
 #comment-table {
   margin-top: 10px;
   table-layout: fixed;
@@ -476,7 +447,7 @@ th {
   font-size: 16px;
   padding: 5px;
 }
-
+ 
 td {
   font-size: 15px;
   padding: 2px;
@@ -491,11 +462,11 @@ strong {
   opacity: 0.3;
   transition: opacity 0.7s;
 }
-
+ 
 .stats-fade-enter-to {
   opacity: 1;
 }
-
+ 
 .skeleton-loader {
   display: flex;
   align-items: center;
@@ -542,29 +513,29 @@ strong {
   overflow: auto;
   margin-bottom: 15vh;
 }
-
+ 
 .stats-container::-webkit-scrollbar {
   display: block;
   width: 10px;
 }
-
+ 
 .stats-container:hover::-webkit-scrollbar {
   display: block;
   width: 10px;
 }
-
+ 
 .stats-container::-webkit-scrollbar-thumb {
   background-color: #ffa941;
   border-radius: 5px;
   border: 1px solid slategray;
 }
-
+ 
 .fill {
   height: 100%;
   background-color: #ffa941;
   transition: width 0.3s ease;
 }
-
+ 
 .implementation-bar {
   width: 75%;
   height: 20px;
@@ -574,11 +545,11 @@ strong {
   border-radius: 7.5px;
   overflow: hidden;
 }
-
+ 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
-
+ 
 .stat-item {
   display: flex;
   align-items: center;

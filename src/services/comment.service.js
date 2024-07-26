@@ -79,7 +79,7 @@ async function loadReplies(pageSize, pageNumber, sortCategory, parentId) {
 }
 
 async function deleteComment(commentId) {
-  return fetch(API_URL + "/comments?commentId=" + commentId, {
+  return fetch(API_URL + "/comments/" + commentId, {
     method: "DELETE",
   });
   return response;
@@ -106,12 +106,23 @@ async function postLike(commentId, userId) {
 }
 async function getLike(commentId, userId) {
   
-  const response = await fetch(API_URL + "/comments/find/" + commentId + "/" + userId, {
+  const response = await fetch(API_URL + "/comments/like/find/" + commentId + "/" + userId, {
     method: "GET",
   });
 
   const text = await response.json();
   return text;
+}
+
+async function getAllCommentsByReportsNr(pageSize,pageNumber,sortCategory) {
+  const response = await fetch(
+    `${API_URL}/comments/allByReportsNr?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`,{
+      method:"GET",
+    }
+  );
+
+  const json = await response.json();
+  return json;
 }
 
 export {
@@ -124,4 +135,5 @@ export {
   getLikesCount,
   postLike,
   getLike,
+  getAllCommentsByReportsNr,
 };
