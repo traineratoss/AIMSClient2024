@@ -309,6 +309,10 @@ function isSelectedRating(){
   isSelected.value = false;
 }
 
+function isSelectedSubscription(){
+  isSelected.value = true;
+}
+
 const isAdmin = getCurrentRole() === "ADMIN";
 
 watch(
@@ -382,6 +386,15 @@ const updateRating = async (newRating) => {
   }
 };
 
+const isSubscribed = ref(false);
+
+const toggleSubscriptionIcon = () => {
+  isSubscribed.value = !isSubscribed.value;
+  isSelectedSubscription();
+}
+
+
+
 </script>
 
 <template>
@@ -405,9 +418,9 @@ const updateRating = async (newRating) => {
               : { 'background-color': 'white' }
           "
         ></div>
-        <div class="idea-card" @dblclick="redirectToCreateIdeaView()">
+        <div class="idea-card">
           <div class="top-container">
-            <div class="left-container">
+            <div class="left-container"  @dblclick="redirectToCreateIdeaView()">
               <div class="left-container-title">
                 <div class="text" v-if="isSelected">
                   {{ getShortenedTitle(title, 40) }}
@@ -456,6 +469,18 @@ const updateRating = async (newRating) => {
               </div>
             </div>
             <div class="right-container">
+
+
+              <div class="right-container-icon">
+                <span 
+                  class="material-symbols-outlined subscription"
+                  @click="toggleSubscriptionIcon()"
+                  :class="{ filled: isSubscribed }">
+                  visibility
+                </span>
+              </div>
+
+
               <div class="right-container-image">
                 <img class="idea-image" :src="props.image" alt="image" />
               </div>
@@ -826,6 +851,15 @@ const updateRating = async (newRating) => {
   grid-template-rows: 60% 40%;
 }
 
+.right-container-icon{
+  position: absolute;
+  align-items: right;
+  right: 0px;
+  display: flex;
+  justify-content: right;
+}
+
+
 .right-container-image {
   display: flex;
   align-items: center;
@@ -1033,5 +1067,9 @@ button:hover {
   text-align: center;
   display: grid;
   grid-template-columns: 25% 50% 25%;
+}
+
+.subscription.filled{
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 </style>
