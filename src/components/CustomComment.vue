@@ -195,7 +195,7 @@ async function handleReport() {
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
         <div class="footer-container-right">
-          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true">
+          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
           </button>
           <Teleport to="body">
@@ -253,7 +253,7 @@ async function handleReport() {
           </div>
         </div>
         <div class="footer-container-right">
-          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true">
+          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
           </button>
           <Teleport to="body">
