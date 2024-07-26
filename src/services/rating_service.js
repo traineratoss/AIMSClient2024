@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export async function postRating(idea_id, user_id, ratingValue) {
+export async function postRating(ideaId, userId, ratingValue) {
   const response = await axios.post("http://localhost:8080/aims/api/v1/ideas/ratings", null, {
     params: {
-      idea_id,
-      user_id,
+      ideaId,
+      userId,
       ratingValue,
     }
   });

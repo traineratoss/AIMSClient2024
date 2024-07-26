@@ -37,10 +37,7 @@ async function postComment(username, ideaId, commentText) {
     },
   });
 
-  //console.log(username);
   const data = await response.json();
-  //console.log(data);
-
   return data;
 }
 
@@ -114,6 +111,26 @@ async function getLike(commentId, userId) {
   return text;
 }
 
+async function reportComment(commentId, userId) {
+  const response = await fetch(API_URL + "/comments/report/" + commentId + "/" + userId, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.indexOf("application/json") !== -1) {
+    const data = await response.json();
+    return data;
+  } else {
+    const text = await response.text();
+    return { message: text };
+  }
+}
+
+
 async function getAllCommentsByReportsNr(pageSize,pageNumber,sortCategory) {
   const response = await fetch(
     `${API_URL}/comments/allByReportsNr?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`,{
@@ -135,5 +152,6 @@ export {
   getLikesCount,
   postLike,
   getLike,
+  reportComment,
   getAllCommentsByReportsNr,
 };
