@@ -17,7 +17,11 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
     const newSelectedDateTo =
       today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
 
-    url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`;
+    url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`,{
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
+    };
   } else if (
     (selectedDateFrom === undefined || selectedDateFrom === "") &&
     selectedDateTo !== undefined &&
@@ -34,9 +38,17 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
     if (selectedDateTo === newSelectedDateTo) {
       newSelectedDateTo =
         today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
-      url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${newSelectedDateTo}`;
+      url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${newSelectedDateTo}`,{
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+      };
     } else {
-      url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${selectedDateTo}`;
+      url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${selectedDateTo}`,{
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+      };
     }
   } else if (
     (selectedDateFrom === undefined || selectedDateFrom === "") &&
@@ -50,7 +62,11 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
 
     let newSelectedDateTo =
       today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
-    url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${newSelectedDateTo}`;
+    url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${newSelectedDateTo}`,{
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
+    };
   } else {
     const today = new Date();
     const month =
@@ -63,16 +79,24 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
     if (selectedDateTo === newSelectedDateTo) {
       newSelectedDateTo =
         today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
-      url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`;
+      url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`,{
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+      };
     } else
-      url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`;
+      url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`,{
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+      };
   }
 
   const response = await fetch(url, {
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -92,7 +116,7 @@ async function getStats() {
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },

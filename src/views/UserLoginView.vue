@@ -25,7 +25,7 @@ async function login() {
     "$2a$10$QkRidA35ea0Fzm/ObrOEgO"
   );
   if (usernameOrEmailText.value && passwordText.value) {
-    loginUser(usernameOrEmailText.value, hashPassword)
+    loginUser(usernameOrEmailText.value, passwordText.value)
       .then((res) => {
         // isFirstLogin(usernameOrEmailText.value)
         //   .then(res => {

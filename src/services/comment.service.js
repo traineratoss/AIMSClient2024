@@ -17,7 +17,11 @@ async function loadComments(pageSize, pageNumber, sortCategory, ideaId) {
       "&sortCategory=" +
       sortCategory +
       "&ideaId=" +
-      ideaId
+      ideaId,{
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+      }
   );
 
   const data = await response.json();
@@ -27,6 +31,9 @@ async function loadComments(pageSize, pageNumber, sortCategory, ideaId) {
 async function postComment(username, ideaId, commentText) {
   const response = await fetch(API_URL + "/comments", {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     body: JSON.stringify({
       username: username,
       ideaId: ideaId,
@@ -44,6 +51,9 @@ async function postComment(username, ideaId, commentText) {
 async function postReply(username, parentId, commentText) {
   const requestOptions = {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: username,
@@ -52,7 +62,11 @@ async function postReply(username, parentId, commentText) {
     }),
   };
 
-  const response = await fetch(API_URL + "/comments/reply", requestOptions);
+  const response = await fetch(API_URL + "/comments/reply", requestOptions,{
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+  });
   const data = await response.json();
 
   return data;
@@ -68,7 +82,11 @@ async function loadReplies(pageSize, pageNumber, sortCategory, parentId) {
       "&sortCategory=" +
       sortCategory +
       "&commentId=" +
-      parentId
+      parentId,{
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+      }
   );
 
   const data = await response.json();
@@ -78,6 +96,9 @@ async function loadReplies(pageSize, pageNumber, sortCategory, parentId) {
 async function deleteComment(commentId) {
   return fetch(API_URL + "/comments/" + commentId, {
     method: "DELETE",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
   });
   return response;
 }
@@ -85,6 +106,9 @@ async function deleteComment(commentId) {
 async function getLikesCount(commentId) {
   const response = await fetch(`${API_URL}/comments/${commentId}/likes/count`, {
     method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
   });
   const data = await response.json();
   return data;
@@ -93,12 +117,18 @@ async function getLikesCount(commentId) {
 async function deleteLike(commentId, userId) {
   return fetch(API_URL + "/comments/like/delete/" + commentId + "/" + userId, {
     method: "DELETE",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
   });
 }
 
 async function postLike(commentId, userId) {
   return fetch(API_URL + "/comments/like/" + commentId + "/" + userId, {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
   });
 }
 
