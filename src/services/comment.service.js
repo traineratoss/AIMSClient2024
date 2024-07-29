@@ -163,6 +163,12 @@ async function getReportsCountForComment(commentId) {
   return text;
 }
 
+async function deleteReports(commentId) {
+  return fetch(API_URL + "/comments/reports/delete/" + commentId , {
+    method: "DELETE",
+  });
+}
+
 export {
   loadComments,
   postComment,
@@ -177,4 +183,5 @@ export {
   getAllCommentsByReportsNr,
   getReport,
   getReportsCountForComment,
+  deleteReports,
 };

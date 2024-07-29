@@ -3,7 +3,8 @@ import { ref, defineProps, defineEmits } from 'vue';
 import CommentOffensiveNotOffensiveModal from './CommentOffensiveNotOffensiveModal.vue';
 import {
   deleteComment,
-  reportComment
+  reportComment,
+  deleteReports,
 } from '../services/comment.service'; 
 
 const props = defineProps({
@@ -34,7 +35,7 @@ async function handleConfirm(action) {
       await deleteComment(props.commentId);
       emit('comment-updated', 'deleted');
     } else {
-      await reportComment(props.commentId, props.userId);
+      await deleteReports(props.commentId);
       emit('comment-updated', 'reported');
     }
   } catch (error) {
