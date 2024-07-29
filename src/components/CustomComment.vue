@@ -219,7 +219,7 @@ async function handleReport() {
               </template>
             </CustomModal>
           </Teleport>
-          <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply" v-if="currentUser != props.username"
+          <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply" v-if="!isReported && currentUser != props.username"
             :isBlackIcon="isBlackIcon" />
           <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
           <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
@@ -278,7 +278,7 @@ async function handleReport() {
             </CustomModal>
           </Teleport>
           <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForComment"
-            v-if="currentUser != props.username" :isBlackIcon="isBlackIcon" />
+            v-if="!isReported && currentUser != props.username" :isBlackIcon="isBlackIcon" />
           <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
           <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
           }}</span>
