@@ -106,7 +106,7 @@ async function postLike(commentId, userId) {
 }
 async function getLike(commentId, userId) {
   
-  const response = await fetch(API_URL + "/comments/find/" + commentId + "/" + userId, {
+  const response = await fetch(API_URL + "/comments/like/find/" + commentId + "/" + userId, {
     method: "GET",
   });
 

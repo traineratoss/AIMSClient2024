@@ -717,6 +717,7 @@ function scrollFadeOnExpand() {
 function setIdeasEmptyFunction() {
   ideas.value = [];
 }
+
 </script>
 
 <template>

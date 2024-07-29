@@ -16,6 +16,8 @@ import {
 import { getIdea } from "../services/idea.service";
 import RatingStars from "../components/RatingStars.vue";
 import { postRating } from "../services/rating_service";
+import {subscribeUser, unsubscribeUser, getSubscriptions} from "../services/subscriptionService";
+import { onMounted } from "vue";
 
 const props = defineProps({
   title: "",
@@ -398,12 +400,35 @@ const updateRating = async (newRating) => {
 
 const isSubscribed = ref(false);
 
-const toggleSubscriptionIcon = () => {
+const toggleSubscriptionIcon = async () => {
+  try{
+    if(isSubscribed.value){
+      await unsubscribeUser(props.ideaId, userId);
+    } else {
+      await subscribeUser(props.ideaId, userId)
+    }
   isSubscribed.value = !isSubscribed.value;
-  isSelectedSubscription();
+  }catch(error){
+    console.error("Error subscribing/unsubscribing", error);
+  }
 }
 
+// const fetchSubscriptions = async () => {
+//   try{
+//       const subscribedIdeas = await getSubscriptions(userId);
+//       isSubscribed.value = 
+//   } catch (error) {
+//     console.error("Error getting subscriptions", error);
+//   }
+// }
 
+// onMounted(() => {
+//   fetchSubscriptions();
+// });
+
+// watch(() => props.ideaId, () => {
+//   fetchSubscriptions();
+// });
 
 </script>
 
