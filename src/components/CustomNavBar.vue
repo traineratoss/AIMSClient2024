@@ -380,7 +380,7 @@ nav {
 
 .dropdown-content {
   position: absolute;
-  width: 100px;
+  width: 160px;
 }
 
 .dropdown-content-user {

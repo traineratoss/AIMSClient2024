@@ -4,11 +4,12 @@ import UserApproveDeclineModal from "./UserApproveDeclineModal.vue";
 
 const props = defineProps({
   content: String,
+  nrReports: Number,
 });
            
 const showPopup = ref(false);
 const popupMessage = ref('');
-//const emit = defineEmits(["activation-successful", "deactivation-successful", 'multiple-admin-action']);
+const emit = defineEmits(["activation-successful", "deactivation-successful", 'multiple-admin-action']);
 const showOptions = ref(false);
 
 
@@ -22,11 +23,12 @@ function handleOK() {
   <div 
     class="comment"
   >
-    <div class="content-container" >
+    <div class="comment-container" >
       <div class="animation-container"></div>
-      <span>
+      <span class="content">
         {{ content }}
       </span>
+      <span class="report-count">Reports: {{ nrReports }}</span>
     </div>
     <div class="comment-buttons"
     >
@@ -48,6 +50,14 @@ function handleOK() {
 </template>
 
 <style scoped>
+.report-count {
+  margin-left: 100px;
+  color: rgb(136, 118, 118);
+}
+.content {
+  width: 700px;
+  word-wrap: break-word;
+}
 .comment {
   background-color: white;
   width: 60vw;
@@ -55,11 +65,13 @@ function handleOK() {
   justify-content: space-between;
   padding: 8px;
   cursor: pointer;
+  align-items: center;
 }
 
 .comment-buttons {
   display: flex;
   gap: 15px;
+  height: 25px;
 }
 
 #activate-or-deactivate {
@@ -85,11 +97,12 @@ select {
   width: 5vw;
 }
 
-.content-container {
+.comment-container {
   width: 50vw;
   display: flex;
   flex-direction: row;
   gap: 5px;
+  align-items: center;
 }
 
 .animation-container {

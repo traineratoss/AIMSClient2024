@@ -13,7 +13,6 @@ const showImage = ref(false);
 
 
 const comments = ref([]);
-const sortCategory = ref("nrReports");
 
 
 onMounted(() => {
@@ -33,7 +32,7 @@ async function changePage(pageNumber) {
   await getAllCommentsByReportsNr(
     pageSize.value,
     currentPage.value - 1,
-    sortCategory.value
+
   )
     .then((res) => {
         comments.value = res.pagedComments.content;
@@ -48,11 +47,9 @@ function updateCommentsList() {
     getAllCommentsByReportsNr(
     pageSize.value,
     currentPage.value - 1,
-    sortCategory.value
   )
     .then((res) => {
         comments.value = res.pagedComments.content;
-        console.log(comments);
       totalPages.value = Math.ceil(res.total / pageSize.value);
     })
     .catch((error) => {
@@ -67,7 +64,6 @@ async function changeDisplay(pageSize1) {
   await getAllCommentsByReportsNr(
     pageSize.value,
     currentPage.value - 1,
-    sortCategory.value
   )
     .then((res) => {
         comments.value = res.pagedComments.content;
@@ -96,8 +92,9 @@ async function changeDisplay(pageSize1) {
           <CommentDisplay
             v-for="comment in comments"
             v-if="!showImage"
-            :key="comment.content"
-            :name="comment.content"
+            :key="comment.id"
+            :content="comment.content"
+            :nrReports="comment.nrReports"
             @multiple-admin-action="updateCommentsList"
           />
         </div>

@@ -78,6 +78,7 @@ const shouldDisableDiv = computed(() => {
 <style>
 #all-users,
 #stats,
+#reported-comments,
 #profile,
 #change-password,
 #dashboard,
@@ -88,6 +89,7 @@ const shouldDisableDiv = computed(() => {
 
 #all-users:hover,
 #stats:hover,
+#reported-comments:hover,
 #profile:hover,
 #change-password:hover,
 #dashboard:hover,

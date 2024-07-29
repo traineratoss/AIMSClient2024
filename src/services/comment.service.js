@@ -133,7 +133,7 @@ async function reportComment(commentId, userId) {
 
 async function getAllCommentsByReportsNr(pageSize,pageNumber,sortCategory) {
   const response = await fetch(
-    `${API_URL}/comments/allByReportsNr?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`,{
+    `${API_URL}/comments/allByReportsNr?pageSize=${pageSize}&pageNumber=${pageNumber}`,{
       method:"GET",
     }
   );
