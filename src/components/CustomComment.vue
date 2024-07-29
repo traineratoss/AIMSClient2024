@@ -201,7 +201,8 @@ async function handleReport() {
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
       <div class="comment-text-container">
-        <p>{{ props.text }}</p>
+        <p v-if="reportCount > 5">This comment is under review</p>
+        <p v-else>{{ props.text }}</p>
       </div>
 
       <div class="footer-container">
