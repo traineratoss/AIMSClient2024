@@ -381,7 +381,7 @@ function topContainerGridPercentages() {
           :can-modify-search-value="true"
           :widthInPx="13"
           :height-in-px="2.5"
-          :style="{ 'background-color': 'white', 'font-weight': '370' }"
+          :style="{ 'background-color': 'white', 'font-weight': '370', 'width': '100%' }"
         />
       </div>
 
@@ -394,7 +394,7 @@ function topContainerGridPercentages() {
           :can-modify-search-value="false"
           :widthInPx="13"
           :height-in-px="2.5"
-          :style="{ 'background-color': 'white', 'font-weight': '370' }"
+          :style="{ 'background-color': 'white', 'font-weight': '370', 'width': '100%' }"
         />
       </div>
 
@@ -410,7 +410,7 @@ function topContainerGridPercentages() {
             :canAddInDropdown="false"
             :input-placeholder="`Select your statuses...`"
             :clear-all="clearAllDropdownValues"
-            :width-in-vw="13"
+            :width-in-vw="12.6"
             :height-in-vh="5"
             :selectedObjects="stringifyOptions('status')"
           >
@@ -441,7 +441,7 @@ function topContainerGridPercentages() {
             :canAddInDropdown="false"
             :input-placeholder="`Select your categories...`"
             :clear-all="clearAllDropdownValues"
-            :width-in-vw="13"
+            :width-in-vw="12.6"
             :height-in-vh="5"
             :selectedObjects="stringifyOptions('category')"
           >
@@ -460,7 +460,9 @@ function topContainerGridPercentages() {
         </div>
       </div>
 
-      <div class="top-container-child">
+      <div class="top-container-child selection" 
+      :style="{ 'height': 'fit-content' }">
+        
         <span>Star Rating:</span>
         <div>
           <select v-model="selectedRating">
@@ -476,7 +478,8 @@ function topContainerGridPercentages() {
         </div>
       </div>
 
-      <div class="top-container-child">
+      <div class="top-container-child"
+      :style="{'margin-top': '-3rem', 'height': 'fit-content'}">
         <span
           :class="userSelected.length > 0 ? 'user2' : 'user'"
           :style="{ visibility: hideUser ? 'hidden' : 'visible' }"
@@ -491,7 +494,7 @@ function topContainerGridPercentages() {
             :canAddInDropdown="false"
             :input-placeholder="`Select your users...`"
             :clear-all="clearAllDropdownValues"
-            :width-in-vw="13"
+            :width-in-vw="12.6"
             :height-in-vh="5"
             :selectedObjects="stringifyOptions('user')"
           >
@@ -619,6 +622,7 @@ span {
 .top-container-child {
   display: grid;
   grid-template-columns: 30% 70%;
+  width: 100%;
 }
 
 .top-container-child-dropdown {
@@ -691,7 +695,7 @@ span {
   height: 2.5vh;
   border-radius: 5px;
   border: none;
-  margin-left: 8vw;
+  margin-left: 7.6vw;
   cursor: pointer;
   border: 1px solid slategray;
 }
@@ -734,14 +738,15 @@ span {
   display: flex;
   flex-direction: row;
   width: 100%;
+  border-color: transparent;
 }
 
 select {
-  border-radius: 0.3rem;
+  border-radius: 0.2rem;
   border: 1px solid white;
+  border-color: transparent;
   color: slategray;
-  padding: 5px;
-  box-sizing: border-box;
+  padding: 3px;
   cursor: text;
   width: 100%;
 }

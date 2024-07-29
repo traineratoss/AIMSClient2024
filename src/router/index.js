@@ -8,6 +8,7 @@ import RegistrationCompleteViewVue from "../views/RegistrationCompleteView.vue";
 import ChangePasswordView from "../views/ChangePasswordView.vue";
 import MyProfileView from "../views/MyProfileView.vue";
 import AdminDashboardView from "../views/AdminDashboardView.vue";
+import ReportDashboardView from "../views/ReportDashboardView.vue";
 import CreateIdeaView from "../views/CreateIdeaView.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import TestView from "../views/TestView.vue";
@@ -75,6 +76,11 @@ const router = createRouter({
       path: "/admin-dashboard",
       name: "admin-dashboard",
       component: AdminDashboardView,
+    },
+    {
+      path: "/reports-dashboard",
+      name: "reports-dashboard",
+      component: ReportDashboardView,
     },
     {
       path: "/test",

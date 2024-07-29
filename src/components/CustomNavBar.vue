@@ -50,6 +50,12 @@ const dashboardElements = [
     route: "/all",
     icon: "bar_chart",
   },
+  {
+    id: "reported-comments",
+    name: "Reported Comments",
+    route: "/reports-dashboard",
+    icon: "report",
+  },
 ];
 
 const isSearchInputFocusedSetter = (focused) => {
@@ -374,7 +380,7 @@ nav {
 
 .dropdown-content {
   position: absolute;
-  width: 100px;
+  width: 160px;
 }
 
 .dropdown-content-user {

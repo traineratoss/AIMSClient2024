@@ -6,7 +6,7 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  disableHover: {
+  disableHover: { 
     type: Boolean,
     default: false
   }

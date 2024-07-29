@@ -14,7 +14,8 @@ const props = defineProps({
 
 <style scoped>
 span {
-  width: 15vw;
+  /* width: 15vw; */
+  width: 50%;
   align-items: center;
   display: flex;
   flex-direction: column;

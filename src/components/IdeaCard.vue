@@ -50,7 +50,7 @@ const maxCommentLength = 500;
 const numberOfDisplayedComments = ref(10);
 const userId = getCurrentUserId();
 
-console.log(userId);
+// console.log(userId);
 async function editIdea() {
   const data = await getIdea(props.ideaId);
 
@@ -454,10 +454,10 @@ const toggleSubscriptionIcon = async () => {
           "
         ></div>
         <div class="idea-card">
-          <div class="top-container">
-            <div class="left-container"  @dblclick="redirectToCreateIdeaView()">
-              <div class="left-container-title">
-                <div class="text" v-if="isSelected">
+          <div class="top-container" @dblclick="redirectToCreateIdeaView()">
+            <div class="left-container">
+              <div class="left-container-title" >
+                <div class="text" v-if="isSelected" @dblclick="redirectToCreateIdeaView()">
                   {{ getShortenedTitle(title, 40) }}
                 </div>
                 <div class="text" v-else>
@@ -468,7 +468,7 @@ const toggleSubscriptionIcon = async () => {
                 {{ props.status }}
               </div>
               <div class="left-container-text">
-                <div class="text" v-if="isSelected">
+                <div class="text" v-if="isSelected" @dblclick="redirectToCreateIdeaView()">
                   {{ getShortText(props.text, 3, 49) }}
                 </div>
                 <div class="text" v-else>
