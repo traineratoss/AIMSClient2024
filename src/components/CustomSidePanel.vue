@@ -159,6 +159,8 @@ const filter = async () => {
   const status = statusSelected.value;
   const rating = selectedRating.value;
 
+/* console.log(rating); */
+
   const filteredIdeas = await filterIdeas(
     title,
     text,

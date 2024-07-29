@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment, getLikesCount, deleteLike, postLike, getLike ,reportComment, getReport} from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole, getIdByUsername, } from "../services/user_service";
+import { deleteComment, getLikesCount, deleteLike, postLike, getLike ,reportComment, getReport,getReportsCountForComment} from "../services/comment.service";
+import { getCurrentUsername, getCurrentRole, getIdByUsername} from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
 
@@ -45,10 +45,12 @@ const maxlength = 500;
 const likesCounts = ref([]);
 const isBlackIcon = ref(true);
 const isReported = ref(false);
+const reportCount = ref(0);
 
 onMounted(async () => {
   currentUserRole.value = getCurrentRole();
   await fetchLikesCount();
+  await fetchReportCount();
 
   const userId = await getIdByUsername(currentUser);
   try {
@@ -63,6 +65,15 @@ onMounted(async () => {
   }
 });
 
+async function fetchReportCount() {
+  try {
+    const id = props.isReply ? props.replyId : props.commentId;
+    const count = await getReportsCountForComment(id);
+    reportCount.value = count;
+  } catch (error) {
+    console.error("Failed to fetch report count:", error);
+  }
+}
 
 async function fetchLikesCount() {
   try {
@@ -189,7 +200,6 @@ async function handleReport() {
         <p>@{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
-
       <div class="comment-text-container">
         <p>{{ props.text }}</p>
       </div>
@@ -235,16 +245,16 @@ async function handleReport() {
         <p>{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
-
-      <div class="comment-text-container">
-        <p>{{ props.text }}</p>
+      <div class="comment-text-container">    
+        <p v-if="reportCount > 5">This comment is under review</p>
+        <p v-else>{{ props.text }}</p>
       </div>
 
       <div class="footer-container">
         <div class="footer-container-left"></div>
 
         <div class="footer-container-center">
-          <div v-if="props.hasReplies">
+          <div v-if="props.hasReplies && reportCount <= 5">
             <button @click="toggleReplies()" id="view-replies-button">
               <span v-if="!replyToggled" class="material-symbols-outlined">
                 expand_more

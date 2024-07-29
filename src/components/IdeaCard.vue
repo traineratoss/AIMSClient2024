@@ -16,6 +16,8 @@ import {
 import { getIdea } from "../services/idea.service";
 import RatingStars from "../components/RatingStars.vue";
 import { postRating } from "../services/rating_service";
+import {subscribeUser, unsubscribeUser, getSubscriptions} from "../services/subscriptionService";
+import { onMounted } from "vue";
 
 const props = defineProps({
   title: "",
@@ -319,6 +321,10 @@ function isSelectedRating() {
   isSelected.value = false;
 }
 
+function isSelectedSubscription(){
+  isSelected.value = true;
+}
+
 const isAdmin = getCurrentRole() === "ADMIN";
 
 watch(
@@ -391,6 +397,39 @@ const updateRating = async (newRating) => {
     console.error("Error", error);
   }
 };
+
+const isSubscribed = ref(false);
+
+const toggleSubscriptionIcon = async () => {
+  try{
+    if(isSubscribed.value){
+      await unsubscribeUser(props.ideaId, userId);
+    } else {
+      await subscribeUser(props.ideaId, userId)
+    }
+  isSubscribed.value = !isSubscribed.value;
+  }catch(error){
+    console.error("Error subscribing/unsubscribing", error);
+  }
+}
+
+// const fetchSubscriptions = async () => {
+//   try{
+//       const subscribedIdeas = await getSubscriptions(userId);
+//       isSubscribed.value = 
+//   } catch (error) {
+//     console.error("Error getting subscriptions", error);
+//   }
+// }
+
+// onMounted(() => {
+//   fetchSubscriptions();
+// });
+
+// watch(() => props.ideaId, () => {
+//   fetchSubscriptions();
+// });
+
 </script>
 
 <template>
@@ -465,6 +504,18 @@ const updateRating = async (newRating) => {
               </div>
             </div>
             <div class="right-container">
+
+
+              <div class="right-container-icon">
+                <span 
+                  class="material-symbols-outlined subscription"
+                  @click="toggleSubscriptionIcon()"
+                  :class="{ filled: isSubscribed }">
+                  visibility
+                </span>
+              </div>
+
+
               <div class="right-container-image">
                 <img class="idea-image" :src="props.image" alt="image" />
               </div>
@@ -835,6 +886,15 @@ const updateRating = async (newRating) => {
   grid-template-rows: 60% 40%;
 }
 
+.right-container-icon{
+  position: absolute;
+  align-items: right;
+  right: 0px;
+  display: flex;
+  justify-content: right;
+}
+
+
 .right-container-image {
   display: flex;
   align-items: center;
@@ -1041,5 +1101,9 @@ button:hover {
   text-align: center;
   display: grid;
   grid-template-columns: 25% 50% 25%;
+}
+
+.subscription.filled{
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 </style>
