@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment, getLikesCount, deleteLike, postLike, getLike ,reportComment} from "../services/comment.service";
+import { deleteComment, getLikesCount, deleteLike, postLike, getLike ,reportComment, getReport} from "../services/comment.service";
 import { getCurrentUsername, getCurrentRole, getIdByUsername, } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
@@ -56,6 +56,8 @@ onMounted(async () => {
     const liked = await getLike(id, userId);
     isBlackIcon.value = liked;
 
+    const reported = await getReport(id, userId);
+    isReported.value=reported;
   } catch (error) {
     console.error("Error fetching like status:", error);
   }
@@ -171,6 +173,7 @@ async function handleReport() {
     console.log("Comment reported:", result);
     isReported.value = true; 
     showModal2.value = false; 
+
   } catch (error) {
     console.error("Error reporting comment:", error);
   }

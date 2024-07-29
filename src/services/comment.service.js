@@ -101,6 +101,7 @@ async function postLike(commentId, userId) {
     method: "POST",
   });
 }
+
 async function getLike(commentId, userId) {
   
   const response = await fetch(API_URL + "/comments/like/find/" + commentId + "/" + userId, {
@@ -130,6 +131,16 @@ async function reportComment(commentId, userId) {
   }
 }
 
+async function getReport(commentId, userId) {
+  
+  const response = await fetch(API_URL + "/comments/report/find/" + commentId + "/" + userId, {
+    method: "GET",
+  });
+
+  const text = await response.json();
+  return text;
+}
+
 
 async function getAllCommentsByReportsNr(pageSize,pageNumber,sortCategory) {
   const response = await fetch(
@@ -154,4 +165,5 @@ export {
   getLike,
   reportComment,
   getAllCommentsByReportsNr,
+  getReport,
 };
