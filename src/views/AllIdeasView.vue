@@ -14,6 +14,8 @@ import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import CustomInput from "../components/CustomInput.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
+import { subscribeUser, unsubscribeUser, getSubscriptions } from "../services/subscriptionService";
+import { getCurrentUserId } from "../services/user_service";
 
 const selectedDateFrom = ref();
 const selectedDateTo = ref();
@@ -26,6 +28,7 @@ const loggedUser = ref("");
 const sortOrder = ref(0);
 const totalPages = ref(0);
 const stats = ref({});
+const userId = getCurrentUserId();
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -37,6 +40,7 @@ const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const isAdmin = ref("");
 const selectedRating = ref("");
+
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -718,6 +722,39 @@ function setIdeasEmptyFunction() {
   ideas.value = [];
 }
 
+const subscribedIdeas = ref([]);
+
+const fetchSubscriptions = async () => {
+  try{
+      const response = await getSubscriptions(userId);
+      subscribedIdeas.value = response;
+  } catch (error) {
+    console.error("Error getting subscriptions", error);
+  }
+}
+
+const checkIfSubscribed = (ideaId) => {
+  return subscribedIdeas.value.some(subscription => subscription.ideaId === ideaId);
+};
+
+const toggleSubscriptionIcon = async (ideaId, userId) => {
+  try{
+    if(checkIfSubscribed(ideaId)){
+      await unsubscribeUser(ideaId, userId);
+      fetchSubscriptions();
+    } else {
+      await subscribeUser(ideaId, userId)
+      fetchSubscriptions();
+    }
+  }catch(error){
+    console.error("Error subscribing/unsubscribing", error);
+  }
+}
+
+onMounted(() => {
+  fetchSubscriptions();
+});
+
 </script>
 
 <template>
@@ -809,6 +846,8 @@ function setIdeasEmptyFunction() {
                 @comment-counter-sub="idea.commentsNumber--"
                 @revealOnScroll="scrollFadeOnExpand()"
                 :ratingAvg="idea.ratingAvg"
+                :isSubscribed="checkIfSubscribed(idea.id)"
+                @subscribeUser="toggleSubscriptionIcon"
               />
             </div>
             <div

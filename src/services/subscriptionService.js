@@ -26,5 +26,5 @@ export async function getSubscriptions(userId){
             userId,
         }
 });
-    return reponse.data;
+    return response.data;
 }
