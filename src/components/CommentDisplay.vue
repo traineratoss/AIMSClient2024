@@ -1,51 +1,72 @@
 <script setup>
-import { ref, defineProps, defineEmits } from "vue";
-import UserApproveDeclineModal from "./UserApproveDeclineModal.vue";
+import { ref, defineProps, defineEmits } from 'vue';
+import CommentOffensiveNotOffensiveModal from './CommentOffensiveNotOffensiveModal.vue';
+import {
+  deleteComment,
+  reportComment
+} from '../services/comment.service'; 
 
 const props = defineProps({
   content: String,
   nrReports: Number,
+  commentId: Number,
+  userId: Number
 });
-           
-const showPopup = ref(false);
-const popupMessage = ref('');
-const emit = defineEmits(["activation-successful", "deactivation-successful", 'multiple-admin-action']);
-const showOptions = ref(false);
 
+const showModal = ref(false);
+const modalMessage = ref('');
+const actionType = ref('');
 
-function handleOK() {
-  showPopup.value = false;
-  emit('multiple-admin-action');
+const emit = defineEmits(['comment-updated']);
+
+function showModalDialog(action) {
+  actionType.value = action;
+  modalMessage.value = action === 'offensive'
+    ? 'Are you sure you want to mark this comment as offensive?'
+    : 'Are you sure you want to mark this comment as not offensive?';
+  showModal.value = true;
+}
+
+async function handleConfirm(action) {
+  showModal.value = false;
+  try {
+    if (action === 'offensive') {
+      await deleteComment(props.commentId);
+      emit('comment-updated', 'deleted');
+    } else {
+      await reportComment(props.commentId, props.userId);
+      emit('comment-updated', 'reported');
+    }
+  } catch (error) {
+    console.error('Error!', error);
+  }
+}
+
+function handleCancel() {
+  showModal.value = false;
 }
 </script>
 
 <template>
-  <div 
-    class="comment"
-  >
-    <div class="comment-container" >
+  <div class="comment">
+    <div class="comment-container">
       <div class="animation-container"></div>
-      <span class="content">
-        {{ content }}
-      </span>
+      <span class="content">{{ content }}</span>
       <span class="report-count">Reports: {{ nrReports }}</span>
     </div>
-    <div class="comment-buttons"
-    >
-      <button>
-        Approve
-      </button>
-      <button>
-        Decline
-      </button>
-      <!-- <Teleport to="body">
-          <UserApproveDeclineModal
-            :message="popupMessage"
-            :show="showPopup"
-            @ok="handleOK"
-          />
-      </Teleport> -->
+    <div class="comment-buttons">
+      <button @click="showModalDialog('not-offensive')">Not Offensive</button>
+      <button @click="showModalDialog('offensive')">Offensive</button>
     </div>
+    <Teleport to="body">
+      <CommentOffensiveNotOffensiveModal
+        :show="showModal"
+        :message="modalMessage"
+        :actionType="actionType"
+        @confirm="handleConfirm"
+        @cancel="handleCancel"
+      />
+    </Teleport>
   </div>
 </template>
 
@@ -53,6 +74,7 @@ function handleOK() {
 .report-count {
   margin-left: 100px;
   color: rgb(136, 118, 118);
+  width: 70px;
 }
 .content {
   width: 700px;
@@ -71,7 +93,9 @@ function handleOK() {
 .comment-buttons {
   display: flex;
   gap: 15px;
-  height: 25px;
+  height: 40px;
+  width: 60vw;
+  padding-left: 65px;
 }
 
 #activate-or-deactivate {
