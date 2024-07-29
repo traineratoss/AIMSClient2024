@@ -2,7 +2,7 @@
 import CommentDisplay from "../components/CommentDisplay.vue";
 import Pagination from "../components/Pagination.vue";
 import FormTitle from "../components/FormTitle.vue";
-import {getAllCommentsByReportsNr} from "../services/comment.service.js";
+import {getAllCommentsByReportsNr, updateReportedCommentText} from "../services/comment.service.js";
 import { ref, onMounted } from "vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 
@@ -25,6 +25,7 @@ function removeComment(comment) {
     comments.value.splice(index, 1);
   }
   updateCommentsList();
+
 }
 
 async function changePage(pageNumber) {
@@ -44,6 +45,7 @@ async function changePage(pageNumber) {
 }
 
 function updateCommentsList() {
+    console.log(comments);
     getAllCommentsByReportsNr(
     pageSize.value,
     currentPage.value - 1,
@@ -95,6 +97,7 @@ async function changeDisplay(pageSize1) {
             :key="comment.id"
             :content="comment.content"
             :nrReports="comment.nrReports"
+            :commentId="comment.id"
             @multiple-admin-action="updateCommentsList"
           />
         </div>
