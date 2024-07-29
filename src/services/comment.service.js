@@ -79,7 +79,12 @@ async function deleteComment(commentId) {
   return fetch(API_URL + "/comments/" + commentId, {
     method: "DELETE",
   });
-  return response;
+}
+
+async function updateReportedComment(commentId) {
+  return fetch(API_URL + "/comments/report/patch/" + commentId, {
+    method: "PATCH",
+  });
 }
 
 async function getLikesCount(commentId) {
@@ -103,19 +108,24 @@ async function postLike(commentId, userId) {
 }
 
 async function getLike(commentId, userId) {
-  
-  const response = await fetch(API_URL + "/comments/like/find/" + commentId + "/" + userId, {
-    method: "GET",
-  });
+  const response = await fetch(
+    API_URL + "/comments/like/find/" + commentId + "/" + userId,
+    {
+      method: "GET",
+    }
+  );
 
   const text = await response.json();
   return text;
 }
 
 async function reportComment(commentId, userId) {
-  const response = await fetch(API_URL + "/comments/report/" + commentId + "/" + userId, {
-    method: "POST",
-  });
+  const response = await fetch(
+    API_URL + "/comments/report/" + commentId + "/" + userId,
+    {
+      method: "POST",
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -132,20 +142,22 @@ async function reportComment(commentId, userId) {
 }
 
 async function getReport(commentId, userId) {
-  
-  const response = await fetch(API_URL + "/comments/report/find/" + commentId + "/" + userId, {
-    method: "GET",
-  });
+  const response = await fetch(
+    API_URL + "/comments/report/find/" + commentId + "/" + userId,
+    {
+      method: "GET",
+    }
+  );
 
   const text = await response.json();
   return text;
 }
 
-
-async function getAllCommentsByReportsNr(pageSize,pageNumber,sortCategory) {
+async function getAllCommentsByReportsNr(pageSize, pageNumber, sortCategory) {
   const response = await fetch(
-    `${API_URL}/comments/allByReportsNr?pageSize=${pageSize}&pageNumber=${pageNumber}`,{
-      method:"GET",
+    `${API_URL}/comments/allByReportsNr?pageSize=${pageSize}&pageNumber=${pageNumber}`,
+    {
+      method: "GET",
     }
   );
 
@@ -182,6 +194,7 @@ export {
   reportComment,
   getAllCommentsByReportsNr,
   getReport,
+  updateReportedComment,
   getReportsCountForComment,
   deleteReports,
 };

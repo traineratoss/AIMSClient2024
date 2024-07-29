@@ -1,45 +1,43 @@
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
-import CommentOffensiveNotOffensiveModal from './CommentOffensiveNotOffensiveModal.vue';
-import {
-  deleteComment,
-  reportComment,
-  deleteReports,
-} from '../services/comment.service'; 
+import { ref, defineProps, defineEmits } from "vue";
+import CommentOffensiveNotOffensiveModal from "./CommentOffensiveNotOffensiveModal.vue";
+import { deleteComment, reportComment,
+  deleteReports,, updateReportedCommentText } from "../services/comment.service";
 
 const props = defineProps({
   content: String,
   nrReports: Number,
   commentId: Number,
-  userId: Number
+  userId: Number,
 });
 
 const showModal = ref(false);
-const modalMessage = ref('');
-const actionType = ref('');
+const modalMessage = ref("");
+const actionType = ref("");
 
-const emit = defineEmits(['comment-updated']);
+const emit = defineEmits(["comment-updated"]);
 
 function showModalDialog(action) {
   actionType.value = action;
-  modalMessage.value = action === 'offensive'
-    ? 'Are you sure you want to mark this comment as offensive?'
-    : 'Are you sure you want to mark this comment as not offensive?';
+  modalMessage.value =
+    action === "offensive"
+      ? "Are you sure you want to mark this comment as offensive?"
+      : "Are you sure you want to mark this comment as not offensive?";
   showModal.value = true;
 }
 
 async function handleConfirm(action) {
   showModal.value = false;
   try {
-    if (action === 'offensive') {
-      await deleteComment(props.commentId);
-      emit('comment-updated', 'deleted');
+    if (action === "offensive") {
+      await updateReportedCommentText(props.commentId);
+      emit("comment-updated", "deleted");
     } else {
       await deleteReports(props.commentId);
       emit('comment-updated', 'reported');
     }
   } catch (error) {
-    console.error('Error!', error);
+    console.error("Error!", error);
   }
 }
 
@@ -141,8 +139,7 @@ select {
   background-color: var(--selected-color);
 }
 
-.isSelected{
+.isSelected {
   background-color: var(--selected-color);
-  
 }
 </style>
