@@ -2,7 +2,7 @@
 import CommentDisplay from "../components/CommentDisplay.vue";
 import Pagination from "../components/Pagination.vue";
 import FormTitle from "../components/FormTitle.vue";
-import {getAllCommentsByReportsNr, updateReportedCommentText} from "../services/comment.service.js";
+import { getAllCommentsByReportsNr } from "../services/comment.service.js";
 import { ref, onMounted } from "vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 
@@ -11,12 +11,10 @@ const currentPage = ref(1);
 const totalPages = ref(0);
 const showImage = ref(false);
 
-
 const comments = ref([]);
 
-
 onMounted(() => {
-    updateCommentsList();
+  updateCommentsList();
 });
 
 function removeComment(comment) {
@@ -25,18 +23,13 @@ function removeComment(comment) {
     comments.value.splice(index, 1);
   }
   updateCommentsList();
-
 }
 
 async function changePage(pageNumber) {
   currentPage.value = pageNumber;
-  await getAllCommentsByReportsNr(
-    pageSize.value,
-    currentPage.value - 1,
-
-  )
+  await getAllCommentsByReportsNr(pageSize.value, currentPage.value - 1)
     .then((res) => {
-        comments.value = res.pagedComments.content;
+      comments.value = res.pagedComments.content;
       totalPages.value = Math.ceil(res.total / pageSize.value);
     })
     .catch((error) => {
@@ -45,11 +38,8 @@ async function changePage(pageNumber) {
 }
 
 function updateCommentsList() {
-    console.log(comments);
-    getAllCommentsByReportsNr(
-    pageSize.value,
-    currentPage.value - 1,
-  )
+  console.log(comments);
+  getAllCommentsByReportsNr(pageSize.value, currentPage.value - 1)
     .then((res) => {
         comments.value = res.pagedComments.content;
       totalPages.value = Math.ceil(res.total / pageSize.value);
@@ -63,12 +53,9 @@ function updateCommentsList() {
 async function changeDisplay(pageSize1) {
   pageSize.value = pageSize1;
   currentPage.value = 1;
-  await getAllCommentsByReportsNr(
-    pageSize.value,
-    currentPage.value - 1,
-  )
+  await getAllCommentsByReportsNr(pageSize.value, currentPage.value - 1)
     .then((res) => {
-        comments.value = res.pagedComments.content;
+      comments.value = res.pagedComments.content;
       totalPages.value = Math.ceil(res.total / pageSize.value);
     })
     .catch((error) => {
@@ -79,37 +66,37 @@ async function changeDisplay(pageSize1) {
 
 <template>
   <div class="container">
-      <FormTitle label="Reported Comments" id="title" v-if="!showImage" />
-      <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
-      <div class="pageSize">
-        <PageSizeSelect
-          v-if="!showImage"
-          id="pageSizeSelect"
-          label="Comments:"
-          @change-display="changeDisplay"
-        />
-      </div>
-      <div class="main-container">
-        <div class="comments-container">
-          <CommentDisplay
-            v-for="comment in comments"
-            v-if="!showImage"
-            :key="comment.id"
-            :content="comment.content"
-            :nrReports="comment.nrReports"
-            :commentId="comment.id"
-            @multiple-admin-action="updateCommentsList"
-          />
-        </div>
-        <Pagination          
-          :totalPages="totalPages"
-          :currentPage="currentPage"
-          @changePage="changePage"
-          v-if="!showImage"
-          class="pagination-container"
-        />
-      </div>
+    <FormTitle label="Reported Comments" id="title" v-if="!showImage" />
+    <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
+    <div class="pageSize">
+      <PageSizeSelect
+        v-if="!showImage"
+        id="pageSizeSelect"
+        label="Comments:"
+        @change-display="changeDisplay"
+      />
     </div>
+    <div class="main-container">
+      <div class="comments-container">
+        <CommentDisplay
+          v-for="comment in comments"
+          v-if="!showImage"
+          :key="comment.id"
+          :content="comment.content"
+          :nrReports="comment.nrReports"
+          :commentId="comment.id"
+          @multiple-admin-action="updateCommentsList"
+        />
+      </div>
+      <Pagination
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @changePage="changePage"
+        v-if="!showImage"
+        class="pagination-container"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>

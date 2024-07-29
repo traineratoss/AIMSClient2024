@@ -166,10 +166,12 @@ async function getAllCommentsByReportsNr(pageSize, pageNumber, sortCategory) {
 }
 
 async function getReportsCountForComment(commentId) {
-  
-  const response = await fetch(API_URL + "/comments/reports/count/" + commentId, {
-    method: "GET",
-  });
+  const response = await fetch(
+    API_URL + "/comments/reports/count/" + commentId,
+    {
+      method: "GET",
+    }
+  );
 
   const text = await response.json();
   return text;
