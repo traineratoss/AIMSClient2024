@@ -221,8 +221,8 @@ async function handleReport() {
           </Teleport>
           <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply" v-if="!isReported && currentUser != props.username"
             :isBlackIcon="isBlackIcon" />
-          <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
-          <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
+          <b v-if="!isReported && currentUser == props.username && likesCounts[0] > 0">Likes: </b>
+          <span v-if="!isReported && likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
           }}</span>
           <button v-if="currentUser === props.username || currentUserRole === 'ADMIN'" class="action-icon-button"
             @click="showModal = true">
@@ -279,8 +279,8 @@ async function handleReport() {
           </Teleport>
           <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForComment"
             v-if="!isReported && currentUser != props.username" :isBlackIcon="isBlackIcon" />
-          <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
-          <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
+          <b v-if="!isReported && currentUser == props.username && likesCounts[0] > 0">Likes: </b>
+          <span v-if="!isReported && likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
           }}</span>
           <span v-if="buttonSelected">
             <button class="action-icon-button" :style="{ color: 'orange' }" @click="
