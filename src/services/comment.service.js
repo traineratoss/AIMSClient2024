@@ -166,13 +166,21 @@ async function getAllCommentsByReportsNr(pageSize, pageNumber, sortCategory) {
 }
 
 async function getReportsCountForComment(commentId) {
-  
-  const response = await fetch(API_URL + "/comments/reports/count/" + commentId, {
-    method: "GET",
-  });
+  const response = await fetch(
+    API_URL + "/comments/reports/count/" + commentId,
+    {
+      method: "GET",
+    }
+  );
 
   const text = await response.json();
   return text;
+}
+
+async function deleteReports(commentId) {
+  return fetch(API_URL + "/comments/reports/delete/" + commentId , {
+    method: "DELETE",
+  });
 }
 
 export {
@@ -190,4 +198,5 @@ export {
   getReport,
   updateReportedComment,
   getReportsCountForComment,
+  deleteReports,
 };
