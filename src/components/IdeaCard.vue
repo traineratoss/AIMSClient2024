@@ -493,6 +493,7 @@ watch(toRef(props, 'isSubscribed'), (newVal) => {
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
+                  v-if="$route.path !== '/my'"
                   >
                   visibility
                 </span>
