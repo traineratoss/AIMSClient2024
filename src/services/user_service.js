@@ -1,3 +1,5 @@
+import { setTokenExpiry } from "./token.service";
+
 const API_URL = "http://localhost:8080/users";
 
 async function getUserByUsername(username) {
@@ -93,13 +95,17 @@ async function loginUser(username, password) {
     throw new Error("Invalid username or password");
   } else {
     const json = await response.json();
-    localStorage.setItem("username", json.username);
-    localStorage.setItem("role", json.role);
-    localStorage.setItem("email", json.email);
-    localStorage.setItem("fullName", json.fullName);
-    localStorage.setItem("avatarId", json.avatarId - 1);
-    localStorage.setItem("isFirstLogin", json.isFirstLogin);
-    localStorage.setItem("userId", json.id);
+    const userData = json.userData;
+    localStorage.setItem("username", userData.username);
+    localStorage.setItem("role", userData.role);
+    localStorage.setItem("email", userData.email);
+    localStorage.setItem("fullName", userData.fullName);
+    localStorage.setItem("avatarId", userData.avatarId - 1);
+    localStorage.setItem("isFirstLogin", userData.isFirstLogin);
+    localStorage.setItem("userId", userData.id);
+
+    setTokenExpiry(json.accessTokenExpiryDate, json.refreshTokenExpiryDate);
+
     return json;
   }
 }

@@ -270,10 +270,15 @@ async function getPagedIdeasFromUser(
 }
 
 async function getImageById(imageId) {
-  const response = await fetch("http://localhost:8080/aims/api/v1/images/get?id=" + imageId,{
+  const response = await fetch(
+    "http://localhost:8080/aims/api/v1/images/get?id=" + imageId
+  , {
+    method: "GET",
     mode: "cors",
-    cache: "no-cache",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    }
   });
   const data = await response.json();
   return data;
