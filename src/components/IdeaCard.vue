@@ -404,6 +404,7 @@ const currentStatusSubscribe = ref(props.isSubscribed)
 
 function subscribeUserAction(){
   emits('subscribeUser', props.ideaId, userId);
+  isSelected.value = true;
 }
 
 watch(toRef(props, 'isSubscribed'), (newVal) => {
