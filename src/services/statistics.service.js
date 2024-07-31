@@ -49,7 +49,7 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
         : today.getMonth() + 1;
 
     let newSelectedDateTo =
-      today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
+      today.getUTCFullYear() + "-" + month + "-" + today.getDate();
     url = `${API_URL}/filteredStats?&selectedDateFrom=2010-01-01&selectedDateTo=${newSelectedDateTo}`;
   } else {
     const today = new Date();
@@ -62,7 +62,7 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
       today.getUTCFullYear() + "-" + month + "-" + today.getDate();
     if (selectedDateTo === newSelectedDateTo) {
       newSelectedDateTo =
-        today.getUTCFullYear() + "-" + month + "-" + (today.getDate() + 1);
+        today.getUTCFullYear() + "-" + month + "-" + today.getDate();
       url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${newSelectedDateTo}`;
     } else
       url = `${API_URL}/filteredStats?&selectedDateFrom=${selectedDateFrom}&selectedDateTo=${selectedDateTo}`;
