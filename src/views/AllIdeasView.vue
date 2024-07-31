@@ -29,6 +29,8 @@ const sortOrder = ref(0);
 const totalPages = ref(0);
 const stats = ref({});
 const userId = getCurrentUserId();
+const selectedIdea = ref(null);
+const showPagination = ref(true);
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -751,6 +753,17 @@ const toggleSubscriptionIcon = async (ideaId, userId) => {
   }
 }
 
+const fetchSelectedIdea = async (id) => {
+  selectedIdea.value = await getIdea(id);
+  showPagination.value = false;
+};
+
+const clearSelectedIdea = () => {
+  selectedIdea.value = null;
+  showTopIdeas.value = false;
+  showPagination.value = true;
+};
+
 onMounted(() => {
   fetchSubscriptions();
 });
@@ -792,6 +805,27 @@ onMounted(() => {
           ref="ideasTransitionContainer"
           id="scrollable-middle"
         >
+        <div v-if="selectedIdea !== null" class="selected-idea-container">
+          <button class="back-button" @click="clearSelectedIdea">Back to Ideas</button>
+          <IdeaCard
+                :title="selectedIdea.title"
+                :text="selectedIdea.text"
+                :status="selectedIdea.status"
+                :username="selectedIdea.username"
+                :ideaId="selectedIdea.id"
+                :commentsNumber="selectedIdea.commentsNumber"
+                :elapsedTime="selectedIdea.elapsedTime"
+                :image="getImageUrl(selectedIdea)"
+                :loggedUser="getCurrentUsername()"
+                @comment-counter-add="selectedIdea.commentsNumber++"
+                @comment-counter-sub="selectedIdea.commentsNumber--"
+                @revealOnScroll="scrollFadeOnExpand()"
+                :ratingAvg="selectedIdea.ratingAvg"
+                :isSubscribed="checkIfSubscribed(selectedIdea.id)"
+                @subscribeUser="toggleSubscriptionIcon"
+              />
+        </div>
+        <div v-else>
           <div
             v-if="!showTopIdeas"
             class="sort-container"
@@ -862,7 +896,7 @@ onMounted(() => {
         </div>
 
         <div v-if="ideas.length > 0" class="pagination-container">
-          <div class="pagination-component">
+          <div v-if="showPagination" class="pagination-component">
             <Pagination
               :totalPages="totalPages"
               :currentPage="currentPage"
@@ -870,7 +904,9 @@ onMounted(() => {
             />
           </div>
         </div>
+       </div>
       </div>
+
       <div v-if="isAdmin" class="custom-statistics">
         <div class="stats-header">
           <div class="center-class">
@@ -921,6 +957,7 @@ onMounted(() => {
             @load-top5-ideas="loadRecievedIdeas"
             @load-data="loadData"
             :show-top-ideas="showTopIdeas"
+            :fetchSelectedIdea="fetchSelectedIdea"
           />
         </Suspense>
       </div>
@@ -1202,5 +1239,31 @@ h2 {
   display: flex;
   justify-content: flex-end;
   margin-top: 5px;
+}
+
+.selected-idea-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(50% - 20px);
+  margin: 10px auto;
+  padding: 10px;
+}
+
+
+.back-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #ffa941;
+  border: 1px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.back-button:hover {
+  background-color: #ff8c00;
+  font-weight: bold;
 }
 </style>
