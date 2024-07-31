@@ -5,7 +5,7 @@ import { logout } from "../services/user_service"
 export const customFetch = async (url, options = {}) => {
 
     if (isRefreshTokenExipred()) {
-        logout();
+        await logout();
     }
 
     if (isAccessTokenExpired()) {
@@ -23,7 +23,7 @@ export const customFetch = async (url, options = {}) => {
             console.log("Refreshed tokens")
         } catch (error) {
             console.log(error.message);
-            logout();
+            await logout();
         }
     }
 

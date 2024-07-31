@@ -85,7 +85,7 @@ async function submit() {
         oldPassword: oldPasswordText.value,
         newPassword: newPasswordText.value,
       });
-      logout();
+      await logout();
       router.push("/login");
     } catch (error) {
       throw new Error("Old password is incorrect");
@@ -122,7 +122,7 @@ function checkPassword() {
 async function cancel() {
   if (isFirstLogin.value) {    
     await abortChangePassword();
-    logout();
+    await logout();
     router.push("/login");
   } else {
     router.push("/my");

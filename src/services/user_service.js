@@ -1,5 +1,6 @@
 import { invalidateTokens, setTokenExpiry } from "./token.service";
 import router from "../router";
+import nativeFetch from "../main";
 
 const API_URL = "http://localhost:8080/users";
 
@@ -69,7 +70,7 @@ async function loginUser(username, password) {
   let connectionError = false;
   let response;
   try {
-    response = await fetch(`http://localhost:8080/api/v1/auth/login`, {
+    response = await nativeFetch(`http://localhost:8080/api/v1/auth/login`, {
       method: "POST",
       cache: "no-cache",
       credentials: "include",
@@ -400,17 +401,25 @@ function setCurrentUsername(username) {
 
 async function logout() {
 
-    localStorage.clear('username');
-    localStorage.clear('role');
-    localStorage.clear('email');
-    localStorage.clear('fullName');
-    localStorage.clear('avatarId');
-    localStorage.clear("isFirstLogin");
-    localStorage.clear("userId");
+  await nativeFetch("http://localhost:8080/api/v1/auth/logout", {
+    method: "POST",
+    cache: "no-cache",
+    credentials: "include",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+  });
 
-    invalidateTokens();
+  localStorage.clear('username');
+  localStorage.clear('role');
+  localStorage.clear('email');
+  localStorage.clear('fullName');
+  localStorage.clear('avatarId');
+  localStorage.clear("isFirstLogin");
+  localStorage.clear("userId");
 
-    router.go('/login');
+  invalidateTokens();
+
+  router.go('/login');
 }
 
 function validateUsername(username) {
