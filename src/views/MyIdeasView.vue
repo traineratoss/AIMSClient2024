@@ -12,7 +12,7 @@ import CuriositySearch from "../views/CuriositySearch.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 
 const currentUsername = getCurrentUsername();
-console.log(currentUsername);
+// console.log(currentUsername);
 
 const ideaPerPage = ref(5);
 const currentPage = ref(1);

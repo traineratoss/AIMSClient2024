@@ -50,8 +50,6 @@ const maxCommentLength = 500;
 const numberOfDisplayedComments = ref(10);
 const userId = getCurrentUserId();
 
-
-
 // console.log(userId);
 async function editIdea() {
   const data = await getIdea(props.ideaId);
@@ -323,7 +321,7 @@ function isSelectedRating() {
   isSelected.value = false;
 }
 
-function isSelectedSubscription(){
+function isSelectedSubscription() {
   isSelected.value = true;
 }
 
@@ -400,17 +398,16 @@ const updateRating = async (newRating) => {
   }
 };
 
-const currentStatusSubscribe = ref(props.isSubscribed)
+const currentStatusSubscribe = ref(props.isSubscribed);
 
 function subscribeUserAction(){
   emits('subscribeUser', props.ideaId, userId);
+  isSelected.value = true;
 }
 
-watch(toRef(props, 'isSubscribed'), (newVal) => {
+watch(toRef(props, "isSubscribed"), (newVal) => {
   currentStatusSubscribe.value = newVal;
 });
-
-
 </script>
 
 <template>
@@ -437,8 +434,12 @@ watch(toRef(props, 'isSubscribed'), (newVal) => {
         <div class="idea-card">
           <div class="top-container" @dblclick="redirectToCreateIdeaView()">
             <div class="left-container">
-              <div class="left-container-title" >
-                <div class="text" v-if="isSelected" @dblclick="redirectToCreateIdeaView()">
+              <div class="left-container-title">
+                <div
+                  class="text"
+                  v-if="isSelected"
+                  @dblclick="redirectToCreateIdeaView()"
+                >
                   {{ getShortenedTitle(title, 40) }}
                 </div>
                 <div class="text" v-else>
@@ -449,7 +450,11 @@ watch(toRef(props, 'isSubscribed'), (newVal) => {
                 {{ props.status }}
               </div>
               <div class="left-container-text">
-                <div class="text" v-if="isSelected" @dblclick="redirectToCreateIdeaView()">
+                <div
+                  class="text"
+                  v-if="isSelected"
+                  @dblclick="redirectToCreateIdeaView()"
+                >
                   {{ getShortText(props.text, 3, 49) }}
                 </div>
                 <div class="text" v-else>
@@ -485,18 +490,16 @@ watch(toRef(props, 'isSubscribed'), (newVal) => {
               </div>
             </div>
             <div class="right-container">
-
-
               <div class="right-container-icon">
-                <span 
+                <span
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
+                  v-if="$route.path !== '/my'"
                   >
                   visibility
                 </span>
               </div>
-
 
               <div class="right-container-image">
                 <img class="idea-image" :src="props.image" alt="image" />
@@ -868,14 +871,13 @@ watch(toRef(props, 'isSubscribed'), (newVal) => {
   grid-template-rows: 60% 40%;
 }
 
-.right-container-icon{
+.right-container-icon {
   position: absolute;
   align-items: right;
   right: 0px;
   display: flex;
   justify-content: right;
 }
-
 
 .right-container-image {
   display: flex;
@@ -1085,7 +1087,7 @@ button:hover {
   grid-template-columns: 25% 50% 25%;
 }
 
-.subscription.filled{
+.subscription.filled {
   font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 </style>

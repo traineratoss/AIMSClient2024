@@ -1,8 +1,7 @@
 <script setup>
 import { ref, defineProps, defineEmits } from "vue";
 import CommentOffensiveNotOffensiveModal from "./CommentOffensiveNotOffensiveModal.vue";
-import { deleteComment, reportComment,
-  deleteReports, updateReportedComment} from "../services/comment.service";
+import { deleteComment, reportComment,deleteReports, updateReportedComment } from "../services/comment.service";
 
 const props = defineProps({
   content: String,
