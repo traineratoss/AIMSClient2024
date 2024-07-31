@@ -22,9 +22,11 @@ onMounted(async () => {
   showSkeleton.value = false;
 });
 
-
 const stats = ref(props.recievedFilteredStats);
-console.log("Initial props.recievedFilteredStats:", props.recievedFilteredStats);
+console.log(
+  "Initial props.recievedFilteredStats:",
+  props.recievedFilteredStats
+);
 console.log(props.recievedFilteredStats.mostCommentedIdeas.length);
 
 const sleepNow = (delay) =>
@@ -77,13 +79,10 @@ function loadTop5Ideas() {
     "Top 5 ideas >> ",
     props.recievedFilteredStats.mostCommentedIdeas
   );
-  
+
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
-async function refreshPage()
-{
-  window.location.reload();
-}
+
 async function refreshStats() {
   showSkeleton.value = true;
 
@@ -188,7 +187,11 @@ const fetchIdeaByComment = async (commentId) => {
                 <th>Idea title</th>
                 <th>No. of comments</th>
               </tr>
-              <tr v-for="(idea, index) in props.recievedFilteredStats.mostCommentedIdeas" :key="index">
+              <tr
+                v-for="(idea, index) in props.recievedFilteredStats
+                  .mostCommentedIdeas"
+                :key="index"
+              >
                 <td>
                   <a href="#" @click.prevent="fetchSelectedIdea(idea.id)">
                     {{ getShortenedTitle(idea.title, 20) }}
@@ -392,17 +395,19 @@ const fetchIdeaByComment = async (commentId) => {
               <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
-              <!-- <button class="load-button" @click="loadData()">
+              <button class="load-button" @click="loadData()">
                 Reload ideas
-              </button> -->
+              </button>
 
-              <!-- Uncomment only if you implement it right -->
               <!-- <button class="load-button" @click="refreshStats()">
                 Refresh 
               </button> -->
             </div>
           </div>
-          <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
+          <div
+            v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
+            class="most-commented-ideas"
+          >
             <p>Top Most commented ideas:</p>
             <h4>No comments were posted in this time interval</h4>
           </div>
@@ -605,7 +610,7 @@ strong {
 }
 
 .material-symbols-outlined {
-  margin-top:20px;
+  margin-top: 20px;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
