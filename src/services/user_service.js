@@ -1,4 +1,5 @@
-import { setTokenExpiry } from "./token.service";
+import { invalidateTokens, setTokenExpiry } from "./token.service";
+import router from "../router";
 
 const API_URL = "http://localhost:8080/users";
 
@@ -397,12 +398,19 @@ function setCurrentUsername(username) {
   localStorage.setItem('username', username);
 }
 
-function logout() {
+async function logout() {
+
     localStorage.clear('username');
     localStorage.clear('role');
     localStorage.clear('email');
     localStorage.clear('fullName');
     localStorage.clear('avatarId');
+    localStorage.clear("isFirstLogin");
+    localStorage.clear("userId");
+
+    invalidateTokens();
+
+    router.go('/login');
 }
 
 function validateUsername(username) {
