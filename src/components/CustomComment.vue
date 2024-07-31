@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { deleteComment, getLikesCount, deleteLike, postLike, getLike ,reportComment, getReport,getReportsCountForComment} from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole, getIdByUsername} from "../services/user_service";
+import { deleteComment, getLikesCount, deleteLike, postLike, getLike, reportComment, getReport, getReportsCountForComment, getReviewStatus } from "../services/comment.service";
+import { getCurrentUsername, getCurrentRole, getIdByUsername } from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
 
@@ -19,7 +19,7 @@ const props = defineProps({
   loggedUser: "",
 });
 
-console.log("Initial props:", props);
+// console.log("Initial props:", props);
 
 const emits = defineEmits([
   "toggleReplies",
@@ -46,24 +46,46 @@ const likesCounts = ref([]);
 const isBlackIcon = ref(true);
 const isReported = ref(false);
 const reportCount = ref(0);
+const id = ref("");
+const reviewStatus = ref("");
 
 onMounted(async () => {
   currentUserRole.value = getCurrentRole();
   await fetchLikesCount();
   await fetchReportCount();
+  getReviewStatusValue();
 
+  fetchLikes();
+
+});
+
+id.value = props.isReply ? props.replyId : props.commentId;
+
+
+async function getReviewStatusValue() {
+  try {
+  const response = await getReviewStatus(id.value);
+  reviewStatus.value = response;
+  console.log(reviewStatus.value);
+  console.log(reportCount.value <= 5 || reviewStatus.value !== 'OFFENSIVE');
+} catch (error) {
+    console.error("Error geting review status:", error);
+  }
+}
+
+async function fetchLikes() {
+  const id = props.isReply ? props.replyId : props.commentId;
   const userId = await getIdByUsername(currentUser);
   try {
-    const id = props.isReply ? props.replyId : props.commentId;
     const liked = await getLike(id, userId);
     isBlackIcon.value = liked;
 
     const reported = await getReport(id, userId);
-    isReported.value=reported;
+    isReported.value = reported;
   } catch (error) {
     console.error("Error fetching like status:", error);
   }
-});
+}
 
 async function fetchReportCount() {
   try {
@@ -173,24 +195,27 @@ async function deleteLikeAll() {
   } catch (error) {
     console.error("Error deleting like:", error);
   }
-  
+
 }
 
 async function handleReport() {
   const userId = await getIdByUsername(currentUser);
   const commentId = props.isReply ? props.replyId : props.commentId;
   try {
-    const result = await reportComment(commentId, userId); 
+    const result = await reportComment(commentId, userId);
     console.log("Comment reported:", result);
-    isReported.value = true; 
-    showModal2.value = false; 
+    isReported.value = true;
+    showModal2.value = false;
 
   } catch (error) {
     console.error("Error reporting comment:", error);
   }
 }
 
+
+
 </script>
+
 
 
 <template>
@@ -204,12 +229,12 @@ async function handleReport() {
         <p v-if="reportCount > 5">This comment is under review</p>
         <p v-else>{{ props.text }}</p>
       </div>
-
       <div class="footer-container">
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
-        <div class="footer-container-right">
-          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true" :disabled="isReported">
+        <div v-if="reportCount <= 5 || reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
+          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button"
+            @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
           </button>
           <Teleport to="body">
@@ -219,8 +244,8 @@ async function handleReport() {
               </template>
             </CustomModal>
           </Teleport>
-          <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply" v-if="!isReported && currentUser != props.username"
-            :isBlackIcon="isBlackIcon" />
+          <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply"
+            v-if="!isReported && currentUser != props.username" :isBlackIcon="isBlackIcon" />
           <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
           <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
           }}</span>
@@ -246,7 +271,7 @@ async function handleReport() {
         <p>{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
-      <div class="comment-text-container">    
+      <div class="comment-text-container">
         <p v-if="reportCount > 5">This comment is under review</p>
         <p v-else>{{ props.text }}</p>
       </div>
@@ -257,7 +282,7 @@ async function handleReport() {
         <div class="footer-container-center">
           <div v-if="props.hasReplies && reportCount <= 5">
             <button @click="toggleReplies()" id="view-replies-button">
-              <span v-if="!replyToggled" class="material-symbols-outlined">
+              <span v-if="!replyToggled" class="material-symbols-outlined" @click="getReviewStatusValue()">
                 expand_more
               </span>
               <span v-else class="material-symbols-outlined" :style="{ color: 'orange' }">
@@ -266,8 +291,9 @@ async function handleReport() {
             </button>
           </div>
         </div>
-        <div class="footer-container-right">
-          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button" @click="showModal2 = true" :disabled="isReported">
+        <div v-if="reportCount <= 5 || reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
+          <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button"
+            @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
           </button>
           <Teleport to="body">
