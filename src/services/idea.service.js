@@ -289,6 +289,25 @@ async function deleteIdea(ideaId) {
   });
 }
 
+async function getIdeaByCommentId(commentId) {
+  try {
+    const response = await fetch(`${API_URL}/getByComment?commentId=${commentId}`, {
+      method: "GET",
+    });
+    console.log(commentId);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Response data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching idea by comment ID:", error);
+    return null;
+  }
+}
+
+
 export {
   loadPagedIdeas,
   createIdea,
@@ -302,4 +321,5 @@ export {
   deleteIdea,
   getImageById,
   getImageByIdeaId,
+  getIdeaByCommentId
 };

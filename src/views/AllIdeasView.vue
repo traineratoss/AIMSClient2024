@@ -2,7 +2,7 @@
 import CustomSidePanel from "../components/CustomSidePanel.vue";
 import { ref, onMounted, watch, computed, onUnmounted } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas, getIdea } from "../services/idea.service";
+import { filterIdeas, loadPagedIdeas, getIdea, getIdeaByCommentId } from "../services/idea.service";
 import {
   getStats,
   sendDataForCustomStats,
@@ -31,6 +31,7 @@ const stats = ref({});
 const userId = getCurrentUserId();
 const selectedIdea = ref(null);
 const showPagination = ref(true);
+
 
 // updated by ref inputs
 const inputTitle = ref("");
@@ -764,10 +765,19 @@ const clearSelectedIdea = () => {
   showPagination.value = true;
 };
 
+async function fetchIdeaByComment(commentId) {
+  console.log(commentId);
+  const idea = await getIdeaByCommentId(commentId);
+  props.fetchSelectedIdea(idea.id);
+}
+
 onMounted(() => {
   fetchSubscriptions();
 });
 
+watch(selectedIdea, (newValue, oldValue) => {
+  console.log("new: ", newValue, " ---- old: ", oldValue);
+})
 </script>
 
 <template>
@@ -859,7 +869,7 @@ onMounted(() => {
             class="ideas-transition-container"
             ref="ideasTransitionContainer"
           >
-            <h2 v-if="showTopIdeas">Top ideas</h2>
+            <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
 
             <div
               v-for="idea in ideas"
@@ -958,6 +968,7 @@ onMounted(() => {
             @load-data="loadData"
             :show-top-ideas="showTopIdeas"
             :fetchSelectedIdea="fetchSelectedIdea"
+            :fetchIdeaByComment="fetchIdeaByComment"
           />
         </Suspense>
       </div>

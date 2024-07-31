@@ -3,6 +3,7 @@ import { ref, onMounted, watch, computed } from "vue";
 import { getStats } from "../services/statistics.service";
 import PieChart from "./PieChart.vue";
 import CustomLoader from "../components/CustomLoader.vue";
+import { getIdeaByCommentId } from "../services/idea.service";
 
 const props = defineProps({
   recievedFilteredStats: Object,
@@ -11,6 +12,7 @@ const props = defineProps({
   showAnimation: Boolean,
   showTopIdeas: Boolean,
   fetchSelectedIdea: Function,
+  fetchIdeaByComment: Function,
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
@@ -98,6 +100,23 @@ function loadData() {
 function getShortenedTitle(title, maxLength) {
   return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
 }
+
+const fetchIdeaByComment = async (commentId) => {
+  console.log(commentId);
+  try {
+    const idea = await getIdeaByCommentId(commentId);
+    if (idea && idea.id) {
+      // fetchSelectedIdea(idea.id);
+      props.fetchSelectedIdea(idea.id);
+    } else {
+      console.error("Idea not found for the given comment ID");
+    }
+  } catch (error) {
+    console.error("Error fetching idea by comment ID:", error);
+  }
+};
+
+
 </script>
 
 <template>
@@ -179,12 +198,11 @@ function getShortenedTitle(title, maxLength) {
               </tr>
             </table>
             <div class="swich-buttons">
+              <button class="material-symbols-outlined" @click="refreshPage">refresh</button>
               <!-- <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
-              <button class="material-symbols-outlined" @click="refreshPage">refresh</button>
-
-              <!-- <button class="load-button" @click="refreshStats()">
+              <button class="load-button" @click="refreshStats()">
                 Refresh
               </button> -->
             </div>
@@ -199,12 +217,11 @@ function getShortenedTitle(title, maxLength) {
                 <th>Comment content</th>
                 <th>No. of likes</th>
               </tr>
-              <tr
-                v-for="(comment, index) in stats.mostLikedComments"
-                :key="index"
-              >
+              <tr v-for="(comment, index) in stats.mostLikedComments" :key="index">
                 <td>
-                  {{ getShortenedTitle(comment.commentText, 20) }}
+                  <a href="#" @click.prevent="fetchIdeaByComment(comment.commentId)">
+                    {{ getShortenedTitle(comment.commentText, 20) }}
+                  </a>
                 </td>
                 <td>{{ comment.nrLikes }}</td>
               </tr>
