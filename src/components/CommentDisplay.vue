@@ -1,8 +1,7 @@
 <script setup>
 import { ref, defineProps, defineEmits } from "vue";
 import CommentOffensiveNotOffensiveModal from "./CommentOffensiveNotOffensiveModal.vue";
-import { deleteComment, reportComment,
-  deleteReports, updateReportedComment} from "../services/comment.service";
+import { deleteComment, reportComment,deleteReports, updateReportedComment } from "../services/comment.service";
 
 const props = defineProps({
   content: String,
@@ -31,10 +30,11 @@ async function handleConfirm(action) {
   try {
     if (action === "offensive") {
       await updateReportedComment(props.commentId);
+      setReviewStatus(props.commentId, "OFFENSIVE");
     } else {
       await deleteReports(props.commentId);
+      setReviewStatus(props.commentId, "NOT_OFFENSIVE");
     }
-    emit('comment-updated');
   } catch (error) {
     console.error("Error!", error);
   }

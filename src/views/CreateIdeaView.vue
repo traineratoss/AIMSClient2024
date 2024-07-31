@@ -6,7 +6,7 @@ import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
 import { ref, onMounted, watchEffect, computed, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import RatingStars from "../components/RatingStars.vue"
+import RatingStars from "../components/RatingStars.vue";
 import router from "../router";
 import {
   getCategory,
@@ -18,7 +18,11 @@ import {
   getImageByIdeaId,
   getImageById,
 } from "../services/idea.service";
-import { getCurrentUsername, getCurrentRole, getCurrentUserId } from "../services/user_service";
+import {
+  getCurrentUsername,
+  getCurrentRole,
+  getCurrentUserId,
+} from "../services/user_service";
 import { getRating } from "../services/rating_service";
 
 const inputValue = ref("");
@@ -59,15 +63,14 @@ const user_id = getCurrentUserId();
 const idea_id = useRoute().query.id;
 const value = ref(0);
 
-async function getRatingFunction(){
+async function getRatingFunction() {
   try {
     const response = await getRating(idea_id, user_id);
     value.value = response;
   } catch (error) {
     console.error("Error", error);
   }
-};
-
+}
 
 onMounted(async () => {
   if (updatedIdea.value == null) {
@@ -441,6 +444,22 @@ async function uploadImage(event) {
   slideImages.value.push(newUploadedImageUrl.value);
 }
 
+const uploadedDocument = ref(null);
+async function uploadDocument(event) {
+  // uploadedDocument.value = event.target.files[0];
+  // const newUploadedDocumentUrl = ref("");
+  // newUploadedDocumentUrl.value += `data:image/${uploadedDocument.value.type};name=${uploadedDocument.value.name};base64,`;
+  // const blob = await uploadedDocument.value.arrayBuffer();
+  // const byteArray = new Uint8Array(await blob);
+  // let binaryString = "";
+  // for (let i = 0; i < byteArray.length; i++) {
+  //   binaryString += String.fromCharCode(byteArray[i]);
+  // }
+  // const base64String = btoa(binaryString);
+  // newUploadedDocument.value += `${base64String}`;
+  //slideImages.value.push(newUploadedImageUrl.value);
+}
+
 async function shouldDisableArrows() {
   if (updatedIdea.value.disableFields === "true") {
     return true;
@@ -459,7 +478,7 @@ const shouldDisplayRatingStars = computed(() => {
   const currentPath = route.path;
   const query = route.query;
 
-  return currentPath === '/create-idea' && 'disableFields' in query;
+  return currentPath === "/create-idea" && "disableFields" in query;
 });
 
 function removeSelection(index) {
@@ -592,7 +611,6 @@ function removeSelection(index) {
             class="rating-stars"
           />
         </div>
-        
       </div>
 
       <div class="idea-text">
@@ -640,39 +658,77 @@ function removeSelection(index) {
           </div>
         </div>
       </div>
-
-      <div class="carousel-container">
-        <div class="idea-carousel">
-          <CarouselImage
-            class="carousel-image"
-            :images="slideImages"
-            @current-index="getCurrentIndex"
-            @selected-image-values="getSelectedImageValues"
-            :initialCurrentIndex="initialCurrentIndex()"
-            :disabledArrow="shouldDisableArrows()"
-            :imageHeightPercentage="100"
-          />
+      <div>
+        <div class="container">
+          <div class="carousel-container">
+            <div class="idea-carousel">
+              <CarouselImage
+                class="carousel-image"
+                :images="slideImages"
+                @current-index="getCurrentIndex"
+                @selected-image-values="getSelectedImageValues"
+                :initialCurrentIndex="initialCurrentIndex()"
+                :disabledArrow="shouldDisableArrows()"
+                :imageHeightPercentage="100"
+              />
+            </div>
+          </div>
+          <div class="document-container">
+            <div class="document">
+              <span class="material-symbols-outlined attach-icon">
+                attach_file
+              </span>
+              <div class="file-name">ytduuu</div>
+              <span class="material-symbols-outlined delete-icon">
+                delete
+              </span>
+            </div>
+          </div>
         </div>
-        <div class="add-image">
-          <input
-            type="file"
-            id="upload"
-            hidden
-            :disabled="fieldsDisabled"
-            ref="uploadedImage"
-            v-on:change="uploadImage($event)"
-          />
-          <label
-            for="upload"
-            class="add-image-idea"
-            v-if="!deletePopup && !disableFields"
-            style="display: flex; align-items: center"
-          >
-            Upload Image
-            <span class="material-symbols-outlined" style="margin-left: 5px">
-              attach_file
-            </span>
-          </label>
+
+        <div class="add-buttons">
+          <div class="add-image">
+            <input
+              type="file"
+              id="upload"
+              hidden
+              :disabled="fieldsDisabled"
+              ref="uploadedImage"
+              v-on:change="uploadImage($event)"
+            />
+            <label
+              for="upload"
+              class="add-image-idea"
+              v-if="!deletePopup && !disableFields"
+              style="display: flex; align-items: center"
+            >
+              Upload Image
+              <span class="material-symbols-outlined" style="margin-left: 5px">
+                attach_file
+              </span>
+            </label>
+          </div>
+          <div class="add-document">
+            <input
+              type="file"
+              id="upload"
+              hidden
+              :disabled="fieldsDisabled"
+              ref="uploadedDocument"
+              v-on:change="uploadDocument($event)"
+            />
+            <label
+              for="upload"
+              class="add-document-idea"
+              v-if="!deletePopup && !disableFields"
+              style="display: flex; align-items: center"
+            >
+              Upload Document
+              <span class="material-symbols-outlined" style="margin-left: 5px">
+                attach_file
+              </span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -796,10 +852,11 @@ b {
 }
 
 .carousel-image {
-  height: 13vw;
+  height: 10vw;
   max-width: 19vw;
   object-fit: fill;
-  margin-top: 20px;
+  margin-top: 1px;
+  height: fit-content;
 }
 
 .carousel-image > img {
@@ -871,9 +928,24 @@ textarea {
   cursor: pointer;
   margin-top: 5px;
   border-radius: 6px;
-  height: 1.9vh;
+  height: 1.5vh;
 }
 .add-image-idea:hover {
+  background-color: rgba(128, 128, 128, 0.753);
+}
+
+.add-document-idea {
+  background-color: gray;
+  color: white;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  cursor: pointer;
+  margin-top: 5px;
+  border-radius: 6px;
+  height: 1.5vh;
+}
+
+.add-document-idea:hover {
   background-color: rgba(128, 128, 128, 0.753);
 }
 
@@ -969,9 +1041,9 @@ textarea {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  width: 23vw;
-  margin: auto;
-  margin-top: 10px;
+  width: 15vw;
+  margin-left: 0;
+  margin-top: 2px;
 }
 
 .create-container {
@@ -981,6 +1053,16 @@ textarea {
   flex-direction: column;
   width: 23vw;
   margin: auto;
+}
+
+.document-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 50%;
+  margin-left: 0;
+  margin-top: 2px;
 }
 
 .label {
@@ -1018,6 +1100,23 @@ select {
 
 .add-image {
   padding-bottom: 10px;
+  width: 35%;
+  justify-content: center;
+}
+
+.add-image label {
+  display: flex;
+  justify-content: center;
+}
+
+.add-document {
+  padding-bottom: 10px;
+  width: 35%;
+}
+
+.add-document label {
+  display: flex;
+  justify-content: center;
 }
 
 .dialog-actions {
@@ -1067,22 +1166,60 @@ select {
   border: 2px solid red;
 }
 
-.rating{
+.rating {
   display: flex;
   flex-direction: row;
   width: 100%;
 }
 
-.rating-stars{
+.rating-stars {
   justify-content: start;
   padding-left: 2rem;
 }
 
-.idea-text{
-  margin-top: 3rem;
+.idea-text {
+  margin-top: 1rem;
 }
 
-.carousel-container{
-  padding-top: 2rem;
+.carousel-container {
+  padding-top: 0.3rem;
+  width: 50%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+}
+
+.document {
+  width: 100%;
+  display: flex;
+}
+
+.document .attach-icon {
+  width: 15%;
+  padding-left: 2rem;
+}
+
+.document .file-name {
+  width: 70%;
+}
+
+.document .delete-icon {
+  width: 15%;
+  padding-right: 2rem;
+}
+
+.add-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  gap: 15%;
+  padding-top: 1rem;
 }
 </style>

@@ -183,6 +183,19 @@ async function deleteReports(commentId) {
   });
 }
 
+async function setReviewStatus(commentId, reviewStatus) {
+  await fetch(`${API_URL}/comments/reports/review/set?reviewStatus=${reviewStatus}&commentId=${commentId}`, {
+    method: "PATCH",
+  });
+}
+
+async function getReviewStatus(commentId) {
+  const response = await fetch(API_URL + "/comments/reports/review/get/" + commentId, {
+    method: "GET",
+  });
+  return await response.json();
+}
+
 export {
   loadComments,
   postComment,
@@ -199,4 +212,6 @@ export {
   updateReportedComment,
   getReportsCountForComment,
   deleteReports,
+  getReviewStatus,
+  setReviewStatus,
 };
