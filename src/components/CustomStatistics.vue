@@ -10,6 +10,7 @@ const props = defineProps({
   showSkeleton: Boolean,
   showAnimation: Boolean,
   showTopIdeas: Boolean,
+  fetchSelectedIdea: Function,
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
@@ -21,10 +22,8 @@ onMounted(async () => {
 
 
 const stats = ref(props.recievedFilteredStats);
-console.log(
-  "Initial props.recievedFilteredStats:",
-  props.recievedFilteredStats
-);
+console.log("Initial props.recievedFilteredStats:", props.recievedFilteredStats);
+console.log(props.recievedFilteredStats.mostCommentedIdeas.length);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
@@ -76,7 +75,7 @@ function loadTop5Ideas() {
     "Top 5 ideas >> ",
     props.recievedFilteredStats.mostCommentedIdeas
   );
-
+  
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
 async function refreshPage()
@@ -170,39 +169,17 @@ function getShortenedTitle(title, maxLength) {
                 <th>Idea title</th>
                 <th>No. of comments</th>
               </tr>
-              <tr>
+              <tr v-for="(idea, index) in props.recievedFilteredStats.mostCommentedIdeas" :key="index">
                 <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[0].title, 20) }}
+                  <a href="#" @click.prevent="fetchSelectedIdea(idea.id)">
+                    {{ getShortenedTitle(idea.title, 20) }}
+                  </a>
                 </td>
-                <td>{{ stats.mostCommentedIdeas[0].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[1].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[1].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[2].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[2].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[3].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[3].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[4].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[4].commentsNumber }}</td>
+                <td>{{ idea.commentsNumber }}</td>
               </tr>
             </table>
             <div class="swich-buttons">
-              <button class="load-button" @click="loadTop5Ideas()">
+              <!-- <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
               <button class="material-symbols-outlined" @click="refreshPage">refresh</button>
@@ -408,11 +385,7 @@ function getShortenedTitle(title, maxLength) {
               </button> -->
             </div>
           </div>
-
-          <div
-            v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
-            class="most-commented-ideas"
-          >
+          <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
             <p>Top Most commented ideas:</p>
             <h4>No comments were posted in this time interval</h4>
           </div>
