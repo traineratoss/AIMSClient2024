@@ -201,7 +201,8 @@ async function handleReport() {
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
       <div class="comment-text-container">
-        <p>{{ props.text }}</p>
+        <p v-if="reportCount > 5">This comment is under review</p>
+        <p v-else>{{ props.text }}</p>
       </div>
 
       <div class="footer-container">
@@ -218,10 +219,10 @@ async function handleReport() {
               </template>
             </CustomModal>
           </Teleport>
-          <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply" v-if="currentUser != props.username"
+          <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForReply" v-if="!isReported && currentUser != props.username"
             :isBlackIcon="isBlackIcon" />
-          <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
-          <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
+          <b v-if="!isReported && currentUser == props.username && likesCounts[0] > 0">Likes: </b>
+          <span v-if="!isReported && likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
           }}</span>
           <button v-if="currentUser === props.username || currentUserRole === 'ADMIN'" class="action-icon-button"
             @click="showModal = true">
@@ -277,9 +278,9 @@ async function handleReport() {
             </CustomModal>
           </Teleport>
           <LikeButton @deleteLike="deleteLikeAll" @addLike="postLikeForComment"
-            v-if="currentUser != props.username" :isBlackIcon="isBlackIcon" />
-          <b v-if="currentUser == props.username && likesCounts[0] > 0">Likes: </b>
-          <span v-if="likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
+            v-if="!isReported && currentUser != props.username" :isBlackIcon="isBlackIcon" />
+          <b v-if="!isReported && currentUser == props.username && likesCounts[0] > 0">Likes: </b>
+          <span v-if="!isReported && likesCounts[0] > 0" v-for="(count, index) in likesCounts" :key="index" class="likes-count">{{ count
           }}</span>
           <span v-if="buttonSelected">
             <button class="action-icon-button" :style="{ color: 'orange' }" @click="

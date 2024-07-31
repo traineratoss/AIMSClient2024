@@ -2,7 +2,7 @@
 import CommentDisplay from "../components/CommentDisplay.vue";
 import Pagination from "../components/Pagination.vue";
 import FormTitle from "../components/FormTitle.vue";
-import {getAllCommentsByReportsNr} from "../services/comment.service.js";
+import {getAllCommentsByReportsNr } from "../services/comment.service.js";
 import { ref, onMounted } from "vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 
@@ -86,6 +86,7 @@ async function changeDisplay(pageSize1) {
           :nrReports="comment.nrReports"
           :commentId="comment.id"
           @multiple-admin-action="updateCommentsList"
+          @comment-updated="updateCommentsList"
         />
       </div>
       <Pagination
