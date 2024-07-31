@@ -20,9 +20,11 @@ onMounted(async () => {
   showSkeleton.value = false;
 });
 
-
 const stats = ref(props.recievedFilteredStats);
-console.log("Initial props.recievedFilteredStats:", props.recievedFilteredStats);
+console.log(
+  "Initial props.recievedFilteredStats:",
+  props.recievedFilteredStats
+);
 console.log(props.recievedFilteredStats.mostCommentedIdeas.length);
 
 const sleepNow = (delay) =>
@@ -75,13 +77,10 @@ function loadTop5Ideas() {
     "Top 5 ideas >> ",
     props.recievedFilteredStats.mostCommentedIdeas
   );
-  
+
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
-async function refreshPage()
-{
-  window.location.reload();
-}
+
 async function refreshStats() {
   showSkeleton.value = true;
 
@@ -169,7 +168,11 @@ function getShortenedTitle(title, maxLength) {
                 <th>Idea title</th>
                 <th>No. of comments</th>
               </tr>
-              <tr v-for="(idea, index) in props.recievedFilteredStats.mostCommentedIdeas" :key="index">
+              <tr
+                v-for="(idea, index) in props.recievedFilteredStats
+                  .mostCommentedIdeas"
+                :key="index"
+              >
                 <td>
                   <a href="#" @click.prevent="fetchSelectedIdea(idea.id)">
                     {{ getShortenedTitle(idea.title, 20) }}
@@ -179,14 +182,15 @@ function getShortenedTitle(title, maxLength) {
               </tr>
             </table>
             <div class="swich-buttons">
-              <!-- <button class="load-button" @click="loadTop5Ideas()">
-                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
+              <button
+                class="material-symbols-outlined"
+                @click="
+                  refreshStats();
+                  loadTop5Ideas();
+                "
+              >
+                refresh
               </button>
-              <button class="material-symbols-outlined" @click="refreshPage">refresh</button>
-
-              <!-- <button class="load-button" @click="refreshStats()">
-                Refresh
-              </button> -->
             </div>
           </div>
           <div
@@ -375,17 +379,19 @@ function getShortenedTitle(title, maxLength) {
               <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
-              <!-- <button class="load-button" @click="loadData()">
+              <button class="load-button" @click="loadData()">
                 Reload ideas
-              </button> -->
+              </button>
 
-              <!-- Uncomment only if you implement it right -->
               <!-- <button class="load-button" @click="refreshStats()">
                 Refresh 
               </button> -->
             </div>
           </div>
-          <div v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0" class="most-commented-ideas">
+          <div
+            v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
+            class="most-commented-ideas"
+          >
             <p>Top Most commented ideas:</p>
             <h4>No comments were posted in this time interval</h4>
           </div>
