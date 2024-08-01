@@ -100,6 +100,7 @@ onMounted(async () => {
     "ASC"
   );
 
+ 
   console.log(currentRating);
 
   loadingPage.value = true;
@@ -763,6 +764,7 @@ const clearSelectedIdea = () => {
   selectedIdea.value = null;
   showTopIdeas.value = false;
   showPagination.value = true;
+  loadData();
 };
 
 async function fetchIdeaByComment(commentId) {
