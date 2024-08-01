@@ -32,7 +32,7 @@ async function loadPagedIdeas(
       method: "GET",
       mode: "cors",
       cache: "no-cache",
-      credentials: "same-origin",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -57,7 +57,7 @@ async function getCategory() {
       method: "GET",
       mode: "cors",
       cache: "no-cache",
-      credentials: "same-origin",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -76,7 +76,7 @@ async function getUser(pageSize, pageNumber, sortCategory) {
       method: "GET",
       mode: "cors",
       cache: "no-cache",
-      credentials: "same-origin",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -135,7 +135,7 @@ async function filterIdeas(
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -160,7 +160,7 @@ async function getIdea(id) {
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -181,7 +181,7 @@ async function updateIdea(id, title, text, status, categoryList, image) {
     method: "PATCH",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     body: JSON.stringify({
       title: title,
       text: text,
@@ -204,6 +204,8 @@ async function createIdea(title, text, status, categoryList, image, username) {
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     body: JSON.stringify({
       title: title,
       text: text,
@@ -250,7 +252,7 @@ async function getPagedIdeasFromUser(
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -270,15 +272,25 @@ async function getPagedIdeasFromUser(
 async function getImageById(imageId) {
   const response = await fetch(
     "http://localhost:8080/aims/api/v1/images/get?id=" + imageId
-  );
+  , {
+    method: "GET",
+    mode: "cors",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
   const data = await response.json();
   return data;
 }
 
 async function getImageByIdeaId(ideaId) {
   const response = await fetch(
-    "http://localhost:8080/aims/api/v1/images/getByIdea?id=" + ideaId
-  );
+    "http://localhost:8080/aims/api/v1/images/getByIdea?id=" + ideaId,{
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+});
   const data = await response.json();
   return data;
 }
@@ -286,6 +298,9 @@ async function getImageByIdeaId(ideaId) {
 async function deleteIdea(ideaId) {
   return fetch("http://localhost:8080/aims/api/v1/ideas/delete?id=" + ideaId, {
     method: "DELETE",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
   });
 }
 
