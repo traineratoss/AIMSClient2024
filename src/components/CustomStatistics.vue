@@ -201,7 +201,15 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
             </table>
             <div class="swich-buttons">
-              <button class="material-symbols-outlined" @click="refreshPage">refresh</button>
+              <button
+                class="material-symbols-outlined"
+                @click="
+                  loadTop5Ideas();
+                  refreshStats();
+                "
+              >
+                refresh
+              </button>
               <!-- <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
@@ -220,9 +228,12 @@ const fetchIdeaByComment = async (commentId) => {
                 <th>Comment content</th>
                 <th>No. of likes</th>
               </tr>
-              <tr v-for="(comment, index) in stats.mostLikedComments" :key="index">
-                <td>
-                  <a href="#" @click.prevent="fetchIdeaByComment(comment.commentId)">
+              <tr
+                v-for="(comment, index) in stats.mostLikedComments"
+                  <a
+                    href="#"
+                    @click.prevent="fetchIdeaByComment(comment.commentId)"
+                  >
                     {{ getShortenedTitle(comment.commentText, 20) }}
                   </a>
                 </td>
