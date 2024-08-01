@@ -1,5 +1,5 @@
-import nativeFetch from "../main";
-import { isRefreshTokenExipred, isAccessTokenExpired, setTokenExpiry } from "../services/token.service"
+import { nativeFetch } from "../main";
+import { isRefreshTokenExipred, isAccessTokenExpired, setTokenExpiry, refreshTokens } from "../services/token.service"
 import { logout } from "../services/user_service"
 
 export const customFetch = async (url, options = {}) => {
@@ -25,24 +25,4 @@ export const customFetch = async (url, options = {}) => {
     }
 
     return response;
-}
-
-
-const refreshTokens = async () => {
-    try {
-        const response = await nativeFetch('http://localhost:8080/api/v1/auth/refresh-token', {
-            method: "POST",
-            mode: "cors",
-            credentials: "include"
-        })
-        
-        const json = await response.json();
-
-        setTokenExpiry(json.accessTokenExpiryDate, json.refreshTokenExpiryDate);
-
-        console.log("Refreshed tokens")
-    } catch (error) {
-        console.log(error.message);
-        await logout();
-    }
 }

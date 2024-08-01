@@ -1,7 +1,7 @@
-import axios from "axios";
+import { axiosInstance } from "../main";
 
 export async function subscribeUser(ideaId, userId){
-    const response = await axios.post("http://localhost:8080/aims/api/v1/ideas/addSubscription", null, {
+    const response = await axiosInstance.post("http://localhost:8080/aims/api/v1/ideas/addSubscription", null, {
     params: {
         ideaId,
         userId
@@ -11,7 +11,7 @@ export async function subscribeUser(ideaId, userId){
 }
 
 export async function unsubscribeUser(ideaId, userId){
-    const response = await axios.delete("http://localhost:8080/aims/api/v1/ideas/deleteSubscription",{
+    const response = await axiosInstance.delete("http://localhost:8080/aims/api/v1/ideas/deleteSubscription",{
         params: {
             ideaId,
             userId
@@ -21,7 +21,7 @@ export async function unsubscribeUser(ideaId, userId){
 }
 
 export async function getSubscriptions(userId){
-    const response = await axios.get("http://localhost:8080/aims/api/v1/ideas/getAllSubscriptions",{
+    const response = await axiosInstance.get("http://localhost:8080/aims/api/v1/ideas/getAllSubscriptions",{
         params: {
             userId,
         }

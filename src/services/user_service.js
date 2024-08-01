@@ -1,6 +1,6 @@
 import { invalidateTokens, setTokenExpiry } from "./token.service";
 import router from "../router";
-import nativeFetch from "../main";
+import { nativeFetch } from "../main";
 
 const API_URL = "http://localhost:8080/users";
 
