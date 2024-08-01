@@ -465,10 +465,10 @@ watch(() => props.ideaId, async () => {
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                  {{ getShortText(props.text, 3, 49) }}
+                <div v-html="getShortText(props.text, 3, 49) "></div>
                 </div>
                 <div class="text" v-else>
-                  {{ getShortText(props.text, 2, 49) }}
+                  <div v-html="getShortText(props.text, 2, 49) "></div>
                 </div>
               </div>
               <div class="left-container-buttons">
