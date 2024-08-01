@@ -227,7 +227,7 @@ async function handleReport() {
       </div>
       <div class="comment-text-container">
         <p v-if="reportCount > 5">This comment is under review</p>
-        <p v-else>{{ props.text }}</p>
+        <p v-else><div v-html="text"></div></p>
       </div>
       <div class="footer-container">
         <div class="footer-container-left"></div>
@@ -273,7 +273,7 @@ async function handleReport() {
       </div>
       <div class="comment-text-container">
         <p v-if="reportCount > 5">This comment is under review</p>
-        <p v-else>{{ props.text }}</p>
+        <p v-else><div v-html="text"></div></p>
       </div>
 
       <div class="footer-container">

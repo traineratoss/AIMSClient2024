@@ -18,6 +18,7 @@ import {
   getImageByIdeaId,
   getImageById,
 } from "../services/idea.service";
+import {getDocumentsByIdeaId, postDocuments, deleteDocument, downloadDocument} from "../services/document_service"
 import {
   getCurrentUsername,
   getCurrentRole,
@@ -62,6 +63,9 @@ const handleSelectedCategories = (selectedCategories) => {
 const user_id = getCurrentUserId();
 const idea_id = useRoute().query.id;
 const value = ref(0);
+const existingDocs = ref([]);
+const newFiles = ref([]);
+const disableFields = useRoute().query.disableFields === "true";
 
 async function getRatingFunction() {
   try {
@@ -72,6 +76,54 @@ async function getRatingFunction() {
   }
 }
 
+const deleteFile = async (file) => {
+  if (disableFields || hasUpdateId) {
+    try {
+      if (file.isLocal) {
+        deleteFileLocal(file.index);
+      } else {
+        await deleteDocument(file.id);
+        await getDocuments(file.ideaId);
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
+    }
+  } else {
+    deleteFileLocal(file.index);
+  }
+};
+
+const deleteFileLocal = (index) => {
+  newFiles.value.splice(index, 1);
+};
+
+const getDocuments = async (idea_id) => {
+  try {
+    const response = await getDocumentsByIdeaId(idea_id);
+    existingDocs.value = response;
+  } catch (error) {
+    console.error("Error", error);
+  }
+};
+
+const isCreateIdeaPath = useRoute().path === '/create-idea';
+const hasUpdateId = isCreateIdeaPath && 'updateId' in useRoute().query;
+const ideaIdd = useRoute().query.updateId;
+
+const displayedFiles = computed(() => {
+  const backendFiles = existingDocs.value.map((doc, index) => ({
+    ...doc,
+    isLocal: false,
+    index
+  }));
+  const localFiles = newFiles.value.map((file, index) => ({
+    ...file,
+    isLocal: true,
+    index
+  }));
+  return [...backendFiles, ...localFiles];
+});
+
 onMounted(async () => {
   if (updatedIdea.value == null) {
     categoriesSelected.value = [];
@@ -80,6 +132,14 @@ onMounted(async () => {
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
   getRatingFunction();
+
+  if (disableFields) {
+    await getDocuments(idea_id);
+  }
+
+  if(hasUpdateId){
+    await getDocuments(ideaIdd);
+  }
 
   // must optimize a lot here, we shouldn't load all the images at first, it will take a lot of time
   // initially, load the image we need and then loading one image at a time, depending on the direction
@@ -206,14 +266,21 @@ async function updateIdeaFunction() {
   }
 }
 
-//Checking what we want to do (update or create) since we use the same component
+
 async function shouldCreateOrUpdate() {
   if (JSON.stringify(updatedIdea.value) === "{}") {
-    createIdeaFunction();
+    const dataResponse = await createIdeaFunction();
+    if (newFiles.value.length > 0) {
+      await uploadFilesAndHandleResponse(newFiles.value, dataResponse.id, userId);
+    }
   } else {
-    updateIdeaFunction();
+    await updateIdeaFunction();
+    if (newFiles.value.length > 0){
+      await uploadFilesAndHandleResponse(newFiles.value, ideaIdd, userId);
+    }
   }
 }
+
 
 //This is used for updating all the fields in the view when clicking update
 async function updateIdeaFields() {
@@ -370,13 +437,36 @@ async function createIdeaFunction() {
       statusValue.value.toUpperCase(),
       categoryTexts,
       imageDTO,
-      currentUsername
+      currentUsername,
+      // newFiles.value
     );
+    // debugger;
     router.push({ name: "my" });
     return data;
   }
 }
-const disableFields = useRoute().query.disableFields === "true";
+
+
+const userId = getCurrentUserId();
+
+async function uploadFilesAndHandleResponse(files, ideaId, userId) {
+  try {
+    if (!Array.isArray(files)) {
+      throw new TypeError("Expected an array of files");
+    }
+
+    const formattedFiles = files.map(file => file.file || file); 
+    
+    const result = await postDocuments(formattedFiles, ideaId, userId);
+    console.log("Files uploaded successfully:", result);
+
+    await getDocuments(ideaId);
+  } catch (error) {
+    console.error("Error during file upload:", error);
+  }
+}
+
+
 const fieldsDisabled = ref(disableFields);
 const showDeletePopup = useRoute().query.showDeletePopup === "true";
 const deletePopup = ref(showDeletePopup);
@@ -445,6 +535,7 @@ async function uploadImage(event) {
 }
 
 const uploadedDocument = ref(null);
+
 async function uploadDocument(event) {
   // uploadedDocument.value = event.target.files[0];
   // const newUploadedDocumentUrl = ref("");
@@ -457,7 +548,6 @@ async function uploadDocument(event) {
   // }
   // const base64String = btoa(binaryString);
   // newUploadedDocument.value += `${base64String}`;
-  //slideImages.value.push(newUploadedImageUrl.value);
 }
 
 async function shouldDisableArrows() {
@@ -489,6 +579,26 @@ function removeSelection(index) {
     );
   }
 }
+
+const uploadFiles = (event) => {
+  const uploadedFiles = Array.from(event.target.files).map((file, index) => ({
+    name: file.name,
+    file,
+    isLocal: true,
+    index: newFiles.value.length + index,
+  }));
+  newFiles.value.push(...uploadedFiles);
+};
+
+
+async function downloadDoc(id, fileName) {
+  try {
+    await downloadDocument(id, fileName);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+  }
+}
+
 </script>
 
 <template>
@@ -674,12 +784,24 @@ function removeSelection(index) {
             </div>
           </div>
           <div class="document-container">
-            <div class="document">
+            <div
+              v-for="file in displayedFiles"
+              :key="file.id || file.index"
+              class="document"
+            >
               <span class="material-symbols-outlined attach-icon">
                 attach_file
               </span>
-              <div class="file-name">ytduuu</div>
-              <span class="material-symbols-outlined delete-icon">
+              <div class="file-name" @click="file.isLocal ? null : downloadDoc(file.id, file.fileName)">
+                <span class="visible-part">{{ file.fileName ? file.fileName.slice(0, 10) : file.name.slice(0, 10) }}</span>
+                <span class="faded-part">{{ file.fileName ? file.fileName.slice(10, 16) : file.name.slice(10, 16) }}</span>
+                <span class="hidden-part">{{ file.fileName ? file.fileName.slice(16) : file.name.slice(16) }}</span>
+              </div>
+              <span
+                class="material-symbols-outlined delete-icon"
+                @click="deleteFile(file)"
+                v-if="(currentRole == 'ADMIN' && !disableFields) || file.isLocal || (userId == file.userId && !disableFields)"
+              >
                 delete
               </span>
             </div>
@@ -692,6 +814,7 @@ function removeSelection(index) {
               type="file"
               id="upload"
               hidden
+              accept=".jpg, .jpeg, .png"
               :disabled="fieldsDisabled"
               ref="uploadedImage"
               v-on:change="uploadImage($event)"
@@ -711,14 +834,14 @@ function removeSelection(index) {
           <div class="add-document">
             <input
               type="file"
-              id="upload"
+              id="uploadDocument"
               hidden
+              multiple
               :disabled="fieldsDisabled"
-              ref="uploadedDocument"
-              v-on:change="uploadDocument($event)"
+              @change="uploadFiles"
             />
             <label
-              for="upload"
+              for="uploadDocument"
               class="add-document-idea"
               v-if="!deletePopup && !disableFields"
               style="display: flex; align-items: center"
@@ -1063,6 +1186,9 @@ textarea {
   width: 50%;
   margin-left: 0;
   margin-top: 2px;
+  overflow-y: auto;
+  height: 8rem;
+  max-height: 8rem;
 }
 
 .label {
@@ -1206,11 +1332,15 @@ select {
 
 .document .file-name {
   width: 70%;
+  max-width: 8rem;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .document .delete-icon {
   width: 15%;
   padding-right: 2rem;
+  cursor: pointer;
 }
 
 .add-buttons {
@@ -1221,5 +1351,17 @@ select {
   align-items: center;
   gap: 15%;
   padding-top: 1rem;
+}
+
+.visible-part {
+  color: black;
+}
+
+.faded-part {
+  color: gray; 
+}
+
+.hidden-part {
+  color: transparent; 
 }
 </style>
