@@ -230,6 +230,9 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
               <tr
                 v-for="(comment, index) in stats.mostLikedComments"
+                :key="index"
+              >
+                <td>
                   <a
                     href="#"
                     @click.prevent="fetchIdeaByComment(comment.commentId)"
