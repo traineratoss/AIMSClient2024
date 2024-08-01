@@ -1,4 +1,5 @@
 import { nativeFetch } from "../main";
+import { logout } from "./user_service";
 
 const refreshDelaySeconds = -3;
 
