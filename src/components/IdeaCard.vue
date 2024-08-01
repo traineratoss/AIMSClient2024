@@ -400,8 +400,8 @@ const updateRating = async (newRating) => {
 
 const currentStatusSubscribe = ref(props.isSubscribed);
 
-function subscribeUserAction(){
-  emits('subscribeUser', props.ideaId, userId);
+function subscribeUserAction() {
+  emits("subscribeUser", props.ideaId, userId);
   isSelected.value = true;
 }
 
@@ -495,8 +495,11 @@ watch(toRef(props, "isSubscribed"), (newVal) => {
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
-                  v-if="$route.path !== '/my'"
-                  >
+                  v-if="
+                    $route.path !== '/my' &&
+                    !(props.loggedUser === props.username)
+                  "
+                >
                   visibility
                 </span>
               </div>

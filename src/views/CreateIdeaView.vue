@@ -692,6 +692,7 @@ function removeSelection(index) {
               type="file"
               id="upload"
               hidden
+              accept=".jpg, .jpeg, .png"
               :disabled="fieldsDisabled"
               ref="uploadedImage"
               v-on:change="uploadImage($event)"
