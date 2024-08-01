@@ -210,13 +210,15 @@ async function createIdea(title, text, status, categoryList, image, username) {
       status: status.toUpperCase(),
       image: image,
       categoryList: categoryList,
+      // file: file,
+      
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
   const data = await response.json();
-  const content = await data.content;
+  return data;
 }
 
 async function getAllImages() {
