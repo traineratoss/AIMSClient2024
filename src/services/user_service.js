@@ -1,13 +1,25 @@
+import { invalidateTokens, setTokenExpiry } from "./token.service";
+import router from "../router";
+import { nativeFetch } from "../main";
+
 const API_URL = "http://localhost:8080/users";
 
 async function getUserByUsername(username) {
-  const response = await fetch(`${API_URL}?username=${username}`);
+  const response = await fetch(`${API_URL}?username=${username}`,{
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+  });
   const json = await response.json();
   return json;
 }
 
 async function getUserByEmail(email) {
-  const response = await fetch(`${API_URL}/email?email=${email}`);
+  const response = await fetch(`${API_URL}/email?email=${email}`,{
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+});
   const json = await response.json();
   return json;
 }
@@ -18,6 +30,9 @@ async function checkValidationeCode(otp, usernameOrEmail) {
     `${API_URL}/verify-otp`,
     {
       method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         usernameOrEmail: usernameOrEmail,
@@ -42,27 +57,38 @@ async function checkValidationeCode(otp, usernameOrEmail) {
 }
 
 async function getIdByUsername(username) {
-  const response = await fetch(`${API_URL}/idByUsername?username=${username}`);
+  const response = await fetch(`${API_URL}/idByUsername?username=${username}`,{
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+  });
   const json = await response.json();
   return json;
 }
 
-async function loginUser(username, hashPassword) {
+async function loginUser(username, password) {
   let connectionError = false;
   let response;
   try {
-    response = await fetch(`${API_URL}/login?username=${username}`, {
+    response = await nativeFetch(`http://localhost:8080/api/v1/auth/login`, {
       method: "POST",
-      body: hashPassword,
+      cache: "no-cache",
+      credentials: "include",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usernameOrEmail: username,
+        password: password
+      })
     });
   } catch (error) {
     connectionError = true;
   }
-
+ 
   if (connectionError) {
     throw new Error("Server connection error");
   }
-
+ 
   if (!response.ok) {
     const text = await response.text();
     if (text.message === "User was deactivated") {
@@ -71,13 +97,17 @@ async function loginUser(username, hashPassword) {
     throw new Error("Invalid username or password");
   } else {
     const json = await response.json();
-    localStorage.setItem("username", json.username);
-    localStorage.setItem("role", json.role);
-    localStorage.setItem("email", json.email);
-    localStorage.setItem("fullName", json.fullName);
-    localStorage.setItem("avatarId", json.avatarId - 1);
-    localStorage.setItem("isFirstLogin", json.isFirstLogin);
-    localStorage.setItem("userId", json.id);
+    const userData = json.userData;
+    localStorage.setItem("username", userData.username);
+    localStorage.setItem("role", userData.role);
+    localStorage.setItem("email", userData.email);
+    localStorage.setItem("fullName", userData.fullName);
+    localStorage.setItem("avatarId", userData.avatarId - 1);
+    localStorage.setItem("isFirstLogin", userData.isFirstLogin);
+    localStorage.setItem("userId", userData.id);
+
+    setTokenExpiry(json.accessTokenExpiryDate, json.refreshTokenExpiryDate);
+
     return json;
   }
 }
@@ -88,6 +118,9 @@ async function postUser(username, email) {
   try {
     response = await fetch(`${API_URL}?username=${username}&email=${email.toLowerCase()}`, {
       method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
     });
   } catch (error) {
     connectionError = true;
@@ -107,7 +140,10 @@ async function postUser(username, email) {
 async function sendEmailToAllAdmins(username) {
   const response = await fetch(
     `${API_URL}/send-email-to-admin?username=${username}`, {
-      method: "POST"
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
     }
   );
 }
@@ -118,6 +154,9 @@ async function updateUser(username, userUpdateDto) {
     `${API_URL}/update-profile?username=${username}`,
     {
       method: "PATCH",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username: userUpdateDto.username,
@@ -140,6 +179,9 @@ async function updateUser(username, userUpdateDto) {
 async function updateUserRole(username) {
   const response = await fetch(`${API_URL}/update-role?username=${username}`, {
     method: "PATCH",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({}),
   });
@@ -153,7 +195,11 @@ async function updateUserRole(username) {
 
 async function getAllUsersForAdmin(pageSize, pageNumber, sortCategory) {
   const response = await fetch(
-    `${API_URL}/allUsers?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`
+    `${API_URL}/allUsers?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`,{
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
+    }
   );
   const json = await response.json();
   return json;
@@ -166,7 +212,11 @@ async function getAllUserByIsActive(
   sortCategory
 ) {
   const response = await fetch(
-    `${API_URL}/allByIsActive?isActive=${isActive}&pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`
+    `${API_URL}/allByIsActive?isActive=${isActive}&pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}`,{
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
+    }
   );
   const json = await response.json();
   return json;
@@ -180,7 +230,11 @@ async function getAllUserByUsername(
   currentUsername,
 ) {
   const response = await fetch(
-    `${API_URL}/allByUsername?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}&username=${username}&currentUsername=${currentUsername}`
+    `${API_URL}/allByUsername?pageSize=${pageSize}&pageNumber=${pageNumber}&sortCategory=${sortCategory}&username=${username}&currentUsername=${currentUsername}`,{
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
+    }
   );
   const json = await response.json();
   return json;
@@ -190,6 +244,9 @@ async function getAllUserByUsername(
 async function changePassword(changePasswordDTO) {
   const response = await fetch(`${API_URL}/change-password`, {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: changePasswordDTO.username,
@@ -208,6 +265,9 @@ async function changePassword(changePasswordDTO) {
 async function abortChangePassword() {
   const response = await fetch(`${API_URL}/change-password/abort`, {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: getCurrentUsername()
@@ -221,6 +281,9 @@ async function sendNewPassword(usernameOrEmail) {
   try {
     const response = await fetch(`${API_URL}/send-forgot-password`, {
       method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "include",
       body: usernameOrEmail,
     });
   } catch (error) {
@@ -235,6 +298,9 @@ async function sendNewPassword(usernameOrEmail) {
 async function sendApproveEmail(usernameOrEmail) {
   const response = await fetch(`${API_URL}/send-approve-email`, {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
@@ -252,6 +318,9 @@ async function sendApproveEmail(usernameOrEmail) {
 async function sendDeclineEmail(usernameOrEmail) {
   const response = await fetch(`${API_URL}/send-decline-email`, {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
@@ -269,6 +338,9 @@ async function sendDeclineEmail(usernameOrEmail) {
 async function sendActivateEmail(usernameOrEmail) {
   const response = await fetch(`${API_URL}/send-activate-message`, {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
@@ -284,6 +356,9 @@ async function sendActivateEmail(usernameOrEmail) {
 async function sendDeactivateEmail(usernameOrEmail) {
   const response = await fetch(`${API_URL}/send-deactivate-message`, {
     method: "POST",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: usernameOrEmail,
   });
@@ -324,12 +399,27 @@ function setCurrentUsername(username) {
   localStorage.setItem('username', username);
 }
 
-function logout() {
-    localStorage.clear('username');
-    localStorage.clear('role');
-    localStorage.clear('email');
-    localStorage.clear('fullName');
-    localStorage.clear('avatarId');
+async function logout() {
+
+  await nativeFetch("http://localhost:8080/api/v1/auth/logout", {
+    method: "POST",
+    cache: "no-cache",
+    credentials: "include",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  localStorage.clear('username');
+  localStorage.clear('role');
+  localStorage.clear('email');
+  localStorage.clear('fullName');
+  localStorage.clear('avatarId');
+  localStorage.clear("isFirstLogin");
+  localStorage.clear("userId");
+
+  invalidateTokens();
+
+  router.go('/login');
 }
 
 function validateUsername(username) {
@@ -354,7 +444,11 @@ const sleepNow = (delay) =>
 
 async function isFirstLogin(usernameOrEmail) {
   await sleepNow(500);
-  const response = await fetch(`${API_URL}/is-first-login?usernameOrEmail=${usernameOrEmail}`);
+  const response = await fetch(`${API_URL}/is-first-login?usernameOrEmail=${usernameOrEmail}`,{
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+  });
   const json = response.json();
   return json;
 }
