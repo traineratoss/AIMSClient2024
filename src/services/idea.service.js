@@ -307,7 +307,6 @@ async function getIdeaByCommentId(commentId) {
   }
 }
 
-
 export {
   loadPagedIdeas,
   createIdea,
