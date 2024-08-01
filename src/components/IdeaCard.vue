@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, toRef } from "vue";
+import { ref, watch, toRef, onUpdated } from "vue";
 import CustomComment from "../components/CustomComment.vue";
 import router from "../router";
 import {
@@ -328,7 +328,7 @@ function isSelectedSubscription() {
 const isAdmin = getCurrentRole() === "ADMIN";
 
 watch(
-  () => allLoadedComments.value,
+  allLoadedComments,
   (comments) => {
     comments.forEach((comment) => {
       watch(
@@ -408,6 +408,16 @@ function subscribeUserAction() {
 watch(toRef(props, "isSubscribed"), (newVal) => {
   currentStatusSubscribe.value = newVal;
 });
+
+watch(() => props.ideaId, async () => {
+  allLoadedComments.value  = []
+  allLoadedComments.value = await loadComments(
+    numberOfDisplayedComments.value,
+    0,
+    "creationDate",
+    props.ideaId
+  );
+})
 </script>
 
 <template>

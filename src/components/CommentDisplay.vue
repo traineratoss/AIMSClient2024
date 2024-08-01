@@ -30,10 +30,11 @@ async function handleConfirm(action) {
   try {
     if (action === "offensive") {
       await updateReportedComment(props.commentId);
+      setReviewStatus(props.commentId, "OFFENSIVE");
     } else {
       await deleteReports(props.commentId);
+      setReviewStatus(props.commentId, "NOT_OFFENSIVE");
     }
-    emit('comment-updated');
   } catch (error) {
     console.error("Error!", error);
   }

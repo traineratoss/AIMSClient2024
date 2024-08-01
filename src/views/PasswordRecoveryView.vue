@@ -72,8 +72,9 @@ function updateOTP(otp, validFormat) {
       >
         Request new Password
       </CustomButton>
-      <div class="container validate-otp" v-else>        
-        <p>Please input your verification code below:</p>
+      <div class="container validate-otp" v-else>   
+        <p>You have received a verification code on your email.
+          <br> Please input your code below: </p>
         <CodeValidation @otp-updated="updateOTP" />
         <CustomButton 
           id="validation-code" 
@@ -109,6 +110,7 @@ function updateOTP(otp, validFormat) {
 p {
   font-size: 17px;
   margin: 0px;
+  text-align: center;
 }
 
 .error-message-visible {

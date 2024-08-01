@@ -3,6 +3,7 @@ import { ref, onMounted, watch, computed } from "vue";
 import { getStats } from "../services/statistics.service";
 import PieChart from "./PieChart.vue";
 import CustomLoader from "../components/CustomLoader.vue";
+import { getIdeaByCommentId } from "../services/idea.service";
 
 const props = defineProps({
   recievedFilteredStats: Object,
@@ -10,6 +11,8 @@ const props = defineProps({
   showSkeleton: Boolean,
   showAnimation: Boolean,
   showTopIdeas: Boolean,
+  fetchSelectedIdea: Function,
+  fetchIdeaByComment: Function,
 });
 
 const emits = defineEmits(["loadTop5Ideas", "loadData"]);
@@ -19,12 +22,12 @@ onMounted(async () => {
   showSkeleton.value = false;
 });
 
-
 const stats = ref(props.recievedFilteredStats);
 console.log(
   "Initial props.recievedFilteredStats:",
   props.recievedFilteredStats
 );
+console.log(props.recievedFilteredStats.mostCommentedIdeas.length);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
@@ -79,10 +82,7 @@ function loadTop5Ideas() {
 
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
-async function refreshPage()
-{
-  window.location.reload();
-}
+
 async function refreshStats() {
   showSkeleton.value = true;
 
@@ -99,6 +99,23 @@ function loadData() {
 function getShortenedTitle(title, maxLength) {
   return title.length > maxLength ? title.substr(0, maxLength) + "..." : title;
 }
+
+const fetchIdeaByComment = async (commentId) => {
+  console.log(commentId);
+  try {
+    const idea = await getIdeaByCommentId(commentId);
+    if (idea && idea.id) {
+      // fetchSelectedIdea(idea.id);
+      props.fetchSelectedIdea(idea.id);
+    } else {
+      console.error("Idea not found for the given comment ID");
+    }
+  } catch (error) {
+    console.error("Error fetching idea by comment ID:", error);
+  }
+};
+
+
 </script>
 
 <template>
@@ -170,44 +187,25 @@ function getShortenedTitle(title, maxLength) {
                 <th>Idea title</th>
                 <th>No. of comments</th>
               </tr>
-              <tr>
+              <tr
+                v-for="(idea, index) in props.recievedFilteredStats
+                  .mostCommentedIdeas"
+                :key="index"
+              >
                 <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[0].title, 20) }}
+                  <a href="#" @click.prevent="fetchSelectedIdea(idea.id)">
+                    {{ getShortenedTitle(idea.title, 20) }}
+                  </a>
                 </td>
-                <td>{{ stats.mostCommentedIdeas[0].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[1].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[1].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[2].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[2].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[3].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[3].commentsNumber }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ getShortenedTitle(stats.mostCommentedIdeas[4].title, 20) }}
-                </td>
-                <td>{{ stats.mostCommentedIdeas[4].commentsNumber }}</td>
+                <td>{{ idea.commentsNumber }}</td>
               </tr>
             </table>
             <div class="swich-buttons">
-              <button class="load-button" @click="loadTop5Ideas()">
+              <button class="material-symbols-outlined" @click="refreshStats(); loadTop5Ideas(); ">refresh</button>
+              <!-- <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
-              <button class="material-symbols-outlined" @click="refreshPage">refresh</button>
-
-              <!-- <button class="load-button" @click="refreshStats()">
+              <button class="load-button" @click="refreshStats()">
                 Refresh
               </button> -->
             </div>
@@ -222,12 +220,11 @@ function getShortenedTitle(title, maxLength) {
                 <th>Comment content</th>
                 <th>No. of likes</th>
               </tr>
-              <tr
-                v-for="(comment, index) in stats.mostLikedComments"
-                :key="index"
-              >
+              <tr v-for="(comment, index) in stats.mostLikedComments" :key="index">
                 <td>
-                  {{ getShortenedTitle(comment.commentText, 20) }}
+                  <a href="#" @click.prevent="fetchIdeaByComment(comment.commentId)">
+                    {{ getShortenedTitle(comment.commentText, 20) }}
+                  </a>
                 </td>
                 <td>{{ comment.nrLikes }}</td>
               </tr>
@@ -398,17 +395,15 @@ function getShortenedTitle(title, maxLength) {
               <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
-              <!-- <button class="load-button" @click="loadData()">
+              <button class="load-button" @click="loadData()">
                 Reload ideas
-              </button> -->
+              </button>
 
-              <!-- Uncomment only if you implement it right -->
               <!-- <button class="load-button" @click="refreshStats()">
                 Refresh 
               </button> -->
             </div>
           </div>
-
           <div
             v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
             class="most-commented-ideas"
@@ -615,7 +610,7 @@ strong {
 }
 
 .material-symbols-outlined {
-  margin-top:20px;
+  margin-top: 20px;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 

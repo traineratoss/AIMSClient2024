@@ -25,20 +25,10 @@ async function login() {
     "$2a$10$QkRidA35ea0Fzm/ObrOEgO"
   );
   if (usernameOrEmailText.value && passwordText.value) {
-    loginUser(usernameOrEmailText.value, hashPassword)
+    loginUser(usernameOrEmailText.value, passwordText.value)
       .then((res) => {
-        // isFirstLogin(usernameOrEmailText.value)
-        //   .then(res => {
-        //     if (res) {
-        //       router.push("/change");
-        //     } else {
-        router.push("/my");
-        //     }
-        //   })
-        // const firstLogin = localStorage.getItem("isFirstLogin");
-        // if (firstLogin === "true") {
 
-        // }
+        router.push("/my");
         console.log(localStorage.getItem("isFirstLogin"));
       })
       .catch((error) => {
