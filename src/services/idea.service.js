@@ -32,7 +32,7 @@ async function loadPagedIdeas(
       method: "GET",
       mode: "cors",
       cache: "no-cache",
-      credentials: "same-origin",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -57,7 +57,7 @@ async function getCategory() {
       method: "GET",
       mode: "cors",
       cache: "no-cache",
-      credentials: "same-origin",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -76,7 +76,7 @@ async function getUser(pageSize, pageNumber, sortCategory) {
       method: "GET",
       mode: "cors",
       cache: "no-cache",
-      credentials: "same-origin",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -135,7 +135,7 @@ async function filterIdeas(
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -160,7 +160,7 @@ async function getIdea(id) {
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -176,12 +176,37 @@ async function getIdea(id) {
   }
 }
 
+
+// async function getIdeaForUpdateIdea(id) {
+//   const response = await fetch(API_URL + "/get/updateIdea?id=" + id, {
+//     method: "GET",
+//     mode: "cors",
+//     cache: "no-cache",
+//     credentials: "same-origin",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     redirect: "follow",
+//     referrerPolicy: "no-referrer",
+//   });
+//   if (!response.ok) {
+//     const responseText = await response.text();
+//     return responseText;
+//   } else {
+//     const json = await response.json();
+//     return json;
+//   }
+// }
+
+
+
+
 async function updateIdea(id, title, text, status, categoryList, image) {
   const response = await fetch(API_URL + "/update?id=" + id, {
     method: "PATCH",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     body: JSON.stringify({
       title: title,
       text: text,
@@ -204,6 +229,8 @@ async function createIdea(title, text, status, categoryList, image, username) {
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
     body: JSON.stringify({
       title: title,
       text: text,
@@ -252,7 +279,7 @@ async function getPagedIdeasFromUser(
     method: "GET",
     mode: "cors",
     cache: "no-cache",
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -272,15 +299,25 @@ async function getPagedIdeasFromUser(
 async function getImageById(imageId) {
   const response = await fetch(
     "http://localhost:8080/aims/api/v1/images/get?id=" + imageId
-  );
+  , {
+    method: "GET",
+    mode: "cors",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
   const data = await response.json();
   return data;
 }
 
 async function getImageByIdeaId(ideaId) {
   const response = await fetch(
-    "http://localhost:8080/aims/api/v1/images/getByIdea?id=" + ideaId
-  );
+    "http://localhost:8080/aims/api/v1/images/getByIdea?id=" + ideaId,{
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+});
   const data = await response.json();
   return data;
 }
@@ -288,7 +325,28 @@ async function getImageByIdeaId(ideaId) {
 async function deleteIdea(ideaId) {
   return fetch("http://localhost:8080/aims/api/v1/ideas/delete?id=" + ideaId, {
     method: "DELETE",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
   });
+}
+
+async function getIdeaByCommentId(commentId) {
+  try {
+    const response = await fetch(`${API_URL}/getByComment?commentId=${commentId}`, {
+      method: "GET",
+    });
+    console.log(commentId);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Response data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching idea by comment ID:", error);
+    return null;
+  }
 }
 
 export {
@@ -304,4 +362,5 @@ export {
   deleteIdea,
   getImageById,
   getImageByIdeaId,
+  getIdeaByCommentId
 };

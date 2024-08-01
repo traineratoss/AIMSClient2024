@@ -32,9 +32,9 @@ function onMouseLeave(element) {
   dashboardIsHovered.value = false;
 }
 
-const onClickHandler = (element) => {
+const onClickHandler = async (element) => {
   if (element.id === "logout") {
-    logout();
+    await logout();
   }
 
   router.push(element.route);

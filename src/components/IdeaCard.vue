@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, toRef } from "vue";
+import { ref, watch, toRef, onUpdated } from "vue";
 import CustomComment from "../components/CustomComment.vue";
 import router from "../router";
 import {
@@ -328,7 +328,7 @@ function isSelectedSubscription() {
 const isAdmin = getCurrentRole() === "ADMIN";
 
 watch(
-  () => allLoadedComments.value,
+  allLoadedComments,
   (comments) => {
     comments.forEach((comment) => {
       watch(
@@ -400,14 +400,24 @@ const updateRating = async (newRating) => {
 
 const currentStatusSubscribe = ref(props.isSubscribed);
 
-function subscribeUserAction(){
-  emits('subscribeUser', props.ideaId, userId);
+function subscribeUserAction() {
+  emits("subscribeUser", props.ideaId, userId);
   isSelected.value = true;
 }
 
 watch(toRef(props, "isSubscribed"), (newVal) => {
   currentStatusSubscribe.value = newVal;
 });
+
+watch(() => props.ideaId, async () => {
+  allLoadedComments.value  = []
+  allLoadedComments.value = await loadComments(
+    numberOfDisplayedComments.value,
+    0,
+    "creationDate",
+    props.ideaId
+  );
+})
 </script>
 
 <template>
@@ -455,10 +465,10 @@ watch(toRef(props, "isSubscribed"), (newVal) => {
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                  {{ getShortText(props.text, 3, 49) }}
+                <div v-html="getShortText(props.text, 3, 49) "></div>
                 </div>
                 <div class="text" v-else>
-                  {{ getShortText(props.text, 2, 49) }}
+                  <div v-html="getShortText(props.text, 2, 49) "></div>
                 </div>
               </div>
               <div class="left-container-buttons">
@@ -495,8 +505,11 @@ watch(toRef(props, "isSubscribed"), (newVal) => {
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
-                  v-if="$route.path !== '/my'"
-                  >
+                  v-if="
+                    $route.path !== '/my' &&
+                    !(props.loggedUser === props.username)
+                  "
+                >
                   visibility
                 </span>
               </div>

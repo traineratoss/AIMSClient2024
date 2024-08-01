@@ -112,11 +112,17 @@ onMounted(() => {
     imagesLoaded.value = true;
   }
 });
+
+
+
+
+
 </script>
 
 <template>
   <div class="carousel">
-    <button @click="prevSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
+    <button v-if="shouldDisableArrowsRef == false"
+    @click="prevSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-left fa-2xl" id="arrow"></i>
     </button>
     <div class="slide-container" :style="imagesLoaded ? (route.name === 'create-idea' ? {'border': '4px solid gray', 'border-radius': '10px'} : 
@@ -143,7 +149,8 @@ onMounted(() => {
         </div>
       </div>
     </div> 
-    <button @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
+    <button v-if="shouldDisableArrowsRef == false"
+         @click="nextSlide" :disabled="shouldDisableArrowsRef || !imagesLoaded">
       <i class="fa-solid fa-arrow-right fa-2xl" id="arrow2"></i>
     </button>
   </div>
