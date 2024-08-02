@@ -74,12 +74,11 @@ async function calculateImplementationPercentage() {
   }
 }
 
-function loadTop5Ideas() {
+async function loadTop5Ideas() {
   console.log(
     "Top 5 ideas >> ",
     props.recievedFilteredStats.mostCommentedIdeas
   );
-
   emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
 }
 
@@ -89,7 +88,8 @@ async function refreshStats() {
   setTimeout(async () => {
     stats.value = await getStats();
     showSkeleton.value = false;
-  }, "100");
+    loadTop5Ideas();
+  }, 100);
 }
 
 function loadData() {
@@ -114,8 +114,6 @@ const fetchIdeaByComment = async (commentId) => {
     console.error("Error fetching idea by comment ID:", error);
   }
 };
-
-
 </script>
 
 <template>
@@ -181,6 +179,9 @@ const fetchIdeaByComment = async (commentId) => {
             v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0"
             class="most-commented-ideas"
           >
+            <button class="material-symbols-outlined" @click="refreshStats()">
+              refresh
+            </button>
             <p>Top most commented ideas:</p>
             <table id="idea-table">
               <tr>
@@ -200,23 +201,7 @@ const fetchIdeaByComment = async (commentId) => {
                 <td>{{ idea.commentsNumber }}</td>
               </tr>
             </table>
-            <div class="swich-buttons">
-              <button
-                class="material-symbols-outlined"
-                @click="
-                  loadTop5Ideas();
-                  refreshStats();
-                "
-              >
-                refresh
-              </button>
-              <!-- <button class="load-button" @click="loadTop5Ideas()">
-                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
-              </button>
-              <button class="load-button" @click="refreshStats()">
-                Refresh
-              </button> -->
-            </div>
+            <div class="swich-buttons"></div>
           </div>
           <div
             v-if="stats.mostLikedComments.length !== 0"
@@ -406,16 +391,9 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
             </table>
             <div class="swich-buttons">
-              <button class="load-button" @click="loadTop5Ideas()">
-                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
-              </button>
               <button class="load-button" @click="loadData()">
                 Reload ideas
               </button>
-
-              <!-- <button class="load-button" @click="refreshStats()">
-                Refresh 
-              </button> -->
             </div>
           </div>
           <div

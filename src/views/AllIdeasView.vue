@@ -2,7 +2,12 @@
 import CustomSidePanel from "../components/CustomSidePanel.vue";
 import { ref, onMounted, watch, computed, onUnmounted } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas, getIdea, getIdeaByCommentId } from "../services/idea.service";
+import {
+  filterIdeas,
+  loadPagedIdeas,
+  getIdea,
+  getIdeaByCommentId,
+} from "../services/idea.service";
 import {
   getStats,
   sendDataForCustomStats,
@@ -14,7 +19,11 @@ import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import CustomInput from "../components/CustomInput.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
-import { subscribeUser, unsubscribeUser, getSubscriptions } from "../services/subscriptionService";
+import {
+  subscribeUser,
+  unsubscribeUser,
+  getSubscriptions,
+} from "../services/subscriptionService";
 import { getCurrentUserId } from "../services/user_service";
 
 const selectedDateFrom = ref();
@@ -32,7 +41,6 @@ const userId = getCurrentUserId();
 const selectedIdea = ref(null);
 const showPagination = ref(true);
 
-
 // updated by ref inputs
 const inputTitle = ref("");
 const inputText = ref("");
@@ -43,7 +51,6 @@ const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const isAdmin = ref("");
 const selectedRating = ref("");
-
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -100,7 +107,6 @@ onMounted(async () => {
     "ASC"
   );
 
- 
   console.log(currentRating);
 
   loadingPage.value = true;
@@ -493,7 +499,7 @@ async function loadRecievedIdeas(mostCommentedIdeas) {
         currentRating,
         sortOrder.value
       );
-
+      stats.value.mostCommentedIdeas = data.content;
       loadingPage.value = true;
       loggedUser.value = getCurrentUsername();
       currentUserRole = getCurrentRole();
@@ -729,31 +735,33 @@ function setIdeasEmptyFunction() {
 const subscribedIdeas = ref([]);
 
 const fetchSubscriptions = async () => {
-  try{
-      const response = await getSubscriptions(userId);
-      subscribedIdeas.value = response;
+  try {
+    const response = await getSubscriptions(userId);
+    subscribedIdeas.value = response;
   } catch (error) {
     console.error("Error getting subscriptions", error);
   }
-}
+};
 
 const checkIfSubscribed = (ideaId) => {
-  return subscribedIdeas.value.some(subscription => subscription.ideaId === ideaId);
+  return subscribedIdeas.value.some(
+    (subscription) => subscription.ideaId === ideaId
+  );
 };
 
 const toggleSubscriptionIcon = async (ideaId, userId) => {
-  try{
-    if(checkIfSubscribed(ideaId)){
+  try {
+    if (checkIfSubscribed(ideaId)) {
       await unsubscribeUser(ideaId, userId);
       fetchSubscriptions();
     } else {
-      await subscribeUser(ideaId, userId)
+      await subscribeUser(ideaId, userId);
       fetchSubscriptions();
     }
-  }catch(error){
+  } catch (error) {
     console.error("Error subscribing/unsubscribing", error);
   }
-}
+};
 
 const fetchSelectedIdea = async (id) => {
   selectedIdea.value = await getIdea(id);
@@ -779,7 +787,7 @@ onMounted(() => {
 
 watch(selectedIdea, (newValue, oldValue) => {
   console.log("new: ", newValue, " ---- old: ", oldValue);
-})
+});
 </script>
 
 <template>
@@ -817,106 +825,108 @@ watch(selectedIdea, (newValue, oldValue) => {
           ref="ideasTransitionContainer"
           id="scrollable-middle"
         >
-        <div v-if="selectedIdea !== null" class="selected-idea-container">
-          <button class="back-button" @click="clearSelectedIdea">Back to Ideas</button>
-          <IdeaCard
-                :title="selectedIdea.title"
-                :text="selectedIdea.text"
-                :status="selectedIdea.status"
-                :username="selectedIdea.username"
-                :ideaId="selectedIdea.id"
-                :commentsNumber="selectedIdea.commentsNumber"
-                :elapsedTime="selectedIdea.elapsedTime"
-                :image="getImageUrl(selectedIdea)"
-                :loggedUser="getCurrentUsername()"
-                @comment-counter-add="selectedIdea.commentsNumber++"
-                @comment-counter-sub="selectedIdea.commentsNumber--"
-                @revealOnScroll="scrollFadeOnExpand()"
-                :ratingAvg="selectedIdea.ratingAvg"
-                :isSubscribed="checkIfSubscribed(selectedIdea.id)"
-                @subscribeUser="toggleSubscriptionIcon"
-              />
-        </div>
-        <div v-else>
-          <div
-            v-if="!showTopIdeas"
-            class="sort-container"
-            :style="
-              ideas
-                ? ideas.length === 0 || showTopIdeas
-                  ? { visibility: 'hidden', 'text-align': 'right' }
-                  : { visibility: 'visible', 'text-align': 'right' }
-                : { 'text-align': 'right' }
-            "
-          >
-            <label for="sortOrder">Sort by: </label>
-            <select
-              id="sortOrder"
-              v-model="sortOrder"
-              @change="updateSortOrder"
-              style="width: 3.8vw"
-            >
-              <option :value="0">Oldest</option>
-              <option :value="1">Newest</option>
-            </select>
-            <div class="pageSize">
-              <PageSizeSelect
-                id="pageSizeSelect"
-                label="Ideas:"
-                @change-display="changeDisplay"
-              />
-            </div>
-          </div>
-          <div
-            class="ideas-transition-container"
-            ref="ideasTransitionContainer"
-          >
-            <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
-
-            <div
-              v-for="idea in ideas"
-              :key="idea.id"
-              class="idea-transition-item reveal"
-            >
-              <IdeaCard
-                :title="idea.title"
-                :text="idea.text"
-                :status="idea.status"
-                :username="idea.username"
-                :ideaId="idea.id"
-                :commentsNumber="idea.commentsNumber"
-                :elapsedTime="idea.elapsedTime"
-                :image="getImageUrl(idea)"
-                :loggedUser="getCurrentUsername()"
-                @comment-counter-add="idea.commentsNumber++"
-                @comment-counter-sub="idea.commentsNumber--"
-                @revealOnScroll="scrollFadeOnExpand()"
-                :ratingAvg="idea.ratingAvg"
-                :isSubscribed="checkIfSubscribed(idea.id)"
-                @subscribeUser="toggleSubscriptionIcon"
-              />
-            </div>
-            <div
-              v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"
-              class="no-ideas-message"
-            >
-              <img src="../assets/img/curiosity-search.svg" />
-              <br />
-              <span class="black-font">Your search returned no results</span>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="ideas.length > 0" class="pagination-container">
-          <div v-if="showPagination" class="pagination-component">
-            <Pagination
-              :totalPages="totalPages"
-              :currentPage="currentPage"
-              @changePage="changePage"
+          <div v-if="selectedIdea !== null" class="selected-idea-container">
+            <button class="back-button" @click="clearSelectedIdea">
+              Back to Ideas
+            </button>
+            <IdeaCard
+              :title="selectedIdea.title"
+              :text="selectedIdea.text"
+              :status="selectedIdea.status"
+              :username="selectedIdea.username"
+              :ideaId="selectedIdea.id"
+              :commentsNumber="selectedIdea.commentsNumber"
+              :elapsedTime="selectedIdea.elapsedTime"
+              :image="getImageUrl(selectedIdea)"
+              :loggedUser="getCurrentUsername()"
+              @comment-counter-add="selectedIdea.commentsNumber++"
+              @comment-counter-sub="selectedIdea.commentsNumber--"
+              @revealOnScroll="scrollFadeOnExpand()"
+              :ratingAvg="selectedIdea.ratingAvg"
+              :isSubscribed="checkIfSubscribed(selectedIdea.id)"
+              @subscribeUser="toggleSubscriptionIcon"
             />
           </div>
+          <div v-else>
+            <div
+              v-if="!showTopIdeas"
+              class="sort-container"
+              :style="
+                ideas
+                  ? ideas.length === 0 || showTopIdeas
+                    ? { visibility: 'hidden', 'text-align': 'right' }
+                    : { visibility: 'visible', 'text-align': 'right' }
+                  : { 'text-align': 'right' }
+              "
+            >
+              <label for="sortOrder">Sort by: </label>
+              <select
+                id="sortOrder"
+                v-model="sortOrder"
+                @change="updateSortOrder"
+                style="width: 3.8vw"
+              >
+                <option :value="0">Oldest</option>
+                <option :value="1">Newest</option>
+              </select>
+              <div class="pageSize">
+                <PageSizeSelect
+                  id="pageSizeSelect"
+                  label="Ideas:"
+                  @change-display="changeDisplay"
+                />
+              </div>
+            </div>
+            <div
+              class="ideas-transition-container"
+              ref="ideasTransitionContainer"
+            >
+              <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
+
+              <div
+                v-for="idea in ideas"
+                :key="idea.id"
+                class="idea-transition-item reveal"
+              >
+                <IdeaCard
+                  :title="idea.title"
+                  :text="idea.text"
+                  :status="idea.status"
+                  :username="idea.username"
+                  :ideaId="idea.id"
+                  :commentsNumber="idea.commentsNumber"
+                  :elapsedTime="idea.elapsedTime"
+                  :image="getImageUrl(idea)"
+                  :loggedUser="getCurrentUsername()"
+                  @comment-counter-add="idea.commentsNumber++"
+                  @comment-counter-sub="idea.commentsNumber--"
+                  @revealOnScroll="scrollFadeOnExpand()"
+                  :ratingAvg="idea.ratingAvg"
+                  :isSubscribed="checkIfSubscribed(idea.id)"
+                  @subscribeUser="toggleSubscriptionIcon"
+                />
+              </div>
+              <div
+                v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"
+                class="no-ideas-message"
+              >
+                <img src="../assets/img/curiosity-search.svg" />
+                <br />
+                <span class="black-font">Your search returned no results</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="ideas.length > 0" class="pagination-container">
+            <div v-if="showPagination" class="pagination-component">
+              <Pagination
+                :totalPages="totalPages"
+                :currentPage="currentPage"
+                @changePage="changePage"
+              />
+            </div>
+          </div>
         </div>
-       </div>
       </div>
 
       <div v-if="isAdmin" class="custom-statistics">
@@ -1262,7 +1272,6 @@ h2 {
   margin: 10px auto;
   padding: 10px;
 }
-
 
 .back-button {
   display: block;
