@@ -227,12 +227,12 @@ async function handleReport() {
       </div>
       <div class="comment-text-container">
         <p v-if="reportCount > 5">This comment is under review</p>
-        <p v-else>{{ props.text }}</p>
+        <p v-else><div v-html="text"></div></p>
       </div>
       <div class="footer-container">
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
-        <div v-if="reportCount <= 5 || reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
+        <div v-if="reportCount <= 5 && reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
           <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button"
             @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
@@ -273,7 +273,7 @@ async function handleReport() {
       </div>
       <div class="comment-text-container">
         <p v-if="reportCount > 5">This comment is under review</p>
-        <p v-else>{{ props.text }}</p>
+        <p v-else><div v-html="text"></div></p>
       </div>
 
       <div class="footer-container">

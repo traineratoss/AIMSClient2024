@@ -56,6 +56,7 @@ watch(
     console.log("showAnimation", newValue);
   }
 );
+
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(
@@ -201,7 +202,15 @@ const fetchIdeaByComment = async (commentId) => {
                 <td>{{ idea.commentsNumber }}</td>
               </tr>
             </table>
-            <div class="swich-buttons"></div>
+            <div class="swich-buttons">
+              <button class="material-symbols-outlined" @click="refreshStats()">refresh</button>
+              <!-- <button class="load-button" @click="loadTop5Ideas()">
+                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
+              </button>
+              <button class="load-button" @click="refreshStats()">
+                Refresh
+              </button> -->
+            </div>
           </div>
           <div
             v-if="stats.mostLikedComments.length !== 0"

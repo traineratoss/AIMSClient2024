@@ -50,6 +50,9 @@ const maxCommentLength = 500;
 const numberOfDisplayedComments = ref(10);
 const userId = getCurrentUserId();
 
+const isHovering = ref(false);
+
+
 // console.log(userId);
 async function editIdea() {
   const data = await getIdea(props.ideaId);
@@ -400,8 +403,8 @@ const updateRating = async (newRating) => {
 
 const currentStatusSubscribe = ref(props.isSubscribed);
 
-function subscribeUserAction(){
-  emits('subscribeUser', props.ideaId, userId);
+function subscribeUserAction() {
+  emits("subscribeUser", props.ideaId, userId);
   isSelected.value = true;
 }
 
@@ -465,10 +468,10 @@ watch(() => props.ideaId, async () => {
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                  {{ getShortText(props.text, 3, 49) }}
+                <div v-html="getShortText(props.text, 3, 49) "></div>
                 </div>
                 <div class="text" v-else>
-                  {{ getShortText(props.text, 2, 49) }}
+                  <div v-html="getShortText(props.text, 2, 49) "></div>
                 </div>
               </div>
               <div class="left-container-buttons">
@@ -505,8 +508,11 @@ watch(() => props.ideaId, async () => {
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
-                  v-if="$route.path !== '/my'"
-                  >
+                  v-if="
+                    $route.path !== '/my' &&
+                    !(props.loggedUser === props.username)
+                  "
+                >
                   visibility
                 </span>
               </div>
@@ -594,7 +600,15 @@ watch(() => props.ideaId, async () => {
 
       <div class="comment-input-bottom">
         <div class="chars">
-          <div></div>
+          <button id="legend-text-format" class="material-symbols-outlined" 
+            @mouseover="isHovering = true" 
+            @mouseleave="isHovering = false">
+            text_fields
+          </button>
+          <div class="tooltip" :class="{ show: isHovering }">
+            <p><b>**Text**</b> for <b>Bold</b></p>
+            <p><i>*Text*</i> for <i>Italic</i></p>
+          </div>
           <p>{{ commentText.length }} / 500</p>
           <button
             id="post-button"
@@ -609,6 +623,7 @@ watch(() => props.ideaId, async () => {
         </div>
       </div>
     </div>
+    
     <transition-group duration="300" name="nested" v-if="showCommentsToggle">
       <div
         class="comment-container"
@@ -1071,6 +1086,16 @@ button:hover {
   height: 30px;
 }
 
+#legend-text-format {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  height: 30px;
+  width: 40px;
+  }
+
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -1099,5 +1124,28 @@ button:hover {
 
 .subscription.filled {
   font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #ffa941;
+  color:  white;
+  border: 2px solid #d48806;
+  padding: 1px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  top: 300px; 
+  left: -12%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  font-size: 1.1em;
+}
+
+.tooltip.show {
+  opacity: 1;
+  visibility: visible;
 }
 </style>

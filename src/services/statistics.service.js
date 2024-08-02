@@ -101,7 +101,6 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
 }
 
 async function getStats() {
-
   let url = API_URL + "/stats";
 
   const response = await fetch(url, {

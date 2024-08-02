@@ -2,7 +2,7 @@
 import CommentDisplay from "../components/CommentDisplay.vue";
 import Pagination from "../components/Pagination.vue";
 import FormTitle from "../components/FormTitle.vue";
-import {getAllCommentsByReportsNr } from "../services/comment.service.js";
+import { getAllCommentsByReportsNr } from "../services/comment.service.js";
 import { ref, onMounted } from "vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 
@@ -41,7 +41,7 @@ function updateCommentsList() {
   console.log(comments);
   getAllCommentsByReportsNr(pageSize.value, currentPage.value - 1)
     .then((res) => {
-        comments.value = res.pagedComments.content;
+      comments.value = res.pagedComments.content;
       totalPages.value = Math.ceil(res.total / pageSize.value);
     })
     .catch((error) => {
@@ -68,39 +68,41 @@ async function changeDisplay(pageSize1) {
   <div class="container">
     <FormTitle label="Reported Comments" id="title" v-if="!showImage" />
     <img src="src/assets/img/curiosity-search.svg" v-if="showImage" />
-    <div class="pageSize">
-      <PageSizeSelect
-        v-if="!showImage"
-        id="pageSizeSelect"
-        label="Comments:"
-        @change-display="changeDisplay"
-      />
-    </div>
-    <div class="main-container">
-      <div class="comments-container">
-        <CommentDisplay
-          v-for="comment in comments"
-          v-if="!showImage"
-          :key="comment.id"
-          :content="comment.content"
-          :nrReports="comment.nrReports"
-          :commentId="comment.id"
-          @multiple-admin-action="updateCommentsList"
-          @comment-updated="updateCommentsList"
-        />
+    <div v-if="comments.length > 0">
+      <div class="pageSize">
+        <PageSizeSelect v-if="!showImage" id="pageSizeSelect" label="Comments:" @change-display="changeDisplay" />
       </div>
-      <Pagination
-        :totalPages="totalPages"
-        :currentPage="currentPage"
-        @changePage="changePage"
-        v-if="!showImage"
-        class="pagination-container"
-      />
+      <div class="main-container">
+        <div class="comments-container">
+          <CommentDisplay v-for="comment in comments" v-if="!showImage" :key="comment.id" :content="comment.content"
+            :nrReports="comment.nrReports" :commentId="comment.id" @multiple-admin-action="updateCommentsList"
+            @comment-updated="updateCommentsList" />
+        </div>
+        <Pagination :totalPages="totalPages" :currentPage="currentPage" @changePage="changePage" v-if="!showImage"
+          class="pagination-container" />
+      </div>
+
+    </div>
+
+    <div v-else class="no-ideas-message">
+      <img src="../assets/img/curiosity-search.svg" />
+      <br />
+      <span class="black-font">Your search returned no results</span>
     </div>
   </div>
 </template>
 
 <style scoped>
+.no-ideas-message {
+  margin-top: -80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 500px;
+  width: 500px;
+}
+
 .container {
   height: calc(94vh - 2px);
   display: flex;
@@ -136,6 +138,7 @@ async function changeDisplay(pageSize1) {
   border-radius: 5px;
   border: 1px solid slategray;
 }
+
 .pagination-container {
   position: absolute;
   bottom: 0.5vh;

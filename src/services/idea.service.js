@@ -176,6 +176,31 @@ async function getIdea(id) {
   }
 }
 
+
+// async function getIdeaForUpdateIdea(id) {
+//   const response = await fetch(API_URL + "/get/updateIdea?id=" + id, {
+//     method: "GET",
+//     mode: "cors",
+//     cache: "no-cache",
+//     credentials: "same-origin",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     redirect: "follow",
+//     referrerPolicy: "no-referrer",
+//   });
+//   if (!response.ok) {
+//     const responseText = await response.text();
+//     return responseText;
+//   } else {
+//     const json = await response.json();
+//     return json;
+//   }
+// }
+
+
+
+
 async function updateIdea(id, title, text, status, categoryList, image) {
   const response = await fetch(API_URL + "/update?id=" + id, {
     method: "PATCH",
@@ -212,13 +237,15 @@ async function createIdea(title, text, status, categoryList, image, username) {
       status: status.toUpperCase(),
       image: image,
       categoryList: categoryList,
+      // file: file,
+      
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
   const data = await response.json();
-  const content = await data.content;
+  return data;
 }
 
 async function getAllImages() {
