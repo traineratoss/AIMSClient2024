@@ -56,6 +56,7 @@ watch(
     console.log("showAnimation", newValue);
   }
 );
+
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(

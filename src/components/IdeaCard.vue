@@ -403,8 +403,8 @@ const updateRating = async (newRating) => {
 
 const currentStatusSubscribe = ref(props.isSubscribed);
 
-function subscribeUserAction(){
-  emits('subscribeUser', props.ideaId, userId);
+function subscribeUserAction() {
+  emits("subscribeUser", props.ideaId, userId);
   isSelected.value = true;
 }
 
@@ -468,10 +468,10 @@ watch(() => props.ideaId, async () => {
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                  {{ getShortText(props.text, 3, 49) }}
+                <div v-html="getShortText(props.text, 3, 49) "></div>
                 </div>
                 <div class="text" v-else>
-                  {{ getShortText(props.text, 2, 49) }}
+                  <div v-html="getShortText(props.text, 2, 49) "></div>
                 </div>
               </div>
               <div class="left-container-buttons">
@@ -508,8 +508,11 @@ watch(() => props.ideaId, async () => {
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
-                  v-if="$route.path !== '/my'"
-                  >
+                  v-if="
+                    $route.path !== '/my' &&
+                    !(props.loggedUser === props.username)
+                  "
+                >
                   visibility
                 </span>
               </div>
