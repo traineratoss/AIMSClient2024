@@ -48,6 +48,7 @@ const isReported = ref(false);
 const reportCount = ref(0);
 const id = ref("");
 const reviewStatus = ref("");
+const isHovering = ref(false);
 
 onMounted(async () => {
   currentUserRole.value = getCurrentRole();
@@ -343,7 +344,15 @@ async function handleReport() {
         id="insert-reply-textarea">
       </textarea>
       <div class="chars">
-        <div></div>
+        <button id="legend-text-format" class="material-symbols-outlined" 
+            @mouseover="isHovering = true" 
+            @mouseleave="isHovering = false">
+            text_fields
+          </button>
+          <div class="tooltip" :class="{ show: isHovering }">
+            <p><b>**Text**</b> for <b>Bold</b></p>
+            <p><i>*Text*</i> for <i>Italic</i></p>
+          </div>
         <p>{{ commentText.length }} / 500</p>
         <button id="postButton" @click="
           postReply(currentUser, props.parentId, commentText);
@@ -548,4 +557,37 @@ button:hover {
   margin-left: 1.5px;
   margin-right: 10px;
 }
+
+.tooltip {
+  position: absolute;
+  background-color: #ffa941;
+  color:  white;
+  border: 2px solid #d48806;
+  padding: 1px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  top: 520px; 
+  left: -12%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  font-size: 1.1em;
+}
+
+.tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#legend-text-format {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  height: 30px;
+  width: 45px;
+  }
 </style>
