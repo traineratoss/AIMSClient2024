@@ -100,8 +100,6 @@ onMounted(async () => {
     "ASC"
   );
 
- 
-  console.log(currentRating);
 
   loadingPage.value = true;
   loggedUser.value = getCurrentUsername();
@@ -124,8 +122,6 @@ onMounted(async () => {
       document.getElementById("scrollable-middle").scrollTop = "0";
     }, 0);
   }
-
-  // console.log(ideas);
 
   showStatistics();
   setTimeout(() => {
@@ -767,8 +763,7 @@ const clearSelectedIdea = () => {
   loadData();
 };
 
-async function fetchIdeaByComment(commentId) {
-  console.log(commentId);
+async function fetchIdeaByComment(commentId) {;
   const idea = await getIdeaByCommentId(commentId);
   props.fetchSelectedIdea(idea.id);
 }

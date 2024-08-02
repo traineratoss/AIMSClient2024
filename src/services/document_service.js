@@ -1,9 +1,7 @@
-import axios from 'axios';
-import require from 'axios'
+const baseUrl = "http://localhost:8080/aims/api/v1/documents";
 
 export async function postDocuments(files, ideaId, userId) {
-  const url = 'http://localhost:8080/aims/api/v1/documents/addDocument';
-
+  const url = `${baseUrl}/addDocument`;
   const formData = new FormData();
 
   if (files instanceof FileList) {
@@ -28,60 +26,96 @@ export async function postDocuments(files, ideaId, userId) {
   formData.append('userId', userId);
 
   try {
-    const response = await axios.post(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
     });
 
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      throw new Error('Server responded with an error: ' + error.response.data);
-    } else if (error.request) {
-      throw new Error('No response received from server: ' + error.request);
-    } else {
-      throw new Error('Error in setting up the request: ' + error.message);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error('Server responded with an error: ' + JSON.stringify(errorData));
     }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error posting documents:', error);
+    throw error;
   }
 }
 
 export async function getDocumentsByIdeaId(ideaId) {
-  const response = await axios.get("http://localhost:8080/aims/api/v1/documents/getByIdea", {
-    params: {
-      ideaId,
+  const url = `${baseUrl}/getByIdea?ideaId=${encodeURIComponent(ideaId)}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error('Server responded with an error: ' + response.statusText);
     }
-  });
-  return response.data;
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error getting documents by ideaId:', error);
+    throw error;
+  }
 }
 
 export async function deleteDocument(id) {
-  const response = await axios.delete("http://localhost:8080/aims/api/v1/documents/deleteById", {
-    params: {
-      id,
-    }
-  });
-  return response.data;
-}
+  const url = `${baseUrl}/deleteDocument?id=${encodeURIComponent(id)}`;
 
-export async function downloadDocument(id, fileName) {
   try {
-    const response = await axios.get(`http://localhost:8080/aims/api/v1/documents/get?id=${id}`, {
-      responseType: 'blob' 
+    const response = await fetch(url, {
+      method: 'DELETE',
     });
 
-    const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+    const contentType = response.headers.get('content-type') || '';
+
+    if (!response.ok) {
+      const errorText = contentType.includes('application/json')
+        ? await response.json()
+        : await response.text();
+      throw new Error(`Server responded with an error: ${JSON.stringify(errorText)}`);
+    }
+
+    if (contentType.includes('application/json')) {
+      return await response.json();
+    } else {
+      const responseText = await response.text();
+      return { message: responseText };
+    }
+  } catch (error) {
+    console.error('Error deleting document:', error);
+    throw error;
+  }
+}
+
+
+
+export async function downloadDocument(id, fileName) {
+  const url = `${baseUrl}/get?id=${encodeURIComponent(id)}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Server responded with an error: ' + response.statusText);
+    }
+
+    const blob = await response.blob();
+    const contentType = response.headers.get('content-type');
+    const objectUrl = window.URL.createObjectURL(new Blob([blob], { type: contentType }));
 
     const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', fileName);  
+    link.href = objectUrl;
+    link.setAttribute('download', fileName);
     document.body.appendChild(link);
     link.click();
 
     document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    window.URL.revokeObjectURL(objectUrl);
   } catch (error) {
     console.error('Error downloading file:', error);
   }
 }
-

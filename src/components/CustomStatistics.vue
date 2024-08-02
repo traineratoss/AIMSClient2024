@@ -202,7 +202,7 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
             </table>
             <div class="swich-buttons">
-              <button class="material-symbols-outlined" @click="refreshPage">refresh</button>
+              <button class="material-symbols-outlined" @click="refreshStats()">refresh</button>
               <!-- <button class="load-button" @click="loadTop5Ideas()">
                 {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
               </button>
