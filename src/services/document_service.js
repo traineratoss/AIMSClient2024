@@ -1,5 +1,4 @@
-import axios from 'axios';
-import require from 'axios'
+import { axiosInstance } from "../main";
 
 export async function postDocuments(files, ideaId, userId) {
   const url = 'http://localhost:8080/aims/api/v1/documents/addDocument';
@@ -28,7 +27,7 @@ export async function postDocuments(files, ideaId, userId) {
   formData.append('userId', userId);
 
   try {
-    const response = await axios.post(url, formData, {
+    const response = await axiosInstance.post(url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -47,7 +46,7 @@ export async function postDocuments(files, ideaId, userId) {
 }
 
 export async function getDocumentsByIdeaId(ideaId) {
-  const response = await axios.get("http://localhost:8080/aims/api/v1/documents/getByIdea", {
+  const response = await axiosInstance.get("http://localhost:8080/aims/api/v1/documents/getByIdea", {
     params: {
       ideaId,
     }
@@ -56,7 +55,7 @@ export async function getDocumentsByIdeaId(ideaId) {
 }
 
 export async function deleteDocument(id) {
-  const response = await axios.delete("http://localhost:8080/aims/api/v1/documents/deleteById", {
+  const response = await axiosInstance.delete("http://localhost:8080/aims/api/v1/documents/deleteDocument", {
     params: {
       id,
     }
@@ -66,7 +65,7 @@ export async function deleteDocument(id) {
 
 export async function downloadDocument(id, fileName) {
   try {
-    const response = await axios.get(`http://localhost:8080/aims/api/v1/documents/get?id=${id}`, {
+    const response = await axiosInstance.get(`http://localhost:8080/aims/api/v1/documents/get?id=${id}`, {
       responseType: 'blob' 
     });
 

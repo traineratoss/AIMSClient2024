@@ -70,11 +70,12 @@ const disableFields = useRoute().query.disableFields === "true";
 async function getRatingFunction() {
   try {
     const response = await getRating(idea_id, user_id);
-    value.value = response;
+    value.value = response; 
   } catch (error) {
     console.error("Error", error);
   }
 }
+
 
 const deleteFile = async (file) => {
   if (disableFields || hasUpdateId) {
@@ -131,10 +132,11 @@ onMounted(async () => {
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
-  getRatingFunction();
+  
 
   if (disableFields) {
     await getDocuments(idea_id);
+    await getRatingFunction();
   }
 
   if(hasUpdateId){
