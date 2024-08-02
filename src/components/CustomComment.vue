@@ -232,7 +232,7 @@ async function handleReport() {
       <div class="footer-container">
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
-        <div v-if="reportCount <= 5 || reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
+        <div v-if="reportCount <= 5 && reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
           <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button"
             @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
