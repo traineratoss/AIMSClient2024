@@ -15,7 +15,12 @@ const props = defineProps({
   fetchIdeaByComment: Function,
 });
 
-const emits = defineEmits(["loadTop5Ideas", "loadData"]);
+const emits = defineEmits([
+  "loadTop5Ideas",
+  "loadData",
+  "commentCounterAdd",
+  "cmmentCounterSub",
+]);
 
 onMounted(async () => {
   calculateImplementationPercentage();
@@ -23,11 +28,6 @@ onMounted(async () => {
 });
 
 const stats = ref(props.recievedFilteredStats);
-console.log(
-  "Initial props.recievedFilteredStats:",
-  props.recievedFilteredStats
-);
-console.log(props.recievedFilteredStats.mostCommentedIdeas.length);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
@@ -75,26 +75,12 @@ async function calculateImplementationPercentage() {
   }
 }
 
-function loadTop5Ideas() {
-  console.log(
-    "Top 5 ideas >> ",
-    props.recievedFilteredStats.mostCommentedIdeas
-  );
-
-  emits("loadTop5Ideas", props.recievedFilteredStats.mostCommentedIdeas);
-}
-
 async function refreshStats() {
   showSkeleton.value = true;
-
-  setTimeout(async () => {
-    stats.value = await getStats();
-    showSkeleton.value = false;
-  }, "100");
-}
-
-function loadData() {
-  emits("loadData");
+  stats.value = await getStats();
+  emits("loadTop5Ideas", stats.value.mostCommentedIdeas);
+  console.log(stats.value);
+  showSkeleton.value = false;
 }
 
 function getShortenedTitle(title, maxLength) {
@@ -115,8 +101,6 @@ const fetchIdeaByComment = async (commentId) => {
     console.error("Error fetching idea by comment ID:", error);
   }
 };
-
-
 </script>
 
 <template>
@@ -182,6 +166,9 @@ const fetchIdeaByComment = async (commentId) => {
             v-if="props.recievedFilteredStats.mostCommentedIdeas.length !== 0"
             class="most-commented-ideas"
           >
+            <button class="refresh-button" @click="refreshStats()">
+              Refresh
+            </button>
             <p>Top most commented ideas:</p>
             <table id="idea-table">
               <tr>
@@ -189,27 +176,17 @@ const fetchIdeaByComment = async (commentId) => {
                 <th>No. of comments</th>
               </tr>
               <tr
-                v-for="(idea, index) in props.recievedFilteredStats
-                  .mostCommentedIdeas"
+                v-for="(idea, index) in stats.mostCommentedIdeas"
                 :key="index"
               >
                 <td>
-                  <a href="#" @click.prevent="fetchSelectedIdea(idea.id)">
+                  <a href="#" @click="fetchSelectedIdea(idea.id)">
                     {{ getShortenedTitle(idea.title, 20) }}
                   </a>
                 </td>
                 <td>{{ idea.commentsNumber }}</td>
               </tr>
             </table>
-            <div class="swich-buttons">
-              <button class="material-symbols-outlined" @click="refreshStats()">refresh</button>
-              <!-- <button class="load-button" @click="loadTop5Ideas()">
-                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
-              </button>
-              <button class="load-button" @click="refreshStats()">
-                Refresh
-              </button> -->
-            </div>
           </div>
           <div
             v-if="stats.mostLikedComments.length !== 0"
@@ -221,9 +198,15 @@ const fetchIdeaByComment = async (commentId) => {
                 <th>Comment content</th>
                 <th>No. of likes</th>
               </tr>
-              <tr v-for="(comment, index) in stats.mostLikedComments" :key="index">
+              <tr
+                v-for="(comment, index) in stats.mostLikedComments"
+                :key="index"
+              >
                 <td>
-                  <a href="#" @click.prevent="fetchIdeaByComment(comment.commentId)">
+                  <a
+                    href="#"
+                    @click.prevent="fetchIdeaByComment(comment.commentId)"
+                  >
                     {{ getShortenedTitle(comment.commentText, 20) }}
                   </a>
                 </td>
@@ -392,18 +375,6 @@ const fetchIdeaByComment = async (commentId) => {
                 </td>
               </tr>
             </table>
-            <div class="swich-buttons">
-              <button class="load-button" @click="loadTop5Ideas()">
-                {{ !showTopIdeas ? "Load top ideas" : "Load all Ideas" }}
-              </button>
-              <button class="load-button" @click="loadData()">
-                Reload ideas
-              </button>
-
-              <!-- <button class="load-button" @click="refreshStats()">
-                Refresh 
-              </button> -->
-            </div>
           </div>
           <div
             v-if="props.recievedFilteredStats.mostCommentedIdeas.length === 0"
@@ -564,6 +535,19 @@ strong {
   }
 }
 
+.refresh-button {
+  cursor: pointer;
+  background-color: orange;
+  width: 30%;
+  height: 3vh;
+  margin-left: 30px;
+  border-color: black;
+}
+
+.refresh-button:hover {
+  font-weight: bold;
+}
+
 .stats-wrapper {
   background-color: white;
   box-sizing: content-box;
@@ -613,6 +597,9 @@ strong {
 .material-symbols-outlined {
   margin-top: 20px;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+  background-color: #fff;
+  border: 2px solid orange;
+  color: orange;
 }
 
 .stat-item {

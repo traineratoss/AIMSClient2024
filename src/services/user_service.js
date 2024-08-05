@@ -56,15 +56,6 @@ async function checkValidationeCode(otp, usernameOrEmail) {
   }
 }
 
-async function getIdByUsername(username) {
-  const response = await fetch(`${API_URL}/idByUsername?username=${username}`,{
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "include",
-  });
-  const json = await response.json();
-  return json;
-}
 
 async function loginUser(username, password) {
   let connectionError = false;
@@ -463,7 +454,6 @@ async function isFirstLogin(usernameOrEmail) {
 
 export {
   getUserByEmail,
-  getIdByUsername,
   getUserByUsername,
   checkValidationeCode,
   postUser,

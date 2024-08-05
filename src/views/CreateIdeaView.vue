@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { ref, onMounted, watchEffect, computed, watch, nextTick } from "vue";
+import { ref, onMounted, watchEffect, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import RatingStars from "../components/RatingStars.vue";
 import router from "../router";
@@ -24,7 +24,8 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-import { getRating } from "../services/rating_service";
+import { getRating, postRating } from "@/services/rating_service";
+import CustomLoader from "@/components/CustomLoader.vue";
 
 const inputValue = ref("");
 const statusValue = ref("open");
@@ -62,20 +63,9 @@ const handleSelectedCategories = (selectedCategories) => {
 
 const user_id = getCurrentUserId();
 const idea_id = useRoute().query.id;
-const value = ref(0);
 const existingDocs = ref([]);
 const newFiles = ref([]);
 const disableFields = useRoute().query.disableFields === "true";
-
-async function getRatingFunction() {
-  try {
-    const response = await getRating(idea_id, user_id);
-    value.value = response; 
-  } catch (error) {
-    console.error("Error", error);
-  }
-}
-
 
 const deleteFile = async (file) => {
   if (disableFields || hasUpdateId) {
@@ -110,6 +100,7 @@ const getDocuments = async (idea_id) => {
 const isCreateIdeaPath = useRoute().path === '/create-idea';
 const hasUpdateId = isCreateIdeaPath && 'updateId' in useRoute().query;
 const ideaIdd = useRoute().query.updateId;
+const isLoading = ref(false);
 
 const displayedFiles = computed(() => {
   const backendFiles = existingDocs.value.map((doc, index) => ({
@@ -125,6 +116,23 @@ const displayedFiles = computed(() => {
   return [...backendFiles, ...localFiles];
 });
 
+async function loadImages() {
+  // Initialize the slideImages array
+  slideImages.value = [];
+
+  // Fetch all images
+  const dataImage = await getAllImages();
+
+  // Generate image URLs
+  const imageUrl = dataImage.map((item) => {
+    return `data:image/${item.fileType};name=${item.fileName};base64,${item.base64Image}`;
+  });
+
+  // Set the slideImages value
+  slideImages.value = imageUrl;
+}
+
+
 onMounted(async () => {
   if (updatedIdea.value == null) {
     categoriesSelected.value = [];
@@ -132,17 +140,18 @@ onMounted(async () => {
   const dataCategory = await getCategory();
   const categoryNames = dataCategory.map((category) => category.text);
   categoryOptions.value = categoryNames;
-  
 
+  isLoading.value = true;
   if (disableFields) {
     await getDocuments(idea_id);
-    await getRatingFunction();
+    await fetchRatings();
   }
 
   if(hasUpdateId){
     await getDocuments(ideaIdd);
   }
 
+  isLoading.value = false;
   // must optimize a lot here, we shouldn't load all the images at first, it will take a lot of time
   // initially, load the image we need and then loading one image at a time, depending on the direction
   // we go (arrows <-> left, right)
@@ -155,6 +164,7 @@ onMounted(async () => {
   });
   // const imageUrl = `data:image/${dataImage.fileType};name=${dataImage.fileName};base64,${dataImage.base64Image}`
   slideImages.value = imageUrl;
+
 });
 
 watch(inputValue, (newValue) => {
@@ -370,6 +380,7 @@ async function createIdeaFunction() {
   if (textValue.value === undefined || textValue.value === null) {
     textValue.value = "";
   }
+  debugger;
   if (inputValue.value === undefined || inputValue.value === null) {
     inputValue.value = "";
   }
@@ -603,6 +614,32 @@ async function downloadDoc(id, fileName) {
   }
 }
 
+const checkLengthDocuments = () => {
+  if (displayedFiles.value.length > 0){
+    return true;
+  }
+}
+
+const updateRating = async (newRating) => {
+  try {
+    await postRating(idea_id, userId, newRating);
+    fetchRatings();
+  } catch (error) {
+    console.error("Error", error);
+  }
+};
+
+const ratingForIdea = ref(0);
+
+const fetchRatings = async () => {
+  try{
+    const response = await getRating(idea_id, user_id);
+    ratingForIdea.value = response;
+  } catch (error) {
+    console.error("Error getting ratings", error);
+  }
+}
+
 </script>
 
 <template>
@@ -720,8 +757,8 @@ async function downloadDoc(id, fileName) {
         <div class="rating" v-if="shouldDisplayRatingStars">
           <label for="title-idea" class="label">Rating:</label>
           <RatingStars
-            :initialRating="value"
-            :disableHover="true"
+            :initialRating="ratingForIdea"
+            @ratingUpdated="updateRating"
             class="rating-stars"
           />
         </div>
@@ -787,7 +824,13 @@ async function downloadDoc(id, fileName) {
               />
             </div>
           </div>
-          <div class="document-container">
+          <div v-if="isLoading" class="loading">
+            <CustomLoader :size="45" />
+          </div>
+          <div v-else class="document-container">
+            <div v-if="!checkLengthDocuments() && !isLoading" class="noDocumentsText">
+              No documents uploaded.
+            </div>
             <div
               v-for="file in displayedFiles"
               :key="file.id || file.index"
@@ -979,10 +1022,8 @@ b {
 }
 
 .carousel-image {
-  height: 10vw;
-  max-width: 19vw;
+  height: 16vw;
   object-fit: fill;
-  margin-top: 1px;
   height: fit-content;
 }
 
@@ -1037,7 +1078,7 @@ textarea {
 .create-idea-container {
   align-items: center;
   display: grid;
-  grid-template-rows: 10% 20% 20% 35% 15%;
+  grid-template-rows: 10% 20% 20% 25% 15%;
   height: 87vh;
   width: 25vw;
   padding: 10px;
@@ -1191,8 +1232,45 @@ textarea {
   margin-left: 0;
   margin-top: 2px;
   overflow-y: auto;
+  height: 4rem;
+  max-height: 4rem;
+  border: .2rem solid #ffa941;
+  border-radius: .5rem;
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
+}
+
+.loading{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 50%;
+  margin-left: 0;
+  margin-top: 2px;
+  overflow-y: auto;
   height: 8rem;
   max-height: 8rem;
+  border-radius: .5rem;
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
+}
+
+.document-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.document-container::-webkit-scrollbar-thumb {
+  background-color: #ffa941;
+  border-radius: 3px;
+}
+
+.document-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.document-container::-webkit-scrollbar-button {
+  display: none;
 }
 
 .label {
@@ -1299,6 +1377,8 @@ select {
 .rating {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: 1rem;
   width: 100%;
 }
 
@@ -1312,7 +1392,6 @@ select {
 }
 
 .carousel-container {
-  padding-top: 0.3rem;
   width: 50%;
 }
 
@@ -1321,7 +1400,9 @@ select {
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  height: fit-content;
 }
 
 .document {
@@ -1331,20 +1412,22 @@ select {
 
 .document .attach-icon {
   width: 15%;
-  padding-left: 2rem;
+  padding-left: 1.5rem;
 }
 
 .document .file-name {
   width: 70%;
   max-width: 8rem;
   cursor: pointer;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .document .delete-icon {
   width: 15%;
-  padding-right: 2rem;
+  padding-right: 1rem;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
 }
 
 .add-buttons {
@@ -1353,7 +1436,7 @@ select {
   justify-content: center;
   flex-direction: row;
   align-items: center;
-  gap: 15%;
+  gap: 10%;
   padding-top: 1rem;
 }
 
@@ -1367,5 +1450,9 @@ select {
 
 .hidden-part {
   color: transparent; 
+}
+
+.noDocumentsText{
+  color: gray;
 }
 </style>

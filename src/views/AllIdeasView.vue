@@ -1,21 +1,18 @@
 <script setup>
 import CustomSidePanel from "../components/CustomSidePanel.vue";
-import { ref, onMounted, watch, computed, onUnmounted } from "vue";
+import {onMounted, ref, watch} from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import { filterIdeas, loadPagedIdeas, getIdea, getIdeaByCommentId } from "../services/idea.service";
-import {
-  getStats,
-  sendDataForCustomStats,
-} from "../services/statistics.service";
-import { getCurrentUsername, getCurrentRole } from "../services/user_service";
+import {filterIdeas, getIdea, getIdeaByCommentId, loadPagedIdeas} from "../services/idea.service";
+import {getStats, sendDataForCustomStats,} from "../services/statistics.service";
+import {getCurrentRole, getCurrentUserId, getCurrentUsername} from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import CustomInput from "../components/CustomInput.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
-import { subscribeUser, unsubscribeUser, getSubscriptions } from "../services/subscriptionService";
-import { getCurrentUserId } from "../services/user_service";
+import {getSubscriptions, subscribeUser, unsubscribeUser} from "../services/subscriptionService";
+import {getAllRatings, getNumberOfRatings} from "@/services/rating_service";
 
 const selectedDateFrom = ref();
 const selectedDateTo = ref();
@@ -723,6 +720,7 @@ function setIdeasEmptyFunction() {
 }
 
 const subscribedIdeas = ref([]);
+const ratingsFetched = ref([]);
 
 const fetchSubscriptions = async () => {
   try{
@@ -733,23 +731,32 @@ const fetchSubscriptions = async () => {
   }
 }
 
+const fetchRatings = async () => {
+  try{
+    const response = await getAllRatings(userId);
+    ratingsFetched.value = response;
+  } catch (error) {
+    console.error("Error getting ratings", error);
+  }
+}
+
 const checkIfSubscribed = (ideaId) => {
-  return subscribedIdeas.value.some(subscription => subscription.ideaId === ideaId);
+  return subscribedIdeas.value.some(subscription => subscription.ideaId == ideaId);
 };
 
 const toggleSubscriptionIcon = async (ideaId, userId) => {
-  try{
-    if(checkIfSubscribed(ideaId)){
+  try {
+    if (checkIfSubscribed(ideaId)) {
       await unsubscribeUser(ideaId, userId);
-      fetchSubscriptions();
     } else {
-      await subscribeUser(ideaId, userId)
-      fetchSubscriptions();
+      await subscribeUser(ideaId, userId);
     }
-  }catch(error){
+    await fetchSubscriptions(userId); 
+  } catch (error) {
     console.error("Error subscribing/unsubscribing", error);
   }
 }
+
 
 const fetchSelectedIdea = async (id) => {
   selectedIdea.value = await getIdea(id);
@@ -763,18 +770,49 @@ const clearSelectedIdea = () => {
   loadData();
 };
 
-async function fetchIdeaByComment(commentId) {;
+async function fetchIdeaByComment(commentId) {
   const idea = await getIdeaByCommentId(commentId);
   props.fetchSelectedIdea(idea.id);
 }
 
 onMounted(() => {
   fetchSubscriptions();
+  fetchRatings();
+  getTotalRatings();
 });
 
 watch(selectedIdea, (newValue, oldValue) => {
   console.log("new: ", newValue, " ---- old: ", oldValue);
 })
+
+// async function getRatingFunction(idea_id) {
+//   try {
+//     return await getRating(idea_id, userId);
+//   } catch (error) {
+//     console.error("Error", error);
+//   }
+// }
+
+function formatRating(rating) {
+    if (rating === null || rating === undefined) {
+        return 0;
+    }
+    return rating.toFixed(2);
+}
+
+
+const ratings = ref([]);
+
+async function getTotalRatings(){
+  try {
+    const response = await getNumberOfRatings();
+    ratings.value = response;
+    return response;
+  } catch (error) {
+    console.error("Error", error);
+  }
+}
+
 </script>
 
 <template>
@@ -827,9 +865,10 @@ watch(selectedIdea, (newValue, oldValue) => {
                 @comment-counter-add="selectedIdea.commentsNumber++"
                 @comment-counter-sub="selectedIdea.commentsNumber--"
                 @revealOnScroll="scrollFadeOnExpand()"
-                :ratingAvg="selectedIdea.ratingAvg"
                 :isSubscribed="checkIfSubscribed(selectedIdea.id)"
                 @subscribeUser="toggleSubscriptionIcon"
+                :ratingAvg="formatRating(selectedIdea.ratingAvg)"
+                :nrOfRatings="ratings"
               />
         </div>
         <div v-else>
@@ -886,9 +925,10 @@ watch(selectedIdea, (newValue, oldValue) => {
                 @comment-counter-add="idea.commentsNumber++"
                 @comment-counter-sub="idea.commentsNumber--"
                 @revealOnScroll="scrollFadeOnExpand()"
-                :ratingAvg="idea.ratingAvg"
                 :isSubscribed="checkIfSubscribed(idea.id)"
                 @subscribeUser="toggleSubscriptionIcon"
+                :ratingAvg="formatRating(idea.ratingAvg)"
+                :nrOfRatings="ratings"
               />
             </div>
             <div
