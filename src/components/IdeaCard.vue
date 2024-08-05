@@ -54,7 +54,8 @@ const isHovering = ref(false);
 
 // console.log(userId);
 async function editIdea() {
-  const data = await getIdea(props.ideaId);
+
+  const data = await getIdeaForUpdateIdea(props.ideaId);
 
   if (data === "Idea doesn't exist.") {
     // emits("ideaNotValid", true)
