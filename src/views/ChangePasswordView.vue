@@ -25,7 +25,7 @@ const containsEightCharacters = ref(false);
 const containsNumber = ref(false);
 const containsUppercase = ref(false);
 const containsSpecialCharacter = ref(false);
-const isFirstLogin = ref(localStorage.getItem("isFirstLogin") === "true");
+const isFirstLogin = ref(sessionStorage.getItem("isFirstLogin") === "true");
 currentAvatarId.value = getCurrentAvatarId();
 
 const slideImages = [

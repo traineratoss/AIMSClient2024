@@ -42,13 +42,13 @@ async function checkValidationeCode(otp, usernameOrEmail) {
 
   if (response.ok) {
     const json = await response.json()
-    localStorage.setItem("username", json.username);
-    localStorage.setItem("role", json.role);
-    localStorage.setItem("email", json.email);
-    localStorage.setItem("fullName", json.fullName);
-    localStorage.setItem("avatarId", json.avatarId - 1);
-    localStorage.setItem("isFirstLogin", json.isFirstLogin);
-    localStorage.setItem("userId", json.id);
+    sessionStorage.setItem("username", json.username);
+    sessionStorage.setItem("role", json.role);
+    sessionStorage.setItem("email", json.email);
+    sessionStorage.setItem("fullName", json.fullName);
+    sessionStorage.setItem("avatarId", json.avatarId - 1);
+    sessionStorage.setItem("isFirstLogin", json.isFirstLogin);
+    sessionStorage.setItem("userId", json.id);
     return json;
   } else {
     const text = await response.text();
@@ -69,13 +69,25 @@ async function getIdByUsername(username) {
 async function loginUser(username, password) {
   let connectionError = false;
   let response;
+
+  function uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+    );
+  }
+
+  sessionStorage.setItem("Session-ID", uuidv4())
+
   try {
     response = await nativeFetch(`http://localhost:8080/api/v1/auth/login`, {
       method: "POST",
       cache: "no-cache",
       credentials: "include",
       mode: "cors",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Session-ID": sessionStorage.getItem("Session-ID")
+      },
       body: JSON.stringify({
         usernameOrEmail: username,
         password: password
@@ -98,13 +110,13 @@ async function loginUser(username, password) {
   } else {
     const json = await response.json();
     const userData = json.userData;
-    localStorage.setItem("username", userData.username);
-    localStorage.setItem("role", userData.role);
-    localStorage.setItem("email", userData.email);
-    localStorage.setItem("fullName", userData.fullName);
-    localStorage.setItem("avatarId", userData.avatarId - 1);
-    localStorage.setItem("isFirstLogin", userData.isFirstLogin);
-    localStorage.setItem("userId", userData.id);
+    sessionStorage.setItem("username", userData.username);
+    sessionStorage.setItem("role", userData.role);
+    sessionStorage.setItem("email", userData.email);
+    sessionStorage.setItem("fullName", userData.fullName);
+    sessionStorage.setItem("avatarId", userData.avatarId - 1);
+    sessionStorage.setItem("isFirstLogin", userData.isFirstLogin);
+    sessionStorage.setItem("userId", userData.id);
 
     setTokenExpiry(json.accessTokenExpiryDate, json.refreshTokenExpiryDate);
 
@@ -176,7 +188,7 @@ async function updateUser(username, userUpdateDto) {
     throw new Error(json.message);
   }
   // update local storage
-  localStorage.setItem('avatarId', userUpdateDto.avatarId);
+  sessionStorage.setItem('avatarId', userUpdateDto.avatarId);
   return json;
 }
 
@@ -376,31 +388,31 @@ async function sendDeactivateEmail(usernameOrEmail) {
 }
 
 function getCurrentUsername() {
-  return localStorage.getItem("username");
+  return sessionStorage.getItem("username");
 }
 
 function getCurrentRole() {
-  return localStorage.getItem("role");
+  return sessionStorage.getItem("role");
 }
 
 function getCurrentEmail() {
-  return localStorage.getItem("email");
+  return sessionStorage.getItem("email");
 }
 
 function getCurrentFullName() {
-  return localStorage.getItem("fullName");
+  return sessionStorage.getItem("fullName");
 }
 
 function getCurrentAvatarId() {
-  return localStorage.getItem("avatarId");
+  return sessionStorage.getItem("avatarId");
 }
 
 function getCurrentUserId(){
-  return localStorage.getItem("userId");
+  return sessionStorage.getItem("userId");
 }
 
 function setCurrentUsername(username) {
-  localStorage.setItem('username', username);
+  sessionStorage.setItem('username', username);
 }
 
 async function logout() {
@@ -413,13 +425,13 @@ async function logout() {
     headers: { "Content-Type": "application/json" },
   });
 
-  localStorage.clear('username');
-  localStorage.clear('role');
-  localStorage.clear('email');
-  localStorage.clear('fullName');
-  localStorage.clear('avatarId');
-  localStorage.clear("isFirstLogin");
-  localStorage.clear("userId");
+  sessionStorage.clear('username');
+  sessionStorage.clear('role');
+  sessionStorage.clear('email');
+  sessionStorage.clear('fullName');
+  sessionStorage.clear('avatarId');
+  sessionStorage.clear("isFirstLogin");
+  sessionStorage.clear("userId");
 
   invalidateTokens();
 

@@ -11,7 +11,7 @@ const emit = defineEmits(['current-index', 'selected-image-values']);
 //checked the condition with the route path and fixed it, works for both teams
 const route = useRoute();
 
-const avatarId = parseInt(localStorage.getItem('avatarId')); 
+const avatarId = parseInt(sessionStorage.getItem('avatarId')); 
 
 //Initially set it to yours and if im on create idea, it will update automatically 
 const currentIndex = ref(avatarId);
