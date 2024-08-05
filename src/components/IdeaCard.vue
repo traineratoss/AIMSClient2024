@@ -13,7 +13,7 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-import { getIdea } from "../services/idea.service";
+import { getIdea,getIdeaForUpdateIdea} from "../services/idea.service";
 
 const props = defineProps({
   title: "",
@@ -54,7 +54,7 @@ const isHovering = ref(false);
 
 // console.log(userId);
 async function editIdea() {
-  const data = await getIdea(props.ideaId);
+  const data = await getIdeaForUpdateIdea(props.ideaId);
 
   if (data === "Idea doesn't exist.") {
     // emits("ideaNotValid", true)
