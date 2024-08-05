@@ -1,6 +1,6 @@
 <script setup>
 import CustomSidePanel from "../components/CustomSidePanel.vue";
-import { ref, onMounted, watch, computed, onUnmounted } from "vue";
+import {onMounted, ref, watch} from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import {
   filterIdeas,
@@ -723,6 +723,7 @@ function setIdeasEmptyFunction() {
 }
 
 const subscribedIdeas = ref([]);
+const ratingsFetched = ref([]);
 
 const fetchSubscriptions = async () => {
   try {
@@ -731,27 +732,33 @@ const fetchSubscriptions = async () => {
   } catch (error) {
     console.error("Error getting subscriptions", error);
   }
-};
+}
+
+const fetchRatings = async () => {
+  try{
+    const response = await getAllRatings(userId);
+    ratingsFetched.value = response;
+  } catch (error) {
+    console.error("Error getting ratings", error);
+  }
+}
 
 const checkIfSubscribed = (ideaId) => {
-  return subscribedIdeas.value.some(
-    (subscription) => subscription.ideaId === ideaId
-  );
+  return subscribedIdeas.value.some(subscription => subscription.ideaId == ideaId);
 };
 
 const toggleSubscriptionIcon = async (ideaId, userId) => {
   try {
     if (checkIfSubscribed(ideaId)) {
       await unsubscribeUser(ideaId, userId);
-      fetchSubscriptions();
     } else {
       await subscribeUser(ideaId, userId);
-      fetchSubscriptions();
     }
+    await fetchSubscriptions(userId); 
   } catch (error) {
     console.error("Error subscribing/unsubscribing", error);
   }
-};
+}
 
 const fetchSelectedIdea = async (id) => {
   selectedIdea.value = await getIdea(id);
@@ -766,17 +773,49 @@ const clearSelectedIdea = () => {
 };
 
 async function fetchIdeaByComment(commentId) {
+async function fetchIdeaByComment(commentId) {
   const idea = await getIdeaByCommentId(commentId);
   props.fetchSelectedIdea(idea.id);
 }
 
 onMounted(() => {
   fetchSubscriptions();
+  fetchRatings();
+  getTotalRatings();
 });
 
 watch(selectedIdea, (newValue, oldValue) => {
   console.log("new: ", newValue, " ---- old: ", oldValue);
-});
+})
+
+// async function getRatingFunction(idea_id) {
+//   try {
+//     return await getRating(idea_id, userId);
+//   } catch (error) {
+//     console.error("Error", error);
+//   }
+// }
+
+function formatRating(rating) {
+    if (rating === null || rating === undefined) {
+        return 0;
+    }
+    return rating.toFixed(2);
+}
+
+
+const ratings = ref([]);
+
+async function getTotalRatings(){
+  try {
+    const response = await getNumberOfRatings();
+    ratings.value = response;
+    return response;
+  } catch (error) {
+    console.error("Error", error);
+  }
+}
+
 </script>
 
 <template>
@@ -814,63 +853,62 @@ watch(selectedIdea, (newValue, oldValue) => {
           ref="ideasTransitionContainer"
           id="scrollable-middle"
         >
-          <div v-if="selectedIdea !== null" class="selected-idea-container">
-            <button class="back-button" @click="clearSelectedIdea">
-              Back to Ideas
-            </button>
-            <IdeaCard
-              :title="selectedIdea.title"
-              :text="selectedIdea.text"
-              :status="selectedIdea.status"
-              :username="selectedIdea.username"
-              :ideaId="selectedIdea.id"
-              :commentsNumber="selectedIdea.commentsNumber"
-              :elapsedTime="selectedIdea.elapsedTime"
-              :image="getImageUrl(selectedIdea)"
-              :loggedUser="getCurrentUsername()"
-              @comment-counter-add="selectedIdea.commentsNumber++"
-              @comment-counter-sub="selectedIdea.commentsNumber--"
-              @revealOnScroll="scrollFadeOnExpand()"
-              :ratingAvg="selectedIdea.ratingAvg"
-              :isSubscribed="checkIfSubscribed(selectedIdea.id)"
-              @subscribeUser="toggleSubscriptionIcon"
-            />
-          </div>
-          <div v-else>
-            <div
-              v-if="!showTopIdeas"
-              class="sort-container"
-              :style="
-                ideas
-                  ? ideas.length === 0 || showTopIdeas
-                    ? { visibility: 'hidden', 'text-align': 'right' }
-                    : { visibility: 'visible', 'text-align': 'right' }
-                  : { 'text-align': 'right' }
-              "
+        <div v-if="selectedIdea !== null" class="selected-idea-container">
+          <button class="back-button" @click="clearSelectedIdea">Back to Ideas</button>
+          <IdeaCard
+                :title="selectedIdea.title"
+                :text="selectedIdea.text"
+                :status="selectedIdea.status"
+                :username="selectedIdea.username"
+                :ideaId="selectedIdea.id"
+                :commentsNumber="selectedIdea.commentsNumber"
+                :elapsedTime="selectedIdea.elapsedTime"
+                :image="getImageUrl(selectedIdea)"
+                :loggedUser="getCurrentUsername()"
+                @comment-counter-add="selectedIdea.commentsNumber++"
+                @comment-counter-sub="selectedIdea.commentsNumber--"
+                @revealOnScroll="scrollFadeOnExpand()"
+                :isSubscribed="checkIfSubscribed(selectedIdea.id)"
+                @subscribeUser="toggleSubscriptionIcon"
+                :ratingAvg="formatRating(selectedIdea.ratingAvg)"
+                :nrOfRatings="ratings"
+              />
+        </div>
+        <div v-else>
+          <div
+            v-if="!showTopIdeas"
+            class="sort-container"
+            :style="
+              ideas
+                ? ideas.length === 0 || showTopIdeas
+                  ? { visibility: 'hidden', 'text-align': 'right' }
+                  : { visibility: 'visible', 'text-align': 'right' }
+                : { 'text-align': 'right' }
+            "
+          >
+            <label for="sortOrder">Sort by: </label>
+            <select
+              id="sortOrder"
+              v-model="sortOrder"
+              @change="updateSortOrder"
+              style="width: 3.8vw"
             >
-              <label for="sortOrder">Sort by: </label>
-              <select
-                id="sortOrder"
-                v-model="sortOrder"
-                @change="updateSortOrder"
-                style="width: 3.8vw"
-              >
-                <option :value="0">Oldest</option>
-                <option :value="1">Newest</option>
-              </select>
-              <div class="pageSize">
-                <PageSizeSelect
-                  id="pageSizeSelect"
-                  label="Ideas:"
-                  @change-display="changeDisplay"
-                />
-              </div>
+              <option :value="0">Oldest</option>
+              <option :value="1">Newest</option>
+            </select>
+            <div class="pageSize">
+              <PageSizeSelect
+                id="pageSizeSelect"
+                label="Ideas:"
+                @change-display="changeDisplay"
+              />
             </div>
-            <div
-              class="ideas-transition-container"
-              ref="ideasTransitionContainer"
-            >
-              <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
+          </div>
+          <div
+            class="ideas-transition-container"
+            ref="ideasTransitionContainer"
+          >
+            <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
 
               <div
                 v-for="idea in ideas"
@@ -878,7 +916,6 @@ watch(selectedIdea, (newValue, oldValue) => {
                 class="idea-transition-item reveal"
               >
                 <IdeaCard
-                  :ideas="ideas"
                   :title="idea.title"
                   :text="idea.text"
                   :status="idea.status"
@@ -891,10 +928,11 @@ watch(selectedIdea, (newValue, oldValue) => {
                   @comment-counter-add="idea.commentsNumber++"
                   @comment-counter-sub="idea.commentsNumber--"
                   @revealOnScroll="scrollFadeOnExpand()"
-                  :ratingAvg="idea.ratingAvg"
-                  :isSubscribed="checkIfSubscribed(idea.id)"
+                    :isSubscribed="checkIfSubscribed(idea.id)"
                   @subscribeUser="toggleSubscriptionIcon"
-                />
+                  :ratingAvg="formatRating(idea.ratingAvg)"
+                :nrOfRatings="ratings"
+              />
               </div>
               <div
                 v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"

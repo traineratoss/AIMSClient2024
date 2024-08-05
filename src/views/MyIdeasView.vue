@@ -3,13 +3,14 @@ import { ref, onMounted, computed, watch, toRaw } from "vue";
 import CustomSidePanel from "../components/CustomSidePanel.vue";
 import IdeaCard from "../components/IdeaCard.vue";
 import { filterIdeas, getPagedIdeasFromUser } from "../services/idea.service";
-import { getCurrentUsername } from "../services/user_service";
+import { getCurrentUserId, getCurrentUsername } from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import { useRoute } from "vue-router";
 import CuriositySearch from "../views/CuriositySearch.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
+import {getAllRatings, getNumberOfRatings} from "@/services/rating_service";
 
 const currentUsername = getCurrentUsername();
 // console.log(currentUsername);
@@ -534,6 +535,42 @@ function scrollFadeOnExpand() {
 function setIdeasEmptyFunction() {
   ideas.value = [];
 }
+
+const ratingsFetched = ref([]);
+const userId = getCurrentUserId();
+
+const fetchRatings = async () => {
+  try{
+    const response = await getAllRatings(userId);
+    ratingsFetched.value = response;
+  } catch (error) {
+    console.error("Error getting ratings", error);
+  }
+}
+
+function formatRating(rating) {
+    if (rating === null || rating === undefined) {
+        return 0;
+    }
+    return rating.toFixed(2);
+}
+
+const ratings = ref([]);
+
+async function getTotalRatings(){
+  try {
+    const response = await getNumberOfRatings();
+    ratings.value = response;
+    return response;
+  } catch (error) {
+    console.error("Error", error);
+  }
+}
+
+onMounted(() => {
+  fetchRatings();
+  getTotalRatings();
+});
 </script>
 
 <template>
@@ -612,7 +649,8 @@ function setIdeasEmptyFunction() {
               @comment-counter-add="idea.commentsNumber++"
               @comment-counter-sub="idea.commentsNumber--"
               @revealOnScroll="scrollFadeOnExpand()"
-              :ratingAvg="idea.ratingAvg"
+              :ratingAvg="formatRating(idea.ratingAvg)"
+              :nrOfRatings="ratings"
             />
           </div>
           <div

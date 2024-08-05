@@ -56,15 +56,6 @@ async function checkValidationeCode(otp, usernameOrEmail) {
   }
 }
 
-async function getIdByUsername(username) {
-  const response = await fetch(`${API_URL}/idByUsername?username=${username}`,{
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "include",
-  });
-  const json = await response.json();
-  return json;
-}
 
 async function loginUser(username, password) {
   let connectionError = false;
@@ -116,11 +107,15 @@ async function postUser(username, email) {
   let response;
   let connectionError = false;
   try {
-    response = await fetch(`${API_URL}?username=${username}&email=${email.toLowerCase()}`, {
+    response = await fetch("http://localhost:8080/api/v1/auth/register", {
       method: "POST",
       mode: "cors",
       cache: "no-cache",
       credentials: "include",
+      body: {
+        username: username,
+        email: email
+      }
     });
   } catch (error) {
     connectionError = true;
@@ -455,7 +450,6 @@ async function isFirstLogin(usernameOrEmail) {
 
 export {
   getUserByEmail,
-  getIdByUsername,
   getUserByUsername,
   checkValidationeCode,
   postUser,

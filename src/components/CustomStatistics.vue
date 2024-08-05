@@ -609,4 +609,12 @@ strong {
   flex-direction: row;
   gap: 10px;
 }
+
+a {
+  color: orange;
+}
+
+a:active {
+  color: black;
+}
 </style>
