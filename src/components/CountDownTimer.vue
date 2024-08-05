@@ -65,7 +65,7 @@ button {
 }
 a {
     font-size: 15px;
-    color: blue ;
+    color: black ;
     font-weight: bold;
     cursor: pointer;
     text-decoration: underline;
