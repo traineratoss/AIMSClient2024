@@ -67,8 +67,6 @@ async function getReviewStatusValue() {
   try {
   const response = await getReviewStatus(id.value);
   reviewStatus.value = response;
-  console.log(reviewStatus.value);
-  console.log(reportCount.value <= 5 || reviewStatus.value !== 'OFFENSIVE');
 } catch (error) {
     console.error("Error geting review status:", error);
   }
@@ -545,11 +543,6 @@ button:hover {
   height: 30px;
 }
 
-.chars {
-  text-align: center;
-  display: grid;
-  grid-template-columns: 20% 60% 20%;
-}
 
 .likes-count {
   color: black;
@@ -557,6 +550,23 @@ button:hover {
   margin-left: 1.5px;
   margin-right: 10px;
 }
+
+.chars {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  position: relative;
+}
+
+#legend-text-format {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  height: 30px;
+  width: 40px;
+  }
 
 .tooltip {
   position: absolute;
@@ -566,8 +576,8 @@ button:hover {
   padding: 1px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  top: 520px; 
-  left: -12%;
+  top: -100px;
+  left: -15%;
   transform: translateX(-50%);
   z-index: 1000;
   opacity: 0;
@@ -581,13 +591,4 @@ button:hover {
   visibility: visible;
 }
 
-#legend-text-format {
-  margin-bottom: 10px;
-  align-self: flex-end;
-  background-color: white;
-  border: 1px solid #000000;
-  border-radius: 3px;
-  height: 30px;
-  width: 45px;
-  }
 </style>
