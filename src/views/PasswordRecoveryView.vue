@@ -86,6 +86,7 @@ function sendEmailAgain(){
           id="validation-code" 
           @click="verifyOtp" 
           :disabled="!validOTPFormat"
+          :style="validOTPFormat ? 'cursor: pointer' : 'cursor: default'"
         >
           Check Validation Code
         </CustomButton>

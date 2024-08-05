@@ -478,6 +478,8 @@ if (showDeletePopup) loadIdeaForDelete();
 if (disableFields) loadIdeaForDelete();
 
 const currentIdeaTitle = ref("");
+
+
 async function loadIdeaForDelete() {
   const response = await getIdea(ideaId);
   if (response === "Idea doesn't exist.") {
