@@ -469,11 +469,11 @@ function topContainerGridPercentages() {
             <option class="selected-text" disabled value="">
               Select your rating...
             </option>
-            <option value="1" class="selected-text">1 star</option>
-            <option value="2" class="selected-text">2 stars</option>
-            <option value="3" class="selected-text">3 stars</option>
-            <option value="4" class="selected-text">4 stars</option>
-            <option value="5" class="selected-text">5 stars</option>
+            <option value="1" class="selected-text">★</option>
+            <option value="2" class="selected-text">★★</option>
+            <option value="3" class="selected-text">★★★</option>
+            <option value="4" class="selected-text">★★★★</option>
+            <option value="5" class="selected-text">★★★★★</option>
           </select>
         </div>
       </div>
@@ -688,6 +688,7 @@ span {
 
 .selected-text {
   color: black;
+  font-size: 1rem;
 }
 
 #clear-all-button {
