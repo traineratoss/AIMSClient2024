@@ -107,7 +107,6 @@ onMounted(async () => {
     "ASC"
   );
 
-
   loadingPage.value = true;
   loggedUser.value = getCurrentUsername();
   currentUserRole = getCurrentRole();
@@ -468,58 +467,52 @@ async function loadRecievedIdeas(mostCommentedIdeas) {
   totalPages.value = 1;
   currentPage.value = 1;
 
-  setTimeout(async () => {
-    showTopIdeas.value = !showTopIdeas.value;
+  showTopIdeas.value = !showTopIdeas.value;
 
-    if (showTopIdeas.value) {
-      // const stats = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
-      // ideas.value = stats.mostCommentedIdeas;
-      ideas.value = mostCommentedIdeas;
+  if (showTopIdeas.value) {
+    ideas.value = mostCommentedIdeas;
 
+    scrollFade();
+    ideasTransitionContainer.value.style.overflowY = "auto";
+    document.getElementById("scrollable-middle").scrollTop = "0";
+  } else {
+    const data = await filterIdeas(
+      inputTitle.value,
+      currentText,
+      currentStatus,
+      currentCategory,
+      currentUser,
+      currentSelectedDateFrom,
+      currentSelectedDateTo,
+      currentPage.value - 1,
+      ideaPerPage.value,
+      null,
+      currentRating,
+      sortOrder.value
+    );
+    stats.value.mostCommentedIdeas = data.content;
+    loadingPage.value = true;
+    loggedUser.value = getCurrentUsername();
+    currentUserRole = getCurrentRole();
+    checkAdmin();
+
+    if (data === "No ideas found.") {
+      noIdeasFoundCondition.value = true;
+      sortOrder.value = 0;
+      totalPages.value = 0;
+      ideas.value = [];
+    } else {
+      noIdeasFoundCondition.value = false;
+      sortOrder.value = 0;
+      totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+      ideas.value = data.content;
       setTimeout(() => {
         scrollFade();
         ideasTransitionContainer.value.style.overflowY = "auto";
         document.getElementById("scrollable-middle").scrollTop = "0";
       }, 0);
-    } else {
-      const data = await filterIdeas(
-        inputTitle.value,
-        currentText,
-        currentStatus,
-        currentCategory,
-        currentUser,
-        currentSelectedDateFrom,
-        currentSelectedDateTo,
-        currentPage.value - 1,
-        ideaPerPage.value,
-        null,
-        currentRating,
-        sortOrder.value
-      );
-      stats.value.mostCommentedIdeas = data.content;
-      loadingPage.value = true;
-      loggedUser.value = getCurrentUsername();
-      currentUserRole = getCurrentRole();
-      checkAdmin();
-
-      if (data === "No ideas found.") {
-        noIdeasFoundCondition.value = true;
-        sortOrder.value = 0;
-        totalPages.value = 0;
-        ideas.value = [];
-      } else {
-        noIdeasFoundCondition.value = false;
-        sortOrder.value = 0;
-        totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
-        ideas.value = data.content;
-        setTimeout(() => {
-          scrollFade();
-          ideasTransitionContainer.value.style.overflowY = "auto";
-          document.getElementById("scrollable-middle").scrollTop = "0";
-        }, 0);
-      }
     }
-  }, "500");
+  }
 }
 
 async function loadData() {
@@ -772,7 +765,7 @@ const clearSelectedIdea = () => {
   loadData();
 };
 
-async function fetchIdeaByComment(commentId) {;
+async function fetchIdeaByComment(commentId) {
   const idea = await getIdeaByCommentId(commentId);
   props.fetchSelectedIdea(idea.id);
 }
@@ -885,6 +878,7 @@ watch(selectedIdea, (newValue, oldValue) => {
                 class="idea-transition-item reveal"
               >
                 <IdeaCard
+                  :ideas="ideas"
                   :title="idea.title"
                   :text="idea.text"
                   :status="idea.status"
@@ -968,6 +962,7 @@ watch(selectedIdea, (newValue, oldValue) => {
         </div>
         <Suspense>
           <CustomStatistics
+            :ideas="ideas"
             :recievedFilteredStats="stats"
             :showGenerated="showGenerated"
             :showAnimation="showAnimation"

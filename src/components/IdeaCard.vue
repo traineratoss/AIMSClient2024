@@ -18,6 +18,7 @@ import RatingStars from "../components/RatingStars.vue";
 import { postRating } from "../services/rating_service";
 
 const props = defineProps({
+  ideas: "",
   title: "",
   text: "",
   status: "",
@@ -51,7 +52,6 @@ const numberOfDisplayedComments = ref(10);
 const userId = getCurrentUserId();
 
 const isHovering = ref(false);
-
 
 // console.log(userId);
 async function editIdea() {
@@ -167,7 +167,6 @@ async function postCommentDynamic(username, ideaId, commentText) {
       comment.elapsedTime = "0 seconds";
       allLoadedComments.value.unshift(comment);
       clearInput();
-      emits("commentCounterAdd");
       if (allLoadedComments.value.length > 0) {
         showCommentsToggle.value = true;
       }
@@ -330,20 +329,17 @@ function isSelectedSubscription() {
 
 const isAdmin = getCurrentRole() === "ADMIN";
 
-watch(
-  allLoadedComments,
-  (comments) => {
-    comments.forEach((comment) => {
-      watch(
-        () => comment.replyToggle,
-        () => {
-          if (comment.replyToggle === true) triggerExpandAnimation(comment.id);
-          else triggerCollapseAnimation(comment.id);
-        }
-      );
-    });
-  }
-);
+watch(allLoadedComments, (comments) => {
+  comments.forEach((comment) => {
+    watch(
+      () => comment.replyToggle,
+      () => {
+        if (comment.replyToggle === true) triggerExpandAnimation(comment.id);
+        else triggerCollapseAnimation(comment.id);
+      }
+    );
+  });
+});
 
 function triggerExpandAnimation(commentId) {
   const reply = document.getElementById("customReply" + commentId);
@@ -412,15 +408,18 @@ watch(toRef(props, "isSubscribed"), (newVal) => {
   currentStatusSubscribe.value = newVal;
 });
 
-watch(() => props.ideaId, async () => {
-  allLoadedComments.value  = []
-  allLoadedComments.value = await loadComments(
-    numberOfDisplayedComments.value,
-    0,
-    "creationDate",
-    props.ideaId
-  );
-})
+watch(
+  () => props.ideaId,
+  async () => {
+    allLoadedComments.value = [];
+    allLoadedComments.value = await loadComments(
+      numberOfDisplayedComments.value,
+      0,
+      "creationDate",
+      props.ideaId
+    );
+  }
+);
 </script>
 
 <template>
@@ -468,10 +467,10 @@ watch(() => props.ideaId, async () => {
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                <div v-html="getShortText(props.text, 3, 49) "></div>
+                  <div v-html="getShortText(props.text, 3, 49)"></div>
                 </div>
                 <div class="text" v-else>
-                  <div v-html="getShortText(props.text, 2, 49) "></div>
+                  <div v-html="getShortText(props.text, 2, 49)"></div>
                 </div>
               </div>
               <div class="left-container-buttons">
@@ -600,9 +599,12 @@ watch(() => props.ideaId, async () => {
 
       <div class="comment-input-bottom">
         <div class="chars">
-          <button id="legend-text-format" class="material-symbols-outlined" 
-            @mouseover="isHovering = true" 
-            @mouseleave="isHovering = false">
+          <button
+            id="legend-text-format"
+            class="material-symbols-outlined"
+            @mouseover="isHovering = true"
+            @mouseleave="isHovering = false"
+          >
             text_fields
           </button>
           <div class="tooltip" :class="{ show: isHovering }">
@@ -623,7 +625,7 @@ watch(() => props.ideaId, async () => {
         </div>
       </div>
     </div>
-    
+
     <transition-group duration="300" name="nested" v-if="showCommentsToggle">
       <div
         class="comment-container"
@@ -1094,7 +1096,7 @@ button:hover {
   border-radius: 3px;
   height: 30px;
   width: 40px;
-  }
+}
 
 .v-enter-active,
 .v-leave-active {
@@ -1129,12 +1131,12 @@ button:hover {
 .tooltip {
   position: absolute;
   background-color: #ffa941;
-  color:  white;
+  color: white;
   border: 2px solid #d48806;
   padding: 1px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  top: 300px; 
+  top: 300px;
   left: -12%;
   transform: translateX(-50%);
   z-index: 1000;
