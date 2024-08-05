@@ -1,12 +1,15 @@
 <script setup>
 import sampleText from "../assets/termsAndConditions/termsAndConditions.js";
 import CustomButton from "../components/CustomButton.vue";
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   show: Boolean,
 });
 
 const fileContent = sampleText;
+const termsRead = ref(false);
+const checkboxChecked = ref(false);
 
 const vFocus = {
   mounted: (el) => {
@@ -17,12 +20,21 @@ const vFocus = {
 const emits = defineEmits(["accepted-terms-and-conditions", "declined-terms-and-conditions"]);
 
 function acceptTermsAndConditions() {
-  emits("accepted-terms-and-conditions");
+  if (termsRead.value) {
+    emits("accepted-terms-and-conditions");
+  }
 }
 
 function declineTermsAndConditions() {
   emits("declined-terms-and-conditions");
 }
+
+function termsAndConditionsReadCompletely(event) {
+  const { scrollTop, scrollHeight, clientHeight } = event.target;
+  termsRead.value = scrollTop + clientHeight >= scrollHeight;
+}
+
+
 </script>
 
 <template>
@@ -38,19 +50,33 @@ function declineTermsAndConditions() {
       >
         <div id="container" class="text-color">
           <h1 id="title">Terms & Conditions</h1>
-          <div id="text-container" v-html="fileContent"></div>
+          <div id="text-container"
+            v-html="fileContent"
+            @scroll="termsAndConditionsReadCompletely"
+          ></div>
         </div>
-        <CustomButton 
-          @click="acceptTermsAndConditions"
-          v-focus
-          style="width: auto;"
-        >
-          I've read and accepted the Terms & Conditions
-        </CustomButton>
+        <div class="actions">
+          <input 
+            type="checkbox" 
+            :checked="checkboxChecked" 
+            disabled
+          >
+          <label for="terms-checkbox">I've read and accepted the Terms & Conditions</label>
+          <CustomButton 
+            @click="acceptTermsAndConditions"
+            v-focus
+            :disabled="!termsRead"
+            style="width: auto;"
+          >
+            I've read and accepted the Terms & Conditions
+          </CustomButton>
+        </div>
       </div>
     </div>
   </Transition>
 </template>
+
+
 
 <style scoped>
 .popup-default-button:hover {

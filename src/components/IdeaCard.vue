@@ -13,9 +13,7 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-import { getIdea, getIdeaForUpdateIdea} from "../services/idea.service";
-import RatingStars from "../components/RatingStars.vue";
-import { postRating } from "../services/rating_service";
+import { getIdea,getIdeaForUpdateIdea} from "../services/idea.service";
 
 const props = defineProps({
   title: "",
@@ -29,6 +27,7 @@ const props = defineProps({
   loggedUser: "",
   ratingAvg: "",
   isSubscribed: Boolean,
+  nrOfRatings: "",
 });
 
 const emits = defineEmits([
@@ -55,7 +54,6 @@ const isHovering = ref(false);
 
 
 async function editIdea() {
-
   const data = await getIdeaForUpdateIdea(props.ideaId);
 
   if (data === "Idea doesn't exist.") {
@@ -390,17 +388,17 @@ function triggerCollapseAnimation(commentId) {
   }
 }
 
-const ratingAvg = ref(props.ratingAvg);
+// const ratingAvg = ref(props.ratingAvg);
 
-const updateRating = async (newRating) => {
-  try {
-    await postRating(props.ideaId, userId, newRating);
-    const response = await getIdea(props.ideaId);
-    ratingAvg.value = response.ratingAvg;
-  } catch (error) {
-    console.error("Error", error);
-  }
-};
+// const updateRating = async (newRating) => {
+//   try {
+//     await postRating(props.ideaId, userId, newRating);
+//     const response = await getIdea(props.ideaId);
+//     ratingAvg.value = response.ratingAvg;
+//   } catch (error) {
+//     console.error("Error", error);
+//   }
+// };
 
 const currentStatusSubscribe = ref(props.isSubscribed);
 
@@ -422,6 +420,12 @@ watch(() => props.ideaId, async () => {
     props.ideaId
   );
 })
+
+const countRatings = (ideaId) => {
+  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+  return rating ? rating.ratingcount : 0;
+}
+
 </script>
 
 <template>
@@ -492,12 +496,12 @@ watch(() => props.ideaId, async () => {
                     >
                       DELETE
                     </button>
-                    <RatingStars
+                    <!-- <RatingStars
                       :initialRating="ratingAvg"
                       @ratingUpdated="updateRating"
                       @click="isSelectedRating"
                       class="rating-stars"
-                    />
+                    /> -->
                   </div>
                 </div>
                 <div class="left-container-buttons-post"></div>
@@ -523,8 +527,15 @@ watch(() => props.ideaId, async () => {
               </div>
               <div class="right-container-info">
                 <div class="number-of-comments">
-                  <p>{{ props.commentsNumber }}</p>
                   <span class="material-symbols-outlined"> comment </span>
+                  <p>{{ props.commentsNumber }}</p>
+                </div>
+                <div class="ratings-info">
+                  <span class="ratingAvg">
+                    <span class="material-symbols-outlined star">star</span>
+                    <span>{{ props.ratingAvg }}</span>
+                  </span>                  
+                  <span class="reviews">({{ countRatings(ideaId) }} reviews)</span>
                 </div>
                 <div class="author">
                   <div>{{ props.elapsedTime }} ago</div>
@@ -678,6 +689,25 @@ watch(() => props.ideaId, async () => {
 </template>
 
 <style scoped>
+
+.ratings-info{
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+}
+
+.reviews{
+  font-size: .7rem;
+}
+
+.ratingAvg{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .expand-animation {
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
   transition-delay: 0.05s;
@@ -894,7 +924,7 @@ watch(() => props.ideaId, async () => {
 
 .right-container {
   display: grid;
-  grid-template-rows: 60% 40%;
+  grid-template-rows: 50% 50%;
 }
 
 .right-container-icon {
@@ -921,7 +951,7 @@ watch(() => props.ideaId, async () => {
 .right-container-info {
   margin-left: 10px;
   display: grid;
-  grid-template-rows: 20% 80%;
+  grid-template-rows: 20% 20%;
 }
 
 .status {
@@ -987,10 +1017,9 @@ watch(() => props.ideaId, async () => {
 }
 
 .idea-image {
-  margin: 20px;
-  object-fit: cover;
-  height: auto;
-  width: 6vw;
+  margin: 15px;
+  height: 3.5vw;
+  width: 5vw;
 }
 
 img {
@@ -1161,5 +1190,14 @@ button:hover {
 .tooltip.show {
   opacity: 1;
   visibility: visible;
+}
+
+.star{
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  color: black;
 }
 </style>
