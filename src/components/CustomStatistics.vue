@@ -4,6 +4,10 @@ import { getStats } from "../services/statistics.service";
 import PieChart from "./PieChart.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import { getIdeaByCommentId } from "../services/idea.service";
+import {
+  getNumberOfLikes,
+  getNumberOfReports,
+} from "../services/comment.service";
 
 const props = defineProps({
   recievedFilteredStats: Object,
@@ -39,6 +43,16 @@ const loadingSpeed = 10;
 
 const showTopIdeas = ref(false);
 
+const nrOfLikes = ref();
+const nrOfReports = ref();
+
+onMounted(async () => {
+  nrOfLikes.value = await getNumberOfLikes();
+  nrOfReports.value = await getNumberOfReports();
+
+  console.log("Componenta a fost montată, nrOfLikes:", nrOfLikes.value);
+  console.log("Componenta a fost montată, nrOfReports:", nrOfReports.value);
+});
 watch(progressBar, (newX) => {
   progressBar.value = newX;
 });
@@ -56,7 +70,6 @@ watch(
     console.log("showAnimation", newValue);
   }
 );
-
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(
@@ -78,8 +91,9 @@ async function calculateImplementationPercentage() {
 async function refreshStats() {
   showSkeleton.value = true;
   stats.value = await getStats();
+  nrOfLikes.value = await getNumberOfLikes();
+  nrOfReports.value = await getNumberOfReports();
   emits("loadTop5Ideas", stats.value.mostCommentedIdeas);
-  console.log(stats.value);
   showSkeleton.value = false;
 }
 
@@ -88,7 +102,6 @@ function getShortenedTitle(title, maxLength) {
 }
 
 const fetchIdeaByComment = async (commentId) => {
-  console.log(commentId);
   try {
     const idea = await getIdeaByCommentId(commentId);
     if (idea && idea.id) {
@@ -242,11 +255,11 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
               <tr>
                 <td>Total no. of Likes:</td>
-                <td>{{ stats.totalNrOfLikes }}</td>
+                <td>{{ nrOfLikes }}</td>
               </tr>
               <tr>
                 <td>Total no. of Reports:</td>
-                <td>{{ stats.totalNrOfReports }}</td>
+                <td>{{ nrOfReports }}</td>
               </tr>
             </table>
           </div>

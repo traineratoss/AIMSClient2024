@@ -226,6 +226,30 @@ async function getReviewStatus(commentId) {
   return await response.json();
 }
 
+async function getNumberOfLikes() {
+  const response = await fetch(`${API_URL}/likes/count`, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+  });
+  const data = await response.json();
+  console.log(data);
+  return data;
+}
+
+async function getNumberOfReports() {
+  const response = await fetch(`${API_URL}/reports/count`, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+  });
+  const data = await response.json();
+  return data;
+}
+
+
 export {
   loadComments,
   postComment,
@@ -244,4 +268,6 @@ export {
   deleteReports,
   getReviewStatus,
   setReviewStatus,
+  getNumberOfLikes,
+  getNumberOfReports,
 };

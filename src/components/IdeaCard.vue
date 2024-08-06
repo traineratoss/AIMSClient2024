@@ -428,10 +428,10 @@ watch(() => props.ideaId, async () => {
   );
 })
 
-const countRatings = (ideaId) => {
-  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
-  return rating ? rating.ratingcount : 0;
-}
+// const countRatings = (ideaId) => {
+//   const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+//   return rating ? rating.ratingcount : 0;
+// }
 
 </script>
 
