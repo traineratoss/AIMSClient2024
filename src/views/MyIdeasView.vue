@@ -11,6 +11,7 @@ import { useRoute } from "vue-router";
 import CuriositySearch from "../views/CuriositySearch.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
 import {getAllRatings, getNumberOfRatings} from "@/services/rating_service";
+import { getSubscriptions, subscribeUser, unsubscribeUser } from "../services/subscriptionService";
 
 const currentUsername = getCurrentUsername();
 // console.log(currentUsername);
@@ -567,9 +568,38 @@ async function getTotalRatings(){
   }
 }
 
+const subscribedIdeas = ref([]);
+
+const fetchSubscriptions = async () => {
+  try{
+      const response = await getSubscriptions(userId);
+      subscribedIdeas.value = response;
+  } catch (error) {
+    console.error("Error getting subscriptions", error);
+  }
+}
+
+const checkIfSubscribed = (ideaId) => {
+  return subscribedIdeas.value.some(subscription => subscription.ideaId == ideaId);
+};
+
+const toggleSubscriptionIcon = async (ideaId, userId) => {
+  try {
+    if (checkIfSubscribed(ideaId)) {
+      await unsubscribeUser(ideaId, userId);
+    } else {
+      await subscribeUser(ideaId, userId);
+    }
+    await fetchSubscriptions(userId); 
+  } catch (error) {
+    console.error("Error subscribing/unsubscribing", error);
+  }
+}
+
 onMounted(() => {
   fetchRatings();
   getTotalRatings();
+  fetchSubscriptions();
 });
 </script>
 
@@ -649,6 +679,8 @@ onMounted(() => {
               @comment-counter-add="idea.commentsNumber++"
               @comment-counter-sub="idea.commentsNumber--"
               @revealOnScroll="scrollFadeOnExpand()"
+              :isSubscribed="checkIfSubscribed(idea.id)"
+              @subscribeUser="toggleSubscriptionIcon"
               :ratingAvg="formatRating(idea.ratingAvg)"
               :nrOfRatings="ratings"
             />
