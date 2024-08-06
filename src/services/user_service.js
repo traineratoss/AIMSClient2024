@@ -128,15 +128,18 @@ async function postUser(username, email) {
   let response;
   let connectionError = false;
   try {
-    response = await fetch("http://localhost:8080/api/v1/auth/register", {
+    response = await nativeFetch("http://localhost:8080/api/v1/auth/register", {
       method: "POST",
       mode: "cors",
       cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json",
+      },
       credentials: "include",
-      body: {
+      body: JSON.stringify({
         username: username,
         email: email
-      }
+      })
     });
   } catch (error) {
     connectionError = true;
@@ -151,17 +154,6 @@ async function postUser(username, email) {
     throw new Error(json.message);
   }
   return json;
-}
-
-async function sendEmailToAllAdmins(username) {
-  const response = await fetch(
-    `${API_URL}/send-email-to-admin?username=${username}`, {
-      method: "POST",
-      mode: "cors",
-      cache: "no-cache",
-      credentials: "include",
-    }
-  );
 }
 
 async function updateUser(username, userUpdateDto) {  
@@ -496,6 +488,5 @@ export {
   getCurrentUserId,
   validateUsername,
   isFirstLogin, 
-  sendEmailToAllAdmins,
   abortChangePassword
 };
