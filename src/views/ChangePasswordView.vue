@@ -79,19 +79,15 @@ async function submit() {
     checkAllFieldsComplelted();
     checkPasswords(newPasswordText.value, confirmNewPassword.value);
 
-    try {
-      await changePassword({
-        username: getCurrentUsername(),
-        oldPassword: oldPasswordText.value,
-        newPassword: newPasswordText.value,
-      });
-      await logout();
-      router.push("/login");
-    } catch (error) {
-      throw new Error("Old password is incorrect");
-    }
+    await changePassword({
+      username: getCurrentUsername(),
+      oldPassword: oldPasswordText.value,
+      newPassword: newPasswordText.value,
+    });
+    await logout();
+    router.push("/login");   
 
-  } catch (error) {
+} catch (error) {
     errorMessage.value = error.message;
     showErrorMessage.value = true;
   }

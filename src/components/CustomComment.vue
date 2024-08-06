@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { deleteComment, getLikesCount, deleteLike, postLike, getLike, reportComment, getReport, getReportsCountForComment, getReviewStatus } from "../services/comment.service";
-import { getCurrentUsername, getCurrentRole, getIdByUsername } from "../services/user_service";
+import { getCurrentRole, getCurrentUserId} from "../services/user_service";
 import CustomModal from "./CustomModal.vue";
 import LikeButton from "../components/LikeButton.vue";
 
@@ -43,21 +43,24 @@ const showModal = ref(false);
 const showModal2 = ref(false);
 const maxlength = 500;
 const likesCounts = ref([]);
-const isBlackIcon = ref(true);
+const isBlackIcon = ref(false);
 const isReported = ref(false);
-const reportCount = ref(0);
+const reportCount = ref(true);
 const id = ref("");
 const reviewStatus = ref("");
 const isHovering = ref(false);
+const userId=ref(0);
+const reportsCountLoading = ref(false);
+const likesCountLoading = ref(false);
 
 onMounted(async () => {
   currentUserRole.value = getCurrentRole();
-  await fetchLikesCount();
-  await fetchReportCount();
-  getReviewStatusValue();
-
+  userId.value=getCurrentUserId();
   fetchLikes();
-
+  fetchLikesCount();
+  fetchReportCount();
+  getReviewStatusValue();
+  
 });
 
 id.value = props.isReply ? props.replyId : props.commentId;
@@ -67,22 +70,17 @@ async function getReviewStatusValue() {
   try {
   const response = await getReviewStatus(id.value);
   reviewStatus.value = response;
-  console.log(reviewStatus.value);
-  console.log(reportCount.value <= 5 || reviewStatus.value !== 'OFFENSIVE');
 } catch (error) {
     console.error("Error geting review status:", error);
   }
 }
 
-async function fetchLikes() {
-  const id = props.isReply ? props.replyId : props.commentId;
-  const userId = await getIdByUsername(currentUser);
-  try {
-    const liked = await getLike(id, userId);
-    isBlackIcon.value = liked;
 
-    const reported = await getReport(id, userId);
-    isReported.value = reported;
+async function fetchLikes() {
+
+  try {
+    isBlackIcon.value = await getLike(id.value, userId.value);
+    isReported.value = await getReport(id.value, userId.value);
   } catch (error) {
     console.error("Error fetching like status:", error);
   }
@@ -90,22 +88,24 @@ async function fetchLikes() {
 
 async function fetchReportCount() {
   try {
-    const id = props.isReply ? props.replyId : props.commentId;
-    const count = await getReportsCountForComment(id);
-    reportCount.value = count;
+    const count = await getReportsCountForComment(id.value);
+    if(count > 5 || reviewStatus === 'OFFENSIVE'){
+      reportCount.value = false;
+    }
   } catch (error) {
     console.error("Failed to fetch report count:", error);
   }
+  reportsCountLoading.value=true;
 }
 
 async function fetchLikesCount() {
   try {
-    const id = props.isReply ? props.replyId : props.commentId;
-    const data = await getLikesCount(id);
+    const data = await getLikesCount(id.value);
     likesCounts.value.push(data);
   } catch (error) {
     console.error("Failed to fetch likes count:", error);
   }
+  likesCountLoading.value=true;
 }
 
 function loadCommentReplies() {
@@ -113,9 +113,8 @@ function loadCommentReplies() {
 }
 
 async function postLikeForComment() {
-  const userId = await getIdByUsername(currentUser);
   try {
-    await postLike(props.commentId, userId);
+    await postLike(props.commentId, userId.value);
     likesCounts.value[0]++;
     isBlackIcon.value = !isBlackIcon.value;
   } catch (error) {
@@ -124,9 +123,8 @@ async function postLikeForComment() {
 }
 
 async function postLikeForReply() {
-  const userId = await getIdByUsername(currentUser);
   try {
-    await postLike(props.replyId, userId);
+    await postLike(props.replyId, userId.value);
     likesCounts.value[0]++;
     isBlackIcon.value = !isBlackIcon.value;
   } catch (error) {
@@ -187,10 +185,8 @@ function clearInput() {
 }
 
 async function deleteLikeAll() {
-  const id = props.isReply ? props.replyId : props.commentId;
-  const userId = await getIdByUsername(currentUser);
   try {
-    await deleteLike(id, userId);
+    await deleteLike(id.value, userId.value);
     likesCounts.value[0]--;
     isBlackIcon.value = !isBlackIcon.value;
   } catch (error) {
@@ -200,10 +196,8 @@ async function deleteLikeAll() {
 }
 
 async function handleReport() {
-  const userId = await getIdByUsername(currentUser);
-  const commentId = props.isReply ? props.replyId : props.commentId;
   try {
-    const result = await reportComment(commentId, userId);
+    const result = await reportComment(id.value, userId.value);
     console.log("Comment reported:", result);
     isReported.value = true;
     showModal2.value = false;
@@ -220,20 +214,19 @@ async function handleReport() {
 
 
 <template>
-  <div v-if="props.isReply" class="reply-container">
+  <div v-if="props.isReply && reportsCountLoading && likesCountLoading" class="reply-container">
     <div class="reply-grid-main-container">
       <div class="header-container-reply">
         <p>@{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
       <div class="comment-text-container">
-        <p v-if="reportCount > 5">This comment is under review</p>
-        <p v-else><div v-html="text"></div></p>
+        <div v-html="text"></div>
       </div>
       <div class="footer-container">
         <div class="footer-container-left"></div>
         <div class="footer-container-center"></div>
-        <div v-if="reportCount <= 5 && reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
+        <div v-if="reportCount" class="footer-container-right">
           <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button"
             @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
@@ -266,15 +259,14 @@ async function handleReport() {
     </div>
   </div>
 
-  <div v-if="!props.isReply" class="comment-container">
+  <div v-if="!props.isReply && reportsCountLoading && likesCountLoading" class="comment-container">
     <div class="comment-grid-main-container">
       <div class="header-container">
         <p>{{ props.username }}</p>
         <p class="elapsedTime">{{ props.elapsedTime }} ago</p>
       </div>
       <div class="comment-text-container">
-        <p v-if="reportCount > 5">This comment is under review</p>
-        <p v-else><div v-html="text"></div></p>
+        <div v-html="text"></div>
       </div>
 
       <div class="footer-container">
@@ -292,7 +284,7 @@ async function handleReport() {
             </button>
           </div>
         </div>
-        <div v-if="reportCount <= 5 && reviewStatus !== 'OFFENSIVE'" class="footer-container-right">
+        <div v-if="reportCount" class="footer-container-right">
           <button v-if="currentUser !== props.username && currentUserRole !== 'ADMIN'" class="action-icon-button"
             @click="showModal2 = true" :disabled="isReported">
             <span class="material-symbols-outlined" :style="{ color: isReported ? 'red' : 'black' }"> report </span>
@@ -545,11 +537,6 @@ button:hover {
   height: 30px;
 }
 
-.chars {
-  text-align: center;
-  display: grid;
-  grid-template-columns: 20% 60% 20%;
-}
 
 .likes-count {
   color: black;
@@ -557,6 +544,23 @@ button:hover {
   margin-left: 1.5px;
   margin-right: 10px;
 }
+
+.chars {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  position: relative;
+}
+
+#legend-text-format {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  height: 30px;
+  width: 40px;
+  }
 
 .tooltip {
   position: absolute;
@@ -566,8 +570,8 @@ button:hover {
   padding: 1px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  top: 520px; 
-  left: -12%;
+  top: -100px;
+  left: -15%;
   transform: translateX(-50%);
   z-index: 1000;
   opacity: 0;
@@ -581,13 +585,4 @@ button:hover {
   visibility: visible;
 }
 
-#legend-text-format {
-  margin-bottom: 10px;
-  align-self: flex-end;
-  background-color: white;
-  border: 1px solid #000000;
-  border-radius: 3px;
-  height: 30px;
-  width: 45px;
-  }
 </style>

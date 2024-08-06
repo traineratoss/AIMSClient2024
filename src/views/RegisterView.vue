@@ -139,6 +139,7 @@ function showTermsAndConditionsPopup() {
           v-model="acceptedTermsAndConditions"
           name="acceptedTermsAndConditions"
           @keydown.enter="acceptedTermsAndConditions = !acceptedTermsAndConditions"
+          :disabled="!acceptedTermsAndConditions"
         />
         <button
           class="terms-and-conditions-button"

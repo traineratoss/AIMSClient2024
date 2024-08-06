@@ -8,6 +8,7 @@ import router from "../router";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
 import FormTitle from "../components/FormTitle.vue";
 import CodeValidation from "../components/CodeValidation.vue";
+import CountDownTimer from "../components/CountDownTimer.vue";
 
 const usernameOrEmailText = ref("");
 const showErrorMessage = ref(false);
@@ -41,6 +42,11 @@ function updateOTP(otp, validFormat) {
   code.value = otp;
   validOTPFormat.value = validFormat;
 } 
+
+function sendEmailAgain(){
+  sendNewPassword(usernameOrEmailText.value);
+  showCodeValidation.value = true;
+}
   
 </script>
 
@@ -76,7 +82,7 @@ function updateOTP(otp, validFormat) {
         <p>You have received a verification code on your email.
           <br> Please input your code below: </p>
         <CodeValidation @otp-updated="updateOTP" />
-        <CustomButton 
+          <CustomButton 
           id="validation-code" 
           @click="verifyOtp" 
           :disabled="!validOTPFormat"
@@ -84,6 +90,9 @@ function updateOTP(otp, validFormat) {
         >
           Check Validation Code
         </CustomButton>
+        <CountDownTimer
+        @click="requestNewPassword"
+        style="width: auto;"  />
       </div>
     </div>
   </div>

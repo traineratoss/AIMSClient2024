@@ -56,15 +56,6 @@ async function checkValidationeCode(otp, usernameOrEmail) {
   }
 }
 
-async function getIdByUsername(username) {
-  const response = await fetch(`${API_URL}/idByUsername?username=${username}`,{
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "include",
-  });
-  const json = await response.json();
-  return json;
-}
 
 async function loginUser(username, password) {
   let connectionError = false;
@@ -261,10 +252,14 @@ async function changePassword(changePasswordDTO) {
       newPassword: changePasswordDTO.newPassword,
       oldPassword: changePasswordDTO.oldPassword
     }),
+    
   });
-
-  if (!response.ok) {
-    throw new Error('Incorrect old password');
+   const json = await response.json();
+  if(json.message === 'The old password is incorrect!') {
+      throw new Error('The old password is incorrect!');
+  }
+  if(json.message === 'The new password cannot be the same as the old password!') {
+    throw new Error('The new password cannot be the same as the old password!');
   }
 
   return response;
@@ -463,7 +458,6 @@ async function isFirstLogin(usernameOrEmail) {
 
 export {
   getUserByEmail,
-  getIdByUsername,
   getUserByUsername,
   checkValidationeCode,
   postUser,
