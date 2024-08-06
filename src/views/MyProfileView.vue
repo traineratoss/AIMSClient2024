@@ -21,7 +21,7 @@ const emailText = ref("");
 const avatarIdText = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
-const index = parseInt(localStorage.getItem("avatarId"));
+const index = parseInt(sessionStorage.getItem("avatarId"));
 const carouselImageIndex = ref(index);
 
 const slideImages = [
@@ -82,12 +82,12 @@ function saveChanges() {
     let userUpdateDTO = {};
 
     userUpdateDTO.avatarId = carouselImageIndex.value;
-    localStorage.setItem("avatarId", userUpdateDTO.avatarId);
+    sessionStorage.setItem("avatarId", userUpdateDTO.avatarId);
 
     if (usernameText.value !== oldUsername && usernameText.value !== "") {
       if (validateUsername(usernameText.value)) {
         userUpdateDTO.username = usernameText.value;
-        localStorage.setItem("username", userUpdateDTO.username);
+        sessionStorage.setItem("username", userUpdateDTO.username);
       } else {
         errorMessage.value = "Invalid username format!";
         showErrorMessage.value = true;
@@ -96,17 +96,17 @@ function saveChanges() {
     }
     if (emailText.value !== oldEmail && emailText.value !== "") {
       userUpdateDTO.email = emailText.value;
-      localStorage.setItem("email", userUpdateDTO.email);
+      sessionStorage.setItem("email", userUpdateDTO.email);
     }
     if (oldFullname === "") {
       userUpdateDTO.fullName = fullNameText.value;
-      localStorage.setItem("fullName", userUpdateDTO.fullName);
+      sessionStorage.setItem("fullName", userUpdateDTO.fullName);
     } else if (
       fullNameText.value !== oldFullname &&
       fullNameText.value !== ""
     ) {
       userUpdateDTO.fullName = fullNameText.value;
-      localStorage.setItem("fullName", userUpdateDTO.fullName);
+      sessionStorage.setItem("fullName", userUpdateDTO.fullName);
     } else if (fullNameText.value === "") {
       changesOK = false;
       errorMessage.value = "Fullname must not be empty";
@@ -121,10 +121,10 @@ function saveChanges() {
         .catch((error) => {
           errorMessage.value = error.message;
           if (error.message == "Username already exists!") {
-            localStorage.setItem("username", oldUsername);
+            sessionStorage.setItem("username", oldUsername);
           }
           if (error.message == "Email already exists!") {
-            localStorage.setItem("email", oldEmail);
+            sessionStorage.setItem("email", oldEmail);
           }
           showErrorMessage.value = true;
         });

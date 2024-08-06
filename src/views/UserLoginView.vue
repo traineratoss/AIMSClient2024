@@ -29,7 +29,7 @@ async function login() {
       .then((res) => {
 
         router.push("/my");
-        console.log(localStorage.getItem("isFirstLogin"));
+        console.log(sessionStorage.getItem("isFirstLogin"));
       })
       .catch((error) => {
         usernameOrEmailText.value = "";

@@ -25,7 +25,7 @@ const containsEightCharacters = ref(false);
 const containsNumber = ref(false);
 const containsUppercase = ref(false);
 const containsSpecialCharacter = ref(false);
-const isFirstLogin = ref(localStorage.getItem("isFirstLogin") === "true");
+const isFirstLogin = ref(sessionStorage.getItem("isFirstLogin") === "true");
 currentAvatarId.value = getCurrentAvatarId();
 
 const slideImages = [
@@ -79,19 +79,15 @@ async function submit() {
     checkAllFieldsComplelted();
     checkPasswords(newPasswordText.value, confirmNewPassword.value);
 
-    try {
-      await changePassword({
-        username: getCurrentUsername(),
-        oldPassword: oldPasswordText.value,
-        newPassword: newPasswordText.value,
-      });
-      await logout();
-      router.push("/login");
-    } catch (error) {
-      throw new Error("Old password is incorrect");
-    }
+    await changePassword({
+      username: getCurrentUsername(),
+      oldPassword: oldPasswordText.value,
+      newPassword: newPasswordText.value,
+    });
+    await logout();
+    router.push("/login");   
 
-  } catch (error) {
+} catch (error) {
     errorMessage.value = error.message;
     showErrorMessage.value = true;
   }

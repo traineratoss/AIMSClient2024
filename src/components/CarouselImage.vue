@@ -15,6 +15,8 @@ const props = defineProps({
 const emit = defineEmits(['current-index', 'selected-image-values']);
 
 const route = useRoute();
+
+//Initially set it to yours and if im on create idea, it will update automatically 
 const imagesLoaded = ref(false);
 const currentIndex = ref(0);
 

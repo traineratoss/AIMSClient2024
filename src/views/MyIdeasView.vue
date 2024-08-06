@@ -636,6 +636,7 @@ onMounted(() => {
             class="idea-transition-item reveal"
           >
             <IdeaCard
+              :ideas="ideas"
               :title="idea.title"
               :text="idea.text"
               :status="idea.status"
