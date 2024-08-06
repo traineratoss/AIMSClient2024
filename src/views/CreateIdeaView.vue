@@ -53,6 +53,7 @@ const isWatchEffectExecuted = ref(false);
 const onlyForDeleteCategories = ref([]);
 
 const ideaNotValid = ref(false);
+const isHovering = ref(false);
 
 const regex =
   /^(?=.*[A-Za-z0-9].*[A-Za-z0-9].*[A-Za-z0-9].*[A-Za-z0-9].*[A-Za-z0-9]).*$/;
@@ -763,10 +764,19 @@ const fetchRatings = async () => {
           />
         </div>
       </div>
-
+       
       <div class="idea-text">
         <div class="text-input-wrapper">
           <div class="input-text-container">
+            <button id="legend-text-format" class="material-symbols-outlined" 
+              @mouseover="isHovering = true" 
+              @mouseleave="isHovering = false">
+              text_fields
+            </button>
+            <div class="tooltip" :class="{ show: isHovering }">
+              <p><b>**Text**</b> for <b>Bold</b></p>
+              <p><i>*Text*</i> for <i>Italic</i></p>
+            </div>
             <textarea
               v-model="textValue"
               :disabled="fieldsDisabled"
@@ -991,9 +1001,9 @@ const fetchRatings = async () => {
   animation-iteration-count: 1;
 }
 
-b {
+/* b {
   color: #ffa941;
-}
+} */
 
 #maxlength-textarea {
   position: absolute;
@@ -1033,14 +1043,14 @@ b {
 
 #textarea-id {
   resize: none;
-  height: 14.5vh;
+  height: 11vh;
   width: 21.5vw;
   overflow: auto;
   box-sizing: border-box;
   border: 1px solid rgba(112, 128, 144, 0.349);
   border-radius: 3px;
   word-wrap: break-word;
-  margin-top: 4px;
+  margin-top: 0px;
   padding: 5px;
 }
 
@@ -1455,4 +1465,42 @@ select {
 .noDocumentsText{
   color: gray;
 }
+
+#legend-text-format {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  height: 30px;
+  width: 40px;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #ffa941;
+  color:  white;
+  border: 2px solid #d48806;
+  padding: 1px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  left: -20%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  font-size: 1.1em;
+}
+
+.tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.input-text-container{
+padding-left: 0.2rem;
+padding-top: 0.12rem;
+}
+
 </style>
