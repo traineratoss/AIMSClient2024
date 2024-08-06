@@ -7,7 +7,11 @@ export const customFetch = async (url, options = {}) => {
     options = {
         ...options,
         mode: "cors",
-        credentials: "include"
+        credentials: "include",
+        headers: {
+            ...options.headers, 
+            "Session-ID": sessionStorage.getItem("Session-ID")
+        }
     }
 
     if (isRefreshTokenExipred()) {

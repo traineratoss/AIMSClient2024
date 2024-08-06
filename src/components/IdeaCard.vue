@@ -16,7 +16,6 @@ import {
 import { getIdea, getIdeaForUpdateIdea } from "../services/idea.service";
 
 const props = defineProps({
-  ideas: "",
   title: "",
   text: "",
   status: "",
@@ -52,7 +51,8 @@ const userId = getCurrentUserId();
 
 const isHovering = ref(false);
 
-// console.log(userId);
+
+
 async function editIdea() {
   const data = await getIdeaForUpdateIdea(props.ideaId);
 
@@ -161,21 +161,26 @@ function getRepliesForComment(commentId) {
 
 async function postCommentDynamic(username, ideaId, commentText) {
   try {
-    if (commentText.length !== 0) {
+    if (commentText.trim()) {
       const comment = await postComment(username, ideaId, commentText);
       comment.elapsedTime = "0 seconds";
       allLoadedComments.value.unshift(comment);
       clearInput();
+      emits("commentCounterAdd");
       if (allLoadedComments.value.length > 0) {
         showCommentsToggle.value = true;
       }
     } else throw error;
   } catch (error) {
-    alert("Comment text must not be empty");
+    alert("Comment text must not be empty or contain only whitespace characters");
   }
 }
 
 async function postReplyDynamic(username, parentId, commentText) {
+  if (!commentText.trim()) {
+    alert("Reply text must not be empty or contain only whitespace characters");
+    return;
+  }
   try {
     const reply = await postReply(username, parentId, commentText);
     reply.elapsedTime = "0 seconds";
@@ -328,17 +333,20 @@ function isSelectedSubscription() {
 
 const isAdmin = getCurrentRole() === "ADMIN";
 
-watch(allLoadedComments, (comments) => {
-  comments.forEach((comment) => {
-    watch(
-      () => comment.replyToggle,
-      () => {
-        if (comment.replyToggle === true) triggerExpandAnimation(comment.id);
-        else triggerCollapseAnimation(comment.id);
-      }
-    );
-  });
-});
+watch(
+  allLoadedComments,
+  (comments) => {
+    comments.forEach((comment) => {
+      watch(
+        () => comment.replyToggle,
+        () => {
+          if (comment.replyToggle === true) triggerExpandAnimation(comment.id);
+          else triggerCollapseAnimation(comment.id);
+        }
+      );
+    });
+  }
+);
 
 function triggerExpandAnimation(commentId) {
   const reply = document.getElementById("customReply" + commentId);
@@ -410,18 +418,21 @@ watch(toRef(props, "isSubscribed"), (newVal) => {
   currentStatusSubscribe.value = newVal;
 });
 
-watch(
-  () => props.ideaId,
-  async () => {
-    allLoadedComments.value = [];
-    allLoadedComments.value = await loadComments(
-      numberOfDisplayedComments.value,
-      0,
-      "creationDate",
-      props.ideaId
-    );
-  }
-);
+watch(() => props.ideaId, async () => {
+  allLoadedComments.value  = []
+  allLoadedComments.value = await loadComments(
+    numberOfDisplayedComments.value,
+    0,
+    "creationDate",
+    props.ideaId
+  );
+})
+
+const countRatings = (ideaId) => {
+  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+  return rating ? rating.ratingcount : 0;
+}
+
 </script>
 
 <template>
@@ -469,10 +480,10 @@ watch(
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                  <div v-html="getShortText(props.text, 3, 49)"></div>
+                <div v-html="getShortText(props.text, 3, 49) "></div>
                 </div>
                 <div class="text" v-else>
-                  <div v-html="getShortText(props.text, 2, 49)"></div>
+                  <div v-html="getShortText(props.text, 2, 49) "></div>
                 </div>
               </div>
               <div class="left-container-buttons">
@@ -509,10 +520,6 @@ watch(
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
-                  v-if="
-                    $route.path !== '/my' &&
-                    !(props.loggedUser === props.username)
-                  "
                 >
                   visibility
                 </span>
@@ -610,12 +617,9 @@ watch(
 
       <div class="comment-input-bottom">
         <div class="chars">
-          <button
-            id="legend-text-format"
-            class="material-symbols-outlined"
-            @mouseover="isHovering = true"
-            @mouseleave="isHovering = false"
-          >
+          <button id="legend-text-format" class="material-symbols-outlined" 
+            @mouseover="isHovering = true" 
+            @mouseleave="isHovering = false">
             text_fields
           </button>
           <div class="tooltip" :class="{ show: isHovering }">
@@ -636,7 +640,7 @@ watch(
         </div>
       </div>
     </div>
-
+    
     <transition-group duration="300" name="nested" v-if="showCommentsToggle">
       <div
         class="comment-container"
@@ -930,9 +934,9 @@ watch(
 .right-container-icon {
   position: absolute;
   align-items: right;
-  right: 0px;
+  right: 5px;
   display: flex;
-  justify-content: right;
+
 }
 
 .right-container-image {
@@ -1146,26 +1150,39 @@ button:hover {
   grid-template-columns: 33% 33% 33%;
 } */
 
-.chars {
-  text-align: center;
-  display: grid;
-  grid-template-columns: 25% 50% 25%;
-}
+
 
 .subscription.filled {
   font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
+.chars {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  position: relative;
+}
+
+#legend-text-format {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  height: 30px;
+  width: 40px;
+  }
+
 .tooltip {
   position: absolute;
   background-color: #ffa941;
-  color: white;
+  color:  white;
   border: 2px solid #d48806;
   padding: 1px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  top: 300px;
-  left: -12%;
+  top: -70px;
+  left: -15%;
   transform: translateX(-50%);
   z-index: 1000;
   opacity: 0;

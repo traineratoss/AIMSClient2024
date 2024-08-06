@@ -2,29 +2,17 @@
 import CustomSidePanel from "../components/CustomSidePanel.vue";
 import {onMounted, ref, watch} from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import {
-  filterIdeas,
-  loadPagedIdeas,
-  getIdea,
-  getIdeaByCommentId,
-} from "../services/idea.service";
-import {
-  getStats,
-  sendDataForCustomStats,
-} from "../services/statistics.service";
-import { getCurrentUsername, getCurrentRole } from "../services/user_service";
+import {filterIdeas, getIdea, getIdeaByCommentId, loadPagedIdeas} from "../services/idea.service";
+import {getStats, sendDataForCustomStats,} from "../services/statistics.service";
+import {getCurrentRole, getCurrentUserId, getCurrentUsername} from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import CustomInput from "../components/CustomInput.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
-import {
-  subscribeUser,
-  unsubscribeUser,
-  getSubscriptions,
-} from "../services/subscriptionService";
-import { getCurrentUserId } from "../services/user_service";
+import {getSubscriptions, subscribeUser, unsubscribeUser} from "../services/subscriptionService";
+import {getAllRatings, getNumberOfRatings} from "@/services/rating_service";
 
 const selectedDateFrom = ref();
 const selectedDateTo = ref();
@@ -41,6 +29,7 @@ const userId = getCurrentUserId();
 const selectedIdea = ref(null);
 const showPagination = ref(true);
 
+
 // updated by ref inputs
 const inputTitle = ref("");
 const inputText = ref("");
@@ -51,6 +40,7 @@ const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const isAdmin = ref("");
 const selectedRating = ref("");
+
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -106,6 +96,7 @@ onMounted(async () => {
     currentRating,
     "ASC"
   );
+
 
   loadingPage.value = true;
   loggedUser.value = getCurrentUsername();
@@ -467,52 +458,58 @@ async function loadRecievedIdeas(mostCommentedIdeas) {
   totalPages.value = 1;
   currentPage.value = 1;
 
-  showTopIdeas.value = !showTopIdeas.value;
+  setTimeout(async () => {
+    showTopIdeas.value = !showTopIdeas.value;
 
-  if (showTopIdeas.value) {
-    ideas.value = mostCommentedIdeas;
+    if (showTopIdeas.value) {
+      // const stats = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
+      // ideas.value = stats.mostCommentedIdeas;
+      ideas.value = mostCommentedIdeas;
 
-    scrollFade();
-    ideasTransitionContainer.value.style.overflowY = "auto";
-    document.getElementById("scrollable-middle").scrollTop = "0";
-  } else {
-    const data = await filterIdeas(
-      inputTitle.value,
-      currentText,
-      currentStatus,
-      currentCategory,
-      currentUser,
-      currentSelectedDateFrom,
-      currentSelectedDateTo,
-      currentPage.value - 1,
-      ideaPerPage.value,
-      null,
-      currentRating,
-      sortOrder.value
-    );
-    stats.value.mostCommentedIdeas = data.content;
-    loadingPage.value = true;
-    loggedUser.value = getCurrentUsername();
-    currentUserRole = getCurrentRole();
-    checkAdmin();
-
-    if (data === "No ideas found.") {
-      noIdeasFoundCondition.value = true;
-      sortOrder.value = 0;
-      totalPages.value = 0;
-      ideas.value = [];
-    } else {
-      noIdeasFoundCondition.value = false;
-      sortOrder.value = 0;
-      totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
-      ideas.value = data.content;
       setTimeout(() => {
         scrollFade();
         ideasTransitionContainer.value.style.overflowY = "auto";
         document.getElementById("scrollable-middle").scrollTop = "0";
       }, 0);
+    } else {
+      const data = await filterIdeas(
+        inputTitle.value,
+        currentText,
+        currentStatus,
+        currentCategory,
+        currentUser,
+        currentSelectedDateFrom,
+        currentSelectedDateTo,
+        currentPage.value - 1,
+        ideaPerPage.value,
+        null,
+        currentRating,
+        sortOrder.value
+      );
+
+      loadingPage.value = true;
+      loggedUser.value = getCurrentUsername();
+      currentUserRole = getCurrentRole();
+      checkAdmin();
+
+      if (data === "No ideas found.") {
+        noIdeasFoundCondition.value = true;
+        sortOrder.value = 0;
+        totalPages.value = 0;
+        ideas.value = [];
+      } else {
+        noIdeasFoundCondition.value = false;
+        sortOrder.value = 0;
+        totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
+        ideas.value = data.content;
+        setTimeout(() => {
+          scrollFade();
+          ideasTransitionContainer.value.style.overflowY = "auto";
+          document.getElementById("scrollable-middle").scrollTop = "0";
+        }, 0);
+      }
     }
-  }
+  }, "500");
 }
 
 async function loadData() {
@@ -726,9 +723,9 @@ const subscribedIdeas = ref([]);
 const ratingsFetched = ref([]);
 
 const fetchSubscriptions = async () => {
-  try {
-    const response = await getSubscriptions(userId);
-    subscribedIdeas.value = response;
+  try{
+      const response = await getSubscriptions(userId);
+      subscribedIdeas.value = response;
   } catch (error) {
     console.error("Error getting subscriptions", error);
   }
@@ -759,6 +756,7 @@ const toggleSubscriptionIcon = async (ideaId, userId) => {
     console.error("Error subscribing/unsubscribing", error);
   }
 }
+
 
 const fetchSelectedIdea = async (id) => {
   selectedIdea.value = await getIdea(id);
@@ -913,51 +911,51 @@ const countRatings = (ideaId) => {
           >
             <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
 
-              <div
-                v-for="idea in ideas"
-                :key="idea.id"
-                class="idea-transition-item reveal"
-              >
-                <IdeaCard
-                  :title="idea.title"
-                  :text="idea.text"
-                  :status="idea.status"
-                  :username="idea.username"
-                  :ideaId="idea.id"
-                  :commentsNumber="idea.commentsNumber"
-                  :elapsedTime="idea.elapsedTime"
-                  :image="getImageUrl(idea)"
-                  :loggedUser="getCurrentUsername()"
-                  @comment-counter-add="idea.commentsNumber++"
-                  @comment-counter-sub="idea.commentsNumber--"
-                  @revealOnScroll="scrollFadeOnExpand()"
-                    :isSubscribed="checkIfSubscribed(idea.id)"
-                  @subscribeUser="toggleSubscriptionIcon"
-                  :ratingAvg="formatRating(idea.ratingAvg)"
+            <div
+              v-for="idea in ideas"
+              :key="idea.id"
+              class="idea-transition-item reveal"
+            >
+              <IdeaCard
+                :title="idea.title"
+                :text="idea.text"
+                :status="idea.status"
+                :username="idea.username"
+                :ideaId="idea.id"
+                :commentsNumber="idea.commentsNumber"
+                :elapsedTime="idea.elapsedTime"
+                :image="getImageUrl(idea)"
+                :loggedUser="getCurrentUsername()"
+                @comment-counter-add="idea.commentsNumber++"
+                @comment-counter-sub="idea.commentsNumber--"
+                @revealOnScroll="scrollFadeOnExpand()"
+                :isSubscribed="checkIfSubscribed(idea.id)"
+                @subscribeUser="toggleSubscriptionIcon"
+                :ratingAvg="formatRating(idea.ratingAvg)"
                 :nrOfRatings="ratings"
               />
-              </div>
-              <div
-                v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"
-                class="no-ideas-message"
-              >
-                <img src="../assets/img/curiosity-search.svg" />
-                <br />
-                <span class="black-font">Your search returned no results</span>
-              </div>
             </div>
-          </div>
-
-          <div v-if="ideas.length > 0" class="pagination-container">
-            <div v-if="showPagination" class="pagination-component">
-              <Pagination
-                :totalPages="totalPages"
-                :currentPage="currentPage"
-                @changePage="changePage"
-              />
+            <div
+              v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"
+              class="no-ideas-message"
+            >
+              <img src="../assets/img/curiosity-search.svg" />
+              <br />
+              <span class="black-font">Your search returned no results</span>
             </div>
           </div>
         </div>
+
+        <div v-if="ideas.length > 0" class="pagination-container">
+          <div v-if="showPagination" class="pagination-component">
+            <Pagination
+              :totalPages="totalPages"
+              :currentPage="currentPage"
+              @changePage="changePage"
+            />
+          </div>
+        </div>
+       </div>
       </div>
 
       <div v-if="isAdmin" class="custom-statistics">
@@ -1303,6 +1301,7 @@ h2 {
   margin: 10px auto;
   padding: 10px;
 }
+
 
 .back-button {
   display: block;
