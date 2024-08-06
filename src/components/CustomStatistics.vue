@@ -240,6 +240,14 @@ const fetchIdeaByComment = async (commentId) => {
                 <td>Total no. of Replies:</td>
                 <td>{{ stats.totalNrOfReplies }}</td>
               </tr>
+              <tr>
+                <td>Total no. of Likes:</td>
+                <td>{{ stats.totalNrOfLikes }}</td>
+              </tr>
+              <tr>
+                <td>Total no. of Reports:</td>
+                <td>{{ stats.totalNrOfReports }}</td>
+              </tr>
             </table>
           </div>
         </div>
@@ -540,7 +548,7 @@ strong {
   background-color: orange;
   width: 30%;
   height: 3vh;
-  margin-left: 30px;
+  margin-left: 20px;
   border-color: black;
 }
 

@@ -773,7 +773,6 @@ const clearSelectedIdea = () => {
 };
 
 async function fetchIdeaByComment(commentId) {
-async function fetchIdeaByComment(commentId) {
   const idea = await getIdeaByCommentId(commentId);
   props.fetchSelectedIdea(idea.id);
 }
@@ -786,7 +785,7 @@ onMounted(() => {
 
 watch(selectedIdea, (newValue, oldValue) => {
   console.log("new: ", newValue, " ---- old: ", oldValue);
-})
+});
 
 // async function getRatingFunction(idea_id) {
 //   try {
@@ -816,6 +815,10 @@ async function getTotalRatings(){
   }
 }
 
+const countRatings = (ideaId) => {
+  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+  return rating ? rating.ratingcount : 0;
+}
 </script>
 
 <template>
@@ -1000,7 +1003,6 @@ async function getTotalRatings(){
         </div>
         <Suspense>
           <CustomStatistics
-            :ideas="ideas"
             :recievedFilteredStats="stats"
             :showGenerated="showGenerated"
             :showAnimation="showAnimation"

@@ -13,7 +13,7 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-import { getIdea } from "../services/idea.service";
+import { getIdea, getIdeaForUpdateIdea } from "../services/idea.service";
 
 const props = defineProps({
   ideas: "",
@@ -54,7 +54,6 @@ const isHovering = ref(false);
 
 // console.log(userId);
 async function editIdea() {
-
   const data = await getIdeaForUpdateIdea(props.ideaId);
 
   if (data === "Idea doesn't exist.") {
@@ -384,7 +383,10 @@ function triggerCollapseAnimation(commentId) {
     };
   }
 }
-
+const countRatings = (ideaId) => {
+  const rating = props.nrOfRatings.find((rating) => rating.ideaid == ideaId);
+  return rating ? rating.ratingcount : 0;
+};
 // const ratingAvg = ref(props.ratingAvg);
 
 // const updateRating = async (newRating) => {
@@ -528,8 +530,10 @@ watch(
                   <span class="ratingAvg">
                     <span class="material-symbols-outlined star">star</span>
                     <span>{{ props.ratingAvg }}</span>
-                  </span>                  
-                  <span class="reviews">({{ countRatings(ideaId) }} reviews)</span>
+                  </span>
+                  <span class="reviews"
+                    >({{ countRatings(ideaId) }} reviews)</span
+                  >
                 </div>
                 <div class="author">
                   <div>{{ props.elapsedTime }} ago</div>
@@ -686,20 +690,19 @@ watch(
 </template>
 
 <style scoped>
-
-.ratings-info{
+.ratings-info {
   height: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: .4rem;
+  gap: 0.4rem;
 }
 
-.reviews{
-  font-size: .7rem;
+.reviews {
+  font-size: 0.7rem;
 }
 
-.ratingAvg{
+.ratingAvg {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1176,12 +1179,8 @@ button:hover {
   visibility: visible;
 }
 
-.star{
-  font-variation-settings:
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
+.star {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
   color: black;
 }
 </style>
