@@ -161,7 +161,7 @@ function getRepliesForComment(commentId) {
 
 async function postCommentDynamic(username, ideaId, commentText) {
   try {
-    if (commentText.length !== 0) {
+    if (commentText.trim()) {
       const comment = await postComment(username, ideaId, commentText);
       comment.elapsedTime = "0 seconds";
       allLoadedComments.value.unshift(comment);
@@ -172,11 +172,15 @@ async function postCommentDynamic(username, ideaId, commentText) {
       }
     } else throw error;
   } catch (error) {
-    alert("Comment text must not be empty");
+    alert("Comment text must not be empty or contain only whitespace characters");
   }
 }
 
 async function postReplyDynamic(username, parentId, commentText) {
+  if (!commentText.trim()) {
+    alert("Reply text must not be empty or contain only whitespace characters");
+    return;
+  }
   try {
     const reply = await postReply(username, parentId, commentText);
     reply.elapsedTime = "0 seconds";
