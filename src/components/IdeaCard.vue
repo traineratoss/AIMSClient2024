@@ -514,10 +514,6 @@ const countRatings = (ideaId) => {
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
-                  v-if="
-                    $route.path !== '/my' &&
-                    !(props.loggedUser === props.username)
-                  "
                 >
                   visibility
                 </span>
@@ -931,9 +927,9 @@ const countRatings = (ideaId) => {
 .right-container-icon {
   position: absolute;
   align-items: right;
-  right: 0px;
+  right: 5px;
   display: flex;
-  justify-content: right;
+
 }
 
 .right-container-image {

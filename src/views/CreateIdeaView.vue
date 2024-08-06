@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { ref, onMounted, watchEffect, computed, watch } from "vue";
+import { ref, onMounted, watchEffect, computed, watch, toRef, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import RatingStars from "../components/RatingStars.vue";
 import router from "../router";
@@ -26,7 +26,10 @@ import {
 } from "../services/user_service";
 import { getRating, postRating } from "@/services/rating_service";
 import CustomLoader from "@/components/CustomLoader.vue";
+import { getSubscriptions } from "../services/subscriptionService";
 
+const props = defineProps({isSubscribed: Boolean});
+const emits = defineEmits(["subscribeUser"]);
 const inputValue = ref("");
 const statusValue = ref("open");
 const textValue = ref("");
@@ -63,9 +66,20 @@ const handleSelectedCategories = (selectedCategories) => {
 
 const user_id = getCurrentUserId();
 const idea_id = useRoute().query.id;
+const value = ref(0);
 const existingDocs = ref([]);
 const newFiles = ref([]);
 const disableFields = useRoute().query.disableFields === "true";
+
+async function getRatingFunction() {
+  try {
+    const response = await getRating(idea_id, user_id);
+    value.value = response; 
+  } catch (error) {
+    console.error("Error", error);
+  }
+}
+
 
 const deleteFile = async (file) => {
   if (disableFields || hasUpdateId) {
@@ -639,11 +653,32 @@ const fetchRatings = async () => {
   }
 }
 
+const isSubscribed = ref(false);
+const fetchSubscriptionStatus = async () => {
+  try {
+    const subscriptions = await getSubscriptions(getCurrentUserId());
+    isSubscribed.value = subscriptions.some(subscription => subscription.ideaId == idea_id);
+  } catch (error) {
+    console.error("Error checking subscription:", error);
+  }
+};
+fetchSubscriptionStatus();
+
 </script>
 
 <template>
   <div class="wrapper">
     <div class="create-idea-container">
+
+      <div class="right-container-icon">
+         <span
+           class="material-symbols-outlined subscription"
+           :class="{ filled: isSubscribed }"
+            >
+            visibility
+        </span>
+      </div>
+
       <div class="idea-title">
         <h1>
           {{ pageTitle }}
@@ -1023,6 +1058,7 @@ b {
 .carousel-image {
   height: 16vw;
   object-fit: fill;
+  margin-top: 1px;
   height: fit-content;
 }
 
@@ -1077,7 +1113,7 @@ textarea {
 .create-idea-container {
   align-items: center;
   display: grid;
-  grid-template-rows: 10% 20% 20% 25% 15%;
+  grid-template-rows: 1% 10% 20% 20% 25% 15%;
   height: 87vh;
   width: 25vw;
   padding: 10px;
@@ -1085,6 +1121,15 @@ textarea {
   background-color: #e9e9e9;
   user-select: none;
   margin-bottom: 15px;
+}
+
+.right-container-icon {
+  display: flex;
+  justify-content: right;
+}
+
+.subscription.filled {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
 .add-image-idea {
@@ -1391,6 +1436,7 @@ select {
 }
 
 .carousel-container {
+  padding-top: 0.3rem;
   width: 50%;
 }
 
