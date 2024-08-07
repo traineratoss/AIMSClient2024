@@ -3,14 +3,17 @@ import CustomButtonGray from "../components/CustomButtonGray.vue";
 import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CarouselImage from "../components/CarouselImage.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import InvalidInputMessage from "../components/InvalidInputMessage.vue";
+import CustomLoader from "../components/CustomLoader.vue";
+
 import {
   getCurrentUsername,
   updateUser,
   getCurrentEmail,
   getCurrentFullName,
   getCurrentAvatarId,
+  getCustomAvatar,
   validateUsername,
 } from "../services/user_service";
 import router from "../router";
@@ -22,9 +25,13 @@ const avatarIdText = ref("");
 const showErrorMessage = ref(false);
 const errorMessage = ref("");
 const index = parseInt(sessionStorage.getItem("avatarId"));
-const carouselImageIndex = ref(index);
+const carouselImageIndex = ref(parseInt(sessionStorage.getItem("avatarId")));
+const uploadedImage = ref();
+const avatarsLoaded = ref(false)
+const customAvatar = ref({});
+const originalCustomAvatar = ref({});
 
-const slideImages = [
+const slideImages = ref([
   "src/assets/img/avatars/avatar1.svg",
   "src/assets/img/avatars/avatar2.svg",
   "src/assets/img/avatars/avatar3.svg",
@@ -32,17 +39,22 @@ const slideImages = [
   "src/assets/img/avatars/avatar5.svg",
   "src/assets/img/avatars/avatar6.svg",
   "src/assets/img/avatars/avatar7.svg",
-];
+]);
 
 function onImageChange(index) {
   carouselImageIndex.value = index;
 }
 
-onMounted(() => {
+onMounted(async () => {
   usernameText.value = getCurrentUsername();
   fullNameText.value = getCurrentFullName();
   emailText.value = getCurrentEmail();
   avatarIdText.value = getCurrentAvatarId();
+
+  customAvatar.value = await getCustomAvatar(getCurrentUsername());
+  originalCustomAvatar.value = customAvatar.value;
+
+  avatarsLoaded.value = true
 });
 
 // function validateUsername(username) {
@@ -113,10 +125,14 @@ function saveChanges() {
       showErrorMessage.value = true;
     }
 
+    userUpdateDTO.imageDTO = customAvatar.value;
+
+    userUpdateDTO.updatedImage = JSON.stringify(originalCustomAvatar.value) !== JSON.stringify(customAvatar.value);
+
     if (changesOK) {
       updateUser(oldUsername, userUpdateDTO)
         .then((res) => {
-          router.push("/my");
+          router.go("/my");
         })
         .catch((error) => {
           errorMessage.value = error.message;
@@ -131,10 +147,57 @@ function saveChanges() {
     }
   }
 }
+
+console.log(index)
+
+const getImageSource = computed(() => customAvatar.value ? `data:image/${customAvatar.value.fileType};name=${customAvatar.value.fileName};base64,${customAvatar.value.image}` : undefined)
+
+
+async function processImage(event) {
+
+  function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const fileName = file.name;
+  const fileType = file.type;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const byteArray = new Uint8Array(arrayBuffer);
+
+  const base64String = arrayBufferToBase64(byteArray);
+
+  const dto = {
+    image: base64String,
+    fileName: fileName,
+    fileType: fileType
+  };
+
+  customAvatar.value = dto;
+}
+
+function removeCustomAvatar() {
+  customAvatar.value = null;
+  uploadedImage.value.value = null;
+}
+
+async function getInitialIndex() {
+  return index;
+}
+
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="wrapper" v-if="avatarsLoaded">
     <div class="my-profile">
       <h1>My profile</h1>
       <InvalidInputMessage
@@ -157,29 +220,81 @@ function saveChanges() {
           <CustomInput type="email" v-model:model-value="emailText" />
         </div>
       </form>
+      <div class="container">
+        <div>
+          <label
+          for="upload"
+          class="add-image-button"
+          style="display: flex; align-items: center"
+          >
+          <input
+          type="file"
+          id="upload"
+          hidden
+          accept=".jpg, .jpeg, .png"
+          ref="uploadedImage"
+          @change="processImage($event)"
+
+          />
+            Upload Image
+            <span class="material-symbols-outlined" style="margin-left: 5px">
+              attach_file
+            </span>
+          </label>
+        </div>
+        <CustomButton
+          class="remove-image-button"
+          @click="removeCustomAvatar">
+          Remove avatar
+        </CustomButton>
+      </div>
+      <img  v-if="customAvatar" class="custom-avatar"  :src="getImageSource">
       <CarouselImage
+        v-else
         :images="slideImages"
         class="avatar-carousel"
         @current-index="onImageChange"
         :imageHeightPercentage="80"
+        :initialCurrentIndexNumber="index"
       />
       <div class="button-container">
-        <button @click="router.push('/my')" class="cancel-button">
-          Cancel
-        </button>
-        <CustomButton
-          id="save-changes"
-          class="save-changes-button"
-          @click="saveChanges"
-        >
-          Save changes
-        </CustomButton>
-      </div>
+      <button @click="router.push('/my')" class="cancel-button">
+        Cancel
+      </button>
+      <CustomButton
+        id="save-changes"
+        class="save-changes-button"
+        @click="saveChanges"
+      >
+        Save changes
+      </CustomButton>
     </div>
+    </div>
+  </div>
+  <div
+    v-else
+    class="loading-placeholder"
+  >
+    <CustomLoader :size="100" />
   </div>
 </template>
 
 <style scoped>
+.custom-avatar {
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 40px;
+  margin-top: 30px;
+}
+
 .my-profile {
   display: flex;
   flex-direction: column;
@@ -188,6 +303,35 @@ function saveChanges() {
   background-color: #e9e9e9;
   padding: 20px;
   border-radius: 10px;
+}
+
+.add-image-button {
+  background-color: gray;
+  color: white;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  cursor: pointer;
+  margin-top: 5px;
+  border-radius: 6px;
+  padding: 7px;
+}
+.add-image-button:hover {
+  background-color: rgba(128, 128, 128, 0.753);
+}
+
+.remove-image-button {
+  background-color: gray;
+  color: white;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  cursor: pointer;
+  margin-top: 5px;
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 18px;
+}
+.remove-image-button:hover {
+  background-color: rgba(128, 128, 128, 0.753);
 }
 
 .cancel-button {
@@ -255,6 +399,12 @@ img {
   height: 15vw;
   max-width: 23vw;
   object-fit: scale-down;
-  margin-top: 50px;
+}
+
+.loading-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 94vh;
 }
 </style>
