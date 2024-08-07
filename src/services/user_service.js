@@ -162,6 +162,8 @@ async function updateUser(username, userUpdateDto) {
         fullName: userUpdateDto.fullName,
         email: userUpdateDto.email,
         avatarId: userUpdateDto.avatarId + 1,
+        image: userUpdateDto.imageDTO,
+        updatedImage: userUpdateDto.updatedImage
       }),
     }
   );
@@ -394,7 +396,23 @@ function getCurrentAvatarId() {
   return sessionStorage.getItem("avatarId");
 }
 
-function getCurrentUserId(){
+async function getCustomAvatar(username) {
+  const response = await fetch(`${API_URL}/get-avatar-by-username?username=${username}`, {
+    method: "GET",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const json = await response.json();
+  return json;
+}
+
+function getCurrentUserId() {
   return sessionStorage.getItem("userId");
 }
 
@@ -479,6 +497,7 @@ export {
   getCurrentEmail,
   getCurrentFullName,
   getCurrentAvatarId,
+  getCustomAvatar,
   getCurrentUserId,
   validateUsername,
   isFirstLogin, 

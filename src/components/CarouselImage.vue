@@ -7,6 +7,7 @@ const props = defineProps({
   images: Array,
   selectedImage: String,
   initialCurrentIndex: [Number, Promise],
+  initialCurrentIndexNumber: Number,
   disabledArrow: [Boolean, Promise],
   imageHeightPercentage: Number,
   hiddenArrows: Boolean
@@ -24,6 +25,10 @@ const selectedImageBase64 = ref(null);
 const selectedImageType = ref(null);
 const selectedImageName = ref(null);
 const shouldDisableArrowsRef = ref(false);
+
+onMounted(async () => {
+  currentIndex.value = props.initialCurrentIndexNumber;
+})
 
 // Utility function to extract image data
 function transformImageDataIntoValues(dataString) {
