@@ -3,12 +3,13 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import {
   getCurrentAvatarId,
   getCurrentFullName,
   getCurrentRole,
   getCurrentUsername,
+  getCustomAvatar,
 } from "../services/user_service";
 import searchValue from "../utils/search-title";
 import {useRoute} from 'vue-router';
@@ -57,6 +58,13 @@ const dashboardElements = [
     icon: "report",
   },
 ];
+
+const customAvatar = ref();
+
+onMounted(async () => {
+  customAvatar.value = await getCustomAvatar(getCurrentUsername());
+  console.log(customAvatar.value);
+});
 
 const isSearchInputFocusedSetter = (focused) => {
   isSearchInputFocused.value = focused;
@@ -166,6 +174,8 @@ function onMouseEnterUser() {
 function onMouseLeaveUser() {
   disabledUser.value = true;
 }
+
+const getImageSource = computed(() => customAvatar.value ? `data:image/${customAvatar.value.fileType};name=${customAvatar.value.fileName};base64,${customAvatar.value.image}` : undefined)
 </script>
 
 
@@ -255,9 +265,9 @@ function onMouseLeaveUser() {
         style="padding: 20px 5px"
       >
         <img
-          :src="slideImages[currentAvatarId]"
+          :src="customAvatar ? getImageSource : slideImages[currentAvatarId]"
           alt="avatar not found"
-          style="height: auto; width: 2vw"
+          class="avatar"
         />
         <span class="material-symbols-outlined"> keyboard_arrow_down </span>
         <div class="dropdown-content-user">
@@ -273,6 +283,12 @@ function onMouseLeaveUser() {
 
 
 <style scoped>
+.avatar {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  border: 1px solid #838383;
+}
 
 #all-ideas {
   font-size: 15px;

@@ -94,8 +94,8 @@ async function loginUser(username, password) {
  
   if (!response.ok) {
     const text = await response.text();
-    if (text.message === "User was deactivated") {
-      throw new Error(json.message);
+    if (text === "User was deactivated") {
+      throw new Error(text);
     }
     throw new Error("Invalid username or password");
   } else {
@@ -256,15 +256,12 @@ async function changePassword(changePasswordDTO) {
     }),
     
   });
-   const json = await response.json();
-  if(json.message === 'The old password is incorrect!') {
-      throw new Error('The old password is incorrect!');
-  }
-  if(json.message === 'The new password cannot be the same as the old password!') {
-    throw new Error('The new password cannot be the same as the old password!');
-  }
 
-  return response;
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text);
+  } 
+
 }
 
 async function abortChangePassword() {

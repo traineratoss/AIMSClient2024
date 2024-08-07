@@ -132,7 +132,7 @@ function saveChanges() {
     if (changesOK) {
       updateUser(oldUsername, userUpdateDTO)
         .then((res) => {
-          router.push("/my");
+          router.go("/my");
         })
         .catch((error) => {
           errorMessage.value = error.message;
