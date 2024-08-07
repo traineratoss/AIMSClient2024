@@ -783,7 +783,7 @@ onMounted(() => {
 
 watch(selectedIdea, (newValue, oldValue) => {
   console.log("new: ", newValue, " ---- old: ", oldValue);
-})
+});
 
 // async function getRatingFunction(idea_id) {
 //   try {
@@ -813,6 +813,10 @@ async function getTotalRatings(){
   }
 }
 
+const countRatings = (ideaId) => {
+  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+  return rating ? rating.ratingcount : 0;
+}
 </script>
 
 <template>

@@ -13,7 +13,7 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-import { getIdea,getIdeaForUpdateIdea} from "../services/idea.service";
+import { getIdea, getIdeaForUpdateIdea } from "../services/idea.service";
 
 const props = defineProps({
   title: "",
@@ -161,7 +161,7 @@ function getRepliesForComment(commentId) {
 
 async function postCommentDynamic(username, ideaId, commentText) {
   try {
-    if (commentText.length !== 0) {
+    if (commentText.trim()) {
       const comment = await postComment(username, ideaId, commentText);
       comment.elapsedTime = "0 seconds";
       allLoadedComments.value.unshift(comment);
@@ -172,11 +172,15 @@ async function postCommentDynamic(username, ideaId, commentText) {
       }
     } else throw error;
   } catch (error) {
-    alert("Comment text must not be empty");
+    alert("Comment text must not be empty or contain only whitespace characters");
   }
 }
 
 async function postReplyDynamic(username, parentId, commentText) {
+  if (!commentText.trim()) {
+    alert("Reply text must not be empty or contain only whitespace characters");
+    return;
+  }
   try {
     const reply = await postReply(username, parentId, commentText);
     reply.elapsedTime = "0 seconds";
@@ -387,7 +391,10 @@ function triggerCollapseAnimation(commentId) {
     };
   }
 }
-
+const countRatings = (ideaId) => {
+  const rating = props.nrOfRatings.find((rating) => rating.ideaid == ideaId);
+  return rating ? rating.ratingcount : 0;
+};
 // const ratingAvg = ref(props.ratingAvg);
 
 // const updateRating = async (newRating) => {
@@ -421,10 +428,10 @@ watch(() => props.ideaId, async () => {
   );
 })
 
-const countRatings = (ideaId) => {
-  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
-  return rating ? rating.ratingcount : 0;
-}
+// const countRatings = (ideaId) => {
+//   const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+//   return rating ? rating.ratingcount : 0;
+// }
 
 </script>
 
@@ -513,10 +520,6 @@ const countRatings = (ideaId) => {
                   class="material-symbols-outlined subscription"
                   @click="subscribeUserAction()"
                   :class="{ filled: currentStatusSubscribe }"
-                  v-if="
-                    $route.path !== '/my' &&
-                    !(props.loggedUser === props.username)
-                  "
                 >
                   visibility
                 </span>
@@ -534,8 +537,10 @@ const countRatings = (ideaId) => {
                   <span class="ratingAvg">
                     <span class="material-symbols-outlined star">star</span>
                     <span>{{ props.ratingAvg }}</span>
-                  </span>                  
-                  <span class="reviews">({{ countRatings(ideaId) }} reviews)</span>
+                  </span>
+                  <span class="reviews"
+                    >({{ countRatings(ideaId) }} reviews)</span
+                  >
                 </div>
                 <div class="author">
                   <div>{{ props.elapsedTime }} ago</div>
@@ -689,20 +694,19 @@ const countRatings = (ideaId) => {
 </template>
 
 <style scoped>
-
-.ratings-info{
+.ratings-info {
   height: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: .4rem;
+  gap: 0.4rem;
 }
 
-.reviews{
-  font-size: .7rem;
+.reviews {
+  font-size: 0.7rem;
 }
 
-.ratingAvg{
+.ratingAvg {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -930,9 +934,9 @@ const countRatings = (ideaId) => {
 .right-container-icon {
   position: absolute;
   align-items: right;
-  right: 0px;
+  right: 5px;
   display: flex;
-  justify-content: right;
+
 }
 
 .right-container-image {
@@ -1192,12 +1196,8 @@ button:hover {
   visibility: visible;
 }
 
-.star{
-  font-variation-settings:
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
+.star {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
   color: black;
 }
 </style>
