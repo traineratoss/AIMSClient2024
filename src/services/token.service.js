@@ -1,7 +1,7 @@
 import { nativeFetch } from "../main";
 import { logout } from "./user_service";
 
-const refreshDelaySeconds = -3;
+const refreshDelaySeconds = 5;
 
 const setTokenExpiry = (accessTokenExpiryDate, refreshTokenExpiryDate) => {
     sessionStorage.setItem("accessTokenExpiryDate", new Date(accessTokenExpiryDate));
