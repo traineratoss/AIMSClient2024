@@ -1,21 +1,21 @@
 import { nativeFetch } from "../main";
 import { logout } from "./user_service";
 
-const refreshDelaySeconds = -3;
+const refreshDelaySeconds = 5;
 
 const setTokenExpiry = (accessTokenExpiryDate, refreshTokenExpiryDate) => {
-    localStorage.setItem("accessTokenExpiryDate", new Date(accessTokenExpiryDate));
-    localStorage.setItem("refreshTokenExpiryDate", new Date(refreshTokenExpiryDate));
+    sessionStorage.setItem("accessTokenExpiryDate", new Date(accessTokenExpiryDate));
+    sessionStorage.setItem("refreshTokenExpiryDate", new Date(refreshTokenExpiryDate));
 }
 
 const isAccessTokenExpired = () => {
-    return getCurrentDateWithDelay(refreshDelaySeconds) >= new Date(localStorage.getItem("accessTokenExpiryDate")) &&
-        localStorage.getItem("accessTokenExpiryDate") !== null;
+    return getCurrentDateWithDelay(refreshDelaySeconds) >= new Date(sessionStorage.getItem("accessTokenExpiryDate")) &&
+        sessionStorage.getItem("accessTokenExpiryDate") !== null;
 }
 
 const isRefreshTokenExipred = () => {
-    return getCurrentDateWithDelay(refreshDelaySeconds) >= new Date(localStorage.getItem("refreshTokenExpiryDate")) &&
-        localStorage.getItem("refreshTokenExpiryDate") !== null;
+    return getCurrentDateWithDelay(refreshDelaySeconds) >= new Date(sessionStorage.getItem("refreshTokenExpiryDate")) &&
+        sessionStorage.getItem("refreshTokenExpiryDate") !== null;
 }
 
 const getCurrentDateWithDelay = (delayInSeconds) => {
@@ -23,15 +23,18 @@ const getCurrentDateWithDelay = (delayInSeconds) => {
 }
 
 const invalidateTokens = () => {
-    localStorage.clear("accessTokenExpiryDate");
-    localStorage.clear("refreshTokenExpiryDate");}
+    sessionStorage.clear("accessTokenExpiryDate");
+    sessionStorage.clear("refreshTokenExpiryDate");}
 
 const refreshTokens = async () => {
     try {
         const response = await nativeFetch('http://localhost:8080/api/v1/auth/refresh-token', {
             method: "POST",
             mode: "cors",
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                "Session-ID": sessionStorage.getItem("Session-ID")
+            }
         })
         
         const json = await response.json();

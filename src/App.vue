@@ -27,7 +27,7 @@ const showNavbar = computed(() => {
 })
 
 onMounted(() => {
-  localStorage.setItem('current page index', 2);
+  sessionStorage.setItem('current page index', 2);
 });
 
 

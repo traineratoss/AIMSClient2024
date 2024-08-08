@@ -1,7 +1,7 @@
 <script setup>
 import {ref, onMounted, onBeforeUnmount, computed} from 'vue';
 
-const initialTime = 30;
+const initialTime = 15;
 const timeLeft = ref(initialTime);
 const timer = ref(null);
 
@@ -40,13 +40,15 @@ onBeforeUnmount(() => {
 </script>
        
 <template>  
-    <div class ="countdown-timer">
-         <p> {{ formattedTime }} </p>
-         <p v-if="timeLeft === 0"> 
-          <span>Didn't receive the email? </span>
-          <a href="#" @click="resetTimer">Click to resend</a>
-         </p>
-    </div> 
+    <div class="countdown-timer">
+  <p>{{ formattedTime }}</p>
+ 
+  <p v-if="timeLeft === 0"> 
+    <span>Didn't receive the email? </span>
+    <a href="#" @click="resetTimer">Click to resend</a>
+  </p>
+  <p v-else :style="linkStyle">Didn't receive the email? Click to resend</p>
+</div>
 </template>
 
 
@@ -65,13 +67,16 @@ button {
 }
 a {
     font-size: 15px;
-    color: blue ;
+    color: black ;
     font-weight: bold;
     cursor: pointer;
     text-decoration: underline;
 }
-
+p {
+  font-size: 15px;
+}
 span {
   font-size: 15px;
 }
+
 </style>

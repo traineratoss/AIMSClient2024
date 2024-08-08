@@ -7,6 +7,7 @@ const props = defineProps({
   images: Array,
   selectedImage: String,
   initialCurrentIndex: [Number, Promise],
+  initialCurrentIndexNumber: Number,
   disabledArrow: [Boolean, Promise],
   imageHeightPercentage: Number,
   hiddenArrows: Boolean
@@ -15,6 +16,8 @@ const props = defineProps({
 const emit = defineEmits(['current-index', 'selected-image-values']);
 
 const route = useRoute();
+
+//Initially set it to yours and if im on create idea, it will update automatically 
 const imagesLoaded = ref(false);
 const currentIndex = ref(0);
 
@@ -22,6 +25,10 @@ const selectedImageBase64 = ref(null);
 const selectedImageType = ref(null);
 const selectedImageName = ref(null);
 const shouldDisableArrowsRef = ref(false);
+
+onMounted(async () => {
+  currentIndex.value = props.initialCurrentIndexNumber;
+})
 
 // Utility function to extract image data
 function transformImageDataIntoValues(dataString) {

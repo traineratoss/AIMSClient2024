@@ -4,7 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { ref, onMounted, watchEffect, computed, watch } from "vue";
+import { ref, onMounted, watchEffect, computed, watch, toRef, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import RatingStars from "../components/RatingStars.vue";
 import router from "../router";
@@ -36,7 +36,10 @@ import { getRating, postRating } from "@/services/rating_service";
 import CustomLoader from "@/components/CustomLoader.vue";
 import * as JSZip from 'jszip'
 import { saveAs } from 'file-saver'
+import { getSubscriptions } from "../services/subscriptionService";
 
+const props = defineProps({isSubscribed: Boolean});
+const emits = defineEmits(["subscribeUser"]);
 const inputValue = ref("");
 const statusValue = ref("open");
 const textValue = ref("");
@@ -118,6 +121,7 @@ const isWatchEffectExecuted = ref(false);
 const onlyForDeleteCategories = ref([]);
 
 const ideaNotValid = ref(false);
+const isHovering = ref(false);
 
 const regex =
   /^(?=.*[A-Za-z0-9].*[A-Za-z0-9].*[A-Za-z0-9].*[A-Za-z0-9].*[A-Za-z0-9]).*$/;
@@ -128,9 +132,20 @@ const handleSelectedCategories = (selectedCategories) => {
 
 const user_id = getCurrentUserId();
 const idea_id = useRoute().query.id;
+const value = ref(0);
 const existingDocs = ref([]);
 const newFiles = ref([]);
 const disableFields = useRoute().query.disableFields === "true";
+
+async function getRatingFunction() {
+  try {
+    const response = await getRating(idea_id, user_id);
+    value.value = response; 
+  } catch (error) {
+    console.error("Error", error);
+  }
+}
+
 
 const deleteFile = async (file) => {
   if (disableFields || hasUpdateId) {
@@ -427,6 +442,7 @@ async function createIdeaFunction() {
   if (textValue.value === undefined || textValue.value === null) {
     textValue.value = "";
   }
+  debugger;
   if (inputValue.value === undefined || inputValue.value === null) {
     inputValue.value = "";
   }
@@ -704,12 +720,32 @@ const downloadAllFiles = async () => {
   }
 };
 
+const isSubscribed = ref(false);
+const fetchSubscriptionStatus = async () => {
+  try {
+    const subscriptions = await getSubscriptions(getCurrentUserId());
+    isSubscribed.value = subscriptions.some(subscription => subscription.ideaId == idea_id);
+  } catch (error) {
+    console.error("Error checking subscription:", error);
+  }
+};
+fetchSubscriptionStatus();
 
 </script>
 
 <template>
   <div class="wrapper">
     <div class="create-idea-container">
+
+      <div class="right-container-icon">
+         <span
+           class="material-symbols-outlined subscription"
+           :class="{ filled: isSubscribed }"
+            >
+            visibility
+        </span>
+      </div>
+
       <div class="idea-title">
         <h1>
           {{ pageTitle }}
@@ -828,10 +864,19 @@ const downloadAllFiles = async () => {
           />
         </div>
       </div>
-
+       
       <div class="idea-text">
         <div class="text-input-wrapper">
           <div class="input-text-container">
+            <button id="legend-text-format" class="material-symbols-outlined" 
+              @mouseover="isHovering = true" 
+              @mouseleave="isHovering = false">
+              text_fields
+            </button>
+            <div class="tooltip" :class="{ show: isHovering }">
+              <p><b>**Text**</b> for <b>Bold</b></p>
+              <p><i>*Text*</i> for <i>Italic</i></p>
+            </div>
             <textarea
               v-model="textValue"
               :disabled="fieldsDisabled"
@@ -1066,9 +1111,9 @@ const downloadAllFiles = async () => {
   animation-iteration-count: 1;
 }
 
-b {
+/* b {
   color: #ffa941;
-}
+} */
 
 #maxlength-textarea {
   position: absolute;
@@ -1099,6 +1144,7 @@ b {
 .carousel-image {
   height: 16vw;
   object-fit: fill;
+  margin-top: 1px;
   height: fit-content;
 }
 
@@ -1108,14 +1154,14 @@ b {
 
 #textarea-id {
   resize: none;
-  height: 14.5vh;
+  height: 11vh;
   width: 21.5vw;
   overflow: auto;
   box-sizing: border-box;
   border: 1px solid rgba(112, 128, 144, 0.349);
   border-radius: 3px;
   word-wrap: break-word;
-  margin-top: 4px;
+  margin-top: 0px;
   padding: 5px;
 }
 
@@ -1153,7 +1199,7 @@ textarea {
 .create-idea-container {
   align-items: center;
   display: grid;
-  grid-template-rows: 10% 20% 20% 25% 15%;
+  grid-template-rows: 1% 10% 20% 20% 25% 15%;
   height: 87vh;
   width: 25vw;
   padding: 10px;
@@ -1161,6 +1207,15 @@ textarea {
   background-color: #e9e9e9;
   user-select: none;
   margin-bottom: 15px;
+}
+
+.right-container-icon {
+  display: flex;
+  justify-content: right;
+}
+
+.subscription.filled {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 48;
 }
 
 .add-image-idea {
@@ -1467,6 +1522,7 @@ select {
 }
 
 .carousel-container {
+  padding-top: 0.3rem;
   width: 50%;
 }
 
@@ -1523,4 +1579,42 @@ select {
 .noDocumentsText{
   color: gray;
 }
+
+#legend-text-format {
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: white;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  height: 30px;
+  width: 40px;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #ffa941;
+  color:  white;
+  border: 2px solid #d48806;
+  padding: 1px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  left: -20%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  font-size: 1.1em;
+}
+
+.tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.input-text-container{
+padding-left: 0.2rem;
+padding-top: 0.12rem;
+}
+
 </style>

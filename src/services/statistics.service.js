@@ -1,6 +1,12 @@
+import { getCurrentRole } from "./user_service";
+
 const API_URL = "http://localhost:8080/aims/api/v1/statistics";
 
-async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
+async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) { 
+  if (getCurrentRole() !== "ADMIN") {
+    return;
+  }
+
   let url = "";
 
   if (
@@ -101,6 +107,10 @@ async function sendDataForCustomStats(selectedDateFrom, selectedDateTo) {
 }
 
 async function getStats() {
+  if (getCurrentRole() !== "ADMIN") {
+    return;
+  }
+
   let url = API_URL + "/stats";
 
   const response = await fetch(url, {
