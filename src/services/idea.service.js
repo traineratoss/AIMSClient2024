@@ -201,7 +201,7 @@ async function getIdeaForUpdateIdea(id) {
 
 
 
-async function updateIdea(id, title, text, status, categoryList, image) {
+async function updateIdea(id, title, text, status, categoryList, image, documentDTOs) {
   const response = await fetch(API_URL + "/update?id=" + id, {
     method: "PATCH",
     mode: "cors",
@@ -209,10 +209,11 @@ async function updateIdea(id, title, text, status, categoryList, image) {
     credentials: "include",
     body: JSON.stringify({
       title: title,
-      text: text,
       status: status.toUpperCase(),
       categoryList: categoryList,
       image: image,
+      text: text,
+      documents: documentDTOs, 
     }),
     redirect: "follow",
     referrerPolicy: "no-referrer",
@@ -225,7 +226,8 @@ async function updateIdea(id, title, text, status, categoryList, image) {
   return data;
 }
 
-async function createIdea(title, text, status, categoryList, image, username) {
+async function createIdea(title, text, status, categoryList, image, username, documentDTOs) {
+    
   const response = await fetch(API_URL + "/create?username=" + username, {
     method: "POST",
     mode: "cors",
@@ -233,17 +235,18 @@ async function createIdea(title, text, status, categoryList, image, username) {
     credentials: "include",
     body: JSON.stringify({
       title: title,
-      text: text,
       status: status.toUpperCase(),
-      image: image,
       categoryList: categoryList,
-      // file: file,
-      
+      image: image,
+      text: text,
+      documents: documentDTOs, 
     }),
+    
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
+  
   const data = await response.json();
   return data;
 }
