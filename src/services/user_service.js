@@ -1,6 +1,7 @@
 import { invalidateTokens, setTokenExpiry } from "./token.service";
 import router from "../router";
 import { nativeFetch } from "../main";
+import { fetchAvatarImage } from "./avatar.service";
 
 const API_URL = "http://localhost:8080/users";
 
@@ -99,6 +100,7 @@ async function loginUser(username, password) {
     }
     throw new Error("Invalid username or password");
   } else {
+    
     const json = await response.json();
     const userData = json.userData;
     sessionStorage.setItem("username", userData.username);
@@ -108,8 +110,10 @@ async function loginUser(username, password) {
     sessionStorage.setItem("avatarId", userData.avatarId - 1);
     sessionStorage.setItem("isFirstLogin", userData.isFirstLogin);
     sessionStorage.setItem("userId", userData.id);
-
+    
     setTokenExpiry(json.accessTokenExpiryDate, json.refreshTokenExpiryDate);
+    
+    await fetchAvatarImage(getCurrentUsername());
 
     return json;
   }
@@ -172,8 +176,14 @@ async function updateUser(username, userUpdateDto) {
   if (!response.ok) {
     throw new Error(json.message);
   }
-  // update local storage
+
+  sessionStorage.setItem('username', json.username);
+  sessionStorage.setItem('fullName', json.fullName);
+  sessionStorage.setItem('email', json.email);
   sessionStorage.setItem('avatarId', userUpdateDto.avatarId);
+
+  await fetchAvatarImage(getCurrentUsername());
+
   return json;
 }
 
@@ -393,22 +403,6 @@ function getCurrentAvatarId() {
   return sessionStorage.getItem("avatarId");
 }
 
-async function getCustomAvatar(username) {
-  const response = await fetch(`${API_URL}/get-avatar-by-username?username=${username}`, {
-    method: "GET",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    return null;
-  }
-
-  const json = await response.json();
-  return json;
-}
-
 function getCurrentUserId() {
   return sessionStorage.getItem("userId");
 }
@@ -494,7 +488,6 @@ export {
   getCurrentEmail,
   getCurrentFullName,
   getCurrentAvatarId,
-  getCustomAvatar,
   getCurrentUserId,
   validateUsername,
   isFirstLogin, 

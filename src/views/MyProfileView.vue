@@ -13,9 +13,11 @@ import {
   getCurrentEmail,
   getCurrentFullName,
   getCurrentAvatarId,
-  getCustomAvatar,
   validateUsername,
 } from "../services/user_service";
+
+import { getAvatarImage } from "../services/avatar.service"
+
 import router from "../router";
 
 const usernameText = ref("");
@@ -51,7 +53,7 @@ onMounted(async () => {
   emailText.value = getCurrentEmail();
   avatarIdText.value = getCurrentAvatarId();
 
-  customAvatar.value = await getCustomAvatar(getCurrentUsername());
+  customAvatar.value = await getAvatarImage(getCurrentUsername());
   originalCustomAvatar.value = customAvatar.value;
 
   avatarsLoaded.value = true
@@ -132,7 +134,7 @@ function saveChanges() {
     if (changesOK) {
       updateUser(oldUsername, userUpdateDTO)
         .then((res) => {
-          router.go("/my");
+          router.push("/my");
         })
         .catch((error) => {
           errorMessage.value = error.message;

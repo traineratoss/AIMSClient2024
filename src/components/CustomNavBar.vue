@@ -9,10 +9,10 @@ import {
   getCurrentFullName,
   getCurrentRole,
   getCurrentUsername,
-  getCustomAvatar,
 } from "../services/user_service";
 import searchValue from "../utils/search-title";
 import {useRoute} from 'vue-router';
+import { customAvatarImage, getAvatarImageURI } from "../services/avatar.service";
 
 const route = useRoute();
 
@@ -59,13 +59,16 @@ const dashboardElements = [
   },
 ];
 
-const customAvatar = ref();
+const avatarImageURI = ref();
 
-onMounted(async () => {
-  customAvatar.value = await getCustomAvatar(getCurrentUsername());
+onMounted(() => {
   currentUsername.value = getCurrentUsername();
   currentAvatarId.value = getCurrentAvatarId();
 });
+
+watch(customAvatarImage, () => {
+  avatarImageURI.value = getAvatarImageURI();
+})
 
 const isSearchInputFocusedSetter = (focused) => {
   isSearchInputFocused.value = focused;
@@ -86,7 +89,7 @@ watch(searchValue, (newValue) => {
 });
 
 
-router.beforeEach(async (to, from) => {
+router.beforeEach((to, from) => {
   activePage.value = to.name;
   
   if (
@@ -96,7 +99,6 @@ router.beforeEach(async (to, from) => {
   ) {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
-    customAvatar.value = await getCustomAvatar(getCurrentUsername());
   }
 
   userDashboardElements = [];
@@ -173,7 +175,6 @@ function onMouseLeaveUser() {
   disabledUser.value = true;
 }
 
-const getImageSource = computed(() => customAvatar.value ? `data:image/${customAvatar.value.fileType};name=${customAvatar.value.fileName};base64,${customAvatar.value.image}` : undefined)
 </script>
 
 
@@ -263,7 +264,7 @@ const getImageSource = computed(() => customAvatar.value ? `data:image/${customA
         style="padding: 20px 5px"
       >
         <img
-          :src="customAvatar ? getImageSource : slideImages[currentAvatarId]"
+          :src="avatarImageURI ? avatarImageURI : slideImages[currentAvatarId]"
           alt="avatar not found"
           class="avatar"
         />
