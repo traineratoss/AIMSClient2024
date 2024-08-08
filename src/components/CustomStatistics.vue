@@ -194,7 +194,7 @@ const fetchIdeaByComment = async (commentId) => {
               >
                 <td>
                   <a href="#" @click="fetchSelectedIdea(idea.id)">
-                    {{ getShortenedTitle(idea.title, 20) }}
+                    <div v-html="getShortenedTitle(idea.title, 20)"></div>
                   </a>
                 </td>
                 <td>{{ idea.commentsNumber }}</td>
@@ -220,7 +220,7 @@ const fetchIdeaByComment = async (commentId) => {
                     href="#"
                     @click.prevent="fetchIdeaByComment(comment.commentId)"
                   >
-                    {{ getShortenedTitle(comment.commentText, 20) }}
+                  <div v-html="getShortenedTitle(comment.commentText, 20)"></div>
                   </a>
                 </td>
                 <td>{{ comment.nrLikes }}</td>
@@ -317,12 +317,10 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[0]">
                 <td>
-                  {{
-                    getShortenedTitle(
+                  <div v-html="getShortenedTitle(
                       props.recievedFilteredStats.mostCommentedIdeas[0].title,
                       20
-                    )
-                  }}
+                    )"></div>
                 </td>
                 <td>
                   {{
@@ -333,12 +331,11 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[1]">
                 <td>
-                  {{
-                    getShortenedTitle(
+                  <div v-html="getShortenedTitle(
                       props.recievedFilteredStats.mostCommentedIdeas[1].title,
                       20
-                    )
-                  }}
+                    )"></div>
+                  
                 </td>
                 <td>
                   {{
@@ -349,12 +346,10 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[2]">
                 <td>
-                  {{
-                    getShortenedTitle(
+                  <div v-html="getShortenedTitle(
                       props.recievedFilteredStats.mostCommentedIdeas[2].title,
                       20
-                    )
-                  }}
+                    )"></div>
                 </td>
                 <td>
                   {{
@@ -365,12 +360,10 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[3]">
                 <td>
-                  {{
-                    getShortenedTitle(
+                  <div v-html="getShortenedTitle(
                       props.recievedFilteredStats.mostCommentedIdeas[3].title,
                       20
-                    )
-                  }}
+                    )"></div>
                 </td>
                 <td>
                   {{
@@ -381,12 +374,10 @@ const fetchIdeaByComment = async (commentId) => {
               </tr>
               <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[4]">
                 <td>
-                  {{
-                    getShortenedTitle(
+                  <div v-html="getShortenedTitle(
                       props.recievedFilteredStats.mostCommentedIdeas[4].title,
                       20
-                    )
-                  }}
+                    )"></div>
                 </td>
                 <td>
                   {{

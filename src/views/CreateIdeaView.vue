@@ -442,7 +442,7 @@ async function createIdeaFunction() {
   if (textValue.value === undefined || textValue.value === null) {
     textValue.value = "";
   }
-  debugger;
+
   if (inputValue.value === undefined || inputValue.value === null) {
     inputValue.value = "";
   }

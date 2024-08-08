@@ -223,7 +223,8 @@ async function getReviewStatus(commentId) {
   const response = await fetch(API_URL + "/comments/reports/review/get/" + commentId, {
     method: "GET",
   });
-  return await response.json();
+  const data = await response.json();
+  return data;
 }
 
 async function getNumberOfLikes() {

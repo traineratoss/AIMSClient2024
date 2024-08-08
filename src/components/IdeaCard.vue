@@ -13,11 +13,7 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-<<<<<<< HEAD
 import { getIdea ,getIdeaForUpdateIdea} from "../services/idea.service";
-=======
-import { getIdea, getIdeaForUpdateIdea } from "../services/idea.service";
->>>>>>> cdde807f13d314f10c20bfae8f168549854128e7
 
 const props = defineProps({
   title: "",
@@ -1201,18 +1197,12 @@ button:hover {
   visibility: visible;
 }
 
-<<<<<<< HEAD
-.star{
+.star {
   font-variation-settings:
     'FILL' 1,
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
   color: #ffa941;
-=======
-.star {
-  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
-  color: black;
->>>>>>> cdde807f13d314f10c20bfae8f168549854128e7
 }
 </style>
