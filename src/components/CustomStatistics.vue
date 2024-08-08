@@ -20,7 +20,6 @@ const props = defineProps({
 });
 
 const emits = defineEmits([
-  "loadTop5Ideas",
   "loadData",
   "commentCounterAdd",
   "cmmentCounterSub",
@@ -49,9 +48,6 @@ const nrOfReports = ref();
 onMounted(async () => {
   nrOfLikes.value = await getNumberOfLikes();
   nrOfReports.value = await getNumberOfReports();
-
-  console.log("Componenta a fost montată, nrOfLikes:", nrOfLikes.value);
-  console.log("Componenta a fost montată, nrOfReports:", nrOfReports.value);
 });
 watch(progressBar, (newX) => {
   progressBar.value = newX;
@@ -93,7 +89,6 @@ async function refreshStats() {
   stats.value = await getStats();
   nrOfLikes.value = await getNumberOfLikes();
   nrOfReports.value = await getNumberOfReports();
-  emits("loadTop5Ideas", stats.value.mostCommentedIdeas);
   showSkeleton.value = false;
 }
 

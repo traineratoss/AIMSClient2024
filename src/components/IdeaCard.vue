@@ -1197,7 +1197,7 @@ button:hover {
   visibility: visible;
 }
 
-.star {
+.star{
   font-variation-settings:
     'FILL' 1,
     'wght' 400,

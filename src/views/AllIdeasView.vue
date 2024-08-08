@@ -1,18 +1,34 @@
 <script setup>
 import CustomSidePanel from "../components/CustomSidePanel.vue";
-import {onMounted, ref, watch} from "vue";
+import { onMounted, ref, watch } from "vue";
 import IdeaCard from "../components/IdeaCard.vue";
-import {filterIdeas, getIdea, getIdeaByCommentId, loadPagedIdeas} from "../services/idea.service";
-import {getStats, sendDataForCustomStats,} from "../services/statistics.service";
-import {getCurrentRole, getCurrentUserId, getCurrentUsername} from "../services/user_service";
+import {
+  filterIdeas,
+  getIdea,
+  getIdeaByCommentId,
+  loadPagedIdeas,
+} from "../services/idea.service";
+import {
+  getStats,
+  sendDataForCustomStats,
+} from "../services/statistics.service";
+import {
+  getCurrentRole,
+  getCurrentUserId,
+  getCurrentUsername,
+} from "../services/user_service";
 import Pagination from "../components/Pagination.vue";
 import CustomStatistics from "../components/CustomStatistics.vue";
 import CustomLoader from "../components/CustomLoader.vue";
 import searchValue from "../utils/search-title";
 import CustomInput from "../components/CustomInput.vue";
 import PageSizeSelect from "../components/PageSizeSelect.vue";
-import {getSubscriptions, subscribeUser, unsubscribeUser} from "../services/subscriptionService";
-import {getAllRatings, getNumberOfRatings} from "@/services/rating_service";
+import {
+  getSubscriptions,
+  subscribeUser,
+  unsubscribeUser,
+} from "../services/subscriptionService";
+import { getAllRatings, getNumberOfRatings } from "@/services/rating_service";
 
 const selectedDateFrom = ref();
 const selectedDateTo = ref();
@@ -29,7 +45,6 @@ const userId = getCurrentUserId();
 const selectedIdea = ref(null);
 const showPagination = ref(true);
 
-
 // updated by ref inputs
 const inputTitle = ref("");
 const inputText = ref("");
@@ -40,7 +55,6 @@ const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const isAdmin = ref("");
 const selectedRating = ref("");
-
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -96,7 +110,6 @@ onMounted(async () => {
     currentRating,
     "ASC"
   );
-
 
   loadingPage.value = true;
   loggedUser.value = getCurrentUsername();
@@ -453,65 +466,6 @@ async function updateSortOrder() {
   }
 }
 
-async function loadRecievedIdeas(mostCommentedIdeas) {
-  ideas.value = [];
-  totalPages.value = 1;
-  currentPage.value = 1;
-
-  setTimeout(async () => {
-    showTopIdeas.value = !showTopIdeas.value;
-
-    if (showTopIdeas.value) {
-      // const stats = await getStats(sortOrder.value === 0 ? "ASC" : "DESC");
-      // ideas.value = stats.mostCommentedIdeas;
-      ideas.value = mostCommentedIdeas;
-
-      setTimeout(() => {
-        scrollFade();
-        ideasTransitionContainer.value.style.overflowY = "auto";
-        document.getElementById("scrollable-middle").scrollTop = "0";
-      }, 0);
-    } else {
-      const data = await filterIdeas(
-        inputTitle.value,
-        currentText,
-        currentStatus,
-        currentCategory,
-        currentUser,
-        currentSelectedDateFrom,
-        currentSelectedDateTo,
-        currentPage.value - 1,
-        ideaPerPage.value,
-        null,
-        currentRating,
-        sortOrder.value
-      );
-
-      loadingPage.value = true;
-      loggedUser.value = getCurrentUsername();
-      currentUserRole = getCurrentRole();
-      checkAdmin();
-
-      if (data === "No ideas found.") {
-        noIdeasFoundCondition.value = true;
-        sortOrder.value = 0;
-        totalPages.value = 0;
-        ideas.value = [];
-      } else {
-        noIdeasFoundCondition.value = false;
-        sortOrder.value = 0;
-        totalPages.value = Math.ceil(data.totalElements / ideaPerPage.value);
-        ideas.value = data.content;
-        setTimeout(() => {
-          scrollFade();
-          ideasTransitionContainer.value.style.overflowY = "auto";
-          document.getElementById("scrollable-middle").scrollTop = "0";
-        }, 0);
-      }
-    }
-  }, "500");
-}
-
 async function loadData() {
   showTopIdeas.value = false;
   loadingPage.value = true;
@@ -723,25 +677,27 @@ const subscribedIdeas = ref([]);
 const ratingsFetched = ref([]);
 
 const fetchSubscriptions = async () => {
-  try{
-      const response = await getSubscriptions(userId);
-      subscribedIdeas.value = response;
+  try {
+    const response = await getSubscriptions(userId);
+    subscribedIdeas.value = response;
   } catch (error) {
     console.error("Error getting subscriptions", error);
   }
-}
+};
 
 const fetchRatings = async () => {
-  try{
+  try {
     const response = await getAllRatings(userId);
     ratingsFetched.value = response;
   } catch (error) {
     console.error("Error getting ratings", error);
   }
-}
+};
 
 const checkIfSubscribed = (ideaId) => {
-  return subscribedIdeas.value.some(subscription => subscription.ideaId == ideaId);
+  return subscribedIdeas.value.some(
+    (subscription) => subscription.ideaId == ideaId
+  );
 };
 
 const toggleSubscriptionIcon = async (ideaId, userId) => {
@@ -751,12 +707,11 @@ const toggleSubscriptionIcon = async (ideaId, userId) => {
     } else {
       await subscribeUser(ideaId, userId);
     }
-    await fetchSubscriptions(userId); 
+    await fetchSubscriptions(userId);
   } catch (error) {
     console.error("Error subscribing/unsubscribing", error);
   }
-}
-
+};
 
 const fetchSelectedIdea = async (id) => {
   selectedIdea.value = await getIdea(id);
@@ -794,16 +749,15 @@ watch(selectedIdea, (newValue, oldValue) => {
 // }
 
 function formatRating(rating) {
-    if (rating === null || rating === undefined) {
-        return 0;
-    }
-    return rating.toFixed(2);
+  if (rating === null || rating === undefined) {
+    return 0;
+  }
+  return rating.toFixed(2);
 }
-
 
 const ratings = ref([]);
 
-async function getTotalRatings(){
+async function getTotalRatings() {
   try {
     const response = await getNumberOfRatings();
     ratings.value = response;
@@ -814,9 +768,9 @@ async function getTotalRatings(){
 }
 
 const countRatings = (ideaId) => {
-  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+  const rating = props.nrOfRatings.find((rating) => rating.ideaid == ideaId);
   return rating ? rating.ratingcount : 0;
-}
+};
 </script>
 
 <template>
@@ -854,108 +808,110 @@ const countRatings = (ideaId) => {
           ref="ideasTransitionContainer"
           id="scrollable-middle"
         >
-        <div v-if="selectedIdea !== null" class="selected-idea-container">
-          <button class="back-button" @click="clearSelectedIdea">Back to Ideas</button>
-          <IdeaCard
-                :title="selectedIdea.title"
-                :text="selectedIdea.text"
-                :status="selectedIdea.status"
-                :username="selectedIdea.username"
-                :ideaId="selectedIdea.id"
-                :commentsNumber="selectedIdea.commentsNumber"
-                :elapsedTime="selectedIdea.elapsedTime"
-                :image="getImageUrl(selectedIdea)"
-                :loggedUser="getCurrentUsername()"
-                @comment-counter-add="selectedIdea.commentsNumber++"
-                @comment-counter-sub="selectedIdea.commentsNumber--"
-                @revealOnScroll="scrollFadeOnExpand()"
-                :isSubscribed="checkIfSubscribed(selectedIdea.id)"
-                @subscribeUser="toggleSubscriptionIcon"
-                :ratingAvg="formatRating(selectedIdea.ratingAvg)"
-                :nrOfRatings="ratings"
-              />
-        </div>
-        <div v-else>
-          <div
-            v-if="!showTopIdeas"
-            class="sort-container"
-            :style="
-              ideas
-                ? ideas.length === 0 || showTopIdeas
-                  ? { visibility: 'hidden', 'text-align': 'right' }
-                  : { visibility: 'visible', 'text-align': 'right' }
-                : { 'text-align': 'right' }
-            "
-          >
-            <label for="sortOrder">Sort by: </label>
-            <select
-              id="sortOrder"
-              v-model="sortOrder"
-              @change="updateSortOrder"
-              style="width: 3.8vw"
-            >
-              <option :value="0">Oldest</option>
-              <option :value="1">Newest</option>
-            </select>
-            <div class="pageSize">
-              <PageSizeSelect
-                id="pageSizeSelect"
-                label="Ideas:"
-                @change-display="changeDisplay"
-              />
-            </div>
-          </div>
-          <div
-            class="ideas-transition-container"
-            ref="ideasTransitionContainer"
-          >
-            <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
-
-            <div
-              v-for="idea in ideas"
-              :key="idea.id"
-              class="idea-transition-item reveal"
-            >
-              <IdeaCard
-                :title="idea.title"
-                :text="idea.text"
-                :status="idea.status"
-                :username="idea.username"
-                :ideaId="idea.id"
-                :commentsNumber="idea.commentsNumber"
-                :elapsedTime="idea.elapsedTime"
-                :image="getImageUrl(idea)"
-                :loggedUser="getCurrentUsername()"
-                @comment-counter-add="idea.commentsNumber++"
-                @comment-counter-sub="idea.commentsNumber--"
-                @revealOnScroll="scrollFadeOnExpand()"
-                :isSubscribed="checkIfSubscribed(idea.id)"
-                @subscribeUser="toggleSubscriptionIcon"
-                :ratingAvg="formatRating(idea.ratingAvg)"
-                :nrOfRatings="ratings"
-              />
-            </div>
-            <div
-              v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"
-              class="no-ideas-message"
-            >
-              <img src="../assets/img/curiosity-search.svg" />
-              <br />
-              <span class="black-font">Your search returned no results</span>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="ideas.length > 0" class="pagination-container">
-          <div v-if="showPagination" class="pagination-component">
-            <Pagination
-              :totalPages="totalPages"
-              :currentPage="currentPage"
-              @changePage="changePage"
+          <div v-if="selectedIdea !== null" class="selected-idea-container">
+            <button class="back-button" @click="clearSelectedIdea">
+              Back to Ideas
+            </button>
+            <IdeaCard
+              :title="selectedIdea.title"
+              :text="selectedIdea.text"
+              :status="selectedIdea.status"
+              :username="selectedIdea.username"
+              :ideaId="selectedIdea.id"
+              :commentsNumber="selectedIdea.commentsNumber"
+              :elapsedTime="selectedIdea.elapsedTime"
+              :image="getImageUrl(selectedIdea)"
+              :loggedUser="getCurrentUsername()"
+              @comment-counter-add="selectedIdea.commentsNumber++"
+              @comment-counter-sub="selectedIdea.commentsNumber--"
+              @revealOnScroll="scrollFadeOnExpand()"
+              :isSubscribed="checkIfSubscribed(selectedIdea.id)"
+              @subscribeUser="toggleSubscriptionIcon"
+              :ratingAvg="formatRating(selectedIdea.ratingAvg)"
+              :nrOfRatings="ratings"
             />
           </div>
+          <div v-else>
+            <div
+              v-if="!showTopIdeas"
+              class="sort-container"
+              :style="
+                ideas
+                  ? ideas.length === 0 || showTopIdeas
+                    ? { visibility: 'hidden', 'text-align': 'right' }
+                    : { visibility: 'visible', 'text-align': 'right' }
+                  : { 'text-align': 'right' }
+              "
+            >
+              <label for="sortOrder">Sort by: </label>
+              <select
+                id="sortOrder"
+                v-model="sortOrder"
+                @change="updateSortOrder"
+                style="width: 3.8vw"
+              >
+                <option :value="0">Oldest</option>
+                <option :value="1">Newest</option>
+              </select>
+              <div class="pageSize">
+                <PageSizeSelect
+                  id="pageSizeSelect"
+                  label="Ideas:"
+                  @change-display="changeDisplay"
+                />
+              </div>
+            </div>
+            <div
+              class="ideas-transition-container"
+              ref="ideasTransitionContainer"
+            >
+              <!-- <h2 v-if="showTopIdeas">Top ideas</h2> -->
+
+              <div
+                v-for="idea in ideas"
+                :key="idea.id"
+                class="idea-transition-item reveal"
+              >
+                <IdeaCard
+                  :title="idea.title"
+                  :text="idea.text"
+                  :status="idea.status"
+                  :username="idea.username"
+                  :ideaId="idea.id"
+                  :commentsNumber="idea.commentsNumber"
+                  :elapsedTime="idea.elapsedTime"
+                  :image="getImageUrl(idea)"
+                  :loggedUser="getCurrentUsername()"
+                  @comment-counter-add="idea.commentsNumber++"
+                  @comment-counter-sub="idea.commentsNumber--"
+                  @revealOnScroll="scrollFadeOnExpand()"
+                  :isSubscribed="checkIfSubscribed(idea.id)"
+                  @subscribeUser="toggleSubscriptionIcon"
+                  :ratingAvg="formatRating(idea.ratingAvg)"
+                  :nrOfRatings="ratings"
+                />
+              </div>
+              <div
+                v-if="ideas && ideas.length === 0 && noIdeasFoundCondition"
+                class="no-ideas-message"
+              >
+                <img src="../assets/img/curiosity-search.svg" />
+                <br />
+                <span class="black-font">Your search returned no results</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="ideas.length > 0" class="pagination-container">
+            <div v-if="showPagination" class="pagination-component">
+              <Pagination
+                :totalPages="totalPages"
+                :currentPage="currentPage"
+                @changePage="changePage"
+              />
+            </div>
+          </div>
         </div>
-       </div>
       </div>
 
       <div v-if="isAdmin" class="custom-statistics">
@@ -1005,7 +961,6 @@ const countRatings = (ideaId) => {
             :showGenerated="showGenerated"
             :showAnimation="showAnimation"
             :showSkeleton="showSkeleton"
-            @load-top5-ideas="loadRecievedIdeas"
             @load-data="loadData"
             :show-top-ideas="showTopIdeas"
             :fetchSelectedIdea="fetchSelectedIdea"
@@ -1301,7 +1256,6 @@ h2 {
   margin: 10px auto;
   padding: 10px;
 }
-
 
 .back-button {
   display: block;
