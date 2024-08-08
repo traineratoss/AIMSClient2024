@@ -63,7 +63,8 @@ const customAvatar = ref();
 
 onMounted(async () => {
   customAvatar.value = await getCustomAvatar(getCurrentUsername());
-  console.log(customAvatar.value);
+  currentUsername.value = getCurrentUsername();
+  currentAvatarId.value = getCurrentAvatarId();
 });
 
 const isSearchInputFocusedSetter = (focused) => {
@@ -85,7 +86,7 @@ watch(searchValue, (newValue) => {
 });
 
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   activePage.value = to.name;
   
   if (
@@ -95,6 +96,7 @@ router.beforeEach((to, from) => {
   ) {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
+    customAvatar.value = await getCustomAvatar(getCurrentUsername());
   }
 
   userDashboardElements = [];
@@ -137,10 +139,6 @@ router.beforeEach((to, from) => {
   });
 });
 
-onMounted(() => {
-  currentUsername.value = getCurrentUsername();
-  currentAvatarId.value = getCurrentAvatarId();
-});
 
 function redirectToAllIdeas() {
   router.push("/all");
