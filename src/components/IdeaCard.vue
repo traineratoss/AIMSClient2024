@@ -465,10 +465,10 @@ watch(() => props.ideaId, async () => {
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                  {{ getShortenedTitle(title, 40) }}
+                <div v-html="getShortenedTitle(title, 40) "></div>
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedTitle(title, 32) }}
+                  <div v-html="getShortenedTitle(title, 32) "></div>
                 </div>
               </div>
               <div class="status">
