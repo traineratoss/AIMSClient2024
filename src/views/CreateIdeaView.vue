@@ -18,14 +18,24 @@ import {
   getImageByIdeaId,
   getImageById,
 } from "../services/idea.service";
-import {getDocumentsByIdeaId, postDocuments, deleteDocument, downloadDocument} from "../services/document_service"
+
+import {
+  getDocumentsByIdeaId, 
+  deleteDocument, 
+  downloadDocument, 
+  fetchDocument
+} from "../services/document_service"
+
 import {
   getCurrentUsername,
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
+
 import { getRating, postRating } from "@/services/rating_service";
 import CustomLoader from "@/components/CustomLoader.vue";
+import * as JSZip from 'jszip'
+import { saveAs } from 'file-saver'
 
 const inputValue = ref("");
 const statusValue = ref("open");
@@ -45,6 +55,61 @@ const currentImageIndex = ref(null);
 const selectedImageBase64 = ref("");
 const selectedImageName = ref("");
 const selectedImageType = ref("");
+
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function transformFilesToDocumentDTOs(files) {
+  const documentDTOs = [];
+
+  for (const fileObject of files) {
+    const base64Data = await readFileAsBase64(fileObject.file);
+    const base64Index = base64Data.indexOf(",") + 1;
+    const base64Content = base64Data.slice(base64Index);
+
+    documentDTOs.push({
+      fileName: fileObject.file.name,
+      fileType: fileObject.file.type,
+      document: base64Content,
+    });
+  }
+
+  return documentDTOs;
+}
+
+function transformImageDataIntoValues(dataString) {
+  const base64Index = dataString.indexOf(",") + 1;
+  const base64Data = dataString.slice(base64Index);
+  selectedImageBase64.value = base64Data;
+
+  const indexOfBase64 = dataString.indexOf(";base64");
+  const everythingBeforeBase64 = dataString.substring(0, indexOfBase64);
+
+  const indexOfEqual = everythingBeforeBase64.indexOf("=");
+  selectedImageName.value = everythingBeforeBase64.substring(
+    indexOfEqual + 1,
+    everythingBeforeBase64.length
+  );
+
+  selectedImageType.value = everythingBeforeBase64.substring(
+    everythingBeforeBase64.indexOf(":") + 1,
+    everythingBeforeBase64.indexOf(";")
+  );
+  const obj = {
+    name: selectedImageName.value,
+    type: selectedImageType.value,
+    base: selectedImageBase64.value,
+  };
+  return obj;
+}
+
+
 
 const updatedIdea = ref(null);
 updatedIdea.value = useRoute().query;
@@ -217,31 +282,7 @@ const pageTitle = computed(() => {
 
 //this function transforms my whole image string into 3 parts: type, name and base64
 //needed for the request dto
-function transformImageDataIntoValues(dataString) {
-  const base64Index = dataString.indexOf(",") + 1;
-  const base64Data = dataString.slice(base64Index);
-  selectedImageBase64.value = base64Data;
 
-  const indexOfBase64 = dataString.indexOf(";base64");
-  const everythingBeforeBase64 = dataString.substring(0, indexOfBase64);
-
-  const indexOfEqual = everythingBeforeBase64.indexOf("=");
-  selectedImageName.value = everythingBeforeBase64.substring(
-    indexOfEqual + 1,
-    everythingBeforeBase64.length
-  );
-
-  selectedImageType.value = everythingBeforeBase64.substring(
-    everythingBeforeBase64.indexOf(":") + 1,
-    everythingBeforeBase64.indexOf(";")
-  );
-  const obj = {
-    name: selectedImageName.value,
-    type: selectedImageType.value,
-    base: selectedImageBase64.value,
-  };
-  return obj;
-}
 
 //This is the function that is handling the updating in the db
 async function updateIdeaFunction() {
@@ -266,13 +307,16 @@ async function updateIdeaFunction() {
       image: selectedImageBase64.value,
     };
 
+    const documentDTOs = await transformFilesToDocumentDTOs(newFiles.value);
+
     await updateIdea(
       updatedIdeaId,
       newTitle,
       newText,
       newStatus,
       newCategoryList,
-      imageDTO
+      imageDTO,
+      documentDTOs,
     );
     router.back();
   }
@@ -281,15 +325,9 @@ async function updateIdeaFunction() {
 
 async function shouldCreateOrUpdate() {
   if (JSON.stringify(updatedIdea.value) === "{}") {
-    const dataResponse = await createIdeaFunction();
-    if (newFiles.value.length > 0) {
-      await uploadFilesAndHandleResponse(newFiles.value, dataResponse.id, userId);
-    }
+    await createIdeaFunction();
   } else {
     await updateIdeaFunction();
-    if (newFiles.value.length > 0){
-      await uploadFilesAndHandleResponse(newFiles.value, ideaIdd, userId);
-    }
   }
 }
 
@@ -371,6 +409,15 @@ async function initialCurrentIndex() {
   }
 }
 
+// const createDocumentDTOArray = (files) => {
+//     return files.map(file => ({
+//       document: file.document,
+//       fileName: file.fileName,
+//       fileType: file.fileType,
+//       ideaId: 
+//     }));
+//   };
+
 async function createIdeaFunction() {
   const rawCategoriesValue = categoriesSelected.value;
   const categoryErrorCheck =
@@ -442,6 +489,8 @@ async function createIdeaFunction() {
       fileType: selectedImageType.value,
       image: selectedImageBase64.value,
     };
+    
+    const documentDTOs = await transformFilesToDocumentDTOs(newFiles.value);
 
     const data = await createIdea(
       inputValue.value,
@@ -450,33 +499,31 @@ async function createIdeaFunction() {
       categoryTexts,
       imageDTO,
       currentUsername,
-      // newFiles.value
+      documentDTOs,
     );
-    // debugger;
     router.push({ name: "my" });
     return data;
   }
 }
 
-
 const userId = getCurrentUserId();
 
-async function uploadFilesAndHandleResponse(files, ideaId, userId) {
-  try {
-    if (!Array.isArray(files)) {
-      throw new TypeError("Expected an array of files");
-    }
+// async function uploadFilesAndHandleResponse(files, ideaId, userId) {
+//   try {
+//     if (!Array.isArray(files)) {
+//       throw new TypeError("Expected an array of files");
+//     }
 
-    const formattedFiles = files.map(file => file.file || file); 
-    
-    const result = await postDocuments(formattedFiles, ideaId, userId);
-    console.log("Files uploaded successfully:", result);
+//     const formattedFiles = files.map(file => file.file || file); 
+//     console.log(formattedFiles);
+//     const result = await postDocuments(formattedFiles, ideaId, userId);
+//     console.log("Files uploaded successfully:", result);
 
-    await getDocuments(ideaId);
-  } catch (error) {
-    console.error("Error during file upload:", error);
-  }
-}
+//     await getDocuments(ideaId);
+//   } catch (error) {
+//     console.error("Error during file upload:", error);
+//   }
+// }
 
 
 const fieldsDisabled = ref(disableFields);
@@ -622,7 +669,7 @@ const checkLengthDocuments = () => {
 const updateRating = async (newRating) => {
   try {
     await postRating(idea_id, userId, newRating);
-    fetchRatings();
+    ratingForIdea.value = newRating;
   } catch (error) {
     console.error("Error", error);
   }
@@ -638,6 +685,25 @@ const fetchRatings = async () => {
     console.error("Error getting ratings", error);
   }
 }
+
+
+const downloadAllFiles = async () => {
+  if (displayedFiles.value.length > 0) {
+    const zip = new JSZip();
+
+    for (const fileWrapper of displayedFiles.value) {
+      const documentData = await fetchDocument(fileWrapper.id);
+      if (documentData) {
+        const { arrayBuffer, contentType } = documentData;
+        zip.file(fileWrapper.fileName, new Uint8Array(arrayBuffer), { binary: true });
+      }
+    }
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    saveAs(blob, 'documents.zip');
+  }
+};
+
 
 </script>
 
@@ -839,9 +905,7 @@ const fetchRatings = async () => {
                 attach_file
               </span>
               <div class="file-name" @click="file.isLocal ? null : downloadDoc(file.id, file.fileName)">
-                <span class="visible-part">{{ file.fileName ? file.fileName.slice(0, 10) : file.name.slice(0, 10) }}</span>
-                <span class="faded-part">{{ file.fileName ? file.fileName.slice(10, 16) : file.name.slice(10, 16) }}</span>
-                <span class="hidden-part">{{ file.fileName ? file.fileName.slice(16) : file.name.slice(16) }}</span>
+                <span>{{ file.fileName ? file.fileName : file.name }}</span>
               </div>
               <span
                 class="material-symbols-outlined delete-icon"
@@ -895,6 +959,18 @@ const fetchRatings = async () => {
               Upload Document
               <span class="material-symbols-outlined" style="margin-left: 5px">
                 attach_file
+              </span>
+            </label>
+            <label
+              for="uploadDocument"
+              class="add-document-idea"
+              v-else
+              style="display: flex; align-items: center;"
+              @click="downloadAllFiles()"
+            >
+              Download all
+              <span class="material-symbols-outlined" style="margin-left: 7px">
+                download
               </span>
             </label>
           </div>
@@ -1233,7 +1309,7 @@ textarea {
   overflow-y: auto;
   height: 4rem;
   max-height: 4rem;
-  border: .2rem solid #ffa941;
+  border: .2rem solid gray;
   border-radius: .5rem;
   padding-top: 1.2rem;
   padding-bottom: 1.2rem;
@@ -1260,7 +1336,7 @@ textarea {
 }
 
 .document-container::-webkit-scrollbar-thumb {
-  background-color: #ffa941;
+  background-color: gray;
   border-radius: 3px;
 }
 
@@ -1406,8 +1482,11 @@ select {
 
 .document {
   width: 100%;
-  display: flex;
+  height: 100%;
+  display: flex;  
 }
+
+
 
 .document .attach-icon {
   width: 15%;
@@ -1415,10 +1494,12 @@ select {
 }
 
 .document .file-name {
-  width: 70%;
-  max-width: 8rem;
-  cursor: pointer;
-  overflow-x: hidden;
+  display: inline-block;
+  width: 7rem; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer; 
 }
 
 .document .delete-icon {
@@ -1437,18 +1518,6 @@ select {
   align-items: center;
   gap: 10%;
   padding-top: 1rem;
-}
-
-.visible-part {
-  color: black;
-}
-
-.faded-part {
-  color: gray; 
-}
-
-.hidden-part {
-  color: transparent; 
 }
 
 .noDocumentsText{

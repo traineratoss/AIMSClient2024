@@ -13,7 +13,7 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-import { getIdea } from "../services/idea.service";
+import { getIdea ,getIdeaForUpdateIdea} from "../services/idea.service";
 
 const props = defineProps({
   title: "",
@@ -707,6 +707,7 @@ const countRatings = (ideaId) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: .3rem;
 }
 
 .expand-animation {
@@ -1186,6 +1187,6 @@ button:hover {
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
-  color: black;
+  color: #ffa941;
 }
 </style>
