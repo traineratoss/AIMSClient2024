@@ -329,8 +329,8 @@ async function handleReport() {
       </div>
     </div>
     <div class="reply-input-container" v-if="postToggle">
-      <textarea :maxlength="maxlength" v-model="commentText" placeholder="  Write your reply here .."
-        id="insert-reply-textarea">
+      <textarea :maxlength="maxlength" v-model="commentText" placeholder="Write your reply here ..."
+        id="insert-reply-textarea" style="padding: 10px;">
       </textarea>
       <div class="chars">
         <button id="legend-text-format" class="material-symbols-outlined" 

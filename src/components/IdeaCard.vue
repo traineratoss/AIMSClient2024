@@ -610,7 +610,8 @@ watch(() => props.ideaId, async () => {
           id="comment-input-textarea"
           v-model="commentText"
           :maxlength="maxCommentLength"
-          placeholder="  Write your comment here .."
+          placeholder="Write your comment here ..."
+          style="padding: 10px;"
         >
         </textarea>
       </div>

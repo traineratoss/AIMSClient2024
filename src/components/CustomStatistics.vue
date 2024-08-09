@@ -462,6 +462,7 @@ const fetchIdeaByComment = async (commentId) => {
   text-align: center;
   width: 18vw;
   min-height: 10vh;
+  background-color: #eceaea46;
 }
 
 .most-liked-comments {
@@ -480,6 +481,7 @@ const fetchIdeaByComment = async (commentId) => {
   text-align: center;
   width: 18vw;
   min-height: 10vh;
+  background-color: #eceaea46;
 }
 
 th {
@@ -543,12 +545,14 @@ strong {
 }
 
 .refresh-button {
+  margin-top: 20px;
+  border: 1px solid black;
+  background-color: #ffa941;
+  height: 30px;
+  text-align: center;
+  width: 5.5vw;
+  border-radius: 3px;
   cursor: pointer;
-  background-color: orange;
-  width: 30%;
-  height: 3vh;
-  margin-left: 20px;
-  border-color: black;
 }
 
 .refresh-button:hover {
@@ -563,6 +567,7 @@ strong {
 }
 
 .stats-container {
+  padding-left:10px;
   text-align: center;
   height: 70vh;
   overflow: auto;
@@ -605,8 +610,8 @@ strong {
   margin-top: 20px;
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
   background-color: #fff;
-  border: 2px solid orange;
-  color: orange;
+  border: 2px solid #ffa941;
+  color: #ffa941;
 }
 
 .stat-item {
@@ -618,7 +623,8 @@ strong {
 }
 
 a {
-  color: orange;
+  color: #ffa941;
+  text-decoration: none;
 }
 
 a:active {
