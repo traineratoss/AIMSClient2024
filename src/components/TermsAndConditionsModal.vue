@@ -56,12 +56,6 @@ function termsAndConditionsReadCompletely(event) {
           ></div>
         </div>
         <div class="actions">
-          <input 
-            type="checkbox" 
-            :checked="checkboxChecked" 
-            disabled
-          >
-          <label for="terms-checkbox">I've read and accepted the Terms & Conditions</label>
           <CustomButton 
             @click="acceptTermsAndConditions"
             v-focus

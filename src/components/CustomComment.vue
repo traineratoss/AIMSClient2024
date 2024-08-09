@@ -60,7 +60,6 @@ onMounted(async () => {
   fetchLikesCount();
   fetchReportCount();
   getReviewStatusValue();
-  
 });
 
 id.value = props.isReply ? props.replyId : props.commentId;
@@ -70,6 +69,9 @@ async function getReviewStatusValue() {
   try {
   const response = await getReviewStatus(id.value);
   reviewStatus.value = response;
+  if(reviewStatus.value === 'OFFENSIVE') {
+    reportCount.value = false;
+  }
 } catch (error) {
     console.error("Error geting review status:", error);
   }
@@ -89,7 +91,7 @@ async function fetchLikes() {
 async function fetchReportCount() {
   try {
     const count = await getReportsCountForComment(id.value);
-    if(count > 5 || reviewStatus === 'OFFENSIVE'){
+    if(count > 5){
       reportCount.value = false;
     }
   } catch (error) {
@@ -206,12 +208,7 @@ async function handleReport() {
     console.error("Error reporting comment:", error);
   }
 }
-
-
-
 </script>
-
-
 
 <template>
   <div v-if="props.isReply && reportsCountLoading && likesCountLoading" class="reply-container">

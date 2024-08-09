@@ -13,7 +13,7 @@ import {
   getCurrentRole,
   getCurrentUserId,
 } from "../services/user_service";
-import { getIdea,getIdeaForUpdateIdea} from "../services/idea.service";
+import { getIdea ,getIdeaForUpdateIdea} from "../services/idea.service";
 
 const props = defineProps({
   title: "",
@@ -391,7 +391,10 @@ function triggerCollapseAnimation(commentId) {
     };
   }
 }
-
+const countRatings = (ideaId) => {
+  const rating = props.nrOfRatings.find((rating) => rating.ideaid == ideaId);
+  return rating ? rating.ratingcount : 0;
+};
 // const ratingAvg = ref(props.ratingAvg);
 
 // const updateRating = async (newRating) => {
@@ -425,10 +428,10 @@ watch(() => props.ideaId, async () => {
   );
 })
 
-const countRatings = (ideaId) => {
-  const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
-  return rating ? rating.ratingcount : 0;
-}
+// const countRatings = (ideaId) => {
+//   const rating = props.nrOfRatings.find(rating => rating.ideaid == ideaId);
+//   return rating ? rating.ratingcount : 0;
+// }
 
 </script>
 
@@ -462,10 +465,10 @@ const countRatings = (ideaId) => {
                   v-if="isSelected"
                   @dblclick="redirectToCreateIdeaView()"
                 >
-                  {{ getShortenedTitle(title, 40) }}
+                <div v-html="getShortenedTitle(title, 40) "></div>
                 </div>
                 <div class="text" v-else>
-                  {{ getShortenedTitle(title, 32) }}
+                  <div v-html="getShortenedTitle(title, 32) "></div>
                 </div>
               </div>
               <div class="status">
@@ -534,8 +537,10 @@ const countRatings = (ideaId) => {
                   <span class="ratingAvg">
                     <span class="material-symbols-outlined star">star</span>
                     <span>{{ props.ratingAvg }}</span>
-                  </span>                  
-                  <span class="reviews">({{ countRatings(ideaId) }} reviews)</span>
+                  </span>
+                  <span class="reviews"
+                    >({{ countRatings(ideaId) }} reviews)</span
+                  >
                 </div>
                 <div class="author">
                   <div>{{ props.elapsedTime }} ago</div>
@@ -689,23 +694,23 @@ const countRatings = (ideaId) => {
 </template>
 
 <style scoped>
-
-.ratings-info{
+.ratings-info {
   height: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: .4rem;
+  gap: 0.4rem;
 }
 
-.reviews{
-  font-size: .7rem;
+.reviews {
+  font-size: 0.7rem;
 }
 
-.ratingAvg{
+.ratingAvg {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: .3rem;
 }
 
 .expand-animation {
@@ -1198,6 +1203,6 @@ button:hover {
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
-  color: black;
+  color: #ffa941;
 }
 </style>

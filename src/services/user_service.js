@@ -1,6 +1,7 @@
 import { invalidateTokens, setTokenExpiry } from "./token.service";
 import router from "../router";
 import { nativeFetch } from "../main";
+import { fetchAvatarImage } from "./avatar.service";
 
 const API_URL = "http://localhost:8080/users";
 
@@ -94,11 +95,12 @@ async function loginUser(username, password) {
  
   if (!response.ok) {
     const text = await response.text();
-    if (text.message === "User was deactivated") {
-      throw new Error(json.message);
+    if (text === "User was deactivated") {
+      throw new Error(text);
     }
     throw new Error("Invalid username or password");
   } else {
+    
     const json = await response.json();
     const userData = json.userData;
     sessionStorage.setItem("username", userData.username);
@@ -108,8 +110,10 @@ async function loginUser(username, password) {
     sessionStorage.setItem("avatarId", userData.avatarId - 1);
     sessionStorage.setItem("isFirstLogin", userData.isFirstLogin);
     sessionStorage.setItem("userId", userData.id);
-
+    
     setTokenExpiry(json.accessTokenExpiryDate, json.refreshTokenExpiryDate);
+    
+    await fetchAvatarImage(getCurrentUsername());
 
     return json;
   }
@@ -162,6 +166,8 @@ async function updateUser(username, userUpdateDto) {
         fullName: userUpdateDto.fullName,
         email: userUpdateDto.email,
         avatarId: userUpdateDto.avatarId + 1,
+        image: userUpdateDto.imageDTO,
+        updatedImage: userUpdateDto.updatedImage
       }),
     }
   );
@@ -170,8 +176,14 @@ async function updateUser(username, userUpdateDto) {
   if (!response.ok) {
     throw new Error(json.message);
   }
-  // update local storage
+
+  sessionStorage.setItem('username', json.username);
+  sessionStorage.setItem('fullName', json.fullName);
+  sessionStorage.setItem('email', json.email);
   sessionStorage.setItem('avatarId', userUpdateDto.avatarId);
+
+  await fetchAvatarImage(getCurrentUsername());
+
   return json;
 }
 
@@ -254,15 +266,12 @@ async function changePassword(changePasswordDTO) {
     }),
     
   });
-   const json = await response.json();
-  if(json.message === 'The old password is incorrect!') {
-      throw new Error('The old password is incorrect!');
-  }
-  if(json.message === 'The new password cannot be the same as the old password!') {
-    throw new Error('The new password cannot be the same as the old password!');
-  }
 
-  return response;
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text);
+  } 
+
 }
 
 async function abortChangePassword() {
@@ -394,7 +403,7 @@ function getCurrentAvatarId() {
   return sessionStorage.getItem("avatarId");
 }
 
-function getCurrentUserId(){
+function getCurrentUserId() {
   return sessionStorage.getItem("userId");
 }
 

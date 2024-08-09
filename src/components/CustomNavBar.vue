@@ -3,7 +3,7 @@ import CustomInput from "../components/CustomInput.vue";
 import CustomButton from "../components/CustomButton.vue";
 import router from "../router";
 import CustomNavigationDropDown from "../components/CustomNavigationDropDown.vue";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import {
   getCurrentAvatarId,
   getCurrentFullName,
@@ -12,6 +12,7 @@ import {
 } from "../services/user_service";
 import searchValue from "../utils/search-title";
 import {useRoute} from 'vue-router';
+import { customAvatarImage, fetchAvatarImage, getAvatarImageURI } from "../services/avatar.service";
 
 const route = useRoute();
 
@@ -58,6 +59,18 @@ const dashboardElements = [
   },
 ];
 
+const avatarImageURI = ref();
+
+onMounted(async () => {
+  await fetchAvatarImage(currentUsername.value);
+  currentUsername.value = getCurrentUsername();
+  currentAvatarId.value = getCurrentAvatarId();
+});
+
+watch(customAvatarImage, () => {
+  avatarImageURI.value = getAvatarImageURI();
+})
+
 const isSearchInputFocusedSetter = (focused) => {
   isSearchInputFocused.value = focused;
   console.log(focused)
@@ -83,10 +96,11 @@ router.beforeEach((to, from) => {
   if (
     from.name === "my-profile" ||
     from.name === "login" ||
-    to.name === "default"
+    to.name === "my"
   ) {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
+    fetchAvatarImage(currentUsername.value);
   }
 
   userDashboardElements = [];
@@ -129,10 +143,6 @@ router.beforeEach((to, from) => {
   });
 });
 
-onMounted(() => {
-  currentUsername.value = getCurrentUsername();
-  currentAvatarId.value = getCurrentAvatarId();
-});
 
 function redirectToAllIdeas() {
   router.push("/all");
@@ -166,6 +176,7 @@ function onMouseEnterUser() {
 function onMouseLeaveUser() {
   disabledUser.value = true;
 }
+
 </script>
 
 
@@ -255,9 +266,9 @@ function onMouseLeaveUser() {
         style="padding: 20px 5px"
       >
         <img
-          :src="slideImages[currentAvatarId]"
+          :src="avatarImageURI ? avatarImageURI : slideImages[currentAvatarId]"
           alt="avatar not found"
-          style="height: auto; width: 2vw"
+          class="avatar"
         />
         <span class="material-symbols-outlined"> keyboard_arrow_down </span>
         <div class="dropdown-content-user">
@@ -273,6 +284,12 @@ function onMouseLeaveUser() {
 
 
 <style scoped>
+.avatar {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  border: 1px solid #838383;
+}
 
 #all-ideas {
   font-size: 15px;
