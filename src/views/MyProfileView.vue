@@ -150,8 +150,6 @@ function saveChanges() {
   }
 }
 
-console.log(index)
-
 const getImageSource = computed(() => customAvatar.value ? `data:image/${customAvatar.value.fileType};name=${customAvatar.value.fileName};base64,${customAvatar.value.image}` : undefined)
 
 
@@ -233,7 +231,7 @@ async function getInitialIndex() {
           type="file"
           id="upload"
           hidden
-          accept=".jpg, .jpeg, .png"
+          accept=".jpg, .jpeg, .png, .gif"
           ref="uploadedImage"
           @change="processImage($event)"
 
@@ -245,9 +243,10 @@ async function getInitialIndex() {
           </label>
         </div>
         <CustomButton
+          v-if="customAvatar"
           class="remove-image-button"
           @click="removeCustomAvatar">
-          Remove avatar
+          Remove image
         </CustomButton>
       </div>
       <img  v-if="customAvatar" class="custom-avatar"  :src="getImageSource">
@@ -283,8 +282,8 @@ async function getInitialIndex() {
 
 <style scoped>
 .custom-avatar {
-  width: 350px;
-  height: 350px;
+  width: 287px;
+  height: 287px;
   border-radius: 50%;
 }
 
@@ -305,6 +304,7 @@ async function getInitialIndex() {
   background-color: #e9e9e9;
   padding: 20px;
   border-radius: 10px;
+  width: 400px;
 }
 
 .add-image-button {
