@@ -544,11 +544,13 @@ strong {
 
 .refresh-button {
   cursor: pointer;
-  background-color: orange;
+  background-color: #ffa941;
   width: 30%;
   height: 3vh;
   margin-left: 20px;
-  border-color: black;
+  border: 1px solid slategray;
+  border-radius: 3px;
+  font-weight: 600;
 }
 
 .refresh-button:hover {

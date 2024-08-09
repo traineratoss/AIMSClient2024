@@ -15,7 +15,7 @@ const emits = defineEmits(["close", "delete"]);
         </div>
         <div class="modal-footer">
           <button class="modal-default-button1" @click="$emit('close')">
-            Cancel
+            No
           </button>
           <button class="modal-default-button2" @click="$emit('delete')">
             Yes

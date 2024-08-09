@@ -26,8 +26,8 @@ function handleCancel() {
           <p>{{ message }}</p>
         </div>
         <div class="modal-footer">
-          <button class="modal-default-button1" @click="handleCancel">Cancel</button>
-          <button class="modal-default-button2" @click="handleConfirm">Confirm</button>
+          <button class="modal-default-button1" @click="handleCancel">No</button>
+          <button class="modal-default-button2" @click="handleConfirm">Yes</button>
         </div>
       </div>
     </div>

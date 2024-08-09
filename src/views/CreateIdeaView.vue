@@ -1048,8 +1048,8 @@ fetchSubscriptionStatus();
           "
         >
           <div class="dialog-actions" v-if="deletePopup && !ideaNotValid">
-            <button @click="handleCancel">Cancel</button>
-            <button @click="handleConfirm">Confirm</button>
+            <button @click="handleCancel">No</button>
+            <button @click="handleConfirm">Yes</button>
           </div>
           <div class="dialog-actions" v-if="ideaNotValid">
             <button @click="handleConfirm" id="back-button">Back</button>
