@@ -12,7 +12,7 @@ import {
 } from "../services/user_service";
 import searchValue from "../utils/search-title";
 import {useRoute} from 'vue-router';
-import { customAvatarImage, getAvatarImageURI } from "../services/avatar.service";
+import { customAvatarImage, fetchAvatarImage, getAvatarImageURI } from "../services/avatar.service";
 
 const route = useRoute();
 
@@ -61,7 +61,8 @@ const dashboardElements = [
 
 const avatarImageURI = ref();
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchAvatarImage(currentUsername.value);
   currentUsername.value = getCurrentUsername();
   currentAvatarId.value = getCurrentAvatarId();
 });
@@ -95,10 +96,11 @@ router.beforeEach((to, from) => {
   if (
     from.name === "my-profile" ||
     from.name === "login" ||
-    to.name === "default"
+    to.name === "my"
   ) {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
+    fetchAvatarImage(currentUsername.value);
   }
 
   userDashboardElements = [];

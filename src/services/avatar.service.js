@@ -1,21 +1,23 @@
 import { ref } from "vue";
+import { getCurrentUsername } from "./user_service";
 
-const customAvatarImage = ref(null);
+const customAvatarImage = ref(await getAvatarImage(getCurrentUsername()));
 
 const fetchAvatarImage = async (username) => {
   customAvatarImage.value = await getAvatarImage(username);
-  console.log(username);
-  console.log(customAvatarImage.value);
 }
 
 const getAvatarImageURI = () => {
-  if (customAvatarImage) {
-    console.log(customAvatarImage.value);
+  if (customAvatarImage.value) {
     return `data:image/${customAvatarImage.value.fileType};name=${customAvatarImage.value.fileName};base64,${customAvatarImage.value.image}`;
   }
 }
 
 async function getAvatarImage(username) {
+  if (!username) {
+    return null;
+  }
+
   try {
     const response = await fetch(`http://localhost:8080/users/get-avatar-by-username?username=${username}`, {
       method: "GET",
@@ -24,10 +26,14 @@ async function getAvatarImage(username) {
       credentials: "include",
     });
 
+    const contentType = response.headers.get("content-type");
+    if (!contentType || contentType.indexOf("application/json") === -1) {
+      return null;
+    }
+
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log("User has no custom avatar image");
     return null;
   }
 }

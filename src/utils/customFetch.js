@@ -40,5 +40,9 @@ export const customFetch = async (url, options = {}) => {
 
     const response = await nativeFetch(url, { ...options });
     
+    if (url.includes("http://localhost:8080/users/update-profile")) {
+        await refreshTokens();
+    }
+
     return response;
 }
