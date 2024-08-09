@@ -433,6 +433,11 @@ watch(() => props.ideaId, async () => {
 //   return rating ? rating.ratingcount : 0;
 // }
 
+const checkMouseLeave = () => {
+  setTimeout(() => {
+    isHovering.value = false;
+  }, 200);
+};
 </script>
 
 <template>
@@ -619,14 +624,17 @@ watch(() => props.ideaId, async () => {
       <div class="comment-input-bottom">
         <div class="chars">
           <button id="legend-text-format" class="material-symbols-outlined" 
-            @mouseover="isHovering = true" 
-            @mouseleave="isHovering = false">
-            text_fields
-          </button>
-          <div class="tooltip" :class="{ show: isHovering }">
-            <p><b>**Text**</b> for <b>Bold</b></p>
-            <p><i>*Text*</i> for <i>Italic</i></p>
-          </div>
+              @mouseover="isHovering = true" 
+              @mouseleave="isHovering = false">
+              text_fields
+            </button>
+            <div class="tooltip" :class="{ show: isHovering }" @mouseenter="isHovering = true" 
+            @mouseleave="checkMouseLeave">
+              <p><b>**Bold Text**</b> for <b>Bold Text</b></p>
+              <p><i>*Italic Text*</i> for <i>Italic Text</i></p>
+              <p><b><i>***Bold and Italic Text***</i></b> for <i>Bold and Italic Text</i></p>
+              <p><b>![Logo OpenAI](LinkForYourPicture)</b> for inserting pictures</p>
+            </div>
           <p>{{ commentText.length }} / 500</p>
           <button
             id="post-button"
@@ -1175,27 +1183,47 @@ button:hover {
   width: 40px;
   }
 
-.tooltip {
+  .tooltip {
   position: absolute;
+  text-align: center;
   background-color: #ffa941;
   color:  white;
   border: 2px solid #d48806;
-  padding: 1px;
+  padding: 10px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  top: -70px;
-  left: -15%;
+  left: -25%;
+  top:-80px;
   transform: translateX(-50%);
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s, visibility 0.3s;
   font-size: 1.1em;
+  height: 100px; 
+  width: 220px;
+  overflow-y: auto;
 }
 
 .tooltip.show {
   opacity: 1;
   visibility: visible;
+}
+
+.tooltip::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+
+.tooltip:hover::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+
+.tooltip::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid slategray;
 }
 
 .star{
