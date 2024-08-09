@@ -31,6 +31,7 @@ const inputUser = ref([]);
 const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const inputRating = ref("");
+const inputSubscription = ref("");
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -43,6 +44,7 @@ let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 let currentRating = "";
+let currentSubscription = false;
 
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);
@@ -81,6 +83,7 @@ onMounted(async () => {
     ideaPerPage.value,
     currentUsername,
     currentRating,
+    currentSubscription,
     "ASC"
   );
 
@@ -121,6 +124,7 @@ watch(searchValue, async (newValue) => {
       ideaPerPage.value,
       currentUsername,
       currentRating,
+      currentSubscription,
       sortOrder.value
     );
 
@@ -281,6 +285,7 @@ async function changePage(pageNumber) {
     ideaPerPage.value,
     currentUsername,
     currentRating,
+    currentSubscription,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
 
@@ -312,6 +317,7 @@ function setCurrentVariables() {
   currentSelectedDateFrom = inputSelectedDateFrom.value;
   currentSelectedDateTo = inputSelectedDateTo.value;
   currentRating = inputRating.value;
+  currentSubscription = inputSubscription.value;
 }
 
 // here, the page asc or desc is happening
@@ -333,6 +339,7 @@ async function updateSortOrder() {
       ideaPerPage.value,
       getCurrentUsername(),
       currentRating,
+      currentSubscription,
       "ASC"
     );
 
@@ -366,6 +373,7 @@ async function updateSortOrder() {
       ideaPerPage.value,
       getCurrentUsername(),
       currentRating,
+      currentSubscription,
       "DESC"
     );
 
@@ -417,6 +425,7 @@ async function updateIdeas(filteredIdeas) {
       ideaPerPage.value,
       currentUsername,
       currentRating,
+      currentSubscription,
       sortOrder.value
     );
 
@@ -465,6 +474,7 @@ const onPassInputVariables = (
   inputCategoryParam,
   inputUserParam,
   inputRatingParam,
+  inputSubscriptionParam,
   inputSelectedDateFromParam,
   inputSelectedDateToParam
 ) => {
@@ -474,6 +484,7 @@ const onPassInputVariables = (
   inputCategory.value = inputCategoryParam;
   inputUser.value = inputUserParam;
   inputRating.value = inputRatingParam;
+  inputSubscription.value = inputSubscriptionParam;
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
 };
@@ -505,6 +516,7 @@ async function changeDisplay(pageSize) {
     ideaPerPage.value,
     currentUsername,
     currentRating,
+    currentSubscription,
     "ASC"
   );
 

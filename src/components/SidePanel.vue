@@ -34,6 +34,7 @@ const selectedDateTo = ref("");
 const sortOrder = ref("ASC");
 const filteredIdeasEmit = ref({});
 const ratingSelected = ref("");
+const inputSubscription = ref("");
 
 const clearAllDropdownValues = ref(false);
 
@@ -56,6 +57,7 @@ watch(
     categoriesSelected,
     userSelected,
     ratingSelected,
+    inputSubscription,
     selectedDateFrom,
     selectedDateTo,
   ],
@@ -66,6 +68,7 @@ watch(
     newCategoriesSelected,
     newUserSelected,
     newRatingSelected,
+    newInputSubscription,
     newSelectedDateFrom,
     newSelectedDateTo,
   ]) => {
@@ -77,6 +80,7 @@ watch(
       newCategoriesSelected,
       newUserSelected,
       newRatingSelected,
+      newInputSubscription,
       newSelectedDateFrom,
       newSelectedDateTo
     );
@@ -141,6 +145,7 @@ const filter = async () => {
   const dateTo = selectedDateTo.value;
   const user = userSelected.value;
   const rating = ratingSelected.value;
+  const subscription = inputSubscription.value;
   const status = statusSelected.value;
 
   const filteredIdeas = await filterIdeas(
@@ -155,6 +160,7 @@ const filter = async () => {
     props.ideasPerPage,
     props.currentUser,
     rating,
+    subscription,
     props.sort
   );
 
@@ -186,6 +192,7 @@ function clearSelection() {
   userSelected.value = [];
   statusSelected.value = [];
   ratingSelected.value = "";
+  inputSubscription.value = "";
   clearAllDropdownValues.value = true;
   setTimeout(() => {
     clearAllDropdownValues.value = false;

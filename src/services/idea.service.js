@@ -101,6 +101,7 @@ async function filterIdeas(
   pageSize,
   username,
   rating,
+  subscription,
   sortDirection
 ) {
   isFiltering.value = true;
@@ -126,6 +127,7 @@ async function filterIdeas(
   if (selectedDateTo) url += `&selectedDateTo=${selectedDateTo}`;
   if (username) url += `&username=${username}`;
   if (rating) url += `&rating=${rating}`;
+  if (subscription) url += `&subscription=${subscription}`;
 
   // console.log("username", username);
   // console.log("page number", pageNumber);
