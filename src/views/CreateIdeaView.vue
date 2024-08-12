@@ -10,7 +10,7 @@ import RatingStars from "../components/RatingStars.vue";
 import router from "../router";
 import {
   getCategory,
-  getIdea,
+  getIdeaForUpdateIdea,
   updateIdea,
   deleteIdea,
   getAllImages,
@@ -352,13 +352,22 @@ async function updateIdeaFields() {
   if (updatedIdea.value != null) {
     inputValue.value = updatedIdea.value.updateTitle;
     textValue.value = updatedIdea.value.updateText;
-    statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
-    const categoryArray = JSON.parse(updatedIdea.value.updateCategoryList);
-    categoryArray.forEach((category, index) => {
+
+    // Check if updateStatus is defined and not null
+    if (updatedIdea.value.updateStatus != null) {
+      statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
+    } else {
+      statusValue.value = ''; // or handle it appropriately
+    }
+
+    // Safely parse and process the category array
+    const categoryArray = JSON.parse(updatedIdea.value.updateCategoryList || '[]');
+    categoryArray.forEach((category) => {
       categoriesSelected.value.push(category.text);
     });
   }
 }
+
 
 // we stringify the categories selected and send it to the dropdown and then parse it there
 function stringifyCategory() {
@@ -554,7 +563,7 @@ const currentIdeaTitle = ref("");
 
 
 async function loadIdeaForDelete() {
-  const response = await getIdea(ideaId);
+  const response = await getIdeaForUpdateIdea(ideaId);
   if (response === "Idea doesn't exist.") {
     ideaNotValid.value = true;
   } else {
@@ -792,7 +801,6 @@ const checkMouseLeave = () => {
           >
           <select
             v-model="statusValue"
-            :class="{ status: statusError }"
             @mouseenter="onMouseEnter"
             style="width: 16vw"
             @mouseleave="onMouseLeave"
