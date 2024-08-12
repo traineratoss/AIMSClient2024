@@ -10,7 +10,7 @@ import RatingStars from "../components/RatingStars.vue";
 import router from "../router";
 import {
   getCategory,
-  getIdea,
+  getIdeaForUpdateIdea,
   updateIdea,
   deleteIdea,
   getAllImages,
@@ -554,7 +554,7 @@ const currentIdeaTitle = ref("");
 
 
 async function loadIdeaForDelete() {
-  const response = await getIdea(ideaId);
+  const response = await getIdeaForUpdateIdea(ideaId);
   if (response === "Idea doesn't exist.") {
     ideaNotValid.value = true;
   } else {
