@@ -9,6 +9,7 @@ import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import searchValue from "../utils/search-title";
 import { onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
+import { getCurrentUserId } from "../services/user_service";
 
 window.addEventListener("keydown", handleGlobalKeyDown);
 
@@ -23,6 +24,7 @@ const props = defineProps({
   clearAll: Boolean,
 });
 
+const subscribed = ref(false);
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
 const userOptions = ref([]);
@@ -73,6 +75,7 @@ watch(
     selectedDateFrom,
     selectedDateTo,
     selectedRating,
+    subscribed,
   ],
   ([
     newInputTitle,
@@ -83,6 +86,7 @@ watch(
     newSelectedDateFrom,
     newSelectedDateTo,
     newSelectedRating,
+    newSubscribed,
   ]) => {
     emits(
       "pass-input-variables",
@@ -93,7 +97,8 @@ watch(
       newUserSelected,
       newSelectedDateFrom,
       newSelectedDateTo,
-      newSelectedRating
+      newSelectedRating,
+      newSubscribed
     );
   }
 );
@@ -158,7 +163,8 @@ const filter = async () => {
   const user = userSelected.value;
   const status = statusSelected.value;
   const rating = selectedRating.value;
-
+  const isSubscribed = subscribed.value;
+  const userId = getCurrentUserId();
 /* console.log(rating); */
 
   const filteredIdeas = await filterIdeas(
@@ -173,8 +179,10 @@ const filter = async () => {
     props.ideasPerPage,
     props.currentUser,
     rating,
-    props.sort
-  );
+    props.sort,
+    isSubscribed,
+    userId
+    );
 
   //console.log(filteredIdeas);
   console.log("asfasf")
@@ -205,6 +213,7 @@ function clearSelection() {
   userSelected.value = [];
   statusSelected.value = [];
   selectedRating.value = "";
+  subscribed.value = false;
   clearAllDropdownValues.value = true;
   setTimeout(() => {
     clearAllDropdownValues.value = false;
@@ -372,6 +381,14 @@ function topContainerGridPercentages() {
           Clear all
         </button>
       </div>
+
+      <div >
+        <label
+        :style="{ 'font-weight': '650', 'width': '100%' }">
+        Subscribed: 
+        <input type="checkbox" v-model="subscribed" class="style-checkbox">
+        </label>
+        </div>
 
       <div class="top-container-child">
         <span class="title"> Title: </span>
@@ -549,6 +566,15 @@ function topContainerGridPercentages() {
 </template>
 
 <style scoped>
+.style-checkbox{
+  scale: 1.4;
+}
+
+input[type="checkbox"] {
+    accent-color: orange;
+}
+
+
 b {
   color: #ffa941;
 }
@@ -637,7 +663,7 @@ span {
   margin-top: 3vh;
   display: grid;
   gap: 10px;
-  grid-template-rows: 10% 10% 10% 10% 10% 20%;
+  grid-template-rows: 10% 7% 10% 10% 10% 10%;
 }
 
 .top-container-status-activated {
@@ -682,7 +708,7 @@ span {
 .side-panel-container {
   display: grid;
   height: 94vh;
-  grid-template-rows: 50% 50%;
+  grid-template-rows: 65% 35%;
   border-right: 1px solid slategray;
 }
 

@@ -891,7 +891,7 @@ const checkMouseLeave = () => {
               <p><b>**Bold Text**</b> for <b>Bold Text</b></p>
               <p><i>*Italic Text*</i> for <i>Italic Text</i></p>
               <p><b><i>***Bold and Italic Text***</i></b> for <i>Bold and Italic Text</i></p>
-              <p><b>![Logo OpenAI](LinkForYourPicture)</b> for inserting pictures</p>
+              <p><b>![PictureDescription](LinkForYourPicture)</b> for inserting pictures</p>
             </div>
             <textarea
               v-model="textValue"
