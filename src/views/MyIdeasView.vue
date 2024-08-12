@@ -83,7 +83,6 @@ onMounted(async () => {
     ideaPerPage.value,
     currentUsername,
     currentRating,
-    currentSubscription,
     "ASC"
   );
 
@@ -124,7 +123,6 @@ watch(searchValue, async (newValue) => {
       ideaPerPage.value,
       currentUsername,
       currentRating,
-      currentSubscription,
       sortOrder.value
     );
 
@@ -285,7 +283,6 @@ async function changePage(pageNumber) {
     ideaPerPage.value,
     currentUsername,
     currentRating,
-    currentSubscription,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
 
@@ -317,7 +314,6 @@ function setCurrentVariables() {
   currentSelectedDateFrom = inputSelectedDateFrom.value;
   currentSelectedDateTo = inputSelectedDateTo.value;
   currentRating = inputRating.value;
-  currentSubscription = inputSubscription.value;
 }
 
 // here, the page asc or desc is happening
@@ -339,7 +335,6 @@ async function updateSortOrder() {
       ideaPerPage.value,
       getCurrentUsername(),
       currentRating,
-      currentSubscription,
       "ASC"
     );
 
@@ -373,7 +368,6 @@ async function updateSortOrder() {
       ideaPerPage.value,
       getCurrentUsername(),
       currentRating,
-      currentSubscription,
       "DESC"
     );
 
@@ -425,7 +419,6 @@ async function updateIdeas(filteredIdeas) {
       ideaPerPage.value,
       currentUsername,
       currentRating,
-      currentSubscription,
       sortOrder.value
     );
 
@@ -474,7 +467,6 @@ const onPassInputVariables = (
   inputCategoryParam,
   inputUserParam,
   inputRatingParam,
-  inputSubscriptionParam,
   inputSelectedDateFromParam,
   inputSelectedDateToParam
 ) => {
@@ -484,7 +476,6 @@ const onPassInputVariables = (
   inputCategory.value = inputCategoryParam;
   inputUser.value = inputUserParam;
   inputRating.value = inputRatingParam;
-  inputSubscription.value = inputSubscriptionParam;
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
 };
@@ -516,7 +507,6 @@ async function changeDisplay(pageSize) {
     ideaPerPage.value,
     currentUsername,
     currentRating,
-    currentSubscription,
     "ASC"
   );
 

@@ -9,6 +9,7 @@ import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import searchValue from "../utils/search-title";
 import { onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
+import { getCurrentUserId } from "../services/user_service";
 
 window.addEventListener("keydown", handleGlobalKeyDown);
 
@@ -23,6 +24,7 @@ const props = defineProps({
   clearAll: Boolean,
 });
 
+const subscribed = ref(false);
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
 const userOptions = ref([]);
@@ -35,7 +37,6 @@ const selectedDateTo = ref("");
 const sortOrder = ref("ASC");
 const filteredIdeasEmit = ref({});
 const selectedRating = ref("");
-const inputSubscription = ref(false);
 
 const clearAllDropdownValues = ref(false);
 
@@ -74,7 +75,7 @@ watch(
     selectedDateFrom,
     selectedDateTo,
     selectedRating,
-    inputSubscription,
+    subscribed,
   ],
   ([
     newInputTitle,
@@ -85,7 +86,7 @@ watch(
     newSelectedDateFrom,
     newSelectedDateTo,
     newSelectedRating,
-    newInputSubscription,
+    newSubscribed,
   ]) => {
     emits(
       "pass-input-variables",
@@ -97,7 +98,7 @@ watch(
       newSelectedDateFrom,
       newSelectedDateTo,
       newSelectedRating,
-      newInputSubscription,
+      newSubscribed
     );
   }
 );
@@ -162,8 +163,8 @@ const filter = async () => {
   const user = userSelected.value;
   const status = statusSelected.value;
   const rating = selectedRating.value;
-  const subscription = inputSubscription.value;
-
+  const isSubscribed = subscribed.value;
+  const userId = getCurrentUserId();
 /* console.log(rating); */
 
   const filteredIdeas = await filterIdeas(
@@ -178,15 +179,13 @@ const filter = async () => {
     props.ideasPerPage,
     props.currentUser,
     rating,
-    subscription,
-    props.sort
-  );
-  //debugger;
-
-
+    props.sort,
+    isSubscribed,
+    userId
+    );
 
   //console.log(filteredIdeas);
-  // console.log(subscription.value)
+  console.log("asfasf")
 
   if (filteredIdeas === "No ideas found.") {
     filteredIdeasEmit.value = {
@@ -214,7 +213,7 @@ function clearSelection() {
   userSelected.value = [];
   statusSelected.value = [];
   selectedRating.value = "";
-  inputSubscription.value = false;
+  subscribed.value = false;
   clearAllDropdownValues.value = true;
   setTimeout(() => {
     clearAllDropdownValues.value = false;
@@ -369,12 +368,6 @@ function topContainerGridPercentages() {
   } else {
     return "top-container";
   }
-  
-}
-
-
-function setSub(){
-  inputSubscription.value = !inputSubscription;
 }
 </script>
 
@@ -387,15 +380,15 @@ function setSub(){
         <button id="clear-all-button" @click="clearSelection()">
           Clear all
         </button>
+      </div>
 
-      </div>
-      <div class="checkbox-container">
-        <label for="checkbox"
-       :style="{'font-weight': '650', 'width': '100%' }"
-        >Subscribed: </label>
-       <input class="styled-checkbox" type="checkbox" v-model="subscribed" @click="setSub()">
-       
-      </div>
+      <div >
+        <label
+        :style="{ 'font-weight': '650', 'width': '100%' }">
+        Subscribed: 
+        <input type="checkbox" v-model="subscribed" class="style-checkbox">
+        </label>
+        </div>
 
       <div class="top-container-child">
         <span class="title"> Title: </span>
@@ -573,13 +566,14 @@ function setSub(){
 </template>
 
 <style scoped>
-.styled-checkbox{
-  transform: scale(1.6);
+.style-checkbox{
+  scale: 1.4;
 }
 
-.checkbox-container{
-  
+input[type="checkbox"] {
+    accent-color: orange;
 }
+
 
 b {
   color: #ffa941;
@@ -669,7 +663,7 @@ span {
   margin-top: 3vh;
   display: grid;
   gap: 10px;
-  grid-template-rows:10% 10% 10% 10% 10% 10% 20% 10%;
+  grid-template-rows: 10% 7% 10% 10% 10% 10%;
 }
 
 .top-container-status-activated {
@@ -714,7 +708,7 @@ span {
 .side-panel-container {
   display: grid;
   height: 94vh;
-  grid-template-rows: 50% 50%;
+  grid-template-rows: 65% 35%;
   border-right: 1px solid slategray;
 }
 

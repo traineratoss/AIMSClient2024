@@ -55,7 +55,6 @@ const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const isAdmin = ref("");
 const selectedRating = ref("");
-const inputSubscription = ref(false);
 
 
 // non updated inputs, for sorting
@@ -111,7 +110,6 @@ onMounted(async () => {
     ideaPerPage.value,
     null,
     currentRating,
-    currentSubscription,
     "ASC"
   );
 
@@ -162,7 +160,6 @@ watch(searchValue, async (newValue) => {
       ideaPerPage.value,
       null,
       currentRating,
-      currentSubscription,
       sortOrder.value
     );
     if (data === "No ideas found.") {
@@ -324,7 +321,6 @@ async function changePage(pageNumber) {
     ideaPerPage.value,
     null,
     currentRating,
-    currentSubscription,
     sortOrder.value === 0 ? "ASC" : "DESC"
   );
 
@@ -363,7 +359,6 @@ function setCurrentVariables() {
   currentSelectedDateFrom = inputSelectedDateFrom.value;
   currentSelectedDateTo = inputSelectedDateTo.value;
   currentRating = selectedRating.value;
-  currentSubscription = inputSubscription.value;
 }
 
 // here, the page asc or desc is happening
@@ -386,7 +381,6 @@ async function updateSortOrder() {
         ideaPerPage.value,
         null,
         currentRating,
-        currentSubscription,
         "ASC"
       );
 
@@ -438,7 +432,6 @@ async function updateSortOrder() {
         ideaPerPage.value,
         null,
         currentRating,
-        currentSubscription,
         "DESC"
       );
 
@@ -529,7 +522,6 @@ async function updateIdeas(filteredIdeas) {
       ideaPerPage.value,
       null,
       selectedRating.value,
-      inputSubscription.value,
       sortOrder.value
     );
 
@@ -586,7 +578,6 @@ async function changeDisplay(pageSize) {
       ideaPerPage.value,
       null,
       currentRating,
-      currentSubscription,
       sortOrder.value
     );
 
@@ -632,8 +623,6 @@ const onPassInputVariables = (
   inputUserParam,
   inputSelectedDateFromParam,
   inputSelectedDateToParam,
-  selectedRatingParam,
-  inputSubscriptionParam
 ) => {
   inputTitle.value = inputTitleParam;
   inputText.value = inputTextParam;
@@ -642,8 +631,6 @@ const onPassInputVariables = (
   inputUser.value = inputUserParam;
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
-  selectedRating.value = selectedRatingParam;
-  inputSubscription.value = inputSubscriptionParam;
 };
 
 //if the item has an image in the db, we return it. if not, we return a default one
