@@ -31,6 +31,7 @@ const inputUser = ref([]);
 const inputSelectedDateFrom = ref("");
 const inputSelectedDateTo = ref("");
 const inputRating = ref("");
+const inputSubscription = ref("");
 
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
@@ -43,6 +44,7 @@ let currentUser = [];
 let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 let currentRating = "";
+let currentSubscription = false;
 
 const implementedIdeasCount = ref(0);
 const implementationPercentage = ref(0);

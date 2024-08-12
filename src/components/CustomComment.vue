@@ -88,6 +88,7 @@ async function fetchLikes() {
   }
 }
 
+
 async function fetchReportCount() {
   try {
     const count = await getReportsCountForComment(id.value);
