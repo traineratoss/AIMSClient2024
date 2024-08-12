@@ -9,6 +9,7 @@ import generatedStatisticsToBeSend from "../utils/stats-transition-container";
 import searchValue from "../utils/search-title";
 import { onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
+import { getCurrentUserId } from "../services/user_service";
 
 window.addEventListener("keydown", handleGlobalKeyDown);
 
@@ -23,6 +24,7 @@ const props = defineProps({
   clearAll: Boolean,
 });
 
+const subscribed = ref(false);
 const categoryOptions = ref([]);
 const categoriesSelected = ref([]);
 const userOptions = ref([]);
@@ -73,6 +75,7 @@ watch(
     selectedDateFrom,
     selectedDateTo,
     selectedRating,
+    subscribed,
   ],
   ([
     newInputTitle,
@@ -83,6 +86,7 @@ watch(
     newSelectedDateFrom,
     newSelectedDateTo,
     newSelectedRating,
+    newSubscribed,
   ]) => {
     emits(
       "pass-input-variables",
@@ -93,7 +97,8 @@ watch(
       newUserSelected,
       newSelectedDateFrom,
       newSelectedDateTo,
-      newSelectedRating
+      newSelectedRating,
+      newSubscribed
     );
   }
 );
@@ -158,7 +163,8 @@ const filter = async () => {
   const user = userSelected.value;
   const status = statusSelected.value;
   const rating = selectedRating.value;
-
+  const isSubscribed = subscribed.value;
+  const userId = getCurrentUserId();
 /* console.log(rating); */
 
   const filteredIdeas = await filterIdeas(
@@ -173,8 +179,10 @@ const filter = async () => {
     props.ideasPerPage,
     props.currentUser,
     rating,
-    props.sort
-  );
+    props.sort,
+    isSubscribed,
+    userId
+    );
 
   //console.log(filteredIdeas);
   console.log("asfasf")
@@ -205,6 +213,7 @@ function clearSelection() {
   userSelected.value = [];
   statusSelected.value = [];
   selectedRating.value = "";
+  subscribed.value = false;
   clearAllDropdownValues.value = true;
   setTimeout(() => {
     clearAllDropdownValues.value = false;
@@ -371,6 +380,26 @@ function topContainerGridPercentages() {
         <button id="clear-all-button" @click="clearSelection()">
           Clear all
         </button>
+      </div>
+
+      <div>
+        <!-- <label
+        :style="{ 'font-weight': '650', 'width': '100%' }">
+        Subscribed: 
+        <input type="checkbox" v-model="subscribed" class="style-checkbox">
+        </label> -->
+        <div class="toggleSubscription">
+        <label
+        :style="{ 'font-weight': '650', 'width': '100%' }">
+        Subscribed:
+          
+            <label class="switch">
+              <input type="checkbox" v-model="subscribed">
+              <span class="slider round"></span>
+            </label>
+          
+        </label>
+      </div>
       </div>
 
       <div class="top-container-child">
@@ -545,10 +574,20 @@ function topContainerGridPercentages() {
         <button id="filter-button" @click="filterData">Filter</button>
       </div>
     </div>
+    
   </div>
 </template>
 
 <style scoped>
+.style-checkbox{
+  scale: 1.4;
+}
+
+input[type="checkbox"] {
+    accent-color: orange;
+}
+
+
 b {
   color: #ffa941;
 }
@@ -637,7 +676,7 @@ span {
   margin-top: 3vh;
   display: grid;
   gap: 10px;
-  grid-template-rows: 10% 10% 10% 10% 10% 20%;
+  grid-template-rows: 10% 7% 10% 10% 10% 10%;
 }
 
 .top-container-status-activated {
@@ -676,13 +715,13 @@ span {
   width: 18vw;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 30vh;
+  margin-bottom: 20vh;
 }
 
 .side-panel-container {
   display: grid;
   height: 94vh;
-  grid-template-rows: 50% 50%;
+  grid-template-rows: 65% 35%;
   border-right: 1px solid slategray;
 }
 
@@ -742,6 +781,10 @@ span {
   border-color: transparent;
 }
 
+.toggleSubscription{
+  display: flex;
+}
+
 select {
   border-radius: 0.2rem;
   border: 1px solid white;
@@ -751,4 +794,66 @@ select {
   cursor: text;
   width: 100%;
 }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 2.8rem;
+  height: 1.4rem;
+  margin-left: 1.3rem;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.1rem;
+  width: 1.1rem;
+  left: 0px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #e68608;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #e68608;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
 </style>

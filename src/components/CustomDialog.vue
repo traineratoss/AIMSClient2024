@@ -16,7 +16,6 @@ defineExpose({
 
 onMounted(() =>{
   nextTick();
-  console.log(dialogRef.value);
   if(props.open){
     dialogRef.value.showModal();
   }

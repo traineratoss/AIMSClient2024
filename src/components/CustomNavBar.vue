@@ -100,9 +100,10 @@ router.beforeEach((to, from) => {
   ) {
     currentUsername.value = getCurrentUsername();
     currentAvatarId.value = getCurrentAvatarId();
-    fetchAvatarImage(currentUsername.value);
   }
-
+  
+  fetchAvatarImage(currentUsername.value);
+  
   userDashboardElements = [];
 
   userDashboardElements.push({

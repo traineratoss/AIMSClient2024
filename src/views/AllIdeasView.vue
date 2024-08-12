@@ -56,6 +56,7 @@ const inputSelectedDateTo = ref("");
 const isAdmin = ref("");
 const selectedRating = ref("");
 
+
 // non updated inputs, for sorting
 // if i leave the refs and if i press sort, it will filter, which should not happen
 // we put it non reactive so we update it only when the filter is pressed and the inputs are updated
@@ -68,6 +69,7 @@ let currentSelectedDateFrom = "";
 let currentSelectedDateTo = "";
 let currentUserRole = "";
 let currentRating = "";
+let currentSubscription = false;
 
 // fade images variables
 const ideasTransitionContainer = ref(null);
@@ -621,7 +623,6 @@ const onPassInputVariables = (
   inputUserParam,
   inputSelectedDateFromParam,
   inputSelectedDateToParam,
-  selectedRatingParam
 ) => {
   inputTitle.value = inputTitleParam;
   inputText.value = inputTextParam;
@@ -630,7 +631,6 @@ const onPassInputVariables = (
   inputUser.value = inputUserParam;
   inputSelectedDateFrom.value = inputSelectedDateFromParam;
   inputSelectedDateTo.value = inputSelectedDateToParam;
-  selectedRating.value = selectedRatingParam;
 };
 
 //if the item has an image in the db, we return it. if not, we return a default one
