@@ -691,8 +691,8 @@ const checkLengthDocuments = () => {
 
 const updateRating = async (newRating) => {
   try {
-    await postRating(idea_id, userId, newRating);
     ratingForIdea.value = newRating;
+    await postRating(idea_id, userId, newRating);    
   } catch (error) {
     console.error("Error", error);
   }
