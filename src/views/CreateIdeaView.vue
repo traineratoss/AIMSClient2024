@@ -4,6 +4,7 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
+import CustomModal from "../components/CustomModal.vue";
 import {
   ref,
   onMounted,
@@ -167,6 +168,26 @@ const deleteFile = async (file) => {
   } else {
     deleteFileLocal(file.index);
   }
+};
+
+const showModal = ref(false);
+const selectedFile = ref(null);
+
+const openDeleteModal = (file) => {
+  selectedFile.value = file;
+  showModal.value = true;
+};
+
+const closeDeleteModal = () => {
+  showModal.value = false;
+  selectedFile.value = null;
+};
+
+const confirmDelete = () => {
+  if (selectedFile.value) {
+    deleteFile(selectedFile.value);
+  }
+  closeDeleteModal();
 };
 
 const deleteFileLocal = (index) => {
@@ -518,6 +539,7 @@ async function createIdeaFunction() {
 
     const documentDTOs = await transformFilesToDocumentDTOs(newFiles.value);
 
+
     const data = await createIdea(
       inputValue.value,
       textValue.value,
@@ -688,6 +710,12 @@ const checkLengthDocuments = () => {
     return true;
   }
 };
+
+const checkLength = () => {
+  if (existingDocs.value.length > 0) {
+    return true;
+  }
+}
 
 const updateRating = async (newRating) => {
   try {
@@ -992,7 +1020,7 @@ const checkMouseLeave = () => {
               </div>
               <span
                 class="material-symbols-outlined delete-icon"
-                @click="deleteFile(file)"
+                @click="openDeleteModal(file)"
                 v-if="
                   (currentRole == 'ADMIN' && !disableFields) ||
                   file.isLocal ||
@@ -1002,6 +1030,12 @@ const checkMouseLeave = () => {
                 delete
               </span>
             </div>
+            <CustomModal :show="showModal" @close="closeDeleteModal" @delete="confirmDelete">
+            <template #header>
+              <h3>Are you sure you want to delete this file? </h3>
+              <p :style="{ paddingLeft: '4rem' }">You cannot undo this step!</p>
+            </template>
+            </CustomModal>
           </div>
         </div>
 
@@ -1049,9 +1083,9 @@ const checkMouseLeave = () => {
               </span>
             </label>
             <label
-              for="uploadDocument"
+              for="downloadDocument"
               class="add-document-idea"
-              v-if="checkLengthDocuments()"
+              v-if="checkLength()"
               style="display: flex; 
               align-items: center"
               @click="downloadAllFiles()"
@@ -1068,18 +1102,16 @@ const checkMouseLeave = () => {
       <div class="create-container">
 
         <div class="buttons">
-        <button  v-if="!disableFields"
-        @click="router.push('/my')" class="cancel-button">
-        Cancel
-        </button>
+        <CustomButton  v-if="!disableFields"
+          @click="router.push('/my')" id="cancel-idea">
+          Cancel
+        </CustomButton>
 
         <CustomButton
           id="create-idea"
           @click="shouldCreateOrUpdate"
           :disabled="fieldsDisabled"
           v-if="!deletePopup && !disableFields"
-          :height-in-px="40"
-          :width-in-px="300"
         >
           {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
         </CustomButton>
@@ -1114,7 +1146,8 @@ const checkMouseLeave = () => {
 <style scoped>
 .buttons{
   display: flex;
-  
+  width: 100%;
+  gap: 10%;
 }
 
 .cancel-button {
@@ -1247,6 +1280,22 @@ textarea {
   background-color: #fb9209;
   border-radius: 5px;
   margin-top: 20px;
+  width:45%;
+  height: 2rem;
+}
+
+#cancel-idea {
+  background-color: rgba(128, 128, 128, 0.753);
+  border-radius: 5px;
+  margin-top: 20px;
+  width:45%;
+  height: 2rem;
+  color: white;
+  font-size: 1rem;
+}
+
+#cancel-idea:hover {
+  background-color: gray
 }
 
 #create-idea:hover {
@@ -1600,6 +1649,7 @@ select {
   padding-left: 2rem;
   padding-right: 2rem;
   height: fit-content;
+  margin-top: 2rem;
 }
 
 .document {
