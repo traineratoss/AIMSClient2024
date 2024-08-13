@@ -1066,6 +1066,13 @@ const checkMouseLeave = () => {
       </div>
 
       <div class="create-container">
+
+        <div class="buttons">
+        <button  v-if="!disableFields"
+        @click="router.push('/my')" class="cancel-button">
+        Cancel
+        </button>
+
         <CustomButton
           id="create-idea"
           @click="shouldCreateOrUpdate"
@@ -1076,6 +1083,7 @@ const checkMouseLeave = () => {
         >
           {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
         </CustomButton>
+        </div>
         <CustomDialog
           ref="customDialog"
           :open="deletePopup || ideaNotValid"
@@ -1104,6 +1112,21 @@ const checkMouseLeave = () => {
 </template>
 
 <style scoped>
+.buttons{
+  display: flex;
+  
+}
+
+.cancel-button {
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+}
+
+.cancel-button:hover {
+  cursor: pointer;
+}
+
 #back-button:hover {
   background-color: #f8920b;
 }
