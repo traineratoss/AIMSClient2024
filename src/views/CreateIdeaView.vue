@@ -556,23 +556,6 @@ async function createIdeaFunction() {
 
 const userId = getCurrentUserId();
 
-// async function uploadFilesAndHandleResponse(files, ideaId, userId) {
-//   try {
-//     if (!Array.isArray(files)) {
-//       throw new TypeError("Expected an array of files");
-//     }
-
-//     const formattedFiles = files.map(file => file.file || file);
-//     console.log(formattedFiles);
-//     const result = await postDocuments(formattedFiles, ideaId, userId);
-//     console.log("Files uploaded successfully:", result);
-
-//     await getDocuments(ideaId);
-//   } catch (error) {
-//     console.error("Error during file upload:", error);
-//   }
-// }
-
 const fieldsDisabled = ref(disableFields);
 const showDeletePopup = useRoute().query.showDeletePopup === "true";
 const deletePopup = ref(showDeletePopup);

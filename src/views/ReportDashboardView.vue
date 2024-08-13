@@ -38,7 +38,6 @@ async function changePage(pageNumber) {
 }
 
 function updateCommentsList() {
-  console.log(comments);
   getAllCommentsByReportsNr(pageSize.value, currentPage.value - 1)
     .then((res) => {
       comments.value = res.pagedComments.content;

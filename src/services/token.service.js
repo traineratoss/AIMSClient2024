@@ -41,9 +41,8 @@ const refreshTokens = async () => {
 
         setTokenExpiry(json.accessTokenExpiryDate, json.refreshTokenExpiryDate);
 
-        console.log("Refreshed tokens")
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
         await logout();
     }
 }

@@ -73,7 +73,6 @@ watch(customAvatarImage, () => {
 
 const isSearchInputFocusedSetter = (focused) => {
   isSearchInputFocused.value = focused;
-  console.log(focused)
 }
 
 // dont change this watch, it updates the search bar with the input title i give

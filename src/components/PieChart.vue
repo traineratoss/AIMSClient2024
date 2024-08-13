@@ -19,158 +19,48 @@ const props = defineProps({
   implementedIdeasNumber:"",
   draftIdeasNumber:"",
 });
-/*
 
-DISCLAIMER !!! 
-some refs and props are not easy to understand , to be refactored if time allows it 
-
-*/
-
-const top1 = ref("");
-const top2 = ref("");
-const top3 = ref("");
-
-top1.value = props.openP;
-top2.value = props.implP;
-top3.value = props.draftP;
-
-const colorOpen = props.colorOpen;
-const colorImpl = props.colorImpl;
-const colorDraft = props.colorDraft;
-const backgroundColor = props.backgroundColor;
-
-/*
-  recievedP* refs are used for animation 
-*/
+const top1 = ref(props.openP);
+const top2 = ref(props.implP);
+const top3 = ref(props.draftP);
 
 const recievedP1 = ref(0);
 const recievedP2 = ref(0);
 const recievedP3 = ref(0);
 
 const p1 = ref(recievedP1.value);
-
-const p2 = computed(() => {
-  return recievedP1.value + recievedP2.value;
-});
-
-const p3 = computed(() => {
-  return recievedP1.value + recievedP2.value + recievedP3.value;
-});
-
+const p2 = computed(() => recievedP1.value + recievedP2.value);
+const p3 = computed(() => recievedP1.value + recievedP2.value + recievedP3.value);
 const p4 = ref(100);
 
-watch(recievedP1, (newValue) => {
-  p1.value = newValue;
+const style = ref("");
 
+watch([recievedP1, recievedP2, recievedP3], () => {
   style.value =
     "repeating-conic-gradient(from 0deg," +
-    colorOpen +
+    props.colorOpen +
     " 0deg calc(3.6deg *" +
     p1.value +
     ")," +
-    colorImpl +
+    props.colorImpl +
     " calc(3.6deg *" +
     p1.value +
     ") calc(3.6deg * " +
     p2.value +
     ")," +
-    colorDraft +
+    props.colorDraft +
     " calc(3.6deg * " +
     p2.value +
     ") calc(3.6deg * " +
     p3.value +
     ")," +
-    backgroundColor +
+    props.backgroundColor +
     " calc(3.6deg * " +
     p3.value +
     ") calc(3.6deg * " +
     p4.value +
     "))";
 });
-
-watch(recievedP2, (newValue) => {
-  p2.value = recievedP1.value + newValue;
-
-  style.value =
-    "repeating-conic-gradient(from 0deg," +
-    colorOpen +
-    " 0deg calc(3.6deg *" +
-    p1.value +
-    ")," +
-    colorImpl +
-    " calc(3.6deg *" +
-    p1.value +
-    ") calc(3.6deg * " +
-    p2.value +
-    ")," +
-    colorDraft +
-    " calc(3.6deg * " +
-    p2.value +
-    ") calc(3.6deg * " +
-    p3.value +
-    ")," +
-    backgroundColor +
-    " calc(3.6deg * " +
-    p3.value +
-    ") calc(3.6deg * " +
-    p4.value +
-    "))";
-});
-
-watch(recievedP3, (newValue) => {
-  p3.value = recievedP1.value + recievedP2.value + newValue;
-
-  style.value =
-    "repeating-conic-gradient(from 0deg," +
-    colorOpen +
-    " 0deg calc(3.6deg *" +
-    p1.value +
-    ")," +
-    colorImpl +
-    " calc(3.6deg *" +
-    p1.value +
-    ") calc(3.6deg * " +
-    p2.value +
-    ")," +
-    colorDraft +
-    " calc(3.6deg * " +
-    p2.value +
-    ") calc(3.6deg * " +
-    p3.value +
-    ")," +
-    backgroundColor +
-    " calc(3.6deg * " +
-    p3.value +
-    ") calc(3.6deg * " +
-    p4.value +
-    "))";
-});
-
-const style = ref(
-  "repeating-conic-gradient(from 0deg," +
-    colorOpen +
-    " 0deg calc(3.6deg *" +
-    p1.value +
-    ")," +
-    colorImpl +
-    " calc(3.6deg *" +
-    p1.value +
-    ") calc(3.6deg * " +
-    p2.value +
-    ")," +
-    colorDraft +
-    " calc(3.6deg * " +
-    p2.value +
-    ") calc(3.6deg * " +
-    p3.value +
-    ")," +
-    backgroundColor +
-    " calc(3.6deg * " +
-    p3.value +
-    ") calc(3.6deg * " +
-    p4.value +
-    "))"
-);
 
 const sleepNow = (delay) =>
   new Promise((resolve) => setTimeout(resolve, delay));
@@ -197,6 +87,7 @@ const styleObject = ref({
   background: style,
 });
 </script>
+
 
 <template>
   <div class="pie-container">
