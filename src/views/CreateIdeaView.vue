@@ -1051,8 +1051,9 @@ const checkMouseLeave = () => {
             <label
               for="uploadDocument"
               class="add-document-idea"
-              v-else
-              style="display: flex; align-items: center"
+              v-if="checkLengthDocuments()"
+              style="display: flex; 
+              align-items: center"
               @click="downloadAllFiles()"
             >
               Download all
