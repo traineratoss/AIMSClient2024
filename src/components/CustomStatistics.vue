@@ -19,6 +19,7 @@ const props = defineProps({
   fetchIdeaByComment: Function,
 });
 
+
 const emits = defineEmits([
   "loadData",
   "commentCounterAdd",
@@ -310,76 +311,16 @@ const fetchIdeaByComment = async (commentId) => {
                 <th>Idea title</th>
                 <th>No. of comments</th>
               </tr>
-              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[0]">
+              <tr
+                v-for="(idea, index) in props.recievedFilteredStats.mostCommentedIdeas"
+                :key="index"
+              >
                 <td>
-                  <div v-html="getShortenedTitle(
-                      props.recievedFilteredStats.mostCommentedIdeas[0].title,
-                      20
-                    )"></div>
+                  <a href="#" @click="fetchSelectedIdea(idea.id)">
+                    <div v-html="getShortenedTitle(idea.title, 20)"></div>
+                  </a>
                 </td>
-                <td>
-                  {{
-                    props.recievedFilteredStats.mostCommentedIdeas[0]
-                      .commentsNumber
-                  }}
-                </td>
-              </tr>
-              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[1]">
-                <td>
-                  <div v-html="getShortenedTitle(
-                      props.recievedFilteredStats.mostCommentedIdeas[1].title,
-                      20
-                    )"></div>
-                  
-                </td>
-                <td>
-                  {{
-                    props.recievedFilteredStats.mostCommentedIdeas[1]
-                      .commentsNumber
-                  }}
-                </td>
-              </tr>
-              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[2]">
-                <td>
-                  <div v-html="getShortenedTitle(
-                      props.recievedFilteredStats.mostCommentedIdeas[2].title,
-                      20
-                    )"></div>
-                </td>
-                <td>
-                  {{
-                    props.recievedFilteredStats.mostCommentedIdeas[2]
-                      .commentsNumber
-                  }}
-                </td>
-              </tr>
-              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[3]">
-                <td>
-                  <div v-html="getShortenedTitle(
-                      props.recievedFilteredStats.mostCommentedIdeas[3].title,
-                      20
-                    )"></div>
-                </td>
-                <td>
-                  {{
-                    props.recievedFilteredStats.mostCommentedIdeas[3]
-                      .commentsNumber
-                  }}
-                </td>
-              </tr>
-              <tr v-if="props.recievedFilteredStats.mostCommentedIdeas[4]">
-                <td>
-                  <div v-html="getShortenedTitle(
-                      props.recievedFilteredStats.mostCommentedIdeas[4].title,
-                      20
-                    )"></div>
-                </td>
-                <td>
-                  {{
-                    props.recievedFilteredStats.mostCommentedIdeas[4]
-                      .commentsNumber
-                  }}
-                </td>
+                <td>{{ idea.commentsNumber }}</td>
               </tr>
             </table>
           </div>
@@ -388,7 +329,7 @@ const fetchIdeaByComment = async (commentId) => {
             class="most-commented-ideas"
           >
             <p>Top Most commented ideas:</p>
-            <h4>No comments were posted in this time interval</h4>
+            <h4>No ideas had a significant number of comments during the selected time period</h4>
           </div>
           <div class="most-commented-ideas" style="margin-bottom: 50px">
             <p>General information for the selected time interval:</p>
