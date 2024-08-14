@@ -177,6 +177,14 @@ function onMouseLeaveUser() {
   disabledUser.value = true;
 }
 
+const isCreateIdeaButtonActive = computed(() => {
+  // Check if the path is exactly "/create-idea" and there are no query parameters
+  return route.path === "/create-idea" && !Object.keys(route.query).length;
+});
+
+
+
+
 </script>
 
 
@@ -227,7 +235,7 @@ function onMouseLeaveUser() {
           class="nav-button"
           id="create-idea"
           @click="redirectToCreateIdea"
-          :is-active="activePage === 'create-idea'"
+          :is-active="isCreateIdeaButtonActive"
         >
           Create idea
         </CustomButton>
