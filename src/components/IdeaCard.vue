@@ -395,6 +395,7 @@ const countRatings = (ideaId) => {
   const rating = props.nrOfRatings.find((rating) => rating.ideaid == ideaId);
   return rating ? rating.ratingcount : 0;
 };
+
 // const ratingAvg = ref(props.ratingAvg);
 
 // const updateRating = async (newRating) => {
@@ -543,8 +544,9 @@ const checkMouseLeave = () => {
                     <span class="material-symbols-outlined star">star</span>
                     <span>{{ props.ratingAvg }}</span>
                   </span>
-                  <span class="reviews"
-                    >({{ countRatings(ideaId) }} reviews)</span
+                  <span class="reviews">
+                    ({{ countRatings(ideaId) }} {{ (countRatings(ideaId) == 1) ? "review" : "reviews" }})
+                  </span
                   >
                 </div>
                 <div class="author">

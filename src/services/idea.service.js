@@ -131,9 +131,6 @@ async function filterIdeas(
   if (subscribed !== undefined) url += `&subscribed=${subscribed}`;
   if (userId !== undefined) url += `&userId=${userId}`;
 
-  // console.log("username", username);
-  // console.log("page number", pageNumber);
-  // console.log("url", url);
 
   const response = await fetch(url, {
     method: "GET",
@@ -343,12 +340,10 @@ async function getIdeaByCommentId(commentId) {
     const response = await fetch(`${API_URL}/getByComment?commentId=${commentId}`, {
       method: "GET",
     });
-    console.log(commentId);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
-    console.log("Response data:", data);
     return data;
   } catch (error) {
     console.error("Error fetching idea by comment ID:", error);

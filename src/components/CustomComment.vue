@@ -19,8 +19,6 @@ const props = defineProps({
   loggedUser: "",
 });
 
-// console.log("Initial props:", props);
-
 const emits = defineEmits([
   "toggleReplies",
   "showReplies",
@@ -144,7 +142,6 @@ async function deleteCommentById(commentId) {
     if (response.ok) {
       emits("deleteComment", commentId);
       showModal.value = false;
-      console.log("Comment deleted successfully");
     } else {
       console.log("Unable to delete");
     }
@@ -160,7 +157,6 @@ async function deleteReplyById(replyId) {
     if (response.ok) {
       emits("deleteReply", replyId);
       showModal.value = false;
-      console.log("Reply deleted successfully");
     } else {
       console.log("Unable to delete");
     }
@@ -203,7 +199,6 @@ async function deleteLikeAll() {
 async function handleReport() {
   try {
     const result = await reportComment(id.value, userId.value);
-    console.log("Comment reported:", result);
     isReported.value = true;
     showModal2.value = false;
 

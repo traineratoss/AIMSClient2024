@@ -165,7 +165,6 @@ const filter = async () => {
   const rating = selectedRating.value;
   const isSubscribed = subscribed.value;
   const userId = getCurrentUserId();
-/* console.log(rating); */
 
   const filteredIdeas = await filterIdeas(
     title,
@@ -184,9 +183,6 @@ const filter = async () => {
     userId
     );
 
-  //console.log(filteredIdeas);
-  console.log("asfasf")
-
   if (filteredIdeas === "No ideas found.") {
     filteredIdeasEmit.value = {
       content: [],
@@ -195,7 +191,6 @@ const filter = async () => {
     };
   } else {
     filteredIdeasEmit.value = filteredIdeas;
-    console.log(filteredIdeasEmit.value);
   }
 };
 
@@ -319,7 +314,6 @@ watch(userSelected, () => {
 
 function removeSelection(selectionType, index) {
   const indexValue = index;
-  console.log(selectionType);
   switch (selectionType) {
     case "statusType":
       statusSelected.value = statusSelected.value.filter(

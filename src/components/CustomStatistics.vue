@@ -19,6 +19,7 @@ const props = defineProps({
   fetchIdeaByComment: Function,
 });
 
+
 const emits = defineEmits([
   "loadData",
   "commentCounterAdd",
@@ -60,12 +61,12 @@ watch(
   }
 );
 
-watch(
-  () => props.showAnimation,
-  (newValue) => {
-    console.log("showAnimation", newValue);
-  }
-);
+// watch(
+//   () => props.showAnimation,
+//   (newValue) => {
+//     console.log("showAnimation", newValue);
+//   }
+// );
 async function calculateImplementationPercentage() {
   if (props.recievedFilteredStats.nrOfIdeas > 0) {
     implementationPercentage.value = Math.round(
@@ -328,7 +329,7 @@ const fetchIdeaByComment = async (commentId) => {
             class="most-commented-ideas"
           >
             <p>Top Most commented ideas:</p>
-            <h4>No comments were posted in this time interval</h4>
+            <h4>No ideas had a significant number of comments during the selected time period</h4>
           </div>
           <div class="most-commented-ideas" style="margin-bottom: 50px">
             <p>General information for the selected time interval:</p>

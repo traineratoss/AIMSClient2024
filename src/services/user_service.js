@@ -418,7 +418,10 @@ async function logout() {
     cache: "no-cache",
     credentials: "include",
     mode: "cors",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Session-ID": sessionStorage.getItem("Session-ID")
+    },
   });
 
   sessionStorage.clear('username');

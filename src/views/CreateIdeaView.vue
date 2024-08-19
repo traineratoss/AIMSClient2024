@@ -4,7 +4,16 @@ import CustomButton from "../components/CustomButton.vue";
 import CustomInput from "../components/CustomInput.vue";
 import CustomDropDown from "../components/CustomDropDown.vue";
 import CustomDialog from "../components/CustomDialog.vue";
-import { ref, onMounted, watchEffect, computed, watch, toRef, nextTick } from "vue";
+import CustomModal from "../components/CustomModal.vue";
+import {
+  ref,
+  onMounted,
+  watchEffect,
+  computed,
+  watch,
+  toRef,
+  nextTick,
+} from "vue";
 import { useRoute } from "vue-router";
 import RatingStars from "../components/RatingStars.vue";
 import router from "../router";
@@ -20,11 +29,11 @@ import {
 } from "../services/idea.service";
 
 import {
-  getDocumentsByIdeaId, 
-  deleteDocument, 
-  downloadDocument, 
-  fetchDocument
-} from "../services/document_service"
+  getDocumentsByIdeaId,
+  deleteDocument,
+  downloadDocument,
+  fetchDocument,
+} from "../services/document_service";
 
 import {
   getCurrentUsername,
@@ -34,11 +43,11 @@ import {
 
 import { getRating, postRating } from "@/services/rating_service";
 import CustomLoader from "@/components/CustomLoader.vue";
-import * as JSZip from 'jszip'
-import { saveAs } from 'file-saver'
+import * as JSZip from "jszip";
+import { saveAs } from "file-saver";
 import { getSubscriptions } from "../services/subscriptionService";
 
-const props = defineProps({isSubscribed: Boolean});
+const props = defineProps({ isSubscribed: Boolean });
 const emits = defineEmits(["subscribeUser"]);
 const inputValue = ref("");
 const statusValue = ref("open");
@@ -112,8 +121,6 @@ function transformImageDataIntoValues(dataString) {
   return obj;
 }
 
-
-
 const updatedIdea = ref(null);
 updatedIdea.value = useRoute().query;
 const isWatchEffectExecuted = ref(false);
@@ -140,12 +147,11 @@ const disableFields = useRoute().query.disableFields === "true";
 async function getRatingFunction() {
   try {
     const response = await getRating(idea_id, user_id);
-    value.value = response; 
+    value.value = response;
   } catch (error) {
     console.error("Error", error);
   }
 }
-
 
 const deleteFile = async (file) => {
   if (disableFields || hasUpdateId) {
@@ -157,11 +163,31 @@ const deleteFile = async (file) => {
         await getDocuments(file.ideaId);
       }
     } catch (error) {
-      console.error('Error deleting document:', error);
+      console.error("Error deleting document:", error);
     }
   } else {
     deleteFileLocal(file.index);
   }
+};
+
+const showModal = ref(false);
+const selectedFile = ref(null);
+
+const openDeleteModal = (file) => {
+  selectedFile.value = file;
+  showModal.value = true;
+};
+
+const closeDeleteModal = () => {
+  showModal.value = false;
+  selectedFile.value = null;
+};
+
+const confirmDelete = () => {
+  if (selectedFile.value) {
+    deleteFile(selectedFile.value);
+  }
+  closeDeleteModal();
 };
 
 const deleteFileLocal = (index) => {
@@ -177,8 +203,8 @@ const getDocuments = async (idea_id) => {
   }
 };
 
-const isCreateIdeaPath = useRoute().path === '/create-idea';
-const hasUpdateId = isCreateIdeaPath && 'updateId' in useRoute().query;
+const isCreateIdeaPath = useRoute().path === "/create-idea";
+const hasUpdateId = isCreateIdeaPath && "updateId" in useRoute().query;
 const ideaIdd = useRoute().query.updateId;
 const isLoading = ref(false);
 
@@ -186,12 +212,12 @@ const displayedFiles = computed(() => {
   const backendFiles = existingDocs.value.map((doc, index) => ({
     ...doc,
     isLocal: false,
-    index
+    index,
   }));
   const localFiles = newFiles.value.map((file, index) => ({
     ...file,
     isLocal: true,
-    index
+    index,
   }));
   return [...backendFiles, ...localFiles];
 });
@@ -212,7 +238,6 @@ async function loadImages() {
   slideImages.value = imageUrl;
 }
 
-
 onMounted(async () => {
   if (updatedIdea.value == null) {
     categoriesSelected.value = [];
@@ -227,7 +252,7 @@ onMounted(async () => {
     await fetchRatings();
   }
 
-  if(hasUpdateId){
+  if (hasUpdateId) {
     await getDocuments(ideaIdd);
   }
 
@@ -244,7 +269,6 @@ onMounted(async () => {
   });
   // const imageUrl = `data:image/${dataImage.fileType};name=${dataImage.fileName};base64,${dataImage.base64Image}`
   slideImages.value = imageUrl;
-
 });
 
 watch(inputValue, (newValue) => {
@@ -298,7 +322,6 @@ const pageTitle = computed(() => {
 //this function transforms my whole image string into 3 parts: type, name and base64
 //needed for the request dto
 
-
 //This is the function that is handling the updating in the db
 async function updateIdeaFunction() {
   const updatedIdeaId = updatedIdea.value.updateId;
@@ -331,12 +354,11 @@ async function updateIdeaFunction() {
       newStatus,
       newCategoryList,
       imageDTO,
-      documentDTOs,
+      documentDTOs
     );
     router.back();
   }
 }
-
 
 async function shouldCreateOrUpdate() {
   if (JSON.stringify(updatedIdea.value) === "{}") {
@@ -345,7 +367,6 @@ async function shouldCreateOrUpdate() {
     await updateIdeaFunction();
   }
 }
-
 
 //This is used for updating all the fields in the view when clicking update
 async function updateIdeaFields() {
@@ -357,17 +378,18 @@ async function updateIdeaFields() {
     if (updatedIdea.value.updateStatus != null) {
       statusValue.value = updatedIdea.value.updateStatus.toLowerCase();
     } else {
-      statusValue.value = ''; // or handle it appropriately
+      statusValue.value = ""; // or handle it appropriately
     }
 
     // Safely parse and process the category array
-    const categoryArray = JSON.parse(updatedIdea.value.updateCategoryList || '[]');
+    const categoryArray = JSON.parse(
+      updatedIdea.value.updateCategoryList || "[]"
+    );
     categoryArray.forEach((category) => {
       categoriesSelected.value.push(category.text);
     });
   }
 }
-
 
 // we stringify the categories selected and send it to the dropdown and then parse it there
 function stringifyCategory() {
@@ -438,7 +460,7 @@ async function initialCurrentIndex() {
 //       document: file.document,
 //       fileName: file.fileName,
 //       fileType: file.fileType,
-//       ideaId: 
+//       ideaId:
 //     }));
 //   };
 
@@ -514,8 +536,9 @@ async function createIdeaFunction() {
       fileType: selectedImageType.value,
       image: selectedImageBase64.value,
     };
-    
+
     const documentDTOs = await transformFilesToDocumentDTOs(newFiles.value);
+
 
     const data = await createIdea(
       inputValue.value,
@@ -524,7 +547,7 @@ async function createIdeaFunction() {
       categoryTexts,
       imageDTO,
       currentUsername,
-      documentDTOs,
+      documentDTOs
     );
     router.push({ name: "my" });
     return data;
@@ -532,24 +555,6 @@ async function createIdeaFunction() {
 }
 
 const userId = getCurrentUserId();
-
-// async function uploadFilesAndHandleResponse(files, ideaId, userId) {
-//   try {
-//     if (!Array.isArray(files)) {
-//       throw new TypeError("Expected an array of files");
-//     }
-
-//     const formattedFiles = files.map(file => file.file || file); 
-//     console.log(formattedFiles);
-//     const result = await postDocuments(formattedFiles, ideaId, userId);
-//     console.log("Files uploaded successfully:", result);
-
-//     await getDocuments(ideaId);
-//   } catch (error) {
-//     console.error("Error during file upload:", error);
-//   }
-// }
-
 
 const fieldsDisabled = ref(disableFields);
 const showDeletePopup = useRoute().query.showDeletePopup === "true";
@@ -560,7 +565,6 @@ if (showDeletePopup) loadIdeaForDelete();
 if (disableFields) loadIdeaForDelete();
 
 const currentIdeaTitle = ref("");
-
 
 async function loadIdeaForDelete() {
   const response = await getIdeaForUpdateIdea(ideaId);
@@ -676,25 +680,30 @@ const uploadFiles = (event) => {
   newFiles.value.push(...uploadedFiles);
 };
 
-
 async function downloadDoc(id, fileName) {
   try {
     await downloadDocument(id, fileName);
   } catch (error) {
-    console.error('Error downloading file:', error);
+    console.error("Error downloading file:", error);
   }
 }
 
 const checkLengthDocuments = () => {
-  if (displayedFiles.value.length > 0){
+  if (displayedFiles.value.length > 0) {
+    return true;
+  }
+};
+
+const checkLength = () => {
+  if (existingDocs.value.length > 0) {
     return true;
   }
 }
 
 const updateRating = async (newRating) => {
   try {
-    await postRating(idea_id, userId, newRating);
     ratingForIdea.value = newRating;
+    await postRating(idea_id, userId, newRating);    
   } catch (error) {
     console.error("Error", error);
   }
@@ -703,14 +712,13 @@ const updateRating = async (newRating) => {
 const ratingForIdea = ref(0);
 
 const fetchRatings = async () => {
-  try{
+  try {
     const response = await getRating(idea_id, user_id);
     ratingForIdea.value = response;
   } catch (error) {
     console.error("Error getting ratings", error);
   }
-}
-
+};
 
 const downloadAllFiles = async () => {
   if (displayedFiles.value.length > 0) {
@@ -720,12 +728,14 @@ const downloadAllFiles = async () => {
       const documentData = await fetchDocument(fileWrapper.id);
       if (documentData) {
         const { arrayBuffer, contentType } = documentData;
-        zip.file(fileWrapper.fileName, new Uint8Array(arrayBuffer), { binary: true });
+        zip.file(fileWrapper.fileName, new Uint8Array(arrayBuffer), {
+          binary: true,
+        });
       }
     }
 
-    const blob = await zip.generateAsync({ type: 'blob' });
-    saveAs(blob, 'documents.zip');
+    const blob = await zip.generateAsync({ type: "blob" });
+    saveAs(blob, "documents.zip");
   }
 };
 
@@ -733,7 +743,9 @@ const isSubscribed = ref(false);
 const fetchSubscriptionStatus = async () => {
   try {
     const subscriptions = await getSubscriptions(getCurrentUserId());
-    isSubscribed.value = subscriptions.some(subscription => subscription.ideaId == idea_id);
+    isSubscribed.value = subscriptions.some(
+      (subscription) => subscription.ideaId == idea_id
+    );
   } catch (error) {
     console.error("Error checking subscription:", error);
   }
@@ -750,13 +762,13 @@ const checkMouseLeave = () => {
 <template>
   <div class="wrapper">
     <div class="create-idea-container">
-
       <div class="right-container-icon">
-         <span
-           class="material-symbols-outlined subscription"
-           :class="{ filled: isSubscribed }"
-            >
-            visibility
+        <span
+          class="material-symbols-outlined subscription"
+          :class="{ filled: isSubscribed }"
+          v-if="disableFields"
+        >
+          visibility
         </span>
       </div>
 
@@ -877,21 +889,34 @@ const checkMouseLeave = () => {
           />
         </div>
       </div>
-       
+
       <div class="idea-text">
         <div class="text-input-wrapper">
           <div class="input-text-container">
-            <button id="legend-text-format" class="material-symbols-outlined" 
-              @mouseover="isHovering = true" 
-              @mouseleave="isHovering = false">
+            <button
+              id="legend-text-format"
+              class="material-symbols-outlined"
+              @mouseover="isHovering = true"
+              @mouseleave="isHovering = false"
+            >
               text_fields
             </button>
-            <div class="tooltip" :class="{ show: isHovering }" @mouseenter="isHovering = true" 
-            @mouseleave="checkMouseLeave">
+            <div
+              class="tooltip"
+              :class="{ show: isHovering }"
+              @mouseenter="isHovering = true"
+              @mouseleave="checkMouseLeave"
+            >
               <p><b>**Bold Text**</b> for <b>Bold Text</b></p>
               <p><i>*Italic Text*</i> for <i>Italic Text</i></p>
-              <p><b><i>***Bold and Italic Text***</i></b> for <i>Bold and Italic Text</i></p>
-              <p><b>![PictureDescription](LinkForYourPicture)</b> for inserting pictures</p>
+              <p>
+                <b><i>***Bold and Italic Text***</i></b> for
+                <i>Bold and Italic Text</i>
+              </p>
+              <p>
+                <b>![PictureDescription](LinkForYourPicture)</b> for inserting
+                pictures
+              </p>
             </div>
             <textarea
               v-model="textValue"
@@ -954,7 +979,10 @@ const checkMouseLeave = () => {
             <CustomLoader :size="45" />
           </div>
           <div v-else class="document-container">
-            <div v-if="!checkLengthDocuments() && !isLoading" class="noDocumentsText">
+            <div
+              v-if="!checkLengthDocuments() && !isLoading"
+              class="noDocumentsText"
+            >
               No documents uploaded.
             </div>
             <div
@@ -965,17 +993,32 @@ const checkMouseLeave = () => {
               <span class="material-symbols-outlined attach-icon">
                 attach_file
               </span>
-              <div class="file-name" @click="file.isLocal ? null : downloadDoc(file.id, file.fileName)">
+              <div
+                class="file-name"
+                @click="
+                  file.isLocal ? null : downloadDoc(file.id, file.fileName)
+                "
+              >
                 <span>{{ file.fileName ? file.fileName : file.name }}</span>
               </div>
               <span
                 class="material-symbols-outlined delete-icon"
-                @click="deleteFile(file)"
-                v-if="(currentRole == 'ADMIN' && !disableFields) || file.isLocal || (userId == file.userId && !disableFields)"
+                @click="openDeleteModal(file)"
+                v-if="
+                  (currentRole == 'ADMIN' && !disableFields) ||
+                  file.isLocal ||
+                  (userId == file.userId && !disableFields)
+                "
               >
                 delete
               </span>
             </div>
+            <CustomModal :show="showModal" @close="closeDeleteModal" @delete="confirmDelete">
+            <template #header>
+              <h3>Are you sure you want to delete this file? </h3>
+              <p :style="{ paddingLeft: '4rem' }">You cannot undo this step!</p>
+            </template>
+            </CustomModal>
           </div>
         </div>
 
@@ -1023,10 +1066,11 @@ const checkMouseLeave = () => {
               </span>
             </label>
             <label
-              for="uploadDocument"
+              for="downloadDocument"
               class="add-document-idea"
-              v-else
-              style="display: flex; align-items: center;"
+              v-if="checkLength()"
+              style="display: flex; 
+              align-items: center"
               @click="downloadAllFiles()"
             >
               Download all
@@ -1039,16 +1083,22 @@ const checkMouseLeave = () => {
       </div>
 
       <div class="create-container">
+
+        <div class="buttons">
+        <CustomButton  v-if="!disableFields"
+          @click="router.push('/my')" id="cancel-idea">
+          Cancel
+        </CustomButton>
+
         <CustomButton
           id="create-idea"
           @click="shouldCreateOrUpdate"
           :disabled="fieldsDisabled"
           v-if="!deletePopup && !disableFields"
-          :height-in-px="40"
-          :width-in-px="300"
         >
           {{ isUpdatedIdeaEmpty ? "Create Idea" : "Update Idea" }}
         </CustomButton>
+        </div>
         <CustomDialog
           ref="customDialog"
           :open="deletePopup || ideaNotValid"
@@ -1077,6 +1127,22 @@ const checkMouseLeave = () => {
 </template>
 
 <style scoped>
+.buttons{
+  display: flex;
+  width: 100%;
+  gap: 10%;
+}
+
+.cancel-button {
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+}
+
+.cancel-button:hover {
+  cursor: pointer;
+}
+
 #back-button:hover {
   background-color: #f8920b;
 }
@@ -1197,6 +1263,22 @@ textarea {
   background-color: #fb9209;
   border-radius: 5px;
   margin-top: 20px;
+  width:45%;
+  height: 2rem;
+}
+
+#cancel-idea {
+  background-color: rgba(128, 128, 128, 0.753);
+  border-radius: 5px;
+  margin-top: 20px;
+  width:45%;
+  height: 2rem;
+  color: white;
+  font-size: 1rem;
+}
+
+#cancel-idea:hover {
+  background-color: gray
 }
 
 #create-idea:hover {
@@ -1380,13 +1462,13 @@ textarea {
   overflow-y: auto;
   height: 4rem;
   max-height: 4rem;
-  border: .2rem solid gray;
-  border-radius: .5rem;
+  border: 0.2rem solid gray;
+  border-radius: 0.5rem;
   padding-top: 1.2rem;
   padding-bottom: 1.2rem;
 }
 
-.loading{
+.loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1397,7 +1479,7 @@ textarea {
   overflow-y: auto;
   height: 8rem;
   max-height: 8rem;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   padding-top: 1.2rem;
   padding-bottom: 1.2rem;
 }
@@ -1550,15 +1632,14 @@ select {
   padding-left: 2rem;
   padding-right: 2rem;
   height: fit-content;
+  margin-top: 2rem;
 }
 
 .document {
   width: 100%;
   height: 100%;
-  display: flex;  
+  display: flex;
 }
-
-
 
 .document .attach-icon {
   width: 15%;
@@ -1567,11 +1648,11 @@ select {
 
 .document .file-name {
   display: inline-block;
-  width: 7rem; 
+  width: 7rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 .document .delete-icon {
@@ -1592,7 +1673,7 @@ select {
   padding-top: 1rem;
 }
 
-.noDocumentsText{
+.noDocumentsText {
   color: gray;
 }
 
@@ -1610,7 +1691,7 @@ select {
   position: absolute;
   text-align: center;
   background-color: #ffa941;
-  color:  white;
+  color: white;
   border: 2px solid #d48806;
   padding: 10px;
   border-radius: 5px;
@@ -1622,7 +1703,7 @@ select {
   visibility: hidden;
   transition: opacity 0.3s, visibility 0.3s;
   font-size: 1.1em;
-  height: 100px; 
+  height: 100px;
   width: 220px;
   overflow-y: auto;
 }
@@ -1648,9 +1729,8 @@ select {
   border: 1px solid slategray;
 }
 
-.input-text-container{
-padding-left: 0.2rem;
-padding-top: 0.12rem;
+.input-text-container {
+  padding-left: 0.2rem;
+  padding-top: 0.12rem;
 }
-
 </style>

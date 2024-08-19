@@ -14,7 +14,6 @@ import {getAllRatings, getNumberOfRatings} from "@/services/rating_service";
 import { getSubscriptions, subscribeUser, unsubscribeUser } from "../services/subscriptionService";
 
 const currentUsername = getCurrentUsername();
-// console.log(currentUsername);
 
 const ideaPerPage = ref(5);
 const currentPage = ref(1);
@@ -182,11 +181,6 @@ function scrollFade() {
 
     const gapBottom = distanceTop;
 
-    // If the card is visible
-
-    // console.log(reveals[4].getBoundingClientRect().top -
-    //   ideasTransitionContainer.value.getBoundingClientRect().bottom)
-
     if (elementTop > gapTop && elementBottom < gapBottom) {
       reveals[i].classList.add("active");
       reveals[i].style.transform = `translateY(0px)`;
@@ -219,25 +213,6 @@ function scrollFade() {
               50;
           reveals[i].style.opacity = `${topOpacityPercentage}`;
         }
-        //   console.log(reveals[1].getBoundingClientRect().bottom -
-        // ideasTransitionContainer.value.getBoundingClientRect().top)
-
-        // if (
-        //   ideasTransitionContainer.value.clientHeight -
-        //     reveals[i].getBoundingClientRect().bottom <
-        //     -50 &&
-        //   ideasTransitionContainer.value.clientHeight -
-        //     reveals[i].getBoundingClientRect().bottom >
-        //     -300
-        // ) {
-        //   const distanceDown =
-        //     ideasTransitionContainer.value.clientHeight -
-        //     reveals[i].getBoundingClientRect().bottom;
-
-        //   const bottomOpacityPercentage = (distanceDown + 300) / 200;
-
-        //   reveals[i].style.opacity = `${bottomOpacityPercentage}`;
-        // }
       }
 
       // If the card doesnt respect the conditions, it isn't active anymore and I check which direction it will go

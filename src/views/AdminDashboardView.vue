@@ -55,7 +55,7 @@ async function search(username) {
       }
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
       showImage.value = true;
     });
 }
