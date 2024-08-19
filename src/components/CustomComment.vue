@@ -46,6 +46,7 @@ const likesCounts = ref([]);
 const isBlackIcon = ref(false);
 const isReported = ref(false);
 const reportCount = ref(true);
+const reportNr = ref(0);
 const id = ref("");
 const reviewStatus = ref("");
 const isHovering = ref(false);
@@ -92,6 +93,7 @@ async function fetchLikes() {
 async function fetchReportCount() {
   try {
     const count = await getReportsCountForComment(id.value);
+    reportNr.value = count;
     if(count > 5){
       reportCount.value = false;
     }
@@ -278,7 +280,7 @@ const checkMouseLeave = () => {
         <div class="footer-container-left"></div>
 
         <div class="footer-container-center">
-          <div v-if="props.hasReplies && reportCount <= 5">
+          <div v-if="props.hasReplies && reportNr <= 5">
             <button @click="toggleReplies()" id="view-replies-button">
               <span v-if="!replyToggled" class="material-symbols-outlined" @click="getReviewStatusValue()">
                 expand_more
