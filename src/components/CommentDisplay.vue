@@ -51,7 +51,6 @@ function handleCancel() {
     <div class="comment-container">
       <div class="animation-container"></div>
       <span class="content"><div v-html="content"></div></span>
-      <span class="report-count">Reports: {{ nrReports }}</span>
     </div>
     <div class="comment-buttons">
       <button @click="showModalDialog('not-offensive')">Not Offensive</button>
@@ -76,7 +75,7 @@ function handleCancel() {
   width: 70px;
 }
 .content {
-  width: 600px;
+  width: 900px;
   word-wrap: break-word;
 }
 .comment {
