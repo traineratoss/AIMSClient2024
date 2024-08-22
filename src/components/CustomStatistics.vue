@@ -190,7 +190,7 @@ const fetchIdeaByComment = async (commentId) => {
               >
                 <td>
                   <a href="#" @click="fetchSelectedIdea(idea.id)">
-                    <div v-html="getShortenedTitle(idea.title, 20)"></div>
+                    <div v-html="'<u>'+getShortenedTitle(idea.title, 20)+'</u>'"></div>
                   </a>
                 </td>
                 <td>{{ idea.commentsNumber }}</td>
@@ -216,7 +216,7 @@ const fetchIdeaByComment = async (commentId) => {
                     href="#"
                     @click.prevent="fetchIdeaByComment(comment.commentId)"
                   >
-                  <div v-html="getShortenedTitle(comment.commentText, 20)"></div>
+                  <div v-html= "'<u>' + getShortenedTitle(comment.commentText, 20) + '</u>'"></div>
                   </a>
                 </td>
                 <td>{{ comment.nrLikes }}</td>
@@ -564,11 +564,7 @@ strong {
 }
 
 a {
-  color: #ffa941;
-  text-decoration: none;
-}
-
-a:active {
   color: black;
+  text-decoration: none;
 }
 </style>
